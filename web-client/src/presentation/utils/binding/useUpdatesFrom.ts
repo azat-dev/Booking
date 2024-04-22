@@ -1,19 +1,29 @@
-import { useEffect, useMemo, useReducer } from "react";
+import { useEffect, useMemo, useReducer, useRef, useState } from "react";
 import Subject from "./Subject";
 
 const useUpdatesFrom = (...dependencies: Subject<any | null>[]) => {
-    const [, forceUpdate] = useReducer((x) => x + 1, 0);
+    const [newValues, setNewValues] = useState(() =>
+        dependencies.map((item) => item.value)
+    );
 
     useEffect(() => {
-        const listener = () => forceUpdate();
-        const subscriptions = dependencies.map((item) => item.listen(listener));
+        const subscriptions = dependencies.map((item, itemIndex) => {
+            return item.listen((newValue) => {
+                setNewValues((prev) => {
+                    const newValues = [...prev];
+                    newValues[itemIndex] = newValue;
+                    return newValues;
+                });
+            });
+        });
 
+        setNewValues(dependencies.map((item) => item.value));
         return () => {
             subscriptions.forEach((s) => s.cancel());
         };
     }, dependencies);
-    
-    return dependencies.map((item) => item.value);
+
+    return newValues;
 };
 
 export default useUpdatesFrom;
@@ -23,7 +33,6 @@ export interface DestroyableViewModel {
 }
 
 export const useDestroyableViewModel = (vm: any) => {
-
     useEffect(() => {
         return () => {
             if (vm.destroy) {
@@ -31,4 +40,4 @@ export const useDestroyableViewModel = (vm: any) => {
             }
         };
     }, [vm]);
-}
+};
