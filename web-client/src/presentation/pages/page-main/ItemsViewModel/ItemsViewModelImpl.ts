@@ -21,20 +21,20 @@ class ItemsViewModelImpl implements ItemsViewModel {
                 300,
                 "https://picsum.photos/id/237/400/400"
             ),
-            // new AccommodiationPreviewViewModel(
-            //     "1",
-            //     "Hotel 2",
-            //     4.0,
-            //     200,
-            //     "https://picsum.photos/id/238/400/400"
-            // ),
-            // new AccommodiationPreviewViewModel(
-            //     "1",
-            //     "Hotel 3",
-            //     3.5,
-            //     100,
-            //     "https://picsum.photos/id/239/400/400"
-            // ),
+            new AccommodiationPreviewViewModel(
+                "1",
+                "Hotel 2",
+                4.0,
+                200,
+                "https://picsum.photos/id/238/400/400"
+            ),
+            new AccommodiationPreviewViewModel(
+                "1",
+                "Hotel 3",
+                3.5,
+                100,
+                "https://picsum.photos/id/239/400/400"
+            ),
         ];
 
         this.state.set({ type: "loaded", items });

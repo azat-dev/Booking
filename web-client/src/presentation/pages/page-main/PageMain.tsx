@@ -1,5 +1,6 @@
 import React, { useRef, useEffect, useMemo } from "react";
 
+import Box from "@mui/joy/Box";
 import PropsPageMain from "./props";
 
 import style from "./style.module.scss";
@@ -23,13 +24,20 @@ const PageMain = ({ vm }: PropsPageMain) => {
     return (
         <div className={style.pageMain}>
             <NavigationBar vm={vm.navigationBar} />
-            <div className={style.items}>
-                {itemsState.type === "loading" && <div>Loading...</div>}
+            {itemsState.type === "loading" && <div>Loading...</div>}
+            <Box
+                sx={{
+                    display: "grid",
+                    gridTemplateColumns:
+                        "repeat(auto-fit, minmax(240px, 300px))",
+                    gap: 5,
+                }}
+            >
                 {itemsState.type === "loaded" &&
                     itemsState.items.map((item, index) => (
                         <AccommodiationPreview key={item.id} vm={item} />
                     ))}
-            </div>
+            </Box>
         </div>
     );
 };
