@@ -1,6 +1,6 @@
 enum SessionStatus {
-    NOT_AUTHENTICATED = "not-authenticated",
-    AUTH_PROCESSING = "auth-processing",
+    ANONYMOUS = "anonymous",
+    PROCESSING = "processing",
     AUTHENTICATED = "authenticated",
 }
 

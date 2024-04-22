@@ -8,7 +8,7 @@ import { Session } from "./Session";
 import SessionAuthenticatedImpl from "./SessionAuthenticatedImpl";
 
 class SessionAnonymousImpl implements SessionAnonymous {
-    public readonly type = SessionStatus.NOT_AUTHENTICATED;
+    public readonly type = SessionStatus.ANONYMOUS;
 
     public constructor(
         private authService: AuthService,
@@ -20,22 +20,53 @@ class SessionAnonymousImpl implements SessionAnonymous {
         email: Email,
         password: Password
     ): Promise<void> => {
-        await this.authService.authenticateByEmail(email, password);
+        this.setNext({
+            type: SessionStatus.PROCESSING,
+        });
+
+        try {
+            const result = await this.authService.authenticateByEmail(
+                email,
+                password
+            );
+
+            this.setNext(
+                new SessionAuthenticatedImpl(
+                    result.accessToken,
+                    result.userInfo,
+                    this.authService,
+                    this.tokensRepository,
+                    this.setNext
+                )
+            );
+        } catch (error) {
+            this.setNext(this);
+            throw error;
+        }
     };
 
     public tryToLoadLastSession = async (): Promise<void> => {
-        const token = await this.tokensRepository.getAccessToken();
-        const user = await this.authService.authenticateByToken(token);
+        this.setNext({
+            type: SessionStatus.PROCESSING,
+        });
 
-        this.setNext(
-            new SessionAuthenticatedImpl(
-                token,
-                user,
-                this.authService,
-                this.tokensRepository,
-                this.setNext
-            )
-        );
+        try {
+            const token = await this.tokensRepository.getAccessToken();
+            const user = await this.authService.authenticateByToken(token);
+
+            this.setNext(
+                new SessionAuthenticatedImpl(
+                    token,
+                    user,
+                    this.authService,
+                    this.tokensRepository,
+                    this.setNext
+                )
+            );
+        } catch (error) {
+            this.setNext(this);
+            throw error;
+        }
     };
 }
 
