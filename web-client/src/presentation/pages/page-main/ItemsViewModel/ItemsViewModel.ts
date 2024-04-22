@@ -8,6 +8,8 @@ export interface ItemsViewModelStateLoading {
 export interface ItemsViewModelStateLoaded {
     type: "loaded";
     items: AccommodiationPreviewViewModel[];
+    loadMore: (() => Promise<void>) | undefined;
+    isLoadingMore: boolean;
 }
 
 export type ItemsViewModelState =

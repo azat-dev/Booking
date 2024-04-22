@@ -1,6 +1,7 @@
 import React, { useRef, useEffect, useMemo } from "react";
 
 import Box from "@mui/joy/Box";
+import Button from "@mui/joy/Button";
 import Stack from "@mui/joy/Stack";
 import PropsPageMain from "./props";
 
@@ -63,6 +64,26 @@ const PageMain = ({ vm }: PropsPageMain) => {
                         <AccommodiationPreview key={item.id} vm={item} />
                     ))}
             </Box>
+            {itemsState.type === "loaded" && itemsState.loadMore && (
+                <Box
+                    sx={{
+                        width: "100%",
+                        display: "flex",
+                        alignItems: "center",
+                        justifyContent: "center",
+                        padding: 2,
+                    }}
+                >
+                    <Button
+                        onClick={itemsState.loadMore}
+                        loadingPosition="start"
+                        loading={itemsState.isLoadingMore}
+                        size="lg"
+                    >
+                        Show More
+                    </Button>
+                </Box>
+            )}
         </div>
     );
 };

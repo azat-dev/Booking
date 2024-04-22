@@ -30,11 +30,12 @@ const NavigationBar = ({ vm }: PropsNavigationBar) => {
                 top: 0,
                 px: 1.5,
                 py: 1,
-                zIndex: 10000,
+                zIndex: 1000,
                 position: "sticky",
                 paddingLeft: 10,
                 paddingRight: 10,
                 paddingTop: 2,
+                backgroundColor: "background.body",
             }}
         >
             <Box
