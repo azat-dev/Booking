@@ -13,29 +13,18 @@ class ItemsViewModelImpl implements ItemsViewModel {
     public load = async (): Promise<void> => {
         this.state.set({ type: "loading" });
 
-        const items: AccommodiationPreviewViewModel[] = [
-            new AccommodiationPreviewViewModel(
-                "1",
-                "Hotel 1",
-                4.5,
-                300,
-                "https://picsum.photos/id/237/400/400"
-            ),
-            new AccommodiationPreviewViewModel(
-                "1",
-                "Hotel 2",
-                4.0,
-                200,
-                "https://picsum.photos/id/238/400/400"
-            ),
-            new AccommodiationPreviewViewModel(
-                "1",
-                "Hotel 3",
-                3.5,
-                100,
-                "https://picsum.photos/id/239/400/400"
-            ),
-        ];
+        const picturesIds = [193, 48, 28, 195, 49, 57, 308, 369, 428, 522, 594];
+
+        const items: AccommodiationPreviewViewModel[] = picturesIds.map(
+            (id) =>
+                new AccommodiationPreviewViewModel(
+                    id.toString(),
+                    `Hotel ${id}`,
+                    4.5,
+                    300,
+                    `https://picsum.photos/id/${id}/400/400`
+                )
+        );
 
         this.state.set({ type: "loaded", items });
     };

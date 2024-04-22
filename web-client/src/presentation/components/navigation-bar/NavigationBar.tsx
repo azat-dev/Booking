@@ -21,10 +21,9 @@ const NavigationBar = ({ vm }: PropsNavigationBar) => {
                 px: 1.5,
                 py: 1,
                 zIndex: 10000,
-                backgroundColor: "background.body",
-                borderBottom: "1px solid",
-                borderColor: "divider",
                 position: "sticky",
+                paddingLeft: 10,
+                paddingTop: 2,
             }}
         >
             <Box
@@ -35,10 +34,10 @@ const NavigationBar = ({ vm }: PropsNavigationBar) => {
                     gap: 1.5,
                 }}
             >
-                <IconButton size="sm" variant="soft">
+                <IconButton size="sm" variant="soft" color="primary">
                     <MapsHomeWorkIcon />
                 </IconButton>
-                <Typography component="h1" fontWeight="xl">
+                <Typography component="h1" fontWeight="xl" color="primary">
                     Demo Booking
                 </Typography>
             </Box>
