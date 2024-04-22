@@ -1,6 +1,15 @@
 import * as React from "react";
-import { Box, IconButton } from "@mui/joy";
+import {
+    Box,
+    IconButton,
+    ListDivider,
+    Menu,
+    MenuButton,
+    MenuItem,
+} from "@mui/joy";
 import Typography from "@mui/joy/Typography";
+
+import Dropdown from "@mui/joy/Dropdown";
 import Avatar from "@mui/joy/Avatar";
 import MapsHomeWorkIcon from "@mui/icons-material/MapsHomeWork";
 
@@ -17,12 +26,14 @@ const NavigationBar = ({ vm }: PropsNavigationBar) => {
                 justifyContent: "space-between",
                 alignItems: "center",
                 width: "100%",
+                boxSizing: "border-box",
                 top: 0,
                 px: 1.5,
                 py: 1,
                 zIndex: 10000,
                 position: "sticky",
                 paddingLeft: 10,
+                paddingRight: 10,
                 paddingTop: 2,
             }}
         >
@@ -31,6 +42,7 @@ const NavigationBar = ({ vm }: PropsNavigationBar) => {
                     display: "flex",
                     flexDirection: "row",
                     alignItems: "center",
+                    justifyContent: "space-between",
                     gap: 1.5,
                 }}
             >
@@ -41,16 +53,41 @@ const NavigationBar = ({ vm }: PropsNavigationBar) => {
                     Demo Booking
                 </Typography>
             </Box>
-
-            <Box sx={{ display: "flex", flexDirection: "row", gap: 3 }}>
-                <Box
+            <Dropdown>
+                <MenuButton
+                    variant="outlined"
+                    size="lg"
                     sx={{
-                        gap: 1,
-                        alignItems: "center",
-                        display: { xs: "none", sm: "flex" },
+                        maxHeight: "48px",
+                        borderRadius: "9999999px",
+                        backgroundColor: "transparent",
                     }}
-                ></Box>
-            </Box>
+                    startDecorator={
+                        <Avatar
+                            sx={{ maxWidth: "48px", maxHeight: "48px" }}
+                            variant="plain"
+                        />
+                    }
+                >
+                    <Typography>Login / Sign Up</Typography>
+                </MenuButton>
+                <Menu
+                    placement="bottom-end"
+                    size="sm"
+                    sx={{
+                        zIndex: "99999",
+                        p: 1,
+                        gap: 1,
+                        "--ListItem-radius": "var(--joy-radius-sm)",
+                        minWidth: "200px",
+                    }}
+                >
+                    <MenuItem>
+                        <strong>Sign Up</strong>
+                    </MenuItem>
+                    <MenuItem>Log In</MenuItem>
+                </Menu>
+            </Dropdown>
         </Box>
     );
 };

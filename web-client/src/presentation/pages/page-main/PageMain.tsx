@@ -5,7 +5,6 @@ import Stack from "@mui/joy/Stack";
 import PropsPageMain from "./props";
 
 import style from "./style.module.scss";
-import PageMainViewModelImpl from "./PageMainViewModelImpl";
 import NavigationBar from "../../components/navigation-bar/NavigationBar";
 import useUpdatesFrom from "../../utils/binding/useUpdatesFrom";
 import { ItemsViewModelState } from "./ItemsViewModel/ItemsViewModel";
