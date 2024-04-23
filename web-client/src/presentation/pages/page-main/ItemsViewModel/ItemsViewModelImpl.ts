@@ -6,7 +6,7 @@ import ItemsViewModel, { ItemsViewModelState } from "./ItemsViewModel";
 class ItemsViewModelImpl implements ItemsViewModel {
     public state: Subject<ItemsViewModelState>;
 
-    public constructor() {
+    public constructor(private onToggleFavorite: (id: string) => void) {
         this.state = value({ type: "loading" });
     }
 
@@ -14,14 +14,20 @@ class ItemsViewModelImpl implements ItemsViewModel {
         const picturesIds = [193, 48, 28, 195, 49, 57, 308, 369, 428, 522, 594];
 
         const items: AccommodiationPreviewViewModel[] = picturesIds.map(
-            (id) =>
-                new AccommodiationPreviewViewModel(
-                    id.toString() + Math.random(),
+            (id) => {
+                const itemId = id.toString() + Math.random();
+                return new AccommodiationPreviewViewModel(
+                    itemId,
                     `Hotel ${id}`,
                     4.5,
                     300,
-                    `https://picsum.photos/id/${id}/400/400`
-                )
+                    `https://picsum.photos/id/${id}/400/400`,
+                    true,
+                    () => {
+                        this.onToggleFavorite(itemId);
+                    }
+                );
+            }
         );
 
         return items;

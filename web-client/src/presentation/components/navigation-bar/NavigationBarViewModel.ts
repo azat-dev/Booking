@@ -1,5 +1,3 @@
-import React, { useState } from "react";
-
 class NavigationBarViewModel {
     public constructor(private readonly onLogin: () => void) {}
 

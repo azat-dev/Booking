@@ -62,7 +62,7 @@ const AccommodiationPreview = ({ vm }: PropsAccommodiationPreview) => {
                                 color="neutral"
                                 // sx={{ bgcolor: "rgba(0 0 0 / 0.2)" }}
                             >
-                                <Favorite />
+                                <Favorite onClick={vm.toggleFavorite} />
                             </IconButton>
                         </Box>
                     </div>

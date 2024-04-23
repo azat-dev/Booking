@@ -42,6 +42,16 @@ class AppViewModelImpl implements AppViewModel {
             }, this.closeDialog),
         });
     };
+
+    public toggleFavorite = (id: string): void => {
+        const currentUserSession = this.currentSession.current.value;
+        if (currentUserSession.type !== SessionStatus.AUTHENTICATED) {
+            this.openLoginDialog();
+            return;
+        }
+
+        throw new Error("Not implemented");
+    };
 }
 
 export default AppViewModelImpl;

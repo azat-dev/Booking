@@ -10,4 +10,5 @@ export default interface AppViewModel {
     activeDialog: Subject<ActiveDialogViewModel | null>;
 
     openLoginDialog(): void;
+    toggleFavorite(id: string): void;
 }

@@ -10,7 +10,7 @@ import PageMainViewModelImpl from "../pages/page-main/PageMainViewModelImpl";
 const App = ({ vm }: PropsApp) => {
     const [activeDialog] = useUpdatesFrom(vm.activeDialog);
     const pageMain = useMemo(
-        () => new PageMainViewModelImpl(vm.openLoginDialog),
+        () => new PageMainViewModelImpl(vm.openLoginDialog, vm.toggleFavorite),
         []
     );
     return (
