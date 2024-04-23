@@ -27,7 +27,7 @@ const PageMain = ({ vm }: PropsPageMain) => {
     return (
         <div className={style.pageMain}>
             <NavigationBar vm={vm.navigationBar} />
-            {/* <Stack
+            <Stack
                 sx={{
                     px: { xs: 2, md: 4 },
                     py: 2,
@@ -42,11 +42,25 @@ const PageMain = ({ vm }: PropsPageMain) => {
                     </Typography>
                 </Stack>
                 <Stack sx={{ alignItems: "center" }}>
-                    <Box sx={{ maxWidth: 900, minWidth: 900 }}>
+                    <Box
+                        sx={(theme) => ({
+                            [mobile(theme)]: {
+                                width: "100%",
+                            },
+                            [tablet(theme)]: {
+                                width: "100%",
+                                maxWidth: 600,
+                            },
+                            [desktop(theme)]: {
+                                width: "100%",
+                                maxWidth: 600,
+                            },
+                        })}
+                    >
                         <SearchInput vm={vm.searchInput} />
                     </Box>
                 </Stack>
-            </Stack> */}
+            </Stack>
             <Box
                 display="flex"
                 flexDirection="column"
