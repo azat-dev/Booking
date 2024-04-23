@@ -11,10 +11,10 @@ import Typography from "@mui/joy/Typography";
 import Favorite from "@mui/icons-material/FavoriteBorderOutlined";
 import StarIcon from "@mui/icons-material/Star";
 
-import PropsAccommodiationPreview from "./props";
+import PropsAccommodationPreview from "./props";
 import style from "./style.module.scss";
 
-const AccommodiationPreview = ({ vm }: PropsAccommodiationPreview) => {
+const AccommodationPreview = ({ vm }: PropsAccommodationPreview) => {
     return (
         <Card
             variant="plain"
@@ -25,7 +25,7 @@ const AccommodiationPreview = ({ vm }: PropsAccommodiationPreview) => {
             }}
         >
             <Box sx={{ position: "relative" }}>
-                <AspectRatio ratio="4/4">
+                <AspectRatio ratio="1/1">
                     <figure>
                         <img src={vm.image} loading="lazy" alt={vm.title} />
                     </figure>
@@ -117,4 +117,4 @@ const AccommodiationPreview = ({ vm }: PropsAccommodiationPreview) => {
     );
 };
 
-export default React.memo(AccommodiationPreview);
+export default React.memo(AccommodationPreview);

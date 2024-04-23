@@ -1,4 +1,4 @@
-import AccommodiationPreviewViewModel from "../../../components/accommodiation-preview/AccommodiationPreviewViewModel";
+import AccommodationPreviewViewModel from "../../../components/accommodation-preview/AccommodationPreviewViewModel";
 import Subject from "../../../utils/binding/Subject";
 
 export type Item =
@@ -9,7 +9,7 @@ export type Item =
     | {
           id: string;
           type: "loaded";
-          vm: AccommodiationPreviewViewModel;
+          vm: AccommodationPreviewViewModel;
       };
 
 export interface ItemsViewModelStateNoItems {

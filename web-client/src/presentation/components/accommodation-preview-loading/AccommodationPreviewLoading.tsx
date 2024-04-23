@@ -2,20 +2,17 @@ import React from "react";
 
 import AspectRatio from "@mui/joy/AspectRatio";
 import Card from "@mui/joy/Card";
-import CardCover from "@mui/joy/CardCover";
 import Box from "@mui/joy/Box";
-import Chip from "@mui/joy/Chip";
-import IconButton from "@mui/joy/IconButton";
 import Stack from "@mui/joy/Stack";
 import Typography from "@mui/joy/Typography";
-import Favorite from "@mui/icons-material/FavoriteBorderOutlined";
 
-import PropsAccommodiationPreviewLoading from "./props";
-import style from "./style.module.scss";
+import PropsAccommodationPreviewLoading from "./props";
 import Skeleton from "@mui/joy/Skeleton";
 
-const AccommodiationPreviewLoading = (
-    props: PropsAccommodiationPreviewLoading
+import style from "./style.module.scss";
+
+const AccommodationPreviewLoading = (
+    props: PropsAccommodationPreviewLoading
 ) => {
     return (
         <Card
@@ -58,4 +55,4 @@ const AccommodiationPreviewLoading = (
     );
 };
 
-export default React.memo(AccommodiationPreviewLoading);
+export default React.memo(AccommodationPreviewLoading);

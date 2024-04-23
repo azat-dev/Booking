@@ -1,4 +1,4 @@
-import AccommodiationPreviewViewModel from "../../../components/accommodiation-preview/AccommodiationPreviewViewModel";
+import AccommodationPreviewViewModel from "../../../components/accommodation-preview/AccommodationPreviewViewModel";
 import Subject from "../../../utils/binding/Subject";
 import value from "../../../utils/binding/value";
 import ItemsViewModel, { Item, ItemsViewModelState } from "./ItemsViewModel";
@@ -33,7 +33,7 @@ class ItemsViewModelImpl implements ItemsViewModel {
             return {
                 id: itemId,
                 type: "loaded",
-                vm: new AccommodiationPreviewViewModel(
+                vm: new AccommodationPreviewViewModel(
                     itemId,
                     `Hotel ${id}`,
                     4.5,

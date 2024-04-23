@@ -1,4 +1,4 @@
-class AccommodiationPreviewViewModel {
+class AccommodationPreviewViewModel {
     public constructor(
         public readonly id: string,
         public readonly title: string,
@@ -15,4 +15,4 @@ class AccommodiationPreviewViewModel {
     };
 }
 
-export default AccommodiationPreviewViewModel;
+export default AccommodationPreviewViewModel;

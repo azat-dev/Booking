@@ -8,11 +8,11 @@ import style from "./style.module.scss";
 import NavigationBar from "../../components/navigation-bar/NavigationBar";
 import useUpdatesFrom from "../../utils/binding/useUpdatesFrom";
 import { ItemsViewModelState } from "./ItemsViewModel/ItemsViewModel";
-import AccommodiationPreview from "../../components/accommodiation-preview/AccommodiationPreview";
 import { Grid, Stack, Typography } from "@mui/joy";
 import { desktop, mobile, tablet } from "../../utils/selectors";
 import SearchInput from "../../components/search-input/SearchInput";
-import AccommodiationPreviewLoading from "../../components/accommodiation-preview-loading/AccommodiationPreviewLoading";
+import AccommodationPreviewLoading from "../../components/accommodation-preview-loading/AccommodationPreviewLoading";
+import AccommodationPreview from "../../components/accommodation-preview/AccommodationPreview";
 
 const PageMain = ({ vm }: PropsPageMain) => {
     useEffect(() => {
@@ -117,9 +117,9 @@ const PageMain = ({ vm }: PropsPageMain) => {
                                 xl={1}
                             >
                                 {item.type === "loading" ? (
-                                    <AccommodiationPreviewLoading />
+                                    <AccommodationPreviewLoading />
                                 ) : (
-                                    <AccommodiationPreview vm={item.vm} />
+                                    <AccommodationPreview vm={item.vm} />
                                 )}
                             </Grid>
                         ))}
