@@ -37,7 +37,8 @@ class ItemsViewModelImpl implements ItemsViewModel {
                     itemId,
                     `Hotel ${id}`,
                     4.5,
-                    300,
+                    "$300",
+                    "per night",
                     `https://picsum.photos/id/${id}/400/400`,
                     true,
                     () => {

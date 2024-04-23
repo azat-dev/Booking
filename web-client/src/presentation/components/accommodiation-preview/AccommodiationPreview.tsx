@@ -9,6 +9,7 @@ import IconButton from "@mui/joy/IconButton";
 import Stack from "@mui/joy/Stack";
 import Typography from "@mui/joy/Typography";
 import Favorite from "@mui/icons-material/FavoriteBorderOutlined";
+import StarIcon from "@mui/icons-material/Star";
 
 import PropsAccommodiationPreview from "./props";
 import style from "./style.module.scss";
@@ -50,26 +51,66 @@ const AccommodiationPreview = ({ vm }: PropsAccommodiationPreview) => {
                             size="sm"
                             variant="plain"
                             color="neutral"
-                            // sx={{ bgcolor: "rgba(0 0 0 / 0.2)" }}
+                            onClick={vm.toggleFavorite}
                         >
-                            <Favorite onClick={vm.toggleFavorite} />
+                            <Favorite />
                         </IconButton>
                     </Box>
                 </div>
             </CardCover>
-            <Box sx={{ display: "flex", gap: 1, alignItems: "center" }}>
-                <Stack direction="column" gap={0.5}>
-                    <Stack direction="row" gap={0.5}>
-                        <Typography sx={{ fontSize: "sm", fontWeight: "md" }}>
+            <Box
+                sx={{
+                    display: "flex",
+                    gap: 1,
+                    alignItems: "center",
+                    width: "100%",
+                }}
+            >
+                <Stack
+                    direction="column"
+                    gap={0}
+                    alignItems="stretch"
+                    sx={{ width: "100%" }}
+                >
+                    <Stack
+                        direction="row"
+                        gap={0.5}
+                        justifyContent="space-between"
+                    >
+                        <Typography
+                            sx={{
+                                fontSize: "md",
+                                fontWeight: "bold",
+                                flexGrow: 1,
+                            }}
+                        >
                             {vm.title}
                         </Typography>
-                        <Typography sx={{ fontSize: "sm", fontWeight: "md" }}>
-                            {vm.rating}
+                        {vm.rating && (
+                            <Stack
+                                direction="row"
+                                gap={0.5}
+                                alignItems="center"
+                            >
+                                <StarIcon sx={{ width: 15, height: 15 }} />
+                                <Typography
+                                    noWrap
+                                    sx={{ fontSize: "sm", fontWeight: "md" }}
+                                >
+                                    {vm.rating}
+                                </Typography>
+                            </Stack>
+                        )}
+                    </Stack>
+                    <Stack direction="row">
+                        <Typography sx={{ fontSize: "sm", fontWeight: "bold" }}>
+                            {vm.price}
+                        </Typography>
+                        <Typography sx={{ fontSize: "sm", fontWeight: "sm" }}>
+                            &nbsp;
+                            {vm.unit}
                         </Typography>
                     </Stack>
-                    <Typography sx={{ fontSize: "sm", fontWeight: "md" }}>
-                        {vm.price}
-                    </Typography>
                 </Stack>
             </Box>
         </Card>

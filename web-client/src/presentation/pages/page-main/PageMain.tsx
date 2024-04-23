@@ -27,7 +27,7 @@ const PageMain = ({ vm }: PropsPageMain) => {
     return (
         <div className={style.pageMain}>
             <NavigationBar vm={vm.navigationBar} />
-            <Stack
+            {/* <Stack
                 sx={{
                     px: { xs: 2, md: 4 },
                     py: 2,
@@ -46,7 +46,7 @@ const PageMain = ({ vm }: PropsPageMain) => {
                         <SearchInput vm={vm.searchInput} />
                     </Box>
                 </Stack>
-            </Stack>
+            </Stack> */}
             <Box
                 display="flex"
                 flexDirection="column"
