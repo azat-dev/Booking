@@ -15,7 +15,6 @@ import SearchInput from "../../components/search-input/SearchInput";
 
 const PageMain = ({ vm }: PropsPageMain) => {
     useEffect(() => {
-        console.log("LOAD");
         vm.load();
     }, []);
 

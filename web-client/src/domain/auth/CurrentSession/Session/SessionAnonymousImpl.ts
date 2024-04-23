@@ -52,6 +52,11 @@ class SessionAnonymousImpl implements SessionAnonymous {
 
         try {
             const token = await this.tokensRepository.getAccessToken();
+            if (!token) {
+                this.setNext(this);
+                return;
+            }
+
             const user = await this.authService.authenticateByToken(token);
 
             this.setNext(

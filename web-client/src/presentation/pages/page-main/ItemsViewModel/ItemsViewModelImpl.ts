@@ -10,26 +10,13 @@ class ItemsViewModelImpl implements ItemsViewModel {
         this.state = value({ type: "loading" });
     }
 
-    private appendItems = async (): Promise<void> => {
-        const currentState = this.state.value;
-
-        switch (currentState.type) {
-            case "loading":
-                break;
-            case "loaded":
-                this.state.set({
-                    ...currentState,
-                    isLoadingMore: true,
-                });
-                break;
-        }
-
+    private getItems = () => {
         const picturesIds = [193, 48, 28, 195, 49, 57, 308, 369, 428, 522, 594];
 
         const items: AccommodiationPreviewViewModel[] = picturesIds.map(
             (id) =>
                 new AccommodiationPreviewViewModel(
-                    id.toString(),
+                    id.toString() + Math.random(),
                     `Hotel ${id}`,
                     4.5,
                     300,
@@ -37,25 +24,42 @@ class ItemsViewModelImpl implements ItemsViewModel {
                 )
         );
 
+        return items;
+    };
+
+    private loadMore = async (): Promise<void> => {
+        const currentState = this.state.value;
+
+        if (currentState.type === "loaded") {
+            this.state.set({
+                ...currentState,
+                isLoadingMore: true,
+            });
+        }
+
         const newItems = [
             ...(this.state.value.type === "loaded"
                 ? this.state.value.items
                 : []),
-            ...items,
+            ...this.getItems(),
         ];
 
         this.state.set({
             type: "loaded",
             items: newItems,
-            loadMore: this.appendItems,
+            loadMore: this.loadMore,
             isLoadingMore: false,
         });
     };
 
     public load = async (): Promise<void> => {
         this.state.set({ type: "loading" });
-
-        this.appendItems();
+        this.state.set({
+            type: "loaded",
+            items: this.getItems(),
+            loadMore: this.loadMore,
+            isLoadingMore: false,
+        });
     };
 }
 

@@ -9,8 +9,8 @@ class PageMainViewModelImpl implements PageMainViewModel {
     public readonly itemsViewModel: ItemsViewModel;
     public readonly searchInput: SearchInputViewModel;
 
-    public constructor() {
-        this.navigationBar = new NavigationBarViewModel();
+    public constructor(onLogin: () => void) {
+        this.navigationBar = new NavigationBarViewModel(onLogin);
         this.itemsViewModel = new ItemsViewModelImpl();
         this.searchInput = new SearchInputViewModel();
     }

@@ -1,10 +1,10 @@
 import AuthService, {
     AuthenticationByEmailResult,
-} from "./domain/auth/CurrentSession/Session/AuthService";
-import Email from "./domain/auth/values/Email";
-import Password from "./domain/auth/values/Password";
-import User from "./domain/auth/values/User";
-import UserId from "./domain/auth/values/UserId";
+} from "../../../domain/auth/CurrentSession/Session/AuthService";
+import Email from "../../../domain/auth/values/Email";
+import Password from "../../../domain/auth/values/Password";
+import User from "../../../domain/auth/values/User";
+import UserId from "../../../domain/auth/values/UserId";
 
 class AuthServiceImpl implements AuthService {
     private testUser: User = {

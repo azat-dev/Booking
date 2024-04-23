@@ -21,25 +21,13 @@ import {
 import style from "./style.module.scss";
 
 const AuthDialog = ({ vm }: PropsAuthDialog) => {
-    const [isOpen, isProcessing, showWrongCredentialsError] = useUpdatesFrom(
-        vm.isOpen,
+    const [isProcessing, showWrongCredentialsError] = useUpdatesFrom(
         vm.isProcessing,
         vm.showWrongCredentialsError
     );
 
-    useLayoutEffect(() => {
-        if (!isOpen) {
-            vm.didClose();
-            return;
-        }
-    }, [isOpen]);
-
-    useLayoutEffect(() => {
-        vm.didMount();
-    }, []);
-
     return (
-        <Modal open={isOpen} onClose={vm.close}>
+        <Modal open={true} onClose={vm.close}>
             <ModalDialog size="lg">
                 <ModalClose />
                 <DialogTitle>Log In</DialogTitle>
@@ -58,11 +46,12 @@ const AuthDialog = ({ vm }: PropsAuthDialog) => {
                             <FormLabel>Password</FormLabel>
                             <Input required type="password" />
                         </FormControl>
-                        {showWrongCredentialsError && (
-                            <Typography color="danger">
-                                Wrong credentials
-                            </Typography>
-                        )}
+                        <Typography
+                            color="danger"
+                            sx={{ opacity: showWrongCredentialsError ? 1 : 0 }}
+                        >
+                            Wrong credentials
+                        </Typography>
                         <Button
                             type="submit"
                             size="lg"

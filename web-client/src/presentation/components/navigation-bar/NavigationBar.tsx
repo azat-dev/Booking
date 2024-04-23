@@ -86,7 +86,7 @@ const NavigationBar = ({ vm }: PropsNavigationBar) => {
                     <MenuItem>
                         <strong>Sign Up</strong>
                     </MenuItem>
-                    <MenuItem>Log In</MenuItem>
+                    <MenuItem onClick={vm.login}>Log In</MenuItem>
                 </Menu>
             </Dropdown>
         </Box>
