@@ -1,22 +1,39 @@
 import AccommodiationPreviewViewModel from "../../../components/accommodiation-preview/AccommodiationPreviewViewModel";
 import Subject from "../../../utils/binding/Subject";
 import value from "../../../utils/binding/value";
-import ItemsViewModel, { ItemsViewModelState } from "./ItemsViewModel";
+import ItemsViewModel, { Item, ItemsViewModelState } from "./ItemsViewModel";
 
 class ItemsViewModelImpl implements ItemsViewModel {
     public state: Subject<ItemsViewModelState>;
 
     public constructor(private onToggleFavorite: (id: string) => void) {
-        this.state = value({ type: "loading" });
+        this.state = value({
+            type: "showItems",
+            items: this.generateLoadingItems(20),
+        });
     }
+
+    private generateLoadingItems = (count: number) => {
+        const items: Item[] = [];
+
+        for (let i = 0; i < count; i++) {
+            items.push({
+                id: "loading-" + i.toString() + Math.random(),
+                type: "loading",
+            });
+        }
+        return items;
+    };
 
     private getItems = () => {
         const picturesIds = [193, 48, 28, 195, 49, 57, 308, 369, 428, 522, 594];
 
-        const items: AccommodiationPreviewViewModel[] = picturesIds.map(
-            (id) => {
-                const itemId = id.toString() + Math.random();
-                return new AccommodiationPreviewViewModel(
+        const items: Item[] = picturesIds.map((id) => {
+            const itemId = id.toString() + Math.random();
+            return {
+                id: itemId,
+                type: "loaded",
+                vm: new AccommodiationPreviewViewModel(
                     itemId,
                     `Hotel ${id}`,
                     4.5,
@@ -26,9 +43,9 @@ class ItemsViewModelImpl implements ItemsViewModel {
                     () => {
                         this.onToggleFavorite(itemId);
                     }
-                );
-            }
-        );
+                ),
+            };
+        });
 
         return items;
     };
@@ -36,35 +53,44 @@ class ItemsViewModelImpl implements ItemsViewModel {
     private loadMore = async (): Promise<void> => {
         const currentState = this.state.value;
 
-        if (currentState.type === "loaded") {
-            this.state.set({
-                ...currentState,
-                isLoadingMore: true,
-            });
-        }
-
-        const newItems = [
-            ...(this.state.value.type === "loaded"
-                ? this.state.value.items
-                : []),
-            ...this.getItems(),
-        ];
+        const prevItems =
+            currentState.type === "showItems" ? currentState.items : [];
 
         this.state.set({
-            type: "loaded",
+            type: "showItems",
+            items: [
+                ...prevItems.filter((i) => i.type != "loading"),
+                ...this.generateLoadingItems(15),
+            ],
+            showMoreButton: { click: () => {}, isLoading: true },
+        });
+
+        await new Promise((resolve) => setTimeout(resolve, 1000));
+        const newItems = [...prevItems, ...this.getItems()];
+
+        this.state.set({
+            type: "showItems",
             items: newItems,
-            loadMore: this.loadMore,
-            isLoadingMore: false,
+            showMoreButton: {
+                click: this.loadMore,
+                isLoading: false,
+            },
         });
     };
 
     public load = async (): Promise<void> => {
-        this.state.set({ type: "loading" });
         this.state.set({
-            type: "loaded",
+            type: "showItems",
+            items: this.generateLoadingItems(15),
+            showMoreButton: { click: () => {}, isLoading: true },
+        });
+
+        await new Promise((resolve) => setTimeout(resolve, 1000));
+
+        this.state.set({
+            type: "showItems",
             items: this.getItems(),
-            loadMore: this.loadMore,
-            isLoadingMore: false,
+            showMoreButton: { click: this.loadMore, isLoading: false },
         });
     };
 }

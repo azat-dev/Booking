@@ -15,70 +15,64 @@ import style from "./style.module.scss";
 
 const AccommodiationPreview = ({ vm }: PropsAccommodiationPreview) => {
     return (
-        <div className={style.accommodiationPreview}>
-            <Card
-                variant="plain"
-                sx={{
-                    width: "100%",
-                    bgcolor: "initial",
-                    p: 0,
-                }}
-            >
-                <Box sx={{ position: "relative" }}>
-                    <AspectRatio ratio="4/4">
-                        <figure>
-                            <img src={vm.image} loading="lazy" alt={vm.title} />
-                        </figure>
-                    </AspectRatio>
-                </Box>
-                <CardCover>
-                    <div>
-                        <Box
-                            sx={{
-                                p: 2,
-                                display: "flex",
-                                alignItems: "center",
-                                justifyContent: "space-between",
-                                gap: 1.5,
-                                flexGrow: 1,
-                                alignSelf: "flex-start",
-                            }}
+        <Card
+            variant="plain"
+            sx={{
+                width: "100%",
+                bgcolor: "initial",
+                p: 0,
+            }}
+        >
+            <Box sx={{ position: "relative" }}>
+                <AspectRatio ratio="4/4">
+                    <figure>
+                        <img src={vm.image} loading="lazy" alt={vm.title} />
+                    </figure>
+                </AspectRatio>
+            </Box>
+            <CardCover>
+                <div>
+                    <Box
+                        sx={{
+                            p: 2,
+                            display: "flex",
+                            alignItems: "center",
+                            justifyContent: "space-between",
+                            gap: 1.5,
+                            flexGrow: 1,
+                            alignSelf: "flex-start",
+                        }}
+                    >
+                        <Chip variant="solid" color="primary">
+                            Guests Choice
+                        </Chip>
+                        <IconButton
+                            size="sm"
+                            variant="plain"
+                            color="neutral"
+                            // sx={{ bgcolor: "rgba(0 0 0 / 0.2)" }}
                         >
-                            <Chip variant="solid" color="primary">
-                                Guests Choice
-                            </Chip>
-                            <IconButton
-                                size="sm"
-                                variant="plain"
-                                color="neutral"
-                                // sx={{ bgcolor: "rgba(0 0 0 / 0.2)" }}
-                            >
-                                <Favorite onClick={vm.toggleFavorite} />
-                            </IconButton>
-                        </Box>
-                    </div>
-                </CardCover>
-                <Box sx={{ display: "flex", gap: 1, alignItems: "center" }}>
-                    <Stack direction="column" gap={0.5}>
-                        <Stack direction="row" gap={0.5}>
-                            <Typography
-                                sx={{ fontSize: "sm", fontWeight: "md" }}
-                            >
-                                {vm.title}
-                            </Typography>
-                            <Typography
-                                sx={{ fontSize: "sm", fontWeight: "md" }}
-                            >
-                                {vm.rating}
-                            </Typography>
-                        </Stack>
+                            <Favorite onClick={vm.toggleFavorite} />
+                        </IconButton>
+                    </Box>
+                </div>
+            </CardCover>
+            <Box sx={{ display: "flex", gap: 1, alignItems: "center" }}>
+                <Stack direction="column" gap={0.5}>
+                    <Stack direction="row" gap={0.5}>
                         <Typography sx={{ fontSize: "sm", fontWeight: "md" }}>
-                            {vm.price}
+                            {vm.title}
+                        </Typography>
+                        <Typography sx={{ fontSize: "sm", fontWeight: "md" }}>
+                            {vm.rating}
                         </Typography>
                     </Stack>
-                </Box>
-            </Card>
-        </div>
+                    <Typography sx={{ fontSize: "sm", fontWeight: "md" }}>
+                        {vm.price}
+                    </Typography>
+                </Stack>
+            </Box>
+        </Card>
     );
 };
 

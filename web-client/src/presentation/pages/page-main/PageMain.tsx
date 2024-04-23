@@ -9,8 +9,10 @@ import NavigationBar from "../../components/navigation-bar/NavigationBar";
 import useUpdatesFrom from "../../utils/binding/useUpdatesFrom";
 import { ItemsViewModelState } from "./ItemsViewModel/ItemsViewModel";
 import AccommodiationPreview from "../../components/accommodiation-preview/AccommodiationPreview";
-import { Grid } from "@mui/joy";
+import { Grid, Stack, Typography } from "@mui/joy";
 import { desktop, mobile, tablet } from "../../utils/selectors";
+import SearchInput from "../../components/search-input/SearchInput";
+import AccommodiationPreviewLoading from "../../components/accommodiation-preview-loading/AccommodiationPreviewLoading";
 
 const PageMain = ({ vm }: PropsPageMain) => {
     useEffect(() => {
@@ -25,7 +27,7 @@ const PageMain = ({ vm }: PropsPageMain) => {
     return (
         <div className={style.pageMain}>
             <NavigationBar vm={vm.navigationBar} />
-            {/* <Stack
+            <Stack
                 sx={{
                     px: { xs: 2, md: 4 },
                     py: 2,
@@ -44,8 +46,7 @@ const PageMain = ({ vm }: PropsPageMain) => {
                         <SearchInput vm={vm.searchInput} />
                     </Box>
                 </Stack>
-            </Stack> */}
-            {itemsState.type === "loading" && <div>Loading...</div>}
+            </Stack>
             <Box
                 display="flex"
                 flexDirection="column"
@@ -91,7 +92,7 @@ const PageMain = ({ vm }: PropsPageMain) => {
                         };
                     }}
                 >
-                    {itemsState.type === "loaded" &&
+                    {itemsState.type === "showItems" &&
                         itemsState.items.map((item, index) => (
                             <Grid
                                 key={item.id}
@@ -101,12 +102,16 @@ const PageMain = ({ vm }: PropsPageMain) => {
                                 lg={1}
                                 xl={1}
                             >
-                                <AccommodiationPreview vm={item} />
+                                {item.type === "loading" ? (
+                                    <AccommodiationPreviewLoading />
+                                ) : (
+                                    <AccommodiationPreview vm={item.vm} />
+                                )}
                             </Grid>
                         ))}
                 </Grid>
             </Box>
-            {itemsState.type === "loaded" && itemsState.loadMore && (
+            {itemsState.type === "showItems" && itemsState.showMoreButton && (
                 <Box
                     sx={{
                         width: "100%",
@@ -118,9 +123,9 @@ const PageMain = ({ vm }: PropsPageMain) => {
                     }}
                 >
                     <Button
-                        onClick={itemsState.loadMore}
+                        onClick={itemsState.showMoreButton.click}
                         loadingPosition="start"
-                        loading={itemsState.isLoadingMore}
+                        loading={itemsState.showMoreButton.isLoading}
                         size="lg"
                     >
                         Show More
