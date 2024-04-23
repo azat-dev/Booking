@@ -7,8 +7,9 @@ class SignUpDialogViewModel {
     public showWrongCredentialsError = value(false);
 
     public constructor(
-        private onSubmit?: (email: Email, password: Password) => Promise<void>,
-        private readonly onClose?: () => void
+        private signUp?: (email: Email, password: Password) => Promise<void>,
+        private readonly onClose?: () => void,
+        private readonly onOpenLoginDialog?: () => void
     ) {}
 
     public close = () => {
@@ -18,7 +19,7 @@ class SignUpDialogViewModel {
     public submit = async () => {
         this.isProcessing.set(true);
 
-        const success = await this.onSubmit?.(
+        const success = await this.signUp?.(
             new Email("email@some.com"),
             new Password("password")
         );
@@ -28,6 +29,11 @@ class SignUpDialogViewModel {
 
         this.isProcessing.set(false);
         this.showWrongCredentialsError.set(true);
+    };
+
+    public logIn = () => {
+        debugger;
+        this.onOpenLoginDialog?.();
     };
 }
 

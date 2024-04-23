@@ -35,30 +35,38 @@ class AppViewModelImpl implements AppViewModel {
     public openLoginDialog = (): void => {
         this.activeDialog.set({
             type: ActiveDialogType.Login,
-            vm: new LoginDialogViewModel(async (email, password) => {
-                const session = this.currentSession.current.value;
+            vm: new LoginDialogViewModel(
+                async (email, password) => {
+                    const session = this.currentSession.current.value;
 
-                if (session.type !== SessionStatus.ANONYMOUS) {
-                    return;
-                }
+                    if (session.type !== SessionStatus.ANONYMOUS) {
+                        return;
+                    }
 
-                await session.authenticate(email, password);
-            }, this.closeDialog),
+                    await session.authenticate(email, password);
+                },
+                this.closeDialog,
+                this.openSignUpDialog
+            ),
         });
     };
 
     public openSignUpDialog = (): void => {
         this.activeDialog.set({
             type: ActiveDialogType.SignUp,
-            vm: new SignUpDialogViewModel(async (email, password) => {
-                const session = this.currentSession.current.value;
+            vm: new SignUpDialogViewModel(
+                async (email, password) => {
+                    const session = this.currentSession.current.value;
 
-                if (session.type !== SessionStatus.ANONYMOUS) {
-                    return;
-                }
+                    if (session.type !== SessionStatus.ANONYMOUS) {
+                        return;
+                    }
 
-                await session.authenticate(email, password);
-            }, this.closeDialog),
+                    await session.authenticate(email, password);
+                },
+                this.closeDialog,
+                this.openLoginDialog
+            ),
         });
     };
 

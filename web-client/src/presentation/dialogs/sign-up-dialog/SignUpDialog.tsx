@@ -81,7 +81,9 @@ const SignUpDialog = ({ vm }: PropsSignUpDialog) => {
                             Create Account
                         </Button>
                         <Typography
-                            endDecorator={<Link href="/login">Log in</Link>}
+                            endDecorator={
+                                <Link onClick={vm.logIn}>Log in</Link>
+                            }
                             fontSize="sm"
                             sx={{ alignSelf: "center" }}
                         >
