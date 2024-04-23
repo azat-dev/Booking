@@ -97,7 +97,7 @@ const NavigationBar = ({ vm }: PropsNavigationBar) => {
                         minWidth: "200px",
                     }}
                 >
-                    <MenuItem>
+                    <MenuItem onClick={vm.signUp}>
                         <strong>Sign Up</strong>
                     </MenuItem>
                     <MenuItem onClick={vm.login}>Log In</MenuItem>

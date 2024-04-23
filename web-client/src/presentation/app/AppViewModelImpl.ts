@@ -1,4 +1,7 @@
-import AppViewModel, { ActiveDialogViewModel } from "./AppViewModel";
+import AppViewModel, {
+    ActiveDialogViewModel,
+    ActiveDialogType,
+} from "./AppViewModel";
 import Subject from "../utils/binding/Subject";
 import value from "../utils/binding/value";
 import CurrentSessionStore from "../../domain/auth/CurrentSession/CurrentSessionStore";
@@ -7,6 +10,7 @@ import LocalStorageTokensRepository from "../../LocalStorageTokensRepository";
 import AuthServiceImpl from "../../data/auth/services/AuthServiceImpl";
 import LoginDialogViewModel from "../dialogs/login-dialog/LoginDialogViewModel";
 import SessionStatus from "../../domain/auth/CurrentSession/Session/SessionStatus";
+import SignUpDialogViewModel from "../dialogs/sign-up-dialog/SignUpDialogViewModel";
 
 class AppViewModelImpl implements AppViewModel {
     public activeDialog: Subject<ActiveDialogViewModel | null>;
@@ -30,8 +34,23 @@ class AppViewModelImpl implements AppViewModel {
 
     public openLoginDialog = (): void => {
         this.activeDialog.set({
-            type: "login",
+            type: ActiveDialogType.Login,
             vm: new LoginDialogViewModel(async (email, password) => {
+                const session = this.currentSession.current.value;
+
+                if (session.type !== SessionStatus.ANONYMOUS) {
+                    return;
+                }
+
+                await session.authenticate(email, password);
+            }, this.closeDialog),
+        });
+    };
+
+    public openSignUpDialog = (): void => {
+        this.activeDialog.set({
+            type: ActiveDialogType.SignUp,
+            vm: new SignUpDialogViewModel(async (email, password) => {
                 const session = this.currentSession.current.value;
 
                 if (session.type !== SessionStatus.ANONYMOUS) {
@@ -46,7 +65,7 @@ class AppViewModelImpl implements AppViewModel {
     public toggleFavorite = (id: string): void => {
         const currentUserSession = this.currentSession.current.value;
         if (currentUserSession.type !== SessionStatus.AUTHENTICATED) {
-            this.openLoginDialog();
+            this.openSignUpDialog();
             return;
         }
 

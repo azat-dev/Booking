@@ -11,9 +11,10 @@ class PageMainViewModelImpl implements PageMainViewModel {
 
     public constructor(
         onLogin: () => void,
+        onSignUp: () => void,
         onToggleFavorite: (id: string) => void
     ) {
-        this.navigationBar = new NavigationBarViewModel(onLogin);
+        this.navigationBar = new NavigationBarViewModel(onLogin, onSignUp);
         this.itemsViewModel = new ItemsViewModelImpl(onToggleFavorite);
         this.searchInput = new SearchInputViewModel();
     }
