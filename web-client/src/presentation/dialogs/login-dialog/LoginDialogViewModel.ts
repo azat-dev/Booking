@@ -2,7 +2,7 @@ import Email from "../../../domain/auth/values/Email";
 import Password from "../../../domain/auth/values/Password";
 import value from "../../utils/binding/value";
 
-class AuthDialogViewModel {
+class LoginDialogViewModel {
     public isProcessing = value(false);
     public showWrongCredentialsError = value(false);
 
@@ -31,4 +31,4 @@ class AuthDialogViewModel {
     };
 }
 
-export default AuthDialogViewModel;
+export default LoginDialogViewModel;

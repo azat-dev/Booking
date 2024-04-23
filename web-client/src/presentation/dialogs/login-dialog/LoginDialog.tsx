@@ -1,6 +1,6 @@
-import React, { useEffect, useLayoutEffect } from "react";
+import React from "react";
 
-import PropsAuthDialog from "./props";
+import PropsLoginDialog from "./props";
 import useUpdatesFrom from "../../utils/binding/useUpdatesFrom";
 import {
     Modal,
@@ -13,14 +13,12 @@ import {
     Button,
     ModalClose,
     Link,
-    Chip,
-    Divider,
     Typography,
 } from "@mui/joy";
 
 import style from "./style.module.scss";
 
-const AuthDialog = ({ vm }: PropsAuthDialog) => {
+const LoginDialog = ({ vm }: PropsLoginDialog) => {
     const [isProcessing, showWrongCredentialsError] = useUpdatesFrom(
         vm.isProcessing,
         vm.showWrongCredentialsError
@@ -85,4 +83,4 @@ const AuthDialog = ({ vm }: PropsAuthDialog) => {
     );
 };
 
-export default React.memo(AuthDialog);
+export default React.memo(LoginDialog);

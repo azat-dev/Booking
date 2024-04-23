@@ -5,7 +5,7 @@ import CurrentSessionStore from "../../domain/auth/CurrentSession/CurrentSession
 import CurrentSessionStoreImpl from "../../domain/auth/CurrentSession/CurrentSessionStoreImpl";
 import LocalStorageTokensRepository from "../../LocalStorageTokensRepository";
 import AuthServiceImpl from "../../data/auth/services/AuthServiceImpl";
-import AuthDialogViewModel from "../dialogs/auth-dialog/AuthDialogViewModel";
+import LoginDialogViewModel from "../dialogs/login-dialog/LoginDialogViewModel";
 import SessionStatus from "../../domain/auth/CurrentSession/Session/SessionStatus";
 
 class AppViewModelImpl implements AppViewModel {
@@ -31,7 +31,7 @@ class AppViewModelImpl implements AppViewModel {
     public openLoginDialog = (): void => {
         this.activeDialog.set({
             type: "login",
-            vm: new AuthDialogViewModel(async (email, password) => {
+            vm: new LoginDialogViewModel(async (email, password) => {
                 const session = this.currentSession.current.value;
 
                 if (session.type !== SessionStatus.ANONYMOUS) {

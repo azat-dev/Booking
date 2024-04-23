@@ -1,9 +1,9 @@
-import AuthDialogViewModel from "../dialogs/auth-dialog/AuthDialogViewModel";
+import LoginDialogViewModel from "../dialogs/login-dialog/LoginDialogViewModel";
 import Subject from "../utils/binding/Subject";
 
 export type ActiveDialogViewModel = {
     type: "login";
-    vm: AuthDialogViewModel;
+    vm: LoginDialogViewModel;
 };
 
 export default interface AppViewModel {
