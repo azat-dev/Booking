@@ -6,6 +6,7 @@ import {
     Menu,
     MenuButton,
     MenuItem,
+    Theme,
 } from "@mui/joy";
 import Typography from "@mui/joy/Typography";
 
@@ -17,10 +18,22 @@ import PropsNavigationBar from "./props";
 
 import style from "./style.module.scss";
 
+const mobile = (theme: Theme) => {
+    return theme.breakpoints.down("sm");
+};
+
+const tablet = (theme: Theme) => {
+    return theme.breakpoints.up("sm");
+};
+
+const desktop = (theme: Theme) => {
+    return theme.breakpoints.up("md");
+};
+
 const NavigationBar = ({ vm }: PropsNavigationBar) => {
     return (
         <Box
-            sx={{
+            sx={(theme) => ({
                 display: "flex",
                 flexDirection: "row",
                 justifyContent: "space-between",
@@ -32,11 +45,17 @@ const NavigationBar = ({ vm }: PropsNavigationBar) => {
                 py: 1,
                 zIndex: 1000,
                 position: "sticky",
-                paddingLeft: 10,
-                paddingRight: 10,
-                paddingTop: 2,
-                backgroundColor: "background.body",
-            }}
+                [mobile(theme)]: {
+                    backgroundColor: "background.surface",
+                },
+                [tablet(theme)]: {},
+                [desktop(theme)]: {
+                    paddingLeft: 10,
+                    paddingRight: 10,
+                    paddingTop: 2,
+                    backgroundColor: "background.body",
+                },
+            })}
         >
             <Box
                 sx={{
@@ -70,7 +89,17 @@ const NavigationBar = ({ vm }: PropsNavigationBar) => {
                         />
                     }
                 >
-                    <Typography>Login / Sign Up</Typography>
+                    <Typography
+                        sx={(theme) => {
+                            return {
+                                [mobile(theme)]: {
+                                    display: "none",
+                                },
+                            };
+                        }}
+                    >
+                        Login / Sign Up
+                    </Typography>
                 </MenuButton>
                 <Menu
                     placement="bottom-end"
