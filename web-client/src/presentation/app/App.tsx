@@ -8,8 +8,6 @@ import PageMain from "../pages/page-main/PageMain";
 import PageMainViewModelImpl from "../pages/page-main/PageMainViewModelImpl";
 import { ActiveDialogType } from "./AppViewModel";
 import SignUpDialog from "../dialogs/sign-up-dialog/SignUpDialog";
-import PageAccomodiationDetails from "../pages/page-accomodiation-details/PageAccomodiationDetails";
-import PageAccomodiationDetailsViewModel from "../pages/page-accomodiation-details/PageAccomodiationDetailsViewModel";
 import Accommodation, {
     Description,
     Owner,
@@ -20,6 +18,8 @@ import Accommodation, {
     AccommodationType,
 } from "../../domain/accommodations/Accommodation";
 import Avatar from "../../domain/auth/values/Avatar";
+import PageAccommodationDetailsViewModel from "../pages/page-accommodation-details/PageAccommodationDetailsViewModel";
+import PageAccommodationDetails from "../pages/page-accommodation-details/PageAccommodationDetails";
 
 const dialogTypes: any = {
     [ActiveDialogType.Login]: LoginDialog,
@@ -57,10 +57,11 @@ const App = ({ vm }: PropsApp) => {
             new RoomInfo(1, "Living room"),
             new RoomInfo(1, "Kitchen"),
             new RoomInfo(1, "Bathroom"),
-        ]
+        ],
+        4.5
     );
 
-    const pageAccomodiationDetails = new PageAccomodiationDetailsViewModel(
+    const pageAccommodationDetails = new PageAccommodationDetailsViewModel(
         accommodation,
         vm.openLoginDialog,
         vm.openSignUpDialog
@@ -71,7 +72,7 @@ const App = ({ vm }: PropsApp) => {
     return (
         <div className={style.app}>
             {/* <PageMain vm={pageMain} /> */}
-            <PageAccomodiationDetails vm={pageAccomodiationDetails} />
+            <PageAccommodationDetails vm={pageAccommodationDetails} />
             {activeDialog && <Dialog vm={activeDialog!.vm} />}
         </div>
     );

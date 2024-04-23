@@ -31,7 +31,7 @@ export class Photo {
 
 export class RoomInfo {
     public constructor(
-        public readonly number: number,
+        public readonly quantity: number,
         public readonly title: string
     ) {}
 }
@@ -51,6 +51,7 @@ export default class Accommodation {
         public readonly host: Owner,
         public readonly photos: Photo[],
         public readonly numberOfGuests: number,
-        public readonly rooms: RoomInfo[]
+        public readonly rooms: RoomInfo[],
+        public readonly rating?: number
     ) {}
 }

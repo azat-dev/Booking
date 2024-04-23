@@ -1,18 +1,39 @@
 import React from "react";
 
-import PropsPageAccomodiationDetails from "./props";
+import PropsPageAccommodationDetails from "./props";
 import style from "./style.module.scss";
 import { Avatar, Divider, Grid, Stack, Typography } from "@mui/joy";
 import PhotosGroup from "./photos-group/PhotosGroup";
 import { desktop, mobile, tablet } from "../../utils/selectors";
 import NavigationBar from "../../components/navigation-bar/NavigationBar";
 
-const PageAccomodiationDetails = ({ vm }: PropsPageAccomodiationDetails) => {
+import StarIcon from "@mui/icons-material/Star";
+
+const PageAccommodationDetails = ({ vm }: PropsPageAccommodationDetails) => {
     return (
-        <div className={style.pageAccomodiationDetails}>
+        <div className={style.pageAccommodationDetails}>
             <NavigationBar vm={vm.navigationBar} />
             <Divider />
-            <Stack direction="column" alignItems="center">
+            <Stack
+                direction="column"
+                alignItems="center"
+                sx={(theme) => {
+                    return {
+                        boxSizing: "border-box",
+                        [mobile(theme)]: {
+                            width: "100%",
+                            padding: 3,
+                        },
+                        [tablet(theme)]: {
+                            width: "100%",
+                            padding: 3,
+                        },
+                        [desktop(theme)]: {
+                            width: "100%",
+                        },
+                    };
+                }}
+            >
                 <Stack
                     direction="column"
                     sx={(theme) => {
@@ -22,7 +43,6 @@ const PageAccomodiationDetails = ({ vm }: PropsPageAccomodiationDetails) => {
                             },
                             [tablet(theme)]: {
                                 width: "100%",
-                                maxWidth: 600,
                             },
                             [desktop(theme)]: {
                                 width: "100%",
@@ -40,6 +60,29 @@ const PageAccomodiationDetails = ({ vm }: PropsPageAccomodiationDetails) => {
                                 <Typography level="h3">
                                     {vm.location}
                                 </Typography>
+                                <Typography level="body-md" noWrap>
+                                    {vm.roomInfo}
+                                </Typography>
+                                {vm.rating && (
+                                    <Stack
+                                        direction="row"
+                                        gap={0.5}
+                                        alignItems="center"
+                                    >
+                                        <StarIcon
+                                            sx={{ width: 15, height: 15 }}
+                                        />
+                                        <Typography
+                                            noWrap
+                                            sx={{
+                                                fontSize: "sm",
+                                                fontWeight: "md",
+                                            }}
+                                        >
+                                            {vm.rating}
+                                        </Typography>
+                                    </Stack>
+                                )}
                                 <br />
                                 <Divider />
                                 <br />
@@ -77,4 +120,4 @@ const PageAccomodiationDetails = ({ vm }: PropsPageAccomodiationDetails) => {
     );
 };
 
-export default React.memo(PageAccomodiationDetails);
+export default React.memo(PageAccommodationDetails);

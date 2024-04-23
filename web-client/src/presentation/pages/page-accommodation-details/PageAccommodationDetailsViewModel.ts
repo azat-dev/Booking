@@ -15,7 +15,7 @@ const accommodationTypeToText = (type: AccommodationType): string => {
     }
 };
 
-class PageAccomodiationDetailsViewModel {
+class PageAccommodationDetailsViewModel {
     public readonly navigationBar: NavigationBarViewModel;
     public readonly photosGroup: PhotosGroupViewModel;
 
@@ -24,6 +24,8 @@ class PageAccomodiationDetailsViewModel {
     public readonly location: string;
     public readonly host: string;
     public readonly hostPhoto: string | undefined;
+    public readonly roomInfo: string;
+    public readonly rating: number | undefined;
 
     public constructor(
         accommodation: Accommodation,
@@ -35,10 +37,17 @@ class PageAccomodiationDetailsViewModel {
 
         this.title = accommodation.title.value;
         this.description = accommodation.description.value;
-        this.location = `${accommodation.type} ${accommodation.location.city}, ${accommodation.location.country}`;
+        this.location = `${accommodationTypeToText(accommodation.type)}, ${
+            accommodation.location.city
+        }, ${accommodation.location.country}`;
         this.host = accommodation.host.name;
         this.hostPhoto = accommodation.host.avatar?.value;
+        this.roomInfo = accommodation.rooms
+            .map((room) => `${room.quantity} ${room.title}`)
+            .join(", ");
+
+        this.rating = accommodation.rating;
     }
 }
 
-export default PageAccomodiationDetailsViewModel;
+export default PageAccommodationDetailsViewModel;
