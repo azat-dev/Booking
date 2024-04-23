@@ -2,21 +2,12 @@ import React from "react";
 
 import AspectRatio from "@mui/joy/AspectRatio";
 import Card from "@mui/joy/Card";
-import CardContent from "@mui/joy/CardContent";
-import CardOverflow from "@mui/joy/CardOverflow";
 import CardCover from "@mui/joy/CardCover";
 import Box from "@mui/joy/Box";
 import Chip from "@mui/joy/Chip";
 import IconButton from "@mui/joy/IconButton";
-import Link from "@mui/joy/Link";
 import Stack from "@mui/joy/Stack";
 import Typography from "@mui/joy/Typography";
-import WorkspacePremiumRoundedIcon from "@mui/icons-material/WorkspacePremiumRounded";
-import FavoriteRoundedIcon from "@mui/icons-material/FavoriteRounded";
-import FmdGoodRoundedIcon from "@mui/icons-material/FmdGoodRounded";
-import KingBedRoundedIcon from "@mui/icons-material/KingBedRounded";
-import WifiRoundedIcon from "@mui/icons-material/WifiRounded";
-import Star from "@mui/icons-material/Star";
 import Favorite from "@mui/icons-material/FavoriteBorderOutlined";
 
 import PropsAccommodiationPreview from "./props";
@@ -28,7 +19,7 @@ const AccommodiationPreview = ({ vm }: PropsAccommodiationPreview) => {
             <Card
                 variant="plain"
                 sx={{
-                    width: 300,
+                    width: "100%",
                     bgcolor: "initial",
                     p: 0,
                 }}

@@ -2,7 +2,6 @@ import React, { useRef, useEffect, useMemo } from "react";
 
 import Box from "@mui/joy/Box";
 import Button from "@mui/joy/Button";
-import Stack from "@mui/joy/Stack";
 import PropsPageMain from "./props";
 
 import style from "./style.module.scss";
@@ -10,8 +9,8 @@ import NavigationBar from "../../components/navigation-bar/NavigationBar";
 import useUpdatesFrom from "../../utils/binding/useUpdatesFrom";
 import { ItemsViewModelState } from "./ItemsViewModel/ItemsViewModel";
 import AccommodiationPreview from "../../components/accommodiation-preview/AccommodiationPreview";
-import Typography from "@mui/joy/Typography";
-import SearchInput from "../../components/search-input/SearchInput";
+import { Grid } from "@mui/joy";
+import { desktop, mobile, tablet } from "../../utils/selectors";
 
 const PageMain = ({ vm }: PropsPageMain) => {
     useEffect(() => {
@@ -26,7 +25,7 @@ const PageMain = ({ vm }: PropsPageMain) => {
     return (
         <div className={style.pageMain}>
             <NavigationBar vm={vm.navigationBar} />
-            <Stack
+            {/* <Stack
                 sx={{
                     px: { xs: 2, md: 4 },
                     py: 2,
@@ -45,28 +44,73 @@ const PageMain = ({ vm }: PropsPageMain) => {
                         <SearchInput vm={vm.searchInput} />
                     </Box>
                 </Stack>
-            </Stack>
+            </Stack> */}
             {itemsState.type === "loading" && <div>Loading...</div>}
             <Box
-                sx={{
-                    display: "grid",
-                    gridTemplateColumns:
-                        "repeat(auto-fit, minmax(240px, 300px))",
-                    gap: 5,
-                    padding: 5,
-                    paddingLeft: 10,
-                    paddingRight: 10,
+                display="flex"
+                flexDirection="column"
+                alignItems="stretch"
+                boxSizing="border-box"
+                sx={(theme) => {
+                    return {
+                        [mobile(theme)]: {
+                            padding: 3,
+                        },
+                        [tablet(theme)]: {
+                            padding: 5,
+                        },
+                        [desktop(theme)]: {
+                            padding: 5,
+                        },
+                    };
                 }}
             >
-                {itemsState.type === "loaded" &&
-                    itemsState.items.map((item, index) => (
-                        <AccommodiationPreview key={item.id} vm={item} />
-                    ))}
+                <Grid
+                    container
+                    columns={{
+                        xs: 1,
+                        sm: 2,
+                        md: 4,
+                        lg: 5,
+                        xl: 6,
+                    }}
+                    boxSizing={"border-box"}
+                    spacing={{
+                        xs: 5,
+                        sm: 3,
+                        md: 3,
+                        lg: 2,
+                        xl: 3,
+                    }}
+                    sx={(theme) => {
+                        return {
+                            overflowX: "hidden",
+                            [mobile(theme)]: {},
+                            [tablet(theme)]: {},
+                            [desktop(theme)]: {},
+                        };
+                    }}
+                >
+                    {itemsState.type === "loaded" &&
+                        itemsState.items.map((item, index) => (
+                            <Grid
+                                key={item.id}
+                                xs={1}
+                                sm={1}
+                                md={1}
+                                lg={1}
+                                xl={1}
+                            >
+                                <AccommodiationPreview vm={item} />
+                            </Grid>
+                        ))}
+                </Grid>
             </Box>
             {itemsState.type === "loaded" && itemsState.loadMore && (
                 <Box
                     sx={{
                         width: "100%",
+                        boxSizing: "border-box",
                         display: "flex",
                         alignItems: "center",
                         justifyContent: "center",

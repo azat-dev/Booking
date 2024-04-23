@@ -1,13 +1,5 @@
 import * as React from "react";
-import {
-    Box,
-    IconButton,
-    ListDivider,
-    Menu,
-    MenuButton,
-    MenuItem,
-    Theme,
-} from "@mui/joy";
+import { Box, IconButton, Menu, MenuButton, MenuItem, Theme } from "@mui/joy";
 import Typography from "@mui/joy/Typography";
 
 import Dropdown from "@mui/joy/Dropdown";
@@ -17,18 +9,7 @@ import MapsHomeWorkIcon from "@mui/icons-material/MapsHomeWork";
 import PropsNavigationBar from "./props";
 
 import style from "./style.module.scss";
-
-const mobile = (theme: Theme) => {
-    return theme.breakpoints.down("sm");
-};
-
-const tablet = (theme: Theme) => {
-    return theme.breakpoints.up("sm");
-};
-
-const desktop = (theme: Theme) => {
-    return theme.breakpoints.up("md");
-};
+import { mobile, tablet, desktop } from "../../utils/selectors";
 
 const NavigationBar = ({ vm }: PropsNavigationBar) => {
     return (
@@ -48,7 +29,11 @@ const NavigationBar = ({ vm }: PropsNavigationBar) => {
                 [mobile(theme)]: {
                     backgroundColor: "background.surface",
                 },
-                [tablet(theme)]: {},
+                [tablet(theme)]: {
+                    backgroundColor: "background.surface",
+                    paddingLeft: 5,
+                    paddingRight: 5,
+                },
                 [desktop(theme)]: {
                     paddingLeft: 10,
                     paddingRight: 10,
