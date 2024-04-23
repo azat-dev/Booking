@@ -30,7 +30,8 @@ const AuthDialog = ({ vm }: PropsAuthDialog) => {
         <Modal open={true} onClose={vm.close}>
             <ModalDialog size="lg">
                 <ModalClose />
-                <DialogTitle>Log In</DialogTitle>
+                <DialogTitle>Welcome!</DialogTitle>
+                <Typography level="body-sm">Sign in to continue.</Typography>
                 <form
                     onSubmit={(event: React.FormEvent<HTMLFormElement>) => {
                         event.preventDefault();
@@ -40,11 +41,21 @@ const AuthDialog = ({ vm }: PropsAuthDialog) => {
                     <Stack spacing={2}>
                         <FormControl disabled={isProcessing}>
                             <FormLabel>Email</FormLabel>
-                            <Input autoFocus required type="email" />
+                            <Input
+                                autoFocus
+                                required
+                                type="email"
+                                name="email"
+                                placeholder="johndoe@email.com"
+                            />
                         </FormControl>
                         <FormControl disabled={isProcessing}>
                             <FormLabel>Password</FormLabel>
-                            <Input required type="password" />
+                            <Input
+                                required
+                                type="password"
+                                placeholder="password"
+                            />
                         </FormControl>
                         <Typography
                             color="danger"
@@ -60,14 +71,13 @@ const AuthDialog = ({ vm }: PropsAuthDialog) => {
                         >
                             Log In
                         </Button>
-                        <Divider>
-                            <Chip variant="soft" color="neutral" size="sm">
-                                OR
-                            </Chip>
-                        </Divider>
-                        <Button type="submit" size="md" color="neutral">
-                            Sign Up
-                        </Button>
+                        <Typography
+                            endDecorator={<Link href="/sign-up">Sign up</Link>}
+                            fontSize="sm"
+                            sx={{ alignSelf: "center" }}
+                        >
+                            Don&apos;t have an account?
+                        </Typography>
                     </Stack>
                 </form>
             </ModalDialog>
