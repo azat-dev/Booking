@@ -17,7 +17,7 @@ import AccommodationPreview from "../../components/accommodation-preview/Accommo
 const PageMain = ({ vm }: PropsPageMain) => {
     useEffect(() => {
         vm.load();
-    }, []);
+    }, [vm]);
 
     const itemsViewModel = vm.itemsViewModel;
     const state = itemsViewModel.state;

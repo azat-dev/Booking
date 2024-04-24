@@ -3,6 +3,7 @@ import Accommodation, {
 } from "../../../domain/accommodations/Accommodation";
 import NavigationBarViewModel from "../../components/navigation-bar/NavigationBarViewModel";
 import PhotosGroupViewModel from "./photos-group/PhotosGroupViewModel";
+import RequestReservationCardViewModel from "./request-reservation-card/RequestReservationCardViewModel";
 
 const accommodationTypeToText = (type: AccommodationType): string => {
     switch (type) {
@@ -26,6 +27,7 @@ class PageAccommodationDetailsViewModel {
     public readonly hostPhoto: string | undefined;
     public readonly roomInfo: string;
     public readonly rating: number | undefined;
+    public readonly requestReservationCard: RequestReservationCardViewModel;
 
     public constructor(
         accommodation: Accommodation,
@@ -47,6 +49,7 @@ class PageAccommodationDetailsViewModel {
             .join(", ");
 
         this.rating = accommodation.rating;
+        this.requestReservationCard = new RequestReservationCardViewModel();
     }
 }
 

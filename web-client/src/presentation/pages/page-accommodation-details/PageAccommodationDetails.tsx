@@ -2,12 +2,13 @@ import React from "react";
 
 import PropsPageAccommodationDetails from "./props";
 import style from "./style.module.scss";
-import { Avatar, Divider, Grid, Stack, Typography } from "@mui/joy";
+import { Avatar, Box, Divider, Grid, Stack, Typography } from "@mui/joy";
 import PhotosGroup from "./photos-group/PhotosGroup";
 import { desktop, mobile, tablet } from "../../utils/selectors";
 import NavigationBar from "../../components/navigation-bar/NavigationBar";
 
 import StarIcon from "@mui/icons-material/Star";
+import RequestReservationCard from "./request-reservation-card/RequestReservationCard";
 
 const PageAccommodationDetails = ({ vm }: PropsPageAccommodationDetails) => {
     return (
@@ -54,6 +55,8 @@ const PageAccommodationDetails = ({ vm }: PropsPageAccommodationDetails) => {
                     <Typography level="h2">{vm.title}</Typography>
                     <br />
                     <PhotosGroup vm={vm.photosGroup} />
+                    <br />
+                    <br />
                     <Grid container sx={{ width: "100%" }}>
                         <Grid lg={8}>
                             <Stack direction="column">
@@ -111,7 +114,13 @@ const PageAccommodationDetails = ({ vm }: PropsPageAccommodationDetails) => {
                             </Stack>
                         </Grid>
                         <Grid lg={4}>
-                            <Typography level="h1">{vm.location}</Typography>
+                            <Box
+                                sx={{ paddingLeft: 5, boxSizing: "border-box" }}
+                            >
+                                <RequestReservationCard
+                                    vm={vm.requestReservationCard}
+                                />
+                            </Box>
                         </Grid>
                     </Grid>
                 </Stack>

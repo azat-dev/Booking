@@ -10,6 +10,7 @@ import PropsNavigationBar from "./props";
 
 import style from "./style.module.scss";
 import { mobile, tablet, desktop } from "../../utils/selectors";
+import { Link } from "react-router-dom";
 
 const NavigationBar = ({ vm }: PropsNavigationBar) => {
     return (
@@ -42,22 +43,24 @@ const NavigationBar = ({ vm }: PropsNavigationBar) => {
                 },
             })}
         >
-            <Box
-                sx={{
-                    display: "flex",
-                    flexDirection: "row",
-                    alignItems: "center",
-                    justifyContent: "space-between",
-                    gap: 1.5,
-                }}
-            >
-                <IconButton size="sm" variant="soft" color="primary">
-                    <MapsHomeWorkIcon />
-                </IconButton>
-                <Typography component="h1" fontWeight="xl" color="primary">
-                    Demo Booking
-                </Typography>
-            </Box>
+            <Link to="/" style={{ color: "inherit", textDecoration: "none" }}>
+                <Box
+                    sx={{
+                        display: "flex",
+                        flexDirection: "row",
+                        alignItems: "center",
+                        justifyContent: "space-between",
+                        gap: 1.5,
+                    }}
+                >
+                    <IconButton size="sm" variant="soft" color="primary">
+                        <MapsHomeWorkIcon />
+                    </IconButton>
+                    <Typography component="h1" fontWeight="xl" color="primary">
+                        Demo Booking
+                    </Typography>
+                </Box>
+            </Link>
             <Dropdown>
                 <MenuButton
                     variant="outlined"

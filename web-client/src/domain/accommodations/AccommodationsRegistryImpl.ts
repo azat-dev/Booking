@@ -22,9 +22,9 @@ class AccommodationsRegistryImpl implements AccommodationsRegistry {
             ),
             new Owner("John Doe", new Avatar("https://example.com/avatar.jpg")),
             [
-                new Photo("https://picsum.photos/id/11/200/300"),
-                new Photo("https://picsum.photos/id/12/200/300"),
-                new Photo("https://picsum.photos/id/255/200/300"),
+                new Photo("https://picsum.photos/1200/1200"),
+                new Photo("https://picsum.photos/1200/1200"),
+                new Photo("https://picsum.photos/id/1200/1200"),
             ],
             2,
             [

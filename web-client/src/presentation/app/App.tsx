@@ -38,49 +38,37 @@ interface PropsPageComponent {
     LoadingStub: any;
 }
 
-const PageComponent = ({
-    makeVm,
-    Component,
-    LoadingStub,
-}: PropsPageComponent) => {
-    const [vm, setVm] = useState();
-    const locationParams = useParams();
+const makeComponent = (makeVm: any, Component: any, LoadingStub: any) => {
+    return () => {
+        const [vm, setVm] = useState();
+        const locationParams = useParams();
 
-    useEffect(() => {
-        makeVm(locationParams).then(setVm);
-    }, [makeVm, locationParams]);
+        useEffect(() => {
+            makeVm(locationParams).then(setVm);
+        }, [makeVm, locationParams, Component, LoadingStub]);
 
-    if (!vm) {
-        return <LoadingStub />;
-    }
+        if (!vm) {
+            return <LoadingStub />;
+        }
 
-    return <Component vm={vm} />;
+        return <Component vm={vm} />;
+    };
 };
 
 const App = ({ vm }: PropsApp) => {
     const router = createBrowserRouter([
         {
             path: "/",
-            element: (
-                <PageComponent
-                    Component={PageMain}
-                    makeVm={vm.makeMainPage}
-                    LoadingStub={() => <h1>Loading</h1>}
-                />
-            ),
+            Component: makeComponent(vm.makeMainPage, PageMain, () => (
+                <h1>Loading</h1>
+            )),
         },
         {
             path: "/accommodation/:id",
-            element: (
-                <PageComponent
-                    Component={PageAccommodationDetails}
-                    makeVm={(params) =>
-                        vm.makeAccommodationDetailsPage(
-                            new AccommodationId(params.id)
-                        )
-                    }
-                    LoadingStub={() => <h1>Loading</h1>}
-                />
+            Component: makeComponent(
+                vm.makeAccommodationDetailsPage,
+                PageAccommodationDetails,
+                () => <h1>Loading</h1>
             ),
         },
     ]);
