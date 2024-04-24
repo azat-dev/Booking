@@ -1,5 +1,7 @@
 import LoginDialogViewModel from "../dialogs/login-dialog/LoginDialogViewModel";
 import SignUpDialogViewModel from "../dialogs/sign-up-dialog/SignUpDialogViewModel";
+import PageAccommodationDetailsViewModel from "../pages/page-accommodation-details/PageAccommodationDetailsViewModel";
+import PageMainViewModel from "../pages/page-main/PageMainViewModel";
 import Subject from "../utils/binding/Subject";
 
 export enum ActiveDialogType {
@@ -24,4 +26,7 @@ export default interface AppViewModel {
     openSignUpDialog(): void;
 
     toggleFavorite(id: string): void;
+
+    makeMainPage(): PageMainViewModel;
+    makeAccommodationDetailsPage(): PageAccommodationDetailsViewModel;
 }

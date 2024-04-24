@@ -36,6 +36,7 @@ class ItemsViewModelImpl implements ItemsViewModel {
                 vm: new AccommodationPreviewViewModel(
                     itemId,
                     `Hotel ${id}`,
+                    `/accommodation/${itemId}`,
                     4.5,
                     "$300",
                     "per night",

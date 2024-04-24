@@ -2,6 +2,7 @@ class AccommodationPreviewViewModel {
     public constructor(
         public readonly id: string,
         public readonly title: string,
+        public readonly link: string,
         public readonly rating: number,
         public readonly price: string,
         public readonly unit: string,
