@@ -1,0 +1,66 @@
+.dayCell {
+    &::before {
+        content: "";
+        display: none;
+        position: absolute;
+        left: 0;
+        right: 0;
+        bottom: 0;
+        width: 100%;
+        height: calc(100% - 2px);
+        top: 50%;
+        transform: translateY(-50%);
+        background: #ededed;
+    }
+
+    &[data-selection="middle"] {
+        &::before {
+            display: block;
+        }
+    }
+
+    &[data-selection="start"] {
+        &::before {
+            display: block;
+            left: unset;
+            width: 50%;
+        }
+    }
+
+    &[data-selection="end"] {
+        &::before {
+            display: block;
+            right: unset;
+            width: 50%;
+        }
+    }
+}
+
+.circle {
+    box-sizing: border-box;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    position: relative;
+    border-radius: 50%;
+    width: calc(100% - 2px);
+    height: calc(100% - 2px);
+    overflow: hidden;
+
+    &[data-disabled="true"] {
+        opacity: 0.5;
+        text-decoration: line-through;
+    }
+
+    color: black;
+
+    &[data-selected="true"] {
+        background: black;
+        color: white;
+    }
+
+    &:hover {
+        border: 2px solid black;
+    }
+}
