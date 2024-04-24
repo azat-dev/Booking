@@ -1,4 +1,5 @@
 .dayCell {
+    user-select: none;
     &::before {
         content: "";
         display: none;
@@ -37,6 +38,7 @@
 }
 
 .circle {
+    user-select: none;
     box-sizing: border-box;
     cursor: pointer;
     display: flex;

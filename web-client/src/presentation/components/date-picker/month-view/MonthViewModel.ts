@@ -33,14 +33,26 @@ export class CalendarRange {
     public constructor(start: Date, end: Date | undefined) {
         this.start = CalendarRange.toStartOfDay(start);
         this.end = end && CalendarRange.toStartOfDay(end);
+
+        if (this.end) {
+            if (dayjs(this.end).isBefore(this.start)) {
+                const tmp = this.start;
+                this.start = this.end;
+                this.end = tmp;
+            }
+        }
     }
 
     public contains = (date: Date): boolean => {
+        if (!this.end) {
+            return this.isStart(date);
+        }
+
         if (dayjs(date).isBefore(this.start, "day")) {
             return false;
         }
 
-        if (this.end && dayjs(date).isAfter(this.end, "day")) {
+        if (dayjs(date).isAfter(this.end, "day")) {
             return false;
         }
 
@@ -68,7 +80,9 @@ class MonthViewModel {
 
     public constructor(
         private monthPosition: MonthPosition,
-        initialSelectedRange: CalendarRange | undefined
+        initialSelectedRange: CalendarRange | undefined,
+        private onClickDate: (day: Date) => void,
+        private isDisabled: (day: Date) => boolean
     ) {
         this.selectedRange = initialSelectedRange;
         this.emptyCells = this.generateEmptyCells(
@@ -76,7 +90,9 @@ class MonthViewModel {
         );
         this.days = MonthViewModel.generateDaysForMonth(
             monthPosition,
-            initialSelectedRange
+            initialSelectedRange,
+            onClickDate,
+            isDisabled
         );
         this.weekDays = this.generateWeekDays();
     }
@@ -97,9 +113,34 @@ class MonthViewModel {
         return emptyCells;
     };
 
+    private static getSelectionState = (
+        selectionRange: CalendarRange | undefined,
+        day: Date
+    ) => {
+        let selectionState = SelectionState.None;
+
+        if (
+            selectionRange &&
+            !selectionRange.end &&
+            selectionRange.isStart(day)
+        ) {
+            selectionState = SelectionState.Single;
+        } else if (selectionRange?.isStart(day)) {
+            selectionState = SelectionState.Start;
+        } else if (selectionRange?.isEnd(day)) {
+            selectionState = SelectionState.End;
+        } else if (selectionRange?.contains(day)) {
+            selectionState = SelectionState.Middle;
+        }
+
+        return selectionState;
+    };
+
     private static generateDaysForMonth = (
         position: MonthPosition,
-        selectionRange: CalendarRange | undefined
+        selectionRange: CalendarRange | undefined,
+        onClickDay: (day: Date) => void,
+        isDisabled: (day: Date) => boolean
     ): DayCellViewModel[] => {
         const days: DayCellViewModel[] = [];
         const firstDay = `${position.year}-${position.month}-01`;
@@ -116,25 +157,16 @@ class MonthViewModel {
                 0
             );
 
-            let selectionState = SelectionState.None;
-
-            if (selectionRange?.isStart(day)) {
-                selectionState = SelectionState.Start;
-            } else if (selectionRange?.isEnd(day)) {
-                selectionState = SelectionState.End;
-            } else if (selectionRange?.contains(day)) {
-                selectionState = SelectionState.Middle;
-            }
+            const selectionState = this.getSelectionState(selectionRange, day);
 
             days.push(
                 new DayCellViewModel(
                     i.toString(),
                     i.toString(),
+                    day,
                     selectionState,
-                    false,
-                    () => {
-                        console.log("Day clicked");
-                    }
+                    isDisabled(day),
+                    onClickDay
                 )
             );
         }
@@ -146,6 +178,23 @@ class MonthViewModel {
         return ["Sun", "Mon", "Tue", "Wed", "Thu", "Fri", "Sat"].map(
             (value) => new WeekDayCellViewModel(value, value)
         );
+    };
+
+    public updateSelection = (newRange: CalendarRange | undefined) => {
+        this.days.forEach((day) => {
+            const selectionState = MonthViewModel.getSelectionState(
+                newRange,
+                day.date
+            );
+
+            day.updateSelectionState(selectionState);
+        });
+    };
+
+    public updateIsDisabled = (isDisabled: (day: Date) => boolean) => {
+        this.days.forEach((day) => {
+            day.updateIsDisabled(isDisabled(day.date));
+        });
     };
 }
 

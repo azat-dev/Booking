@@ -9,7 +9,7 @@ import EmptyCell from "./empty-cell/EmptyCell";
 
 const MonthView = ({ vm }: PropsMonthView) => {
     return (
-        <Box sx={{ maxWidth: 300 }}>
+        <Box sx={{ maxWidth: 300, minWidth: 300, width: 300 }}>
             <Grid container columns={7} spacing={0}>
                 {vm.weekDays.map((weekDay) => (
                     <Grid

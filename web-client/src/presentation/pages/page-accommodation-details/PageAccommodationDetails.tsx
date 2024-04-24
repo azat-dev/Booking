@@ -14,13 +14,12 @@ import MonthViewModel, {
     MonthPosition,
 } from "../../components/date-picker/month-view/MonthViewModel";
 import MonthView from "../../components/date-picker/month-view/MonthView";
+import RangePickerCalendar from "../../components/date-picker/range-picker-calendar/RangePickerCalendar";
+import RangePickerCalendarViewModel from "../../components/date-picker/range-picker-calendar/RangePickerCalendarViewModel";
 
 const PageAccommodationDetails = ({ vm }: PropsPageAccommodationDetails) => {
-    const calendar = new MonthViewModel(
-        new MonthPosition(4, 2024),
-        new CalendarRange(new Date(2024, 3, 2), new Date())
-    );
-    return <MonthView vm={calendar} />;
+    const calendar = new RangePickerCalendarViewModel();
+    return <RangePickerCalendar vm={calendar} />;
     return (
         <div className={style.pageAccommodationDetails}>
             <NavigationBar vm={vm.navigationBar} />

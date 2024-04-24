@@ -16,9 +16,10 @@ class DayCellViewModel {
     public constructor(
         public readonly id: string,
         public readonly title: string,
+        public readonly date: Date,
         initialSelectionState: SelectionState,
         initialIsDisabled: boolean,
-        private onClick: () => void
+        private onClick: (day: Date) => void
     ) {
         this.selectionState = value(initialSelectionState);
         this.isDisabled = value(initialIsDisabled);
@@ -37,7 +38,7 @@ class DayCellViewModel {
             return;
         }
 
-        this.onClick();
+        this.onClick(this.date);
     };
 }
 

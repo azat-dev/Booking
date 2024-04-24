@@ -1,0 +1,23 @@
+.rangePickerCalendar {
+    display: inline-flex;
+    flex-direction: row;
+    align-items: center;
+    justify-content: space-between;
+    height: 300px;
+    gap: 10px;
+}
+
+.month {
+    display: inline-flex;
+    flex-direction: column;
+}
+
+.header {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.headerButtons {
+    position: absolute;
+}
