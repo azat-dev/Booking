@@ -4,12 +4,26 @@ import "./index.css";
 import reportWebVitals from "./reportWebVitals";
 import AppViewModelImpl from "./presentation/app/AppViewModelImpl";
 import App from "./presentation/app/App";
+import LocalStorageTokensRepository from "./LocalStorageTokensRepository";
+import AuthServiceImpl from "./data/auth/services/AuthServiceImpl";
+import CurrentSessionStoreImpl from "./domain/auth/CurrentSession/CurrentSessionStoreImpl";
+import AccommodationsRegistryImpl from "./domain/accommodations/AccommodationsRegistryImpl";
 
 const root = ReactDOM.createRoot(
     document.getElementById("root") as HTMLElement
 );
 
-const vm = new AppViewModelImpl();
+const tokensRepository = new LocalStorageTokensRepository();
+const authService = new AuthServiceImpl();
+
+const currentSession = new CurrentSessionStoreImpl(
+    tokensRepository,
+    authService
+);
+
+const accommodationsRegistry = new AccommodationsRegistryImpl();
+
+const vm = new AppViewModelImpl(currentSession, accommodationsRegistry);
 
 root.render(
     <React.StrictMode>

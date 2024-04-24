@@ -1,3 +1,4 @@
+import AccommodationId from "../../domain/accommodations/AccommodationId";
 import LoginDialogViewModel from "../dialogs/login-dialog/LoginDialogViewModel";
 import SignUpDialogViewModel from "../dialogs/sign-up-dialog/SignUpDialogViewModel";
 import PageAccommodationDetailsViewModel from "../pages/page-accommodation-details/PageAccommodationDetailsViewModel";
@@ -27,6 +28,8 @@ export default interface AppViewModel {
 
     toggleFavorite(id: string): void;
 
-    makeMainPage(): PageMainViewModel;
-    makeAccommodationDetailsPage(): PageAccommodationDetailsViewModel;
+    makeMainPage(): Promise<PageMainViewModel>;
+    makeAccommodationDetailsPage(
+        accommodationId: AccommodationId
+    ): Promise<PageAccommodationDetailsViewModel>;
 }

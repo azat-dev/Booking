@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useEffect, useState } from "react";
 
 import PropsApp from "./props";
 import style from "./style.module.scss";
@@ -8,7 +8,13 @@ import PageMain from "../pages/page-main/PageMain";
 import { ActiveDialogType } from "./AppViewModel";
 import SignUpDialog from "../dialogs/sign-up-dialog/SignUpDialog";
 import PageAccommodationDetails from "../pages/page-accommodation-details/PageAccommodationDetails";
-import { createBrowserRouter, RouterProvider } from "react-router-dom";
+import {
+    createBrowserRouter,
+    RouterProvider,
+    useLocation,
+    useParams,
+} from "react-router-dom";
+import AccommodationId from "../../domain/accommodations/AccommodationId";
 
 const dialogTypes: any = {
     [ActiveDialogType.Login]: LoginDialog,
@@ -26,23 +32,55 @@ const Dialogs = ({ vm }: PropsApp) => {
     return <Dialog vm={activeDialog!.vm} />;
 };
 
-const makePageComponent = (Component: any, makeVm: () => any) => {
-    return () => {
-        return <Component vm={makeVm()} />;
-    };
+interface PropsPageComponent {
+    Component: any;
+    makeVm: (locationParams: any) => Promise<any>;
+    LoadingStub: any;
+}
+
+const PageComponent = ({
+    makeVm,
+    Component,
+    LoadingStub,
+}: PropsPageComponent) => {
+    const [vm, setVm] = useState();
+    const locationParams = useParams();
+
+    useEffect(() => {
+        makeVm(locationParams).then(setVm);
+    }, [makeVm, locationParams]);
+
+    if (!vm) {
+        return <LoadingStub />;
+    }
+
+    return <Component vm={vm} />;
 };
 
 const App = ({ vm }: PropsApp) => {
     const router = createBrowserRouter([
         {
             path: "/",
-            Component: makePageComponent(PageMain, vm.makeMainPage),
+            element: (
+                <PageComponent
+                    Component={PageMain}
+                    makeVm={vm.makeMainPage}
+                    LoadingStub={() => <h1>Loading</h1>}
+                />
+            ),
         },
         {
             path: "/accommodation/:id",
-            Component: makePageComponent(
-                PageAccommodationDetails,
-                vm.makeAccommodationDetailsPage
+            element: (
+                <PageComponent
+                    Component={PageAccommodationDetails}
+                    makeVm={(params) =>
+                        vm.makeAccommodationDetailsPage(
+                            new AccommodationId(params.id)
+                        )
+                    }
+                    LoadingStub={() => <h1>Loading</h1>}
+                />
             ),
         },
     ]);
