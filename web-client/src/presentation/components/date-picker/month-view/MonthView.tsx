@@ -1,13 +1,13 @@
 import React from "react";
 
-import PropsCalendar from "./props";
+import PropsMonthView from "./props";
 import style from "./style.module.scss";
 import { Box, Grid } from "@mui/joy";
 import DayCell from "./day-cell/DayCell";
 import WeekDayCell from "./week-day-cell/WeekDayCell";
 import EmptyCell from "./empty-cell/EmptyCell";
 
-const Calendar = ({ vm }: PropsCalendar) => {
+const MonthView = ({ vm }: PropsMonthView) => {
     return (
         <Box sx={{ maxWidth: 300 }}>
             <Grid container columns={7} spacing={0}>
@@ -55,4 +55,4 @@ const Calendar = ({ vm }: PropsCalendar) => {
     );
 };
 
-export default React.memo(Calendar);
+export default React.memo(MonthView);

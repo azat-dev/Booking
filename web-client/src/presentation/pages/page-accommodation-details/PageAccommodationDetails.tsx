@@ -9,18 +9,18 @@ import NavigationBar from "../../components/navigation-bar/NavigationBar";
 
 import StarIcon from "@mui/icons-material/Star";
 import RequestReservationCard from "./request-reservation-card/RequestReservationCard";
-import CalendarViewModel, {
+import MonthViewModel, {
     CalendarRange,
     MonthPosition,
-} from "../../components/date-picker/calendar/CalendarViewModel";
-import Calendar from "../../components/date-picker/calendar/Calendar";
+} from "../../components/date-picker/month-view/MonthViewModel";
+import MonthView from "../../components/date-picker/month-view/MonthView";
 
 const PageAccommodationDetails = ({ vm }: PropsPageAccommodationDetails) => {
-    const calendar = new CalendarViewModel(
+    const calendar = new MonthViewModel(
         new MonthPosition(4, 2024),
         new CalendarRange(new Date(2024, 3, 2), new Date())
     );
-    return <Calendar vm={calendar} />;
+    return <MonthView vm={calendar} />;
     return (
         <div className={style.pageAccommodationDetails}>
             <NavigationBar vm={vm.navigationBar} />

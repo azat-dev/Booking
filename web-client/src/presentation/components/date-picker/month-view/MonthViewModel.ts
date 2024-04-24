@@ -59,7 +59,7 @@ export class CalendarRange {
     };
 }
 
-class CalendarViewModel {
+class MonthViewModel {
     public readonly days: DayCellViewModel[];
     public readonly emptyCells: number[];
     public readonly weekDays: WeekDayCellViewModel[];
@@ -74,7 +74,7 @@ class CalendarViewModel {
         this.emptyCells = this.generateEmptyCells(
             this.getNumberOfEmptyCells(monthPosition.month, monthPosition.year)
         );
-        this.days = CalendarViewModel.generateDaysForMonth(
+        this.days = MonthViewModel.generateDaysForMonth(
             monthPosition,
             initialSelectedRange
         );
@@ -149,4 +149,4 @@ class CalendarViewModel {
     };
 }
 
-export default CalendarViewModel;
+export default MonthViewModel;
