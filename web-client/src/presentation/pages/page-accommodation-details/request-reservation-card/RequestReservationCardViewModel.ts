@@ -33,10 +33,36 @@ class TestAvailableDates extends AvailableDates {
     };
 }
 
+export class LoadingButtonViewModel {
+    public readonly isLoading: Subject<boolean>;
+    public readonly text: Subject<string>;
+
+    public constructor(
+        initialIsLoading: boolean,
+        initialText: string,
+        private onClick: () => void
+    ) {
+        this.isLoading = value(initialIsLoading);
+        this.text = value(initialText);
+    }
+
+    public click = () => {
+        this.onClick();
+    };
+
+    public updateIsLoading = (isLoading: boolean) => {
+        this.isLoading.set(isLoading);
+    };
+
+    public updateText = (text: string) => [this.text.set(text)];
+}
+
 class RequestReservationCardViewModel {
     public readonly costDetails: Subject<CostDetails>;
     public readonly dateRangePicker: DateRangePickerViewModel;
     private currentDateRange: CalendarRange | undefined;
+
+    public reservationButton: LoadingButtonViewModel;
 
     public constructor() {
         this.dateRangePicker = new DateRangePickerViewModel(
@@ -51,14 +77,35 @@ class RequestReservationCardViewModel {
             accommodationCost: "$80",
             serviceFee: "$20",
         });
+
+        this.reservationButton = new LoadingButtonViewModel(
+            false,
+            this.currentDateRange?.end ? "Reserve" : "Check Available Days",
+            this.didClickReservationButton
+        );
     }
+
+    private didClickReservationButton = () => {
+        if (!this.currentDateRange?.end) {
+            // open
+            this.dateRangePicker.open();
+            return;
+        }
+
+        this.requestReservation();
+    };
 
     private didChangeDates = (newRange: CalendarRange) => {
         this.currentDateRange = newRange;
         this.dateRangePicker.updateRange(newRange);
+        this.reservationButton.updateText(
+            newRange?.end ? "Reserve" : "Check Available Days"
+        );
     };
 
-    public requestReservation = (): void => {
+    private requestReservation = (): void => {
+        this.reservationButton.updateIsLoading(true);
+
         this.costDetails.set({ status: CostDetailsStatus.LOADING });
 
         setTimeout(() => {
@@ -68,6 +115,7 @@ class RequestReservationCardViewModel {
                 accommodationCost: "$80",
                 serviceFee: "$20",
             });
+            this.reservationButton.updateIsLoading(false);
         }, 2000);
     };
 }

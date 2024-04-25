@@ -2,8 +2,7 @@ import React from "react";
 
 import PropsDayCell from "./props";
 import style from "./style.module.scss";
-import Box from "@mui/joy/Box";
-import { AspectRatio, Button, Typography } from "@mui/joy";
+import { AspectRatio, Typography } from "@mui/joy";
 import useUpdatesFrom from "../../../../utils/binding/useUpdatesFrom";
 import { SelectionState } from "./DayCellViewModel";
 
