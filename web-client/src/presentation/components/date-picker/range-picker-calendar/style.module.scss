@@ -1,10 +1,10 @@
 .rangePickerCalendar {
     display: inline-flex;
     flex-direction: row;
-    align-items: center;
+    align-items: flex-start;
     justify-content: space-between;
     height: 300px;
-    gap: 10px;
+    gap: 30px;
 }
 
 .month {

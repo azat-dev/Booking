@@ -21,6 +21,23 @@ export class MonthPosition {
         public readonly month: number,
         public readonly year: number
     ) {}
+
+    public nextMonth = () => {
+        const nextMonth = this.month + 1 >= 12 ? 0 : this.month + 1;
+        const nextYear = this.month + 1 >= 12 ? this.year + 1 : this.year;
+        return new MonthPosition(nextMonth, nextYear);
+    };
+
+    public prevMonth = () => {
+        if (this.year === 0 && this.month === 0) {
+            return undefined;
+        }
+
+        const prevMonth = this.month - 1 < 0 ? 11 : this.month - 1;
+        const prevYear = this.month - 1 < 0 ? this.year - 1 : this.year;
+
+        return new MonthPosition(prevMonth, prevYear);
+    };
 }
 
 export class CalendarRange {

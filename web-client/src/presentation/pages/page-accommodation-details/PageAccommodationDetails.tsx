@@ -9,16 +9,15 @@ import NavigationBar from "../../components/navigation-bar/NavigationBar";
 
 import StarIcon from "@mui/icons-material/Star";
 import RequestReservationCard from "./request-reservation-card/RequestReservationCard";
-import MonthViewModel, {
-    CalendarRange,
-    MonthPosition,
-} from "../../components/date-picker/month-view/MonthViewModel";
-import MonthView from "../../components/date-picker/month-view/MonthView";
 import RangePickerCalendar from "../../components/date-picker/range-picker-calendar/RangePickerCalendar";
 import RangePickerCalendarViewModel from "../../components/date-picker/range-picker-calendar/RangePickerCalendarViewModel";
 
 const PageAccommodationDetails = ({ vm }: PropsPageAccommodationDetails) => {
-    const calendar = new RangePickerCalendarViewModel();
+    let calendar: RangePickerCalendarViewModel;
+
+    calendar = new RangePickerCalendarViewModel(undefined, (newRange) =>
+        calendar.updateRange(newRange)
+    );
     return <RangePickerCalendar vm={calendar} />;
     return (
         <div className={style.pageAccommodationDetails}>
