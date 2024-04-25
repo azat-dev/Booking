@@ -11,7 +11,6 @@ import PageAccommodationDetails from "../pages/page-accommodation-details/PageAc
 import {
     createBrowserRouter,
     RouterProvider,
-    useLocation,
     useParams,
 } from "react-router-dom";
 
@@ -68,7 +67,7 @@ const App = ({ vm }: PropsApp) => {
 
     return (
         <div className={style.app}>
-            <RouterProvider router={router}></RouterProvider>;
+            <RouterProvider router={router}></RouterProvider>
             <Dialogs vm={vm} />
         </div>
     );

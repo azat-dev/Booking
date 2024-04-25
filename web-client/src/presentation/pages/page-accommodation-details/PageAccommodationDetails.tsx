@@ -9,8 +9,11 @@ import NavigationBar from "../../components/navigation-bar/NavigationBar";
 
 import StarIcon from "@mui/icons-material/Star";
 import RequestReservationCard from "./request-reservation-card/RequestReservationCard";
+import useScreenType, { ScreenType } from "../../utils/hooks/useScreenType";
 
 const PageAccommodationDetails = ({ vm }: PropsPageAccommodationDetails) => {
+    const screenType = useScreenType();
+
     return (
         <div className={style.pageAccommodationDetails}>
             <NavigationBar vm={vm.navigationBar} />
@@ -58,7 +61,16 @@ const PageAccommodationDetails = ({ vm }: PropsPageAccommodationDetails) => {
                     <br />
                     <br />
                     <Grid container sx={{ width: "100%" }}>
-                        <Grid lg={8}>
+                        <Grid
+                            lg={
+                                [
+                                    ScreenType.DESKTOP,
+                                    ScreenType.TABLET,
+                                ].includes(screenType)
+                                    ? 8
+                                    : 12
+                            }
+                        >
                             <Stack direction="column">
                                 <Typography level="h3">
                                     {vm.location}
@@ -113,15 +125,22 @@ const PageAccommodationDetails = ({ vm }: PropsPageAccommodationDetails) => {
                                 <br />
                             </Stack>
                         </Grid>
-                        <Grid lg={4}>
-                            <Box
-                                sx={{ paddingLeft: 5, boxSizing: "border-box" }}
-                            >
-                                <RequestReservationCard
-                                    vm={vm.requestReservationCard}
-                                />
-                            </Box>
-                        </Grid>
+                        {[ScreenType.DESKTOP, ScreenType.TABLET].includes(
+                            screenType
+                        ) && (
+                            <Grid lg={4}>
+                                <Box
+                                    sx={{
+                                        paddingLeft: 5,
+                                        boxSizing: "border-box",
+                                    }}
+                                >
+                                    <RequestReservationCard
+                                        vm={vm.requestReservationCard}
+                                    />
+                                </Box>
+                            </Grid>
+                        )}
                     </Grid>
                 </Stack>
             </Stack>
