@@ -14,7 +14,6 @@ import {
     useLocation,
     useParams,
 } from "react-router-dom";
-import AccommodationId from "../../domain/accommodations/AccommodationId";
 
 const dialogTypes: any = {
     [ActiveDialogType.Login]: LoginDialog,
@@ -31,12 +30,6 @@ const Dialogs = ({ vm }: PropsApp) => {
     const Dialog = dialogTypes[activeDialog?.type];
     return <Dialog vm={activeDialog!.vm} />;
 };
-
-interface PropsPageComponent {
-    Component: any;
-    makeVm: (locationParams: any) => Promise<any>;
-    LoadingStub: any;
-}
 
 const makeComponent = (makeVm: any, Component: any, LoadingStub: any) => {
     return () => {

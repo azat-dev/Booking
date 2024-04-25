@@ -8,8 +8,8 @@ import useUpdatesFrom from "../../../../utils/binding/useUpdatesFrom";
 import { SelectionState } from "./DayCellViewModel";
 
 const DayCell = ({ vm }: PropsDayCell) => {
-    const [isDisabled, selectionState] = useUpdatesFrom(
-        vm.isDisabled,
+    const [isAvailable, selectionState] = useUpdatesFrom(
+        vm.isAvailable,
         vm.selectionState
     );
 
@@ -24,7 +24,7 @@ const DayCell = ({ vm }: PropsDayCell) => {
                 <div
                     className={style.circle}
                     onClick={vm.click}
-                    data-disabled={!!isDisabled}
+                    data-disabled={!isAvailable}
                     data-selected={[
                         SelectionState.Single,
                         SelectionState.Start,

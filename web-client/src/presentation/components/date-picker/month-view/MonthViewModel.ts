@@ -88,6 +88,10 @@ export class CalendarRange {
     };
 }
 
+export abstract class AvailableDates {
+    abstract isAvailable(date: Date): boolean;
+}
+
 class MonthViewModel {
     public readonly days: DayCellViewModel[];
     public readonly emptyCells: number[];
@@ -98,8 +102,8 @@ class MonthViewModel {
     public constructor(
         private monthPosition: MonthPosition,
         initialSelectedRange: CalendarRange | undefined,
-        private onClickDate: (day: Date) => void,
-        private isDisabled: (day: Date) => boolean
+        onClickDate: (day: Date) => void,
+        private availableDates: AvailableDates
     ) {
         this.selectedRange = initialSelectedRange;
         this.emptyCells = this.generateEmptyCells(
@@ -108,8 +112,8 @@ class MonthViewModel {
         this.days = MonthViewModel.generateDaysForMonth(
             monthPosition,
             initialSelectedRange,
-            onClickDate,
-            isDisabled
+            availableDates,
+            onClickDate
         );
         this.weekDays = this.generateWeekDays();
     }
@@ -156,8 +160,8 @@ class MonthViewModel {
     private static generateDaysForMonth = (
         position: MonthPosition,
         selectionRange: CalendarRange | undefined,
-        onClickDay: (day: Date) => void,
-        isDisabled: (day: Date) => boolean
+        availableDates: AvailableDates,
+        onClickDay: (day: Date) => void
     ): DayCellViewModel[] => {
         const days: DayCellViewModel[] = [];
         const firstDay = `${position.year}-${position.month}-01`;
@@ -182,7 +186,7 @@ class MonthViewModel {
                     i.toString(),
                     day,
                     selectionState,
-                    isDisabled(day),
+                    availableDates.isAvailable(day),
                     onClickDay
                 )
             );
@@ -208,9 +212,9 @@ class MonthViewModel {
         });
     };
 
-    public updateIsDisabled = (isDisabled: (day: Date) => boolean) => {
+    public updateAvailableDates = (availableDates: AvailableDates) => {
         this.days.forEach((day) => {
-            day.updateIsDisabled(isDisabled(day.date));
+            day.updateIsAvailable(availableDates.isAvailable(day.date));
         });
     };
 }

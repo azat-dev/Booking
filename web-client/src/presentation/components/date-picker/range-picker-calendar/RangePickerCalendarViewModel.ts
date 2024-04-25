@@ -1,5 +1,6 @@
 import dayjs from "dayjs";
 import MonthViewModel, {
+    AvailableDates,
     CalendarRange,
     MonthPosition,
 } from "../month-view/MonthViewModel";
@@ -18,6 +19,7 @@ class RangePickerCalendarViewModel {
 
     public constructor(
         initialOpenedPosition: MonthPosition | undefined,
+        private availableDates: AvailableDates,
         private onChange: (range: CalendarRange) => void
     ) {
         this.currentPosition =
@@ -59,12 +61,8 @@ class RangePickerCalendarViewModel {
             position,
             this.selectionRange,
             this.clickDay,
-            this.isDisabledDate
+            this.availableDates
         );
-    };
-
-    private isDisabledDate = (date: Date) => {
-        return false;
     };
 
     private showRange = () => {

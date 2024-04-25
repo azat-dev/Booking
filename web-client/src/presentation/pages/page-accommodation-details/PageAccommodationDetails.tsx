@@ -9,16 +9,8 @@ import NavigationBar from "../../components/navigation-bar/NavigationBar";
 
 import StarIcon from "@mui/icons-material/Star";
 import RequestReservationCard from "./request-reservation-card/RequestReservationCard";
-import RangePickerCalendar from "../../components/date-picker/range-picker-calendar/RangePickerCalendar";
-import RangePickerCalendarViewModel from "../../components/date-picker/range-picker-calendar/RangePickerCalendarViewModel";
 
 const PageAccommodationDetails = ({ vm }: PropsPageAccommodationDetails) => {
-    let calendar: RangePickerCalendarViewModel;
-
-    calendar = new RangePickerCalendarViewModel(undefined, (newRange) =>
-        calendar.updateRange(newRange)
-    );
-    return <RangePickerCalendar vm={calendar} />;
     return (
         <div className={style.pageAccommodationDetails}>
             <NavigationBar vm={vm.navigationBar} />

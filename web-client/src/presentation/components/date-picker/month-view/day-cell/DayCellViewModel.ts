@@ -11,30 +11,30 @@ export enum SelectionState {
 
 class DayCellViewModel {
     public readonly selectionState: Subject<SelectionState>;
-    public readonly isDisabled: Subject<boolean>;
+    public readonly isAvailable: Subject<boolean>;
 
     public constructor(
         public readonly id: string,
         public readonly title: string,
         public readonly date: Date,
         initialSelectionState: SelectionState,
-        initialIsDisabled: boolean,
+        initialIsAvailable: boolean,
         private onClick: (day: Date) => void
     ) {
         this.selectionState = value(initialSelectionState);
-        this.isDisabled = value(initialIsDisabled);
+        this.isAvailable = value(!initialIsAvailable);
     }
 
     public updateSelectionState = (newState: SelectionState): void => {
         this.selectionState.set(newState);
     };
 
-    public updateIsDisabled = (isDisabled: boolean): void => {
-        this.isDisabled.set(isDisabled);
+    public updateIsAvailable = (isAvailable: boolean): void => {
+        this.isAvailable.set(isAvailable);
     };
 
     public click = (): void => {
-        if (this.isDisabled.value) {
+        if (!this.isAvailable.value) {
             return;
         }
 

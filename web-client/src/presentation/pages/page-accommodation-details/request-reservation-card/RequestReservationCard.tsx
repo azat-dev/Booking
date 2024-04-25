@@ -15,11 +15,14 @@ import {
 } from "@mui/joy";
 import useUpdatesFrom from "../../../utils/binding/useUpdatesFrom";
 import { CostDetailsStatus } from "./RequestReservationCardViewModel";
+import DateRangePicker from "../../../components/date-picker/date-range-picker/DateRangePicker";
 
 const RequestReservationCard = ({ vm }: PropsRequestReservationCard) => {
     const [costDetails] = useUpdatesFrom(vm.costDetails);
     return (
         <Card variant="outlined" sx={{ boxSizing: "border-box" }}>
+            <DateRangePicker vm={vm.dateRangePicker} />
+
             <Button size="lg" color="primary" onClick={vm.requestReservation}>
                 Reserve
             </Button>

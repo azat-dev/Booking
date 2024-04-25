@@ -20,7 +20,15 @@ const RangePickerCalendar = ({ vm }: PropsRangePickerCalendar) => {
         <div className={style.rangePickerCalendar}>
             <div className={style.month}>
                 <div className={style.header}>
-                    <IconButton onClick={vm.showPrev}>
+                    <IconButton
+                        onClick={vm.showPrev}
+                        sx={{
+                            position: "absolute",
+                            left: 0,
+                            top: "50%",
+                            transform: "translateY(-50%);",
+                        }}
+                    >
                         <PrevIcon />
                     </IconButton>
                     <Typography fontSize="h3">{leftMonthTitle}</Typography>
@@ -30,7 +38,15 @@ const RangePickerCalendar = ({ vm }: PropsRangePickerCalendar) => {
             <div className={style.month}>
                 <div className={style.header}>
                     <Typography fontSize="h3">{rightMonthTitle}</Typography>
-                    <IconButton onClick={vm.showNext}>
+                    <IconButton
+                        onClick={vm.showNext}
+                        sx={{
+                            position: "absolute",
+                            right: 0,
+                            top: "50%",
+                            transform: "translateY(-50%);",
+                        }}
+                    >
                         <NextIcon />
                     </IconButton>
                 </div>

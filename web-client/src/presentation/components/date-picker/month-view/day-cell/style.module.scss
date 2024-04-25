@@ -45,7 +45,7 @@
     align-items: center;
     justify-content: center;
     position: relative;
-    border-radius: 50%;
+    border-radius: 20%;
     width: calc(100% - 2px);
     height: calc(100% - 2px);
     overflow: hidden;
@@ -64,5 +64,9 @@
 
     &:hover {
         border: 2px solid black;
+
+        &[data-disabled="true"] {
+            border: none;
+        }
     }
 }
