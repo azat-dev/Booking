@@ -8,6 +8,7 @@ import LocalStorageTokensRepository from "./LocalStorageTokensRepository";
 import AuthServiceImpl from "./data/auth/services/AuthServiceImpl";
 import CurrentSessionStoreImpl from "./domain/auth/CurrentSession/CurrentSessionStoreImpl";
 import AccommodationsRegistryImpl from "./domain/accommodations/AccommodationsRegistryImpl";
+import ReservationServiceImpl from "./domain/booking/ReservationServiceImpl";
 
 const root = ReactDOM.createRoot(
     document.getElementById("root") as HTMLElement
@@ -23,7 +24,13 @@ const currentSession = new CurrentSessionStoreImpl(
 
 const accommodationsRegistry = new AccommodationsRegistryImpl();
 
-const vm = new AppViewModelImpl(currentSession, accommodationsRegistry);
+const reservationService = new ReservationServiceImpl();
+
+const vm = new AppViewModelImpl(
+    currentSession,
+    accommodationsRegistry,
+    reservationService
+);
 
 root.render(
     <React.StrictMode>

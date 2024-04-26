@@ -13,13 +13,18 @@ import PageMainViewModel from "../pages/page-main/PageMainViewModel";
 import PageAccommodationDetailsViewModel from "../pages/page-accommodation-details/PageAccommodationDetailsViewModel";
 import AccommodationsRegistry from "../../domain/accommodations/AccommodationsRegistry";
 import AccommodationId from "../../domain/accommodations/AccommodationId";
+import DatesRange from "../../domain/booking/values/DatesRange";
+import GuestsQuantity from "../../domain/booking/values/GuestsQuantity";
+import Cost from "../../domain/booking/values/Cost";
+import ReservationService from "../../domain/booking/ReservationService";
 
 class AppViewModelImpl implements AppViewModel {
     public activeDialog: Subject<ActiveDialogViewModel | null>;
 
     public constructor(
         private currentSession: CurrentSessionStore,
-        private accommodationsRegistry: AccommodationsRegistry
+        private accommodationsRegistry: AccommodationsRegistry,
+        private reservationService: ReservationService
     ) {
         this.activeDialog = value(null);
     }
@@ -94,7 +99,8 @@ class AppViewModelImpl implements AppViewModel {
         return new PageAccommodationDetailsViewModel(
             accommodation,
             this.openLoginDialog,
-            this.openSignUpDialog
+            this.openSignUpDialog,
+            this.reservationService.getAccommodationCost
         );
     };
 }

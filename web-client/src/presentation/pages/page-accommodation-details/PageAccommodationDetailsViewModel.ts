@@ -1,6 +1,10 @@
 import Accommodation, {
     AccommodationType,
 } from "../../../domain/accommodations/Accommodation";
+import AccommodationId from "../../../domain/accommodations/AccommodationId";
+import Cost from "../../../domain/booking/values/Cost";
+import DatesRange from "../../../domain/booking/values/DatesRange";
+import GuestsQuantity from "../../../domain/booking/values/GuestsQuantity";
 import NavigationBarViewModel from "../../components/navigation-bar/NavigationBarViewModel";
 import PhotosGroupViewModel from "./photos-group/PhotosGroupViewModel";
 import RequestReservationCardViewModel from "./request-reservation-card/RequestReservationCardViewModel";
@@ -32,7 +36,12 @@ class PageAccommodationDetailsViewModel {
     public constructor(
         accommodation: Accommodation,
         onLogin: () => void,
-        onSignUp: () => void
+        onSignUp: () => void,
+        getCostDetails: (
+            accommodation: AccommodationId,
+            datesRange: DatesRange,
+            guestsCount: GuestsQuantity
+        ) => Promise<Cost>
     ) {
         this.navigationBar = new NavigationBarViewModel(onLogin, onSignUp);
         this.photosGroup = new PhotosGroupViewModel(accommodation.photos);
@@ -49,7 +58,11 @@ class PageAccommodationDetailsViewModel {
             .join(", ");
 
         this.rating = accommodation.rating;
-        this.requestReservationCard = new RequestReservationCardViewModel();
+        this.requestReservationCard = new RequestReservationCardViewModel(
+            async (datesRange, guests) => {
+                return getCostDetails(accommodation.id, datesRange, guests);
+            }
+        );
     }
 }
 

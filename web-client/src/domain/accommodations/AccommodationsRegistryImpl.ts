@@ -14,6 +14,7 @@ import AccommodationId from "./AccommodationId";
 class AccommodationsRegistryImpl implements AccommodationsRegistry {
     public getAccommodationById = async (id: AccommodationId) => {
         const accommodation = new Accommodation(
+            id,
             new Title("Small House"),
             AccommodationType.House,
             new Location("USA", "New York"),

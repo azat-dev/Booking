@@ -1,4 +1,5 @@
 import Avatar from "../auth/values/Avatar";
+import AccommodationId from "./AccommodationId";
 
 export class Title {
     public constructor(public readonly value: string) {}
@@ -44,6 +45,7 @@ export enum AccommodationType {
 
 export default class Accommodation {
     public constructor(
+        public readonly id: AccommodationId,
         public readonly title: Title,
         public readonly type: AccommodationType,
         public readonly location: Location,

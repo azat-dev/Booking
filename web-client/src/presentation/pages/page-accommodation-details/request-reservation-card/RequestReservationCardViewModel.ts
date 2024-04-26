@@ -6,6 +6,10 @@ import {
 } from "../../../components/date-picker/month-view/MonthViewModel";
 import Subject from "../../../utils/binding/Subject";
 import value from "../../../utils/binding/value";
+import Cost from "../../../../domain/booking/values/Cost";
+import DatesRange from "../../../../domain/booking/values/DatesRange";
+import GuestsQuantity from "../../../../domain/booking/values/GuestsQuantity";
+import AdultQuantity from "../../../../domain/booking/values/AdultQuantity";
 
 export enum CostDetailsStatus {
     LOADING = "loading",
@@ -64,7 +68,12 @@ class RequestReservationCardViewModel {
 
     public reservationButton: LoadingButtonViewModel;
 
-    public constructor() {
+    public constructor(
+        private readonly getCostDetails: (
+            dateRange: DatesRange,
+            guests: GuestsQuantity
+        ) => Promise<Cost>
+    ) {
         this.dateRangePicker = new DateRangePickerViewModel(
             this.currentDateRange,
             new TestAvailableDates(),
@@ -87,7 +96,6 @@ class RequestReservationCardViewModel {
 
     private didClickReservationButton = () => {
         if (!this.currentDateRange?.end) {
-            // open
             this.dateRangePicker.open();
             return;
         }
@@ -95,17 +103,41 @@ class RequestReservationCardViewModel {
         this.requestReservation();
     };
 
-    private didChangeDates = (newRange: CalendarRange) => {
+    private updateCostDetails = async () => {
+        this.costDetails.set({ status: CostDetailsStatus.LOADING });
+
+        const cost = await this.getCostDetails(
+            new DatesRange(
+                this.currentDateRange!.start,
+                this.currentDateRange!.end!
+            ),
+            new GuestsQuantity(new AdultQuantity(1))
+        );
+
+        this.costDetails.set({
+            status: CostDetailsStatus.LOADED,
+            totalCost: cost.totalCost.toString(),
+            accommodationCost: cost.accommodationCost.toString(),
+            serviceFee: cost.serviceFee.toString(),
+        });
+    };
+
+    private didChangeDates = async (newRange: CalendarRange) => {
         this.currentDateRange = newRange;
         this.dateRangePicker.updateRange(newRange);
+
         this.reservationButton.updateText(
             newRange?.end ? "Reserve" : "Check Available Days"
         );
+
+        if (newRange.end) {
+            this.updateCostDetails();
+            this.dateRangePicker.close();
+        }
     };
 
     private requestReservation = (): void => {
         this.reservationButton.updateIsLoading(true);
-
         this.costDetails.set({ status: CostDetailsStatus.LOADING });
 
         setTimeout(() => {
