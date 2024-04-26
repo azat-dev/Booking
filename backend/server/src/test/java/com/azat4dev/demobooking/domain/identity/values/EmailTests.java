@@ -36,4 +36,37 @@ public class EmailTests {
         assertThat(email).isNotNull();
         assertThat(email.getValue()).isEqualTo(validEmail);
     }
+
+    @Test
+    public void given_equal_emails__when_isEqual__then_return_true() {
+
+        // Given
+        final var validEmail = "valid@email.com";
+        final var email1 = Email.makeFromString(validEmail);
+        final var email2 = Email.makeFromString(validEmail);
+
+        // When
+        final var isEqual = email1.equals(email2);
+
+
+        // Then
+        assertThat(isEqual).isTrue();
+    }
+
+    @Test
+    public void given_equal_not_emails__when_isEqual__then_return_false() {
+
+        // Given
+        final var validEmail1 = "valid1@email.com";
+        final var validEmail2 = "valid2@email.com";
+
+        final var email1 = Email.makeFromString(validEmail1);
+        final var email2 = Email.makeFromString(validEmail2);
+
+        // When
+        final var isEqual = email1.equals(email2);
+
+        // Then
+        assertThat(isEqual).isFalse();
+    }
 }
