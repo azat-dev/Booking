@@ -2,7 +2,7 @@ package com.azat4dev.demobooking.domain.identity.values;
 
 import org.apache.commons.validator.routines.EmailValidator;
 
-public class Email {
+public final class Email {
 
     private final String value;
 
@@ -30,5 +30,15 @@ public class Email {
     public static Email makeFromString(String text) throws WrongEmailFormatException {
         validateEmail(text);
         return new Email(text);
+    }
+
+    @Override
+    public boolean equals(Object email) {
+        if (!(email instanceof Email)) {
+            return false;
+        }
+
+        Email other = (Email) email;
+        return value.equals(other.value);
     }
 }

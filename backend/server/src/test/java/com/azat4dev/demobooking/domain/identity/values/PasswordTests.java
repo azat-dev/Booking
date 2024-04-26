@@ -12,8 +12,7 @@ public class PasswordTests {
     public void given_wrong_password__when_create_new__then_throw_exception() {
 
         // Given
-        final var wrongCharacters = "(){}[]|`¬¦! \"£$%^&*\"<>:;#~_-+=,@.";
-        final var wrongPassword = "wrongPassword" + wrongCharacters;
+        final var wrongPassword = "1234 ";
 
         // When
         final var exception = assertThrows(
@@ -22,7 +21,7 @@ public class PasswordTests {
         );
 
         // Then
-        assertThat(exception).isInstanceOf(WrongEmailFormatException.class);
+        assertThat(exception).isInstanceOf(WrongPasswordFormatException.class);
     }
 
     @Test
