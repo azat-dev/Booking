@@ -26,4 +26,8 @@ export default class Date {
     public isSame = (date: Date): boolean => {
         return this.value.isSame(date.value);
     };
+
+    public diff = (date: Date): number => {
+        return this.value.diff(date.value, "day");
+    };
 }

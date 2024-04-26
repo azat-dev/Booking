@@ -17,6 +17,7 @@ import {
 import useUpdatesFrom from "../../../utils/binding/useUpdatesFrom";
 import { CostDetailsStatus } from "./RequestReservationCardViewModel";
 import DateRangePicker from "../../../components/date-picker/date-range-picker/DateRangePicker";
+import GuestsQuantityInput from "../../../components/guests-quantity-input/GuestsQuantityInput";
 
 const RequestReservationCard = ({ vm }: PropsRequestReservationCard) => {
     const [costDetails, isReservationButtonLoading, reservationButtonText] =
@@ -29,6 +30,7 @@ const RequestReservationCard = ({ vm }: PropsRequestReservationCard) => {
     return (
         <Card variant="outlined" sx={{ boxSizing: "border-box" }}>
             <DateRangePicker vm={vm.dateRangePicker} />
+            <GuestsQuantityInput vm={vm.guestsQuantityInput} />
 
             <Button
                 size="lg"

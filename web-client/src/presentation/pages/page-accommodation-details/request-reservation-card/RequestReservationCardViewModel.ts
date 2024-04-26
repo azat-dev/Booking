@@ -10,6 +10,8 @@ import Cost from "../../../../domain/booking/values/Cost";
 import DatesRange from "../../../../domain/booking/values/DatesRange";
 import GuestsQuantity from "../../../../domain/booking/values/GuestsQuantity";
 import AdultQuantity from "../../../../domain/booking/values/AdultQuantity";
+import Date from "../../../../domain/booking/values/Date";
+import GuestsQuantityInputViewModel from "../../../components/guests-quantity-input/GuestsQuantityInputViewModel";
 
 export enum CostDetailsStatus {
     LOADING = "loading",
@@ -32,8 +34,8 @@ export type CostDetails =
       };
 
 class TestAvailableDates extends AvailableDates {
-    isAvailable = (date: Date): boolean => {
-        return dayjs(date).isAfter(new Date());
+    isAvailable = (date: globalThis.Date): boolean => {
+        return dayjs(date).isAfter(new globalThis.Date());
     };
 }
 
@@ -66,6 +68,8 @@ class RequestReservationCardViewModel {
     public readonly dateRangePicker: DateRangePickerViewModel;
     private currentDateRange: CalendarRange | undefined;
 
+    public readonly guestsQuantityInput: GuestsQuantityInputViewModel;
+
     public reservationButton: LoadingButtonViewModel;
 
     public constructor(
@@ -74,6 +78,12 @@ class RequestReservationCardViewModel {
             guests: GuestsQuantity
         ) => Promise<Cost>
     ) {
+        this.guestsQuantityInput = new GuestsQuantityInputViewModel(
+            new GuestsQuantity(new AdultQuantity(1)),
+            () => {
+                throw new Error("Not implemented");
+            }
+        );
         this.dateRangePicker = new DateRangePickerViewModel(
             this.currentDateRange,
             new TestAvailableDates(),
@@ -108,8 +118,8 @@ class RequestReservationCardViewModel {
 
         const cost = await this.getCostDetails(
             new DatesRange(
-                this.currentDateRange!.start,
-                this.currentDateRange!.end!
+                Date.fromDate(this.currentDateRange!.start),
+                Date.fromDate(this.currentDateRange!.end!)
             ),
             new GuestsQuantity(new AdultQuantity(1))
         );
