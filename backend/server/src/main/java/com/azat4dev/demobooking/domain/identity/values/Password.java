@@ -25,4 +25,22 @@ public final class Password {
         validate(password);
         return new Password(password);
     }
+
+    public String getValue() {
+        return value;
+    }
+
+    @Override
+    public boolean equals(Object obj) {
+
+        if (!(obj instanceof Password other)) {
+            return false;
+        }
+
+        if (this == obj) {
+            return true;
+        }
+
+        return this.value.equals(other.getValue());
+    }
 }

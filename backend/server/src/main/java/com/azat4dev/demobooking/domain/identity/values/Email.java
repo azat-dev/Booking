@@ -33,12 +33,15 @@ public final class Email {
     }
 
     @Override
-    public boolean equals(Object email) {
-        if (!(email instanceof Email)) {
+    public boolean equals(Object obj) {
+        if (!(obj instanceof Email other)) {
             return false;
         }
 
-        Email other = (Email) email;
-        return value.equals(other.value);
+        if (this == obj) {
+            return true;
+        }
+
+        return value.equals(other.getValue());
     }
 }
