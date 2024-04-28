@@ -11,11 +11,6 @@ import io.jsonwebtoken.security.Keys;
 import javax.crypto.SecretKey;
 
 import io.jsonwebtoken.ExpiredJwtException;
-import io.jsonwebtoken.Jwts;
-import io.jsonwebtoken.MalformedJwtException;
-import io.jsonwebtoken.UnsupportedJwtException;
-import io.jsonwebtoken.security.Keys;
-import io.jsonwebtoken.security.SignatureException;
 
 import java.util.Date;
 
@@ -74,7 +69,7 @@ public final class VerificationTokensServiceImpl implements VerificationTokensSe
                 .getPayload()
                 .getSubject();
 
-            return UserId.fromString(encodedUserId);
+           return UserId.fromString(encodedUserId);
         } catch (ExpiredJwtException ex) {
             throw new ExpiredVerificationToken();
         } catch (Exception ex) {

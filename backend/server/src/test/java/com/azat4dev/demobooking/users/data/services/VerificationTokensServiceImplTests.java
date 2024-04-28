@@ -8,6 +8,7 @@ import org.junit.jupiter.api.Test;
 import java.util.Date;
 
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.mockito.BDDMockito.given;
 import static org.mockito.Mockito.mock;
 
@@ -55,5 +56,44 @@ public class VerificationTokensServiceImplTests {
 
         // Then
         assertThat(parsedUserId).isEqualTo(userId);
+    }
+
+    @Test
+    void test_given_expired_token__when_parse__then_throw_exception() throws ExpiredVerificationToken, WrongFormatOfVerificationToken {
+
+        // Given
+        final var sut = createSUT();
+        final var userId = UserId.generateNew();
+        final var time = new Date();
+
+        given(sut.timeProvider.currentTime()).willReturn(time);
+
+        // When
+        final var token = sut.service.makeVerificationToken(userId);
+
+        // Then
+        sut.service.parse(token);
+
+        final var nextTime = new Date(time.getTime() + sut.expirationTimeMs + 1000);
+        given(sut.timeProvider.currentTime()).willReturn(nextTime);
+
+        // When
+        assertThrows(ExpiredVerificationToken.class, () -> sut.service.parse(token));
+    }
+
+    @Test
+    void test_given_wrong_token__when_parse__then_throw_exception() throws ExpiredVerificationToken, WrongFormatOfVerificationToken {
+
+        // Given
+        final var sut = createSUT();
+        final var invalidToken = new VerificationToken("invalidToken");
+
+        given(sut.timeProvider.currentTime()).willReturn(new Date());
+
+        // When
+        final var exception = assertThrows(WrongFormatOfVerificationToken.class, () -> sut.service.parse(invalidToken));
+
+        // Then
+        assertThat(exception).isInstanceOf(WrongFormatOfVerificationToken.class);
     }
 }
