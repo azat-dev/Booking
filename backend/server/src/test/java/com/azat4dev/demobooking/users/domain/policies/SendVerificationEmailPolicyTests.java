@@ -127,6 +127,18 @@ class SendVerificationEmailPolicyImpl implements SendVerificationEmailPolicy {
     @Override
     public void execute(UserCreated event) {
 
+        final var user = event.getPayload().getUser();
+        final var userId = user.getId();
+
+        final var builtData = emailBuilder.build(userId);
+
+        emailService.send(
+            user.getEmail(),
+            new EmailData(
+                builtData.getSubject(),
+                builtData.getBody()
+            )
+        );
     }
 }
 
@@ -205,7 +217,7 @@ public class SendVerificationEmailPolicyTests {
         then(sut.emailService)
             .should(times(1))
             .send(
-                email,
+                eq(email),
                 assertArg(m -> {
                     assertThat(m.getSubject()).isEqualTo(builtEmail.getSubject());
                     assertThat(m.getBody()).isEqualTo(builtEmail.getBody());
