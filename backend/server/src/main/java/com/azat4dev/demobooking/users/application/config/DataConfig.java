@@ -5,10 +5,13 @@ import com.azat4dev.demobooking.common.utils.SystemTimeProvider;
 import com.azat4dev.demobooking.common.utils.TimeProvider;
 import com.azat4dev.demobooking.users.domain.interfaces.repositories.UsersRepository;
 import com.azat4dev.demobooking.users.domain.interfaces.services.EmailService;
+import com.azat4dev.demobooking.users.domain.interfaces.services.EncodedPassword;
 import com.azat4dev.demobooking.users.domain.interfaces.services.PasswordService;
+import com.azat4dev.demobooking.users.domain.values.Password;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.security.core.token.TokenService;
+import org.springframework.security.crypto.password.PasswordEncoder;
 
 @Configuration
 public class DataConfig {
@@ -34,8 +37,13 @@ public class DataConfig {
     }
 
     @Bean
-    PasswordService passwordService() {
-        return null;
+    PasswordService passwordService(PasswordEncoder passwordEncoder) {
+        return new PasswordService() {
+            @Override
+            public EncodedPassword encodePassword(Password password) {
+                return new EncodedPassword(passwordEncoder.encode(password.getValue()));
+            }
+        };
     }
 
     @Bean
