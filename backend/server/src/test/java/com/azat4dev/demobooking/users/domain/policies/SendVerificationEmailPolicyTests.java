@@ -3,7 +3,7 @@ package com.azat4dev.demobooking.users.domain.policies;
 import com.azat4dev.demobooking.common.CommandId;
 import com.azat4dev.demobooking.users.domain.events.UserCreated;
 import com.azat4dev.demobooking.users.domain.events.UserCreatedPayload;
-import com.azat4dev.demobooking.users.domain.services.EmailService;
+import com.azat4dev.demobooking.users.domain.interfaces.services.EmailService;
 import com.azat4dev.demobooking.users.domain.services.EmailVerificationStatus;
 import com.azat4dev.demobooking.users.domain.entities.User;
 import com.azat4dev.demobooking.users.domain.services.VerificationEmailBuilder;
