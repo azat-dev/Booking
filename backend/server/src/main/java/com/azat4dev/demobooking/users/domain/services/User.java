@@ -1,6 +1,6 @@
 package com.azat4dev.demobooking.users.domain.services;
 
-import com.azat4dev.demobooking.users.domain.values.Email;
+import com.azat4dev.demobooking.users.domain.values.EmailAddress;
 import com.azat4dev.demobooking.users.domain.values.UserId;
 
 import java.util.Date;
@@ -8,12 +8,12 @@ import java.util.Date;
 public final class User {
 
     private final UserId id;
-    private final Email email;
+    private final EmailAddress email;
     private final EmailVerificationStatus emailVerificationStatus;
 
     private Date createdAt;
 
-    public User(UserId id, Email email, EmailVerificationStatus emailVerificationStatus, Date createdAt) {
+    public User(UserId id, EmailAddress email, EmailVerificationStatus emailVerificationStatus, Date createdAt) {
         if (id == null) {
             throw new NullPointerException("id");
         }
@@ -40,7 +40,7 @@ public final class User {
         return id;
     }
 
-    public Email getEmail() {
+    public EmailAddress getEmail() {
         return email;
     }
 

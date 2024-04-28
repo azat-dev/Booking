@@ -4,7 +4,7 @@ import com.azat4dev.demobooking.common.CommandId;
 import com.azat4dev.demobooking.users.domain.commands.CreateUser;
 import com.azat4dev.demobooking.users.domain.events.UserCreated;
 import com.azat4dev.demobooking.users.domain.events.UserCreatedPayload;
-import com.azat4dev.demobooking.users.domain.values.Email;
+import com.azat4dev.demobooking.users.domain.values.EmailAddress;
 import com.azat4dev.demobooking.users.domain.values.Password;
 import com.azat4dev.demobooking.users.domain.values.WrongEmailFormatException;
 import com.azat4dev.demobooking.users.domain.values.WrongPasswordFormatException;
@@ -37,7 +37,7 @@ public final class UsersServiceImpl implements UsersService {
     public void handle(CreateUser command) throws WrongEmailFormatException, WrongPasswordFormatException {
 
         final var userId = command.getUserId();
-        final var email = Email.makeFromString(command.getEmail());
+        final var email = EmailAddress.makeFromString(command.getEmail());
         final var currentDate = timeProvider.currentTime();
 
         final var encodedPassword = passwordService.encodePassword(

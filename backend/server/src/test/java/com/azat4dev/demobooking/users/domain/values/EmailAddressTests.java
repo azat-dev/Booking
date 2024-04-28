@@ -1,13 +1,11 @@
 package com.azat4dev.demobooking.users.domain.values;
 
-import com.azat4dev.demobooking.users.domain.values.Email;
-import com.azat4dev.demobooking.users.domain.values.WrongEmailFormatException;
 import org.junit.jupiter.api.Test;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 
-public class EmailTests {
+public class EmailAddressTests {
 
     @Test
     public void given_wrong_email__when_create_new__then_throw_exception() {
@@ -18,7 +16,7 @@ public class EmailTests {
         // When
         final var exception = assertThrows(
             WrongEmailFormatException.class,
-            () -> Email.makeFromString(wrongEmail)
+            () -> EmailAddress.makeFromString(wrongEmail)
         );
 
         // Then
@@ -32,7 +30,7 @@ public class EmailTests {
         final var validEmail = "valid@email.com";
 
         // When
-        final var email = Email.makeFromString(validEmail);
+        final var email = EmailAddress.makeFromString(validEmail);
 
         // Then
         assertThat(email).isNotNull();
@@ -44,8 +42,8 @@ public class EmailTests {
 
         // Given
         final var validEmail = "valid@email.com";
-        final var email1 = Email.makeFromString(validEmail);
-        final var email2 = Email.makeFromString(validEmail);
+        final var email1 = EmailAddress.makeFromString(validEmail);
+        final var email2 = EmailAddress.makeFromString(validEmail);
 
         // When
         final var isEqual = email1.equals(email2);
@@ -62,8 +60,8 @@ public class EmailTests {
         final var validEmail1 = "valid1@email.com";
         final var validEmail2 = "valid2@email.com";
 
-        final var email1 = Email.makeFromString(validEmail1);
-        final var email2 = Email.makeFromString(validEmail2);
+        final var email1 = EmailAddress.makeFromString(validEmail1);
+        final var email2 = EmailAddress.makeFromString(validEmail2);
 
         // When
         final var isEqual = email1.equals(email2);

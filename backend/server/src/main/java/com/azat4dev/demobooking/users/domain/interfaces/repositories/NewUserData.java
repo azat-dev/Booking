@@ -1,6 +1,6 @@
 package com.azat4dev.demobooking.users.domain.interfaces.repositories;
 
-import com.azat4dev.demobooking.users.domain.values.Email;
+import com.azat4dev.demobooking.users.domain.values.EmailAddress;
 import com.azat4dev.demobooking.users.domain.values.UserId;
 import com.azat4dev.demobooking.users.domain.interfaces.services.EncodedPassword;
 
@@ -9,13 +9,13 @@ import java.util.Date;
 public final class NewUserData {
     private UserId userId;
     private Date createdAt;
-    private Email email;
+    private EmailAddress email;
     private EncodedPassword encodedPassword;
 
     public NewUserData(
             UserId userId,
             Date createdAt,
-            Email email,
+            EmailAddress email,
             EncodedPassword encodedPassword
     ) {
 
@@ -49,7 +49,7 @@ public final class NewUserData {
         return createdAt;
     }
 
-    public Email getEmail() {
+    public EmailAddress getEmail() {
         return email;
     }
 

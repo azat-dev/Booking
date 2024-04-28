@@ -2,11 +2,13 @@ package com.azat4dev.demobooking.users.domain.values;
 
 import org.apache.commons.validator.routines.EmailValidator;
 
-public final class Email {
+import java.util.Objects;
+
+public final class EmailAddress {
 
     private final String value;
 
-    private Email(String value) {
+    private EmailAddress(String value) {
         this.value = value;
     }
 
@@ -27,21 +29,20 @@ public final class Email {
         }
     }
 
-    public static Email makeFromString(String text) throws WrongEmailFormatException {
+    public static EmailAddress makeFromString(String text) throws WrongEmailFormatException {
         validateEmail(text);
-        return new Email(text);
+        return new EmailAddress(text);
     }
 
     @Override
-    public boolean equals(Object obj) {
-        if (!(obj instanceof Email other)) {
-            return false;
-        }
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (!(o instanceof EmailAddress that)) return false;
+        return Objects.equals(getValue(), that.getValue());
+    }
 
-        if (this == obj) {
-            return true;
-        }
-
-        return value.equals(other.getValue());
+    @Override
+    public int hashCode() {
+        return Objects.hashCode(getValue());
     }
 }
