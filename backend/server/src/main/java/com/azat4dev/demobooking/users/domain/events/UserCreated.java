@@ -5,8 +5,8 @@ import com.azat4dev.demobooking.common.DomainEvent;
 
 public final class UserCreated extends DomainEvent {
 
-    private UserCreatedPayload payload;
-    private CommandId sourceCommandId;
+    private final UserCreatedPayload payload;
+    private final CommandId sourceCommandId;
 
     public UserCreated(
             CommandId sourceCommandId,

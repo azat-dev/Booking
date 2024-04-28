@@ -120,12 +120,12 @@ public class UsersServiceImplTests {
             assertThat(event).isInstanceOf(UserCreated.class);
             final var userCreated = (UserCreated) event;
             final var payload = userCreated.getPayload();
-            final var createdUser = payload.getUser();
+            final var createdUser = payload.user();
 
-            assertThat(createdUser.getId()).isEqualTo(userId);
-            assertThat(createdUser.getEmail()).isEqualTo(email);
-            assertThat(createdUser.getCreatedAt()).isEqualTo(currentTime);
-            assertThat(createdUser.getEmailVerificationStatus()).isEqualTo(EmailVerificationStatus.NOT_VERIFIED);
+            assertThat(createdUser.id()).isEqualTo(userId);
+            assertThat(createdUser.email()).isEqualTo(email);
+            assertThat(createdUser.createdAt()).isEqualTo(currentTime);
+            assertThat(createdUser.emailVerificationStatus()).isEqualTo(EmailVerificationStatus.NOT_VERIFIED);
         };
 
         then(sut.usersRepository)

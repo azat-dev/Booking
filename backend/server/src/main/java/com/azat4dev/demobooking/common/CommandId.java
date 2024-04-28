@@ -5,7 +5,7 @@ import java.util.UUID;
 
 public final class CommandId {
 
-    private UUID value;
+    private final UUID value;
 
     private CommandId(UUID value) {
         this.value = value;

@@ -5,10 +5,10 @@ import com.azat4dev.demobooking.users.domain.values.UserId;
 
 public final class CreateUser {
 
-    private CommandId id;
-    private String email;
-    private String password;
-    private UserId userId;
+    private final CommandId id;
+    private final String email;
+    private final String password;
+    private final UserId userId;
 
     public CreateUser(
             CommandId id,

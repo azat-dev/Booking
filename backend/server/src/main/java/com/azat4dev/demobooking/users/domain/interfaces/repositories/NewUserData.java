@@ -7,10 +7,10 @@ import com.azat4dev.demobooking.users.domain.interfaces.services.EncodedPassword
 import java.util.Date;
 
 public final class NewUserData {
-    private UserId userId;
-    private Date createdAt;
-    private EmailAddress email;
-    private EncodedPassword encodedPassword;
+    private final UserId userId;
+    private final Date createdAt;
+    private final EmailAddress email;
+    private final EncodedPassword encodedPassword;
 
     public NewUserData(
             UserId userId,

@@ -1,16 +1,7 @@
 package com.azat4dev.demobooking.users.domain.events;
 
-import com.azat4dev.demobooking.users.domain.services.User;
+import com.azat4dev.demobooking.users.domain.entities.User;
 
-public final class UserCreatedPayload {
+public record UserCreatedPayload(User user) {
 
-    private User user;
-
-    public UserCreatedPayload(User user) {
-        this.user = user;
-    }
-
-    public User getUser() {
-        return this.user;
-    }
 }

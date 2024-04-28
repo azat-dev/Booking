@@ -2,6 +2,7 @@ package com.azat4dev.demobooking.users.domain.services;
 
 import com.azat4dev.demobooking.common.CommandId;
 import com.azat4dev.demobooking.users.domain.commands.CreateUser;
+import com.azat4dev.demobooking.users.domain.entities.User;
 import com.azat4dev.demobooking.users.domain.events.UserCreated;
 import com.azat4dev.demobooking.users.domain.events.UserCreatedPayload;
 import com.azat4dev.demobooking.users.domain.values.EmailAddress;
