@@ -6,7 +6,7 @@ import java.util.Date;
 
 public interface VerificationTokensService {
 
-    VerificationToken makeVerificationToken(UserId userId, Date expirationDate);
+    VerificationToken makeVerificationToken(UserId userId);
 
     UserId parse(VerificationToken token) throws ExpiredVerificationToken, WrongFormatOfVerificationToken;
 }
