@@ -24,7 +24,7 @@ public class EmailTests {
     }
 
     @Test
-    public void given_valid_email__when_create_new__then_return_email() {
+    public void given_valid_email__when_create_new__then_return_email() throws WrongEmailFormatException {
 
         // Given
         final var validEmail = "valid@email.com";
@@ -38,7 +38,7 @@ public class EmailTests {
     }
 
     @Test
-    public void given_equal_emails__when_isEqual__then_return_true() {
+    public void given_equal_emails__when_isEqual__then_return_true() throws WrongEmailFormatException {
 
         // Given
         final var validEmail = "valid@email.com";
@@ -54,7 +54,7 @@ public class EmailTests {
     }
 
     @Test
-    public void given_equal_not_emails__when_isEqual__then_return_false() {
+    public void given_equal_not_emails__when_isEqual__then_return_false() throws WrongEmailFormatException {
 
         // Given
         final var validEmail1 = "valid1@email.com";

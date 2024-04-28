@@ -21,7 +21,7 @@ public final class Password {
         }
     }
 
-    public static Password makeFromString(String password) {
+    public static Password makeFromString(String password) throws  WrongPasswordFormatException {
         validate(password);
         return new Password(password);
     }

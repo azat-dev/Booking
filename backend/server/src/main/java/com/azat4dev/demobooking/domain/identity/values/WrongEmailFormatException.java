@@ -1,6 +1,6 @@
 package com.azat4dev.demobooking.domain.identity.values;
 
-public class WrongEmailFormatException extends RuntimeException {
+public class WrongEmailFormatException extends Exception {
 
     private final String email;
 

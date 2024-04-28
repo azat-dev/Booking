@@ -25,7 +25,7 @@ public class PasswordTests {
     }
 
     @Test
-    public void given_valid_password__when_create_new__then_return_object() {
+    public void given_valid_password__when_create_new__then_return_object() throws WrongPasswordFormatException {
 
         // Given
         final var validValue = "validpassword";
