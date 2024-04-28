@@ -4,6 +4,7 @@ import com.azat4dev.demobooking.domain.common.CommandId;
 import com.azat4dev.demobooking.domain.identity.commands.CreateUser;
 import com.azat4dev.demobooking.domain.common.DomainEvent;
 import com.azat4dev.demobooking.domain.identity.events.UserCreated;
+import com.azat4dev.demobooking.domain.identity.events.UserCreatedPayload;
 import com.azat4dev.demobooking.domain.identity.values.Email;
 import com.azat4dev.demobooking.domain.identity.values.Password;
 import com.azat4dev.demobooking.domain.identity.values.UserId;
@@ -125,15 +126,20 @@ class UserCreationFailedWrongPassword extends DomainEvent {
     }
 }
 
+
+interface TimeProvider {
+    Date currentTime();
+}
+
 class UsersServiceImpl implements UsersService {
 
-    private final Clock timeProvider;
+    private final TimeProvider timeProvider;
     private final UsersRepository usersRepository;
     private final EventsStore eventsStore;
     private final PasswordService passwordService;
 
     public UsersServiceImpl(
-            Clock timeProvider,
+            TimeProvider timeProvider,
             UsersRepository usersRepository,
             PasswordService passwordService,
             EventsStore eventsStore
@@ -145,8 +151,39 @@ class UsersServiceImpl implements UsersService {
     }
 
     @Override
-    public User handle(CreateUser command) {
-        return null;
+    public void handle(CreateUser command) {
+
+        final var userId = command.getUserId();
+        final var email = Email.makeFromString(command.getEmail());
+        final var currentDate = timeProvider.currentTime();
+
+        final var encodedPassword = passwordService.encodePassword(
+            Password.makeFromString(command.getPassword())
+        );
+
+        usersRepository.createUser(
+            new NewUserData(
+                userId,
+                currentDate,
+                email,
+                encodedPassword
+            )
+        );
+
+        eventsStore.publish(
+                new UserCreated(
+                    CommandId.generateNew(),
+                    currentDate.getTime(),
+                    new UserCreatedPayload(
+                            new User(
+                                userId,
+                                email,
+                                EmailVerificationStatus.NOT_VERIFIED,
+                                currentDate
+                            )
+                    )
+                )
+        );
     }
 }
 
@@ -156,7 +193,8 @@ public class UsersServiceImplTests {
             UsersService usersService,
             UsersRepository usersRepository,
             PasswordService passwordService,
-            EventsStore eventsStore
+            EventsStore eventsStore,
+            TimeProvider timeProvider
     ) {
     }
 
@@ -164,18 +202,21 @@ public class UsersServiceImplTests {
 
         UsersRepository usersRepository = mock(UsersRepository.class);
         EventsStore eventsStore = mock(EventsStore.class);
+
         final var passwordService = mock(PasswordService.class);
+        final var timeProvider = mock(TimeProvider.class);
 
         return new SUT(
                 new UsersServiceImpl(
-                        Clock.systemUTC(),
+                        timeProvider,
                         usersRepository,
                         passwordService,
                         eventsStore
                 ),
                 usersRepository,
                 passwordService,
-                eventsStore
+                eventsStore,
+                timeProvider
         );
     }
 
@@ -217,11 +258,14 @@ public class UsersServiceImplTests {
 
         willDoNothing().given(sut.eventsStore).publish(any());
 
+        given(sut.timeProvider.currentTime())
+            .willReturn(currentTime);
+
         given(sut.passwordService.encodePassword(any()))
             .willReturn(encodedPassword);
 
         // When
-        final var result = sut.usersService.handle(validCommand);
+        sut.usersService.handle(validCommand);
 
         // Then
         final Consumer<DomainEvent> assertUserCreatedEvent  = (event) -> {

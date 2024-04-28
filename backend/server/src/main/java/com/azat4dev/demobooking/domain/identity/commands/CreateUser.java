@@ -3,9 +3,6 @@ package com.azat4dev.demobooking.domain.identity.commands;
 import com.azat4dev.demobooking.domain.common.CommandId;
 import com.azat4dev.demobooking.domain.identity.values.UserId;
 
-import java.util.Optional;
-import java.util.Set;
-
 public final class CreateUser {
 
     private CommandId id;
@@ -32,6 +29,7 @@ public final class CreateUser {
         }
 
         this.id = id;
+        this.userId = userId;
         this.email = email;
         this.password = password;
     }
