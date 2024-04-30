@@ -8,7 +8,9 @@ import com.azat4dev.demobooking.users.domain.interfaces.repositories.UsersReposi
 import com.azat4dev.demobooking.users.domain.interfaces.services.EmailService;
 import com.azat4dev.demobooking.users.domain.interfaces.services.EncodedPassword;
 import com.azat4dev.demobooking.users.domain.interfaces.services.PasswordService;
+import com.azat4dev.demobooking.users.domain.services.EmailData;
 import com.azat4dev.demobooking.users.domain.services.VerificationTokensService;
+import com.azat4dev.demobooking.users.domain.values.EmailAddress;
 import com.azat4dev.demobooking.users.domain.values.Password;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
@@ -46,7 +48,12 @@ public class DataConfig {
 
     @Bean
     EmailService emailService() {
-        return null;
+        return new EmailService() {
+            @Override
+            public void send(EmailAddress email, EmailData data) {
+                System.out.println("Email sent to " + email);
+            }
+        };
     }
 
     @Bean
