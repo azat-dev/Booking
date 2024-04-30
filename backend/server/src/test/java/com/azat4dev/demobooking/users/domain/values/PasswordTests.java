@@ -1,8 +1,6 @@
 package com.azat4dev.demobooking.users.domain.values;
 
 
-import com.azat4dev.demobooking.users.domain.values.Password;
-import com.azat4dev.demobooking.users.domain.values.WrongPasswordFormatException;
 import org.junit.jupiter.api.Test;
 
 import static org.assertj.core.api.Assertions.assertThat;
@@ -18,8 +16,8 @@ public class PasswordTests {
 
         // When
         final var exception = assertThrows(
-                WrongPasswordFormatException.class,
-                () -> Password.makeFromString(wrongPassword)
+            WrongPasswordFormatException.class,
+            () -> Password.makeFromString(wrongPassword)
         );
 
         // Then

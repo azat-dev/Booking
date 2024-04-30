@@ -1,7 +1,9 @@
 package com.azat4dev.demobooking.users.domain.values;
 
-public final class WrongPasswordFormatException extends Exception {
+import com.azat4dev.demobooking.common.DomainDataFormatException;
+
+public final class WrongPasswordFormatException extends DomainDataFormatException {
     public WrongPasswordFormatException() {
-        super("Wrong format of password");
+        super("Wrong password format");
     }
 }

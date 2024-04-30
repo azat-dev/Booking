@@ -1,6 +1,7 @@
 package com.azat4dev.demobooking.users.presentation.api;
 
 import com.azat4dev.demobooking.users.application.config.WebSecurityConfig;
+import com.azat4dev.demobooking.users.domain.UserHelpers;
 import com.azat4dev.demobooking.users.domain.interfaces.services.EncodedPassword;
 import com.azat4dev.demobooking.users.domain.services.UsersService;
 import com.azat4dev.demobooking.users.domain.values.UserId;
@@ -61,7 +62,7 @@ public class AuthenticationControllerTests {
 
 
     @Test
-    void test_singUp_givenNotMatchingPasswords_thenReturnError() throws Exception {
+    void singUp_givenNotMatchingPasswords_thenReturnError() throws Exception {
 
         // Given
         final var password1 = "password";
@@ -99,7 +100,7 @@ public class AuthenticationControllerTests {
     }
 
     @Test
-    void test_singUp_givenValidCredentials_thenCreateANewUser() throws Exception {
+    void singUp_givenValidCredentials_thenCreateANewUser() throws Exception {
 
         // Given
         final var userId = UserId.generateNew();
@@ -153,7 +154,7 @@ public class AuthenticationControllerTests {
 
         // Then
         then(tokenProvider).should(times(1))
-                .generateAccessToken(userId);
+            .generateAccessToken(userId);
 
         then(tokenProvider).should(times(1))
             .generateRefreshToken(userId);
@@ -168,6 +169,51 @@ public class AuthenticationControllerTests {
             .andExpect(jsonPath("$.authenticationInfo.access").value(expectedAccessToken))
             .andExpect(jsonPath("$.authenticationInfo.refresh").value(expectedRefreshToken));
 
+    }
+
+    @Test
+    void singUp_givenWrongDataFormat_thenReturnError() throws Exception {
+
+        // Given
+        final var request = new SignUpRequest(
+            new FullName(
+                "",
+                ""
+            ),
+            "",
+            "",
+            ""
+        );
+
+        // When
+        final var response = performSignUpRequest(request);
+
+        // Then
+        response.andExpect(status().isBadRequest());
+    }
+
+    // Helpers
+
+    private UserPrincipal givenExistingPrincipal() {
+
+        final var userId = UserId.generateNew();
+        final var password = new EncodedPassword("password");
+
+        final var userPrincipal = new UserPrincipal(
+            userId,
+            password,
+            Collections.singletonList(new SimpleGrantedAuthority("ROLE_USER"))
+        );
+
+        given(authenticationManager.authenticate(any())).willReturn(
+            new UsernamePasswordAuthenticationToken(
+                userPrincipal,
+                password,
+                Collections.singletonList(new SimpleGrantedAuthority("ROLE_USER"))
+            )
+        );
+
+        return userPrincipal;
     }
 
     private ResultActions performSignUpRequest(SignUpRequest request) throws Exception {

@@ -14,7 +14,7 @@ public final class LastName {
         }
 
         if (value.length() > MAX_LENGTH) {
-            throw new LastNameMaxLengthException();
+            throw new LastNameMaxLengthException(value);
         }
 
         this.value = value;

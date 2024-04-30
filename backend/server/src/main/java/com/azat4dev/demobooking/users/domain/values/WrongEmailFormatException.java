@@ -1,6 +1,8 @@
 package com.azat4dev.demobooking.users.domain.values;
 
-public class WrongEmailFormatException extends Exception {
+import com.azat4dev.demobooking.common.DomainDataFormatException;
+
+public class WrongEmailFormatException extends DomainDataFormatException {
 
     private final String email;
 

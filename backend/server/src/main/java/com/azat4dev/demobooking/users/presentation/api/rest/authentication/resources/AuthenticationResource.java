@@ -25,5 +25,5 @@ public interface AuthenticationResource {
             @Valid @RequestBody SignUpRequest signUpRequest,
             HttpServletRequest request,
             HttpServletResponse response
-    );
+    ) throws Exception;
 }
