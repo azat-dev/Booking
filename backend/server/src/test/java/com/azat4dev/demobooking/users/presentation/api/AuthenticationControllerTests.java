@@ -5,11 +5,13 @@ import static org.mockito.ArgumentMatchers.matches;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
 
+import com.azat4dev.demobooking.users.application.config.WebSecurityConfig;
 import com.azat4dev.demobooking.users.presentation.api.rest.authentication.resources.AuthenticationController;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
+import org.springframework.context.annotation.Import;
 import org.springframework.http.MediaType;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.test.web.servlet.MockMvc;
@@ -21,6 +23,7 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.azat4dev.demobooking.users.presentation.api.rest.authentication.entities.SignUpRequest;
 
 @WebMvcTest(AuthenticationController.class)
+@Import(WebSecurityConfig.class)
 public class AuthenticationControllerTests {
 
     @Autowired
@@ -33,7 +36,7 @@ public class AuthenticationControllerTests {
     private AuthenticationManager authenticationManager;
 
     @Test
-    void singUp_givenNotMatchingPasswords_thenReturnError() throws Exception {
+    void test_singUp_givenNotMatchingPasswords_thenReturnError() throws Exception {
 
         // Given
         final var username = "username";
@@ -75,5 +78,4 @@ public class AuthenticationControllerTests {
                 request
         );
     }
-
 }
