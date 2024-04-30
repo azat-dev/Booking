@@ -1,10 +1,9 @@
 package com.azat4dev.demobooking.users.presentation.security.services;
 
-import java.util.Collections;
-
-import org.springframework.lang.NonNull;
 import org.springframework.security.authentication.AbstractAuthenticationToken;
 import org.springframework.util.Assert;
+
+import java.util.Collections;
 
 public class JWTAuthenticationToken extends AbstractAuthenticationToken {
 

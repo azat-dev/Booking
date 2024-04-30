@@ -2,7 +2,6 @@ package com.azat4dev.demobooking.users.domain.events;
 
 import com.azat4dev.demobooking.common.CommandId;
 import com.azat4dev.demobooking.common.DomainEvent;
-import org.springframework.lang.NonNull;
 
 public final class UserCreated extends DomainEvent {
 
@@ -10,9 +9,9 @@ public final class UserCreated extends DomainEvent {
     private final CommandId sourceCommandId;
 
     public UserCreated(
-            CommandId sourceCommandId,
-            long timestamp,
-            UserCreatedPayload payload
+        CommandId sourceCommandId,
+        long timestamp,
+        UserCreatedPayload payload
     ) {
         super(timestamp);
 

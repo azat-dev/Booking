@@ -1,7 +1,6 @@
 package com.azat4dev.demobooking.users.presentation.api;
 
 import com.azat4dev.demobooking.users.application.config.WebSecurityConfig;
-import com.azat4dev.demobooking.users.domain.entities.User;
 import com.azat4dev.demobooking.users.domain.interfaces.services.EncodedPassword;
 import com.azat4dev.demobooking.users.domain.services.UsersService;
 import com.azat4dev.demobooking.users.domain.values.UserId;
@@ -27,7 +26,6 @@ import org.springframework.test.web.servlet.ResultActions;
 
 import java.util.Collections;
 import java.util.List;
-
 
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.BDDMockito.*;
@@ -124,8 +122,11 @@ public class AuthenticationControllerTests {
         final var expectedAccessToken = "accessToken";
         final var expectedRefreshToken = "refreshToken";
 
-        given(tokenProvider.generateAccessToken(userId)).willReturn(expectedAccessToken);
-        given(tokenProvider.generateRefreshToken(userId)).willReturn(expectedRefreshToken);
+        given(tokenProvider.generateAccessToken(any()))
+            .willReturn(expectedAccessToken);
+
+        given(tokenProvider.generateRefreshToken(any()))
+            .willReturn(expectedRefreshToken);
 
         final var userPrincipal = new UserPrincipal(
             userId,
@@ -141,19 +142,31 @@ public class AuthenticationControllerTests {
 
         given(authenticationManager.authenticate(any())).willReturn(usernamePasswordToken);
 
+        given(tokenProvider.generateAccessToken(userId))
+            .willReturn(expectedAccessToken);
+
+        given(tokenProvider.generateRefreshToken(userId))
+            .willReturn(expectedRefreshToken);
+
         // When
         final var action = performSignUpRequest(request);
 
         // Then
+        then(tokenProvider).should(times(1))
+                .generateAccessToken(userId);
+
+        then(tokenProvider).should(times(1))
+            .generateRefreshToken(userId);
+
         then(passwordEncoder).should(times(1))
             .encode(eq(password.value()));
 
         action.andExpect(status().isCreated())
             .andExpect(authenticated());
 
-        action.andExpect(jsonPath("$.userId").value(userId.toString()))
-            .andExpect(jsonPath("$.accessToken").value(expectedAccessToken))
-            .andExpect(jsonPath("$.refreshToken").value(expectedRefreshToken));
+        action.andExpect(jsonPath("$.userId").isNotEmpty())
+            .andExpect(jsonPath("$.authenticationInfo.access").value(expectedAccessToken))
+            .andExpect(jsonPath("$.authenticationInfo.refresh").value(expectedRefreshToken));
 
     }
 

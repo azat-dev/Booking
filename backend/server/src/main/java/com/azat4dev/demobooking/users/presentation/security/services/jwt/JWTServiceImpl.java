@@ -1,10 +1,5 @@
 package com.azat4dev.demobooking.users.presentation.security.services.jwt;
 
-import java.util.Date;
-import java.util.UUID;
-
-import javax.crypto.SecretKey;
-
 import com.azat4dev.demobooking.common.utils.TimeProvider;
 import com.azat4dev.demobooking.users.domain.values.UserId;
 import io.jsonwebtoken.ExpiredJwtException;
@@ -13,7 +8,9 @@ import io.jsonwebtoken.MalformedJwtException;
 import io.jsonwebtoken.UnsupportedJwtException;
 import io.jsonwebtoken.security.Keys;
 import io.jsonwebtoken.security.SignatureException;
-import org.springframework.lang.NonNull;
+
+import javax.crypto.SecretKey;
+import java.util.Date;
 
 public final class JWTServiceImpl implements JWTService {
 

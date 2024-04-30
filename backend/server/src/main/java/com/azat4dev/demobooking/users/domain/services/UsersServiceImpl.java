@@ -4,17 +4,12 @@ import com.azat4dev.demobooking.common.CommandId;
 import com.azat4dev.demobooking.common.EventsStore;
 import com.azat4dev.demobooking.common.utils.TimeProvider;
 import com.azat4dev.demobooking.users.domain.commands.CreateUser;
-import com.azat4dev.demobooking.users.domain.entities.User;
 import com.azat4dev.demobooking.users.domain.events.UserCreated;
 import com.azat4dev.demobooking.users.domain.events.UserCreatedPayload;
 import com.azat4dev.demobooking.users.domain.interfaces.repositories.NewUserData;
 import com.azat4dev.demobooking.users.domain.interfaces.repositories.UsersRepository;
-import com.azat4dev.demobooking.users.domain.interfaces.services.PasswordService;
-import com.azat4dev.demobooking.users.domain.values.EmailAddress;
-import com.azat4dev.demobooking.users.domain.values.Password;
 import com.azat4dev.demobooking.users.domain.values.WrongEmailFormatException;
 import com.azat4dev.demobooking.users.domain.values.WrongPasswordFormatException;
-import org.springframework.lang.NonNull;
 
 public final class UsersServiceImpl implements UsersService {
 

@@ -3,7 +3,6 @@ package com.azat4dev.demobooking.users.presentation.security.services;
 import com.azat4dev.demobooking.users.presentation.security.services.jwt.JWTService;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
-import org.springframework.lang.NonNull;
 import org.springframework.security.authentication.AuthenticationProvider;
 import org.springframework.security.core.Authentication;
 

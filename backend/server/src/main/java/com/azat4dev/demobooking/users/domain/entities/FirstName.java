@@ -1,7 +1,5 @@
 package com.azat4dev.demobooking.users.domain.entities;
 
-import org.springframework.lang.NonNull;
-
 import java.util.Objects;
 
 public final class FirstName {

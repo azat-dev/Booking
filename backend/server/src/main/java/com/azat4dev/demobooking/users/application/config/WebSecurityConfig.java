@@ -2,8 +2,11 @@ package com.azat4dev.demobooking.users.application.config;
 
 import com.azat4dev.demobooking.users.domain.interfaces.repositories.UsersRepository;
 import com.azat4dev.demobooking.users.domain.interfaces.services.EmailService;
+import com.azat4dev.demobooking.users.domain.interfaces.services.EncodedPassword;
+import com.azat4dev.demobooking.users.domain.interfaces.services.PasswordService;
 import com.azat4dev.demobooking.users.domain.services.EmailData;
 import com.azat4dev.demobooking.users.domain.values.EmailAddress;
+import com.azat4dev.demobooking.users.domain.values.Password;
 import com.azat4dev.demobooking.users.presentation.security.services.CustomUserDetailsService;
 import com.azat4dev.demobooking.users.presentation.security.services.CustomUserDetailsServiceImpl;
 import com.azat4dev.demobooking.users.presentation.security.services.JwtAuthenticationFilter;
@@ -20,6 +23,8 @@ import org.springframework.security.config.annotation.web.configuration.EnableWe
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.web.SecurityFilterChain;
+import org.springframework.security.web.context.RequestAttributeSecurityContextRepository;
+import org.springframework.security.web.context.SecurityContextRepository;
 import org.springframework.web.cors.CorsConfiguration;
 import org.springframework.web.cors.CorsConfigurationSource;
 import org.springframework.web.cors.UrlBasedCorsConfigurationSource;
@@ -72,6 +77,16 @@ public class WebSecurityConfig {
     }
 
     @Bean
+    PasswordService passwordService(PasswordEncoder passwordEncoder) {
+        return new PasswordService() {
+            @Override
+            public EncodedPassword encodePassword(Password password) {
+                return new EncodedPassword(passwordEncoder.encode(password.getValue()));
+            }
+        };
+    }
+
+    @Bean
     EmailService emailService() {
         return new EmailService() {
             @Override
@@ -113,5 +128,10 @@ public class WebSecurityConfig {
         return new CustomUserDetailsServiceImpl(
             usersRepository
         );
+    }
+
+    @Bean
+    public SecurityContextRepository securityContextRepository() {
+        return new RequestAttributeSecurityContextRepository();
     }
 }
