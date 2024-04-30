@@ -21,16 +21,15 @@ public class SendVerificationEmailPolicyImpl implements SendVerificationEmailPol
     @Override
     public void execute(UserCreated event) {
 
-        final var user = event.getPayload().user();
-        final var userId = user.id();
-
+        final var payload = event.getPayload();
+        final var userId = payload.userId();
         final var builtData = emailBuilder.build(userId);
 
         emailService.send(
-            user.email(),
+            payload.email(),
             new EmailData(
-                    builtData.subject(),
-                    builtData.body()
+                builtData.subject(),
+                builtData.body()
             )
         );
     }

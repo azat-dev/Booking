@@ -3,8 +3,8 @@ package com.azat4dev.demobooking.users.presentation.api.rest.authentication.enti
 import jakarta.validation.constraints.NotNull;
 
 public record SignUpResponse(
-        @NotNull AuthenticationResponse authenticationInfo,
-        @NotNull String userId
+    @NotNull AuthenticationResponse authenticationInfo,
+    @NotNull String userId
 ) {
 
 }

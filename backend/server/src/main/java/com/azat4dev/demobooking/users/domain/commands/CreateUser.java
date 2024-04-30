@@ -1,52 +1,16 @@
 package com.azat4dev.demobooking.users.domain.commands;
 
 import com.azat4dev.demobooking.common.CommandId;
+import com.azat4dev.demobooking.users.domain.entities.FullName;
+import com.azat4dev.demobooking.users.domain.interfaces.services.EncodedPassword;
+import com.azat4dev.demobooking.users.domain.values.EmailAddress;
 import com.azat4dev.demobooking.users.domain.values.UserId;
 
-public final class CreateUser {
-
-    private final CommandId id;
-    private final String email;
-    private final String password;
-    private final UserId userId;
-
-    public CreateUser(
-            CommandId id,
-            UserId userId,
-            String email,
-            String password
-    ) {
-        if (id == null) {
-            throw new NullPointerException("id");
-        }
-
-        if (email == null) {
-            throw new NullPointerException("email");
-        }
-
-        if (password == null) {
-            throw new NullPointerException("password");
-        }
-
-        this.id = id;
-        this.userId = userId;
-        this.email = email;
-        this.password = password;
-    }
-
-    public CommandId getId() {
-        return id;
-    }
-
-    public UserId getUserId() {
-        return this.userId;
-    }
-
-    public String getEmail() {
-        return email;
-    }
-
-    public String getPassword() {
-        return password;
-    }
+public record CreateUser(
+    CommandId id,
+    UserId userId,
+    FullName fullName,
+    EmailAddress email,
+    EncodedPassword encodedPassword
+) {
 }

@@ -2,6 +2,7 @@ package com.azat4dev.demobooking.users.domain.events;
 
 import com.azat4dev.demobooking.common.CommandId;
 import com.azat4dev.demobooking.common.DomainEvent;
+import org.springframework.lang.NonNull;
 
 public final class UserCreated extends DomainEvent {
 
@@ -14,12 +15,6 @@ public final class UserCreated extends DomainEvent {
             UserCreatedPayload payload
     ) {
         super(timestamp);
-        if (sourceCommandId == null) {
-            throw new NullPointerException("sourceCommandId");
-        }
-        if (payload == null) {
-            throw new NullPointerException("payload");
-        }
 
         this.payload = payload;
         this.sourceCommandId = sourceCommandId;

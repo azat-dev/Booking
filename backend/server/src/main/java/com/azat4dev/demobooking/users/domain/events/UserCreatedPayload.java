@@ -1,7 +1,17 @@
 package com.azat4dev.demobooking.users.domain.events;
 
-import com.azat4dev.demobooking.users.domain.entities.User;
+import com.azat4dev.demobooking.users.domain.entities.FullName;
+import com.azat4dev.demobooking.users.domain.services.EmailVerificationStatus;
+import com.azat4dev.demobooking.users.domain.values.EmailAddress;
+import com.azat4dev.demobooking.users.domain.values.UserId;
 
-public record UserCreatedPayload(User user) {
+import java.util.Date;
 
+public record UserCreatedPayload(
+    Date createdAt,
+    UserId userId,
+    FullName fullName,
+    EmailAddress email,
+    EmailVerificationStatus emailVerificationStatus
+) {
 }

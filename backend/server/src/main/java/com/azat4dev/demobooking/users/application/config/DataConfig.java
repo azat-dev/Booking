@@ -3,67 +3,36 @@ package com.azat4dev.demobooking.users.application.config;
 import com.azat4dev.demobooking.common.EventsStore;
 import com.azat4dev.demobooking.common.utils.SystemTimeProvider;
 import com.azat4dev.demobooking.common.utils.TimeProvider;
-import com.azat4dev.demobooking.users.data.services.VerificationTokensServiceImpl;
+import com.azat4dev.demobooking.users.domain.entities.User;
+import com.azat4dev.demobooking.users.domain.interfaces.repositories.NewUserData;
 import com.azat4dev.demobooking.users.domain.interfaces.repositories.UsersRepository;
-import com.azat4dev.demobooking.users.domain.interfaces.services.EmailService;
-import com.azat4dev.demobooking.users.domain.interfaces.services.EncodedPassword;
-import com.azat4dev.demobooking.users.domain.interfaces.services.PasswordService;
-import com.azat4dev.demobooking.users.domain.services.EmailData;
-import com.azat4dev.demobooking.users.domain.services.VerificationTokensService;
-import com.azat4dev.demobooking.users.domain.values.EmailAddress;
-import com.azat4dev.demobooking.users.domain.values.Password;
-import org.springframework.beans.factory.annotation.Value;
+import com.azat4dev.demobooking.users.domain.values.UserId;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
-import org.springframework.security.core.token.TokenService;
-import org.springframework.security.crypto.password.PasswordEncoder;
+
+import java.util.Optional;
 
 @Configuration
 public class DataConfig {
 
     @Bean
     UsersRepository usersRepository() {
-        return null;
+        return new UsersRepository() {
+            @Override
+            public void createUser(NewUserData newUserData) {
+
+            }
+
+            @Override
+            public Optional<User> findById(UserId id) {
+                return Optional.empty();
+            }
+        };
     }
 
     @Bean
     TimeProvider timeProvider() {
         return new SystemTimeProvider();
-    }
-
-    @Bean
-    VerificationTokensService verificationTokensService(
-        @Value("app.security.verification_token.secret")
-        String jwtSecret,
-        @Value("app.security.verification_token.lifetimeMs")
-        long verificationTokensLifeTimeMs,
-        TimeProvider timeProvider
-    ) {
-        return new VerificationTokensServiceImpl(
-            jwtSecret,
-            verificationTokensLifeTimeMs,
-            timeProvider
-        );
-    }
-
-    @Bean
-    EmailService emailService() {
-        return new EmailService() {
-            @Override
-            public void send(EmailAddress email, EmailData data) {
-                System.out.println("Email sent to " + email);
-            }
-        };
-    }
-
-    @Bean
-    PasswordService passwordService(PasswordEncoder passwordEncoder) {
-        return new PasswordService() {
-            @Override
-            public EncodedPassword encodePassword(Password password) {
-                return new EncodedPassword(passwordEncoder.encode(password.getValue()));
-            }
-        };
     }
 
     @Bean

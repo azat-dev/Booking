@@ -1,6 +1,7 @@
 package com.azat4dev.demobooking.users.domain.policies;
 
 import com.azat4dev.demobooking.common.CommandId;
+import com.azat4dev.demobooking.users.domain.UserHelpers;
 import com.azat4dev.demobooking.users.domain.events.UserCreated;
 import com.azat4dev.demobooking.users.domain.events.UserCreatedPayload;
 import com.azat4dev.demobooking.users.domain.interfaces.services.EmailService;
@@ -65,12 +66,11 @@ public class SendVerificationEmailPolicyTests {
             CommandId.generateNew(),
             Clock.systemUTC().millis(),
             new UserCreatedPayload(
-                new User(
-                    userId,
-                    email,
-                    EmailVerificationStatus.NOT_VERIFIED,
-                    new Date()
-                )
+                new Date(),
+                userId,
+                UserHelpers.anyFullName(),
+                email,
+                EmailVerificationStatus.NOT_VERIFIED
             )
         );
 
