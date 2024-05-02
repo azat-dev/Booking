@@ -1,11 +1,11 @@
 package com.azat4dev.demobooking.users.presentation.api;
 
 import com.azat4dev.demobooking.users.application.config.WebSecurityConfig;
-import com.azat4dev.demobooking.users.domain.UserHelpers;
 import com.azat4dev.demobooking.users.domain.interfaces.services.EncodedPassword;
 import com.azat4dev.demobooking.users.domain.services.UsersService;
 import com.azat4dev.demobooking.users.domain.values.UserId;
 import com.azat4dev.demobooking.users.presentation.api.rest.authentication.entities.FullName;
+import com.azat4dev.demobooking.users.presentation.api.rest.authentication.entities.LoginByEmailRequest;
 import com.azat4dev.demobooking.users.presentation.api.rest.authentication.entities.SignUpRequest;
 import com.azat4dev.demobooking.users.presentation.api.rest.authentication.resources.AuthenticationController;
 import com.azat4dev.demobooking.users.presentation.security.entities.UserPrincipal;
@@ -19,6 +19,7 @@ import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.context.annotation.Import;
 import org.springframework.http.MediaType;
 import org.springframework.security.authentication.AuthenticationManager;
+import org.springframework.security.authentication.BadCredentialsException;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.crypto.password.PasswordEncoder;
@@ -31,6 +32,7 @@ import java.util.List;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.BDDMockito.*;
 import static org.springframework.security.test.web.servlet.response.SecurityMockMvcResultMatchers.authenticated;
+import static org.springframework.security.test.web.servlet.response.SecurityMockMvcResultMatchers.unauthenticated;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
@@ -59,6 +61,65 @@ public class AuthenticationControllerTests {
 
     @MockBean
     private JWTService tokenProvider;
+
+    @Test
+    void authenticate_givenUserNotExists_thenReturnError() throws Exception {
+
+        // Given
+        final var loginByEmailRequest = new LoginByEmailRequest(
+            "email@company.com",
+            "password"
+        );
+
+        // When
+        final var response = performAuthenticateRequest(loginByEmailRequest);
+
+        // Then
+        response.andExpect(status().isUnauthorized())
+            .andExpect(unauthenticated());
+    }
+
+    @Test
+    void authenticate_givenExistingUserWrongPassword_thenReturnError() throws Exception {
+
+        // Given
+        final var user = givenExistingPrincipal();
+        final var wrongPassword = user.getUsername() + "wrongPassword";
+
+        final var authenticationRequest = new LoginByEmailRequest(
+            user.getUsername(),
+            wrongPassword
+        );
+
+        given(authenticationManager.authenticate(any())).willThrow(new BadCredentialsException("Wrong password"));
+
+        // When
+        final var response = performAuthenticateRequest(authenticationRequest);
+
+        // Then
+        response.andExpect(status().isUnauthorized())
+            .andExpect(unauthenticated());
+    }
+
+    @Test
+    void authenticate_givenEmptyPassword_thenReturnError() throws Exception {
+
+        // Given
+        final var user = givenExistingPrincipal();
+        final var notValidPassword = "";
+
+        final var authenticationRequest = new LoginByEmailRequest(
+            user.getUsername(),
+            notValidPassword
+        );
+
+        // When
+        final var response = performAuthenticateRequest(authenticationRequest);
+
+        // Then
+        response.andExpect(status().isBadRequest())
+            .andExpect(unauthenticated());
+    }
 
 
     @Test
@@ -214,6 +275,14 @@ public class AuthenticationControllerTests {
         );
 
         return userPrincipal;
+    }
+
+    private ResultActions performAuthenticateRequest(LoginByEmailRequest request) throws Exception {
+        final String url = "/api/public/auth/token";
+        return performPostRequest(
+            url,
+            request
+        );
     }
 
     private ResultActions performSignUpRequest(SignUpRequest request) throws Exception {
