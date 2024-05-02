@@ -4,6 +4,9 @@ import com.azat4dev.demobooking.users.domain.entities.FirstName;
 import com.azat4dev.demobooking.users.domain.entities.FullName;
 import com.azat4dev.demobooking.users.domain.entities.LastName;
 import com.azat4dev.demobooking.users.domain.values.EmailAddress;
+import com.azat4dev.demobooking.users.domain.values.UserId;
+
+import java.util.UUID;
 
 public class UserHelpers {
     public static EmailAddress anyValidEmail() {
@@ -23,5 +26,9 @@ public class UserHelpers {
         } catch (Exception e) {
             throw new RuntimeException(e);
         }
+    }
+
+    public static UserId anyValidUserId() {
+        return UserId.fromString(UUID.randomUUID().toString());
     }
 }

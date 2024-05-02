@@ -4,8 +4,8 @@ spring:
 app:
   security:
     jwt:
-      privateKey: secretsecretsecretsecretsecretsecretsecretsecretsecretsecretsecretsecretsecret
-      publicKey: secretsecretsecretsecretsecretsecretsecretsecretsecretsecretsecretsecretsecret
+      publicKey: classpath:keys/public_key.pub
+      privateKey: classpath:keys/private_key.key
       accessToken:
         expirationInMs: 100000
       refreshToken:

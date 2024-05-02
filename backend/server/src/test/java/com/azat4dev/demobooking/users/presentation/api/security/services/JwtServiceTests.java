@@ -13,6 +13,7 @@ import java.time.Instant;
 import java.util.Date;
 import java.util.HashMap;
 
+import static com.azat4dev.demobooking.users.domain.UserHelpers.anyValidUserId;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.mockito.ArgumentMatchers.any;
@@ -79,7 +80,7 @@ class JwtServiceTests {
     void generateAccessToken_givenUserId_thenReturnToken() {
 
         // Given
-        final var userId = UserId.generateNew();
+        final var userId = anyValidUserId();
 
         final var sut = createSUT();
         final var authorities = anyAuthorities();
@@ -100,7 +101,7 @@ class JwtServiceTests {
     void generateRefreshToken_givenUserId_thenReturnToken() {
 
         // Given
-        final var userId = UserId.generateNew();
+        final var userId = anyValidUserId();
         final var sut = createSUT();
         final var authorities = anyAuthorities();
         final var expectedToken = "token";
@@ -167,7 +168,7 @@ class JwtServiceTests {
         final var sut = createSUT();
         final var now = new Date();
         final var token = "token";
-        final var userId = UserId.generateNew();
+        final var userId = anyValidUserId();
 
         final var expiredJwt = anyJwt(
             userId.toString(),
@@ -213,7 +214,7 @@ class JwtServiceTests {
     void getUserIdFromToken_givenValidToken_thenSuccess() {
 
         // Given
-        final var userId = UserId.generateNew();
+        final var userId = anyValidUserId();
         final var authorities = anyAuthorities();
 
         final var sut = createSUT();

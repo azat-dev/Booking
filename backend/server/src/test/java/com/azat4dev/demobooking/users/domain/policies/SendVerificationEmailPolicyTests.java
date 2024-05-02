@@ -17,6 +17,7 @@ import org.junit.jupiter.api.Test;
 import java.time.Clock;
 import java.util.Date;
 
+import static com.azat4dev.demobooking.users.domain.UserHelpers.anyValidUserId;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.ArgumentMatchers.assertArg;
 import static org.mockito.BDDMockito.*;
@@ -60,7 +61,7 @@ public class SendVerificationEmailPolicyTests {
         // Given
         final var sut = createSUT();
         final var email = anyValidEmail();
-        final var userId = UserId.generateNew();
+        final var userId = anyValidUserId();
 
         final var event = new UserCreated(
             CommandId.generateNew(),

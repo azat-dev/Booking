@@ -34,5 +34,5 @@ public interface AuthenticationResource {
         @Valid @RequestBody LoginByEmailRequest authenticationRequest,
         HttpServletRequest request,
         HttpServletResponse response
-    );
+    ) throws Exception;
 }

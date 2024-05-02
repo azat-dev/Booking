@@ -15,8 +15,7 @@ import org.junit.jupiter.api.Test;
 import java.util.Date;
 import java.util.function.Consumer;
 
-import static com.azat4dev.demobooking.users.domain.UserHelpers.anyFullName;
-import static com.azat4dev.demobooking.users.domain.UserHelpers.anyValidEmail;
+import static com.azat4dev.demobooking.users.domain.UserHelpers.*;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.BDDMockito.*;
 import static org.mockito.Mockito.mock;
@@ -62,7 +61,7 @@ public class UsersServiceImplTests {
         final var encodedPassword = anyEncodedPassword();
         final var currentTime = anyDateTime();
         final var commandId = CommandId.generateNew();
-        final var userId = UserId.generateNew();
+        final var userId = anyValidUserId();
         final var fullName = anyFullName();
 
         final var validCommand = new CreateUser(

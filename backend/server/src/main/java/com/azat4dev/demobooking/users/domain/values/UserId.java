@@ -4,7 +4,7 @@ import java.util.UUID;
 
 public record UserId(UUID value) {
 
-    public static UserId generateNew() {
+    protected static UserId generateNew() {
         return new UserId(UUID.randomUUID());
     }
 

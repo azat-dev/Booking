@@ -11,19 +11,24 @@ import com.azat4dev.demobooking.users.domain.services.UsersService;
 import com.azat4dev.demobooking.users.domain.values.EmailAddress;
 import com.azat4dev.demobooking.users.domain.values.Password;
 import com.azat4dev.demobooking.users.domain.values.UserId;
+import com.azat4dev.demobooking.users.domain.values.UserIdFactory;
 import com.azat4dev.demobooking.users.presentation.api.rest.authentication.entities.*;
-import com.azat4dev.demobooking.users.presentation.security.entities.UserPrincipal;
+import com.azat4dev.demobooking.users.presentation.security.services.CustomUserDetailsService;
 import com.azat4dev.demobooking.users.presentation.security.services.jwt.JwtService;
+import com.azat4dev.demobooking.users.presentation.security.services.jwt.UserIdNotFoundException;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import jakarta.validation.Valid;
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.core.log.LogMessage;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.security.authentication.AuthenticationManager;
-import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
+import org.springframework.security.config.annotation.authentication.configuration.AuthenticationConfiguration;
 import org.springframework.security.core.context.SecurityContextHolder;
-import org.springframework.security.crypto.password.PasswordEncoder;
+import org.springframework.security.core.context.SecurityContextHolderStrategy;
+import org.springframework.security.oauth2.server.resource.authentication.BearerTokenAuthenticationToken;
 import org.springframework.security.web.context.SecurityContextRepository;
 import org.springframework.stereotype.Component;
 import org.springframework.web.bind.annotation.ExceptionHandler;
@@ -34,23 +39,32 @@ import java.net.URI;
 @Component
 public class AuthenticationController implements AuthenticationResource {
 
+    protected final Log logger = LogFactory.getLog(this.getClass());
+
+    private final SecurityContextHolderStrategy securityContextHolderStrategy = SecurityContextHolder
+        .getContextHolderStrategy();
+
+
+    @Autowired
+    private AuthenticationConfiguration authConfig;
+
+    @Autowired
+    private UserIdFactory userIdFactory;
+
     @Autowired
     private JwtService tokenProvider;
 
     @Autowired
-    private AuthenticationManager authenticationManager;
-
-    @Autowired
     private SecurityContextRepository securityContextRepository;
-
-    @Autowired
-    private PasswordEncoder passwordEncoder;
 
     @Autowired
     private PasswordService passwordService;
 
     @Autowired
     private UsersService usersService;
+
+    @Autowired
+    private CustomUserDetailsService userDetailsService;
 
     @ExceptionHandler
     public ResponseEntity<String> handleException(Exception ex) {
@@ -68,7 +82,7 @@ public class AuthenticationController implements AuthenticationResource {
         @Valid SignUpRequest signUpRequest,
         HttpServletRequest request,
         HttpServletResponse response
-    ) throws DomainDataFormatException {
+    ) throws Exception {
 
         final var password1 = signUpRequest.password1();
         final var password2 = signUpRequest.password2();
@@ -80,7 +94,7 @@ public class AuthenticationController implements AuthenticationResource {
 
         final var password = Password.makeFromString(password1);
         final var encodedPassword = passwordService.encodePassword(password);
-        final var userId = UserId.generateNew();
+        final var userId = userIdFactory.generateNewUserId();
 
         usersService.handle(
             new CreateUser(
@@ -95,62 +109,89 @@ public class AuthenticationController implements AuthenticationResource {
             )
         );
 
-        final var authorities = new String[] {"ROLE_USER"};
+        final var authorities = new String[]{"ROLE_USER"};
+        final var authenticationResult = this.authenticateUser(userId, authorities, request, response);
 
         final var signUpResponse = new SignUpResponse(
             userId.toString(),
-            new AuthenticationResponse(
-                tokenProvider.generateAccessToken(userId, authorities),
-                tokenProvider.generateRefreshToken(userId, authorities)
-            )
+            authenticationResult
         );
-
-        this.authenticateUser(userId.toString(), password.getValue(), request, response);
 
         return ResponseEntity.created(URI.create("")).body(signUpResponse);
     }
 
     private AuthenticationResponse authenticateUser(
-        String username,
-        String password,
+        UserId userId,
+        String[] authorities,
         HttpServletRequest request,
         HttpServletResponse response
-    ) {
+    ) throws Exception {
 
-        final var authenticationRequest = new UsernamePasswordAuthenticationToken(
-            username,
-            password
-        );
+        try {
+            final var authenticationResponse = new AuthenticationResponse(
+                tokenProvider.generateAccessToken(userId, authorities),
+                tokenProvider.generateRefreshToken(userId, authorities)
+            );
 
-        final var authentication = authenticationManager.authenticate(authenticationRequest);
-        final var userPrincipal = (UserPrincipal) authentication.getPrincipal();
-        final var userId = userPrincipal.id();
+            final var authenticationRequest = new BearerTokenAuthenticationToken(authenticationResponse.access());
+            final var authenticationManager = this.authConfig.getAuthenticationManager();
 
-        final var authorities = new String[] {"ROLE_USER"};
+            final var authenticationResult = authenticationManager.authenticate(authenticationRequest);
 
-        final var authenticationResponse = new AuthenticationResponse(
-            tokenProvider.generateAccessToken(userId, authorities),
-            tokenProvider.generateRefreshToken(userId, authorities)
-        );
+            final var context = securityContextHolderStrategy.createEmptyContext();
+            context.setAuthentication(authenticationResult);
 
-        final var context = SecurityContextHolder.createEmptyContext();
+            this.securityContextRepository.saveContext(
+                context,
+                request,
+                response
+            );
 
-        context.setAuthentication(authentication);
+            if (this.logger.isDebugEnabled()) {
+                this.logger.debug(LogMessage.format("Set SecurityContextHolder to %s", authenticationResult));
+            }
 
-        this.securityContextRepository.saveContext(
-            context,
-            request,
-            response
-        );
+            return authenticationResponse;
 
-        return authenticationResponse;
+        } catch (Exception failed) {
+            this.securityContextHolderStrategy.clearContext();
+            this.logger.trace("Failed to process authentication request", failed);
+
+            throw failed;
+        }
     }
 
     public ResponseEntity<LoginByEmailResponse> authenticate(
         @Valid @RequestBody LoginByEmailRequest authenticationRequest,
         HttpServletRequest request,
         HttpServletResponse response
-    ) {
-        throw new RuntimeException("Not implemented");
+    ) throws Exception {
+
+        final var email = EmailAddress.makeFromString(authenticationRequest.email());
+        final var password = Password.makeFromString(authenticationRequest.password());
+
+        try {
+            final var user = userDetailsService.loadUserByEmail(email);
+
+            final var encodedPassword = passwordService.encodePassword(password);
+
+            if (!encodedPassword.value().equals(user.getPassword())) {
+                return ResponseEntity.status(HttpStatus.UNAUTHORIZED).build();
+            }
+
+            final var authenticationResponse = authenticateUser(
+                user.id(),
+                new String[]{"USER_ROLE"},
+                request,
+                response
+            );
+
+            return ResponseEntity.ok(new LoginByEmailResponse(authenticationResponse));
+
+        } catch (UserIdNotFoundException e) {
+            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).build();
+        } catch (Exception e) {
+            throw e;
+        }
     }
 }

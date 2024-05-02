@@ -10,8 +10,12 @@ import com.nimbusds.jose.jwk.source.ImmutableJWKSet;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.security.converter.RsaKeyConverters;
 import org.springframework.security.oauth2.jwt.*;
 
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.InputStream;
 import java.security.interfaces.RSAPrivateKey;
 import java.security.interfaces.RSAPublicKey;
 
@@ -19,11 +23,17 @@ import java.security.interfaces.RSAPublicKey;
 @Configuration
 public class JwtConfig {
 
-    @Value("${jwt.publicKey}")
-    RSAPublicKey publicKey;
+    @Bean
+    RSAPublicKey publicKey(@Value("${app.security.jwt.publicKey}") File file) throws Exception {
+        final var stream = new FileInputStream(file);
+        return RsaKeyConverters.x509().convert(stream);
+    }
 
-    @Value("${jwt.privateKey}")
-    RSAPrivateKey privateKey;
+    @Bean
+    RSAPrivateKey privateKey(@Value("${app.security.jwt.privateKey}") File file) throws Exception {
+        final var stream = new FileInputStream(file);
+        return RsaKeyConverters.pkcs8().convert(stream);
+    }
 
     @Bean
     public JwtService jwtService(
@@ -45,14 +55,17 @@ public class JwtConfig {
     }
 
     @Bean
-    public JwtEncoder jwtEncoder() {
-        final var jwk = new RSAKey.Builder(this.publicKey).privateKey(this.privateKey).build();
+    public JwtEncoder jwtEncoder(
+        RSAPublicKey publicKey,
+        RSAPrivateKey privateKey
+    ) {
+        final var jwk = new RSAKey.Builder(publicKey).privateKey(privateKey).build();
         final var jwks = new ImmutableJWKSet<>(new JWKSet(jwk));
         return new NimbusJwtEncoder(jwks);
     }
 
     @Bean
-    JwtDecoder jwtDecoder() {
-        return NimbusJwtDecoder.withPublicKey(this.publicKey).build();
+    JwtDecoder jwtDecoder(RSAPublicKey publicKey) {
+        return NimbusJwtDecoder.withPublicKey(publicKey).build();
     }
 }

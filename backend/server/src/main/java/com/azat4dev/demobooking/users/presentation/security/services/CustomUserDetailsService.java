@@ -1,5 +1,6 @@
 package com.azat4dev.demobooking.users.presentation.security.services;
 
+import com.azat4dev.demobooking.users.domain.values.EmailAddress;
 import com.azat4dev.demobooking.users.domain.values.UserId;
 import com.azat4dev.demobooking.users.presentation.security.entities.UserPrincipal;
 import com.azat4dev.demobooking.users.presentation.security.services.jwt.UserIdNotFoundException;
@@ -17,4 +18,6 @@ public interface CustomUserDetailsService extends UserDetailsService {
     // Methods
 
     UserPrincipal loadUserById(UserId userId) throws UserIdNotFoundException;
+
+    UserPrincipal loadUserByEmail(EmailAddress email) throws UserIdNotFoundException;
 }

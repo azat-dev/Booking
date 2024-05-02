@@ -1,9 +1,10 @@
 package com.azat4dev.demobooking.users.presentation.api;
 
 import com.azat4dev.demobooking.users.application.config.WebSecurityConfig;
+import com.azat4dev.demobooking.users.domain.UserHelpers;
 import com.azat4dev.demobooking.users.domain.interfaces.services.EncodedPassword;
 import com.azat4dev.demobooking.users.domain.services.UsersService;
-import com.azat4dev.demobooking.users.domain.values.UserId;
+import com.azat4dev.demobooking.users.domain.values.UserIdFactory;
 import com.azat4dev.demobooking.users.presentation.api.rest.authentication.entities.FullName;
 import com.azat4dev.demobooking.users.presentation.api.rest.authentication.entities.LoginByEmailRequest;
 import com.azat4dev.demobooking.users.presentation.api.rest.authentication.entities.SignUpRequest;
@@ -11,6 +12,7 @@ import com.azat4dev.demobooking.users.presentation.api.rest.authentication.resou
 import com.azat4dev.demobooking.users.presentation.security.entities.UserPrincipal;
 import com.azat4dev.demobooking.users.presentation.security.services.CustomUserDetailsService;
 import com.azat4dev.demobooking.users.presentation.security.services.jwt.JwtService;
+import com.azat4dev.demobooking.users.presentation.security.services.jwt.UserIdNotFoundException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -19,16 +21,18 @@ import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.context.annotation.Import;
 import org.springframework.http.MediaType;
 import org.springframework.security.authentication.AuthenticationManager;
-import org.springframework.security.authentication.BadCredentialsException;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.crypto.password.PasswordEncoder;
+import org.springframework.security.oauth2.jwt.JwtDecoder;
+import org.springframework.security.oauth2.jwt.JwtEncoder;
+import org.springframework.security.oauth2.server.resource.authentication.BearerTokenAuthenticationToken;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.ResultActions;
 
 import java.util.Collections;
-import java.util.List;
 
+import static com.azat4dev.demobooking.users.domain.UserHelpers.anyValidUserId;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.BDDMockito.*;
 import static org.springframework.security.test.web.servlet.response.SecurityMockMvcResultMatchers.authenticated;
@@ -36,6 +40,7 @@ import static org.springframework.security.test.web.servlet.response.SecurityMoc
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
+
 
 @WebMvcTest(AuthenticationController.class)
 @Import(WebSecurityConfig.class)
@@ -62,14 +67,30 @@ public class AuthenticationControllerTests {
     @MockBean
     private JwtService tokenProvider;
 
+    @MockBean
+    private JwtEncoder jwtEncoder;
+
+    @MockBean
+    private JwtDecoder jwtDecoder;
+
+    @MockBean
+    private UserIdFactory userIdFactory;
+
+    private String anyValidEmail() {
+        return "email@company.com";
+    }
+
     @Test
-    void authenticate_givenUserNotExists_thenReturnError() throws Exception {
+    void test_authenticate_givenUserNotExists_thenReturnError() throws Exception {
 
         // Given
         final var loginByEmailRequest = new LoginByEmailRequest(
-            "email@company.com",
+            anyValidEmail(),
             "password"
         );
+
+        given(customUserDetailsService.loadUserByEmail(any()))
+            .willThrow(new UserIdNotFoundException("User not found"));
 
         // When
         final var response = performAuthenticateRequest(loginByEmailRequest);
@@ -80,36 +101,46 @@ public class AuthenticationControllerTests {
     }
 
     @Test
-    void authenticate_givenExistingUserWrongPassword_thenReturnError() throws Exception {
+    void test_authenticate_givenExistingUserWrongPassword_thenReturnError() throws Exception {
 
         // Given
+        final var email = UserHelpers.anyValidEmail();
         final var user = givenExistingPrincipal();
-        final var wrongPassword = user.getUsername() + "wrongPassword";
+        final var wrongPassword = "wrongPassword";
+        final var wrongEncodedPassword = user.getPassword() + "wrong";
 
         final var authenticationRequest = new LoginByEmailRequest(
-            user.getUsername(),
+            email.getValue(),
             wrongPassword
         );
 
-        given(authenticationManager.authenticate(any())).willThrow(new BadCredentialsException("Wrong password"));
+        given(customUserDetailsService.loadUserByEmail(any()))
+            .willReturn(user);
+
+        given(passwordEncoder.encode(any()))
+            .willReturn(wrongEncodedPassword);
 
         // When
         final var response = performAuthenticateRequest(authenticationRequest);
 
         // Then
+        then(customUserDetailsService)
+            .should(times(1))
+            .loadUserByEmail(email);
+
         response.andExpect(status().isUnauthorized())
             .andExpect(unauthenticated());
     }
 
     @Test
-    void authenticate_givenEmptyPassword_thenReturnError() throws Exception {
+    void test_authenticate_givenEmptyPassword_thenReturnError() throws Exception {
 
         // Given
-        final var user = givenExistingPrincipal();
         final var notValidPassword = "";
+        final var validEmail = UserHelpers.anyValidEmail();
 
         final var authenticationRequest = new LoginByEmailRequest(
-            user.getUsername(),
+            validEmail.getValue(),
             notValidPassword
         );
 
@@ -123,7 +154,7 @@ public class AuthenticationControllerTests {
 
 
     @Test
-    void singUp_givenNotMatchingPasswords_thenReturnError() throws Exception {
+    void test_singUp_givenNotMatchingPasswords_thenReturnError() throws Exception {
 
         // Given
         final var password1 = "password";
@@ -160,21 +191,20 @@ public class AuthenticationControllerTests {
         );
     }
 
-    String[] userAuthorities() {
-        return new String[]{"ROLE_USER"};
-    }
-
     @Test
-    void singUp_givenValidCredentials_thenCreateANewUser() throws Exception {
+    void test_singUp_givenValidCredentials_thenCreateANewUser() throws Exception {
 
         // Given
-        final var userId = UserId.generateNew();
+        final var userId = anyValidUserId();
         final var fullName = new FullName(
             "John",
             "Doe"
         );
         final var password = new EncodedPassword("password");
         final var validEmail = "valid@email.com";
+
+        final var expectedAccessToken = "accessToken";
+        final var expectedRefreshToken = "refreshToken";
 
         final var request = new SignUpRequest(
             fullName,
@@ -183,11 +213,10 @@ public class AuthenticationControllerTests {
             password.value()
         );
 
-        willDoNothing().given(usersService).handle(any());
+        given(userIdFactory.generateNewUserId())
+            .willReturn(userId);
 
-        final var expectedAccessToken = "accessToken";
-        final var expectedRefreshToken = "refreshToken";
-        final var authorities = userAuthorities();
+        willDoNothing().given(usersService).handle(any());
 
         given(tokenProvider.generateAccessToken(any(), any()))
             .willReturn(expectedAccessToken);
@@ -195,24 +224,15 @@ public class AuthenticationControllerTests {
         given(tokenProvider.generateRefreshToken(any(), any()))
             .willReturn(expectedRefreshToken);
 
-        final var userPrincipal = new UserPrincipal(
-            userId,
-            password,
-            List.of()
-        );
+        final var authentication = new BearerTokenAuthenticationToken(expectedAccessToken);
 
-        final var usernamePasswordToken = new UsernamePasswordAuthenticationToken(
-            userPrincipal,
-            password,
-            Collections.singletonList(new SimpleGrantedAuthority("ROLE_USER"))
-        );
+        given(authenticationManager.authenticate(any()))
+            .willReturn(authentication);
 
-        given(authenticationManager.authenticate(any())).willReturn(usernamePasswordToken);
-
-        given(tokenProvider.generateAccessToken(userId, any()))
+        given(tokenProvider.generateAccessToken(any(), any()))
             .willReturn(expectedAccessToken);
 
-        given(tokenProvider.generateRefreshToken(userId, any()))
+        given(tokenProvider.generateRefreshToken(any(), any()))
             .willReturn(expectedRefreshToken);
 
         // When
@@ -220,10 +240,10 @@ public class AuthenticationControllerTests {
 
         // Then
         then(tokenProvider).should(times(1))
-            .generateAccessToken(userId, any());
+            .generateAccessToken(eq(userId), any());
 
         then(tokenProvider).should(times(1))
-            .generateRefreshToken(userId, any());
+            .generateRefreshToken(eq(userId), any());
 
         then(passwordEncoder).should(times(1))
             .encode(eq(password.value()));
@@ -238,7 +258,7 @@ public class AuthenticationControllerTests {
     }
 
     @Test
-    void singUp_givenWrongDataFormat_thenReturnError() throws Exception {
+    void test_singUp_givenWrongDataFormat_thenReturnError() throws Exception {
 
         // Given
         final var request = new SignUpRequest(
@@ -262,8 +282,8 @@ public class AuthenticationControllerTests {
 
     private UserPrincipal givenExistingPrincipal() {
 
-        final var userId = UserId.generateNew();
-        final var password = new EncodedPassword("password");
+        final var userId = anyValidUserId();
+        final var password = new EncodedPassword("encodedPassword");
 
         final var userPrincipal = new UserPrincipal(
             userId,

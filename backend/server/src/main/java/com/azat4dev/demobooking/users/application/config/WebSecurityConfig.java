@@ -1,13 +1,8 @@
 package com.azat4dev.demobooking.users.application.config;
 
-import com.azat4dev.demobooking.users.domain.interfaces.repositories.UsersRepository;
-import com.azat4dev.demobooking.users.domain.interfaces.services.EmailService;
 import com.azat4dev.demobooking.users.domain.interfaces.services.EncodedPassword;
 import com.azat4dev.demobooking.users.domain.interfaces.services.PasswordService;
-import com.azat4dev.demobooking.users.domain.services.EmailData;
-import com.azat4dev.demobooking.users.domain.values.EmailAddress;
 import com.azat4dev.demobooking.users.domain.values.Password;
-import com.azat4dev.demobooking.users.presentation.security.services.CustomUserDetailsServiceImpl;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.http.HttpMethod;
@@ -15,7 +10,6 @@ import org.springframework.security.config.Customizer;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 import org.springframework.security.config.http.SessionCreationPolicy;
-import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.web.SecurityFilterChain;
@@ -79,23 +73,6 @@ public class WebSecurityConfig {
                 return new EncodedPassword(passwordEncoder.encode(password.getValue()));
             }
         };
-    }
-
-    @Bean
-    EmailService emailService() {
-        return new EmailService() {
-            @Override
-            public void send(EmailAddress email, EmailData data) {
-                System.out.println("Email sent to " + email);
-            }
-        };
-    }
-
-    @Bean
-    public UserDetailsService customUserDetailsService(UsersRepository usersRepository) {
-        return new CustomUserDetailsServiceImpl(
-            usersRepository
-        );
     }
 
     @Bean
