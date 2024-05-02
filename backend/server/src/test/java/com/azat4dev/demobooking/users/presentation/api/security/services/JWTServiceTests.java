@@ -16,10 +16,7 @@ import static org.mockito.Mockito.mock;
 
 class JWTServiceTests {
 
-    SUT createSUT(
-        long accessTokenExpirationInMs,
-        long refreshTokenExpirationInMs
-    ) {
+    SUT createSUT() {
         final var dateTimeProvider = mock(TimeProvider.class);
 
         given(dateTimeProvider.currentTime()).willReturn(new Date());
@@ -27,8 +24,8 @@ class JWTServiceTests {
         return new SUT(
             new JWTServiceImpl(
                 "secretsecretsecretsecretsecretsecretsecretsecretsecretsecretsecretsecretsecret",
-                accessTokenExpirationInMs,
-                refreshTokenExpirationInMs,
+                10000,
+                10000,
                 dateTimeProvider
             ),
             dateTimeProvider
@@ -42,8 +39,6 @@ class JWTServiceTests {
         final var userId = UserId.generateNew();
 
         final var sut = createSUT(
-            10000,
-            10000
         );
 
         // When
@@ -59,8 +54,6 @@ class JWTServiceTests {
         // Given
         final var userId = UserId.generateNew();
         final var sut = createSUT(
-            10000,
-            10000
         );
 
         // When
@@ -76,8 +69,6 @@ class JWTServiceTests {
         // Given
         final var wrongToken = "wrongToken";
         final var sut = createSUT(
-            10000,
-            10000
         );
 
         // When
@@ -92,8 +83,6 @@ class JWTServiceTests {
 
         // Given
         final var sut = createSUT(
-            10000,
-            10000
         );
         final var token = sut.jwtService.generateAccessToken(UserId.generateNew());
 
@@ -109,8 +98,6 @@ class JWTServiceTests {
 
         // Given
         final var sut = createSUT(
-            10000,
-            10000
         );
         final var now = new Date();
 
@@ -134,8 +121,6 @@ class JWTServiceTests {
         final var wrongToken = "wrongToken";
 
         final var sut = createSUT(
-            10000,
-            10000
         );
 
         // When
@@ -154,8 +139,6 @@ class JWTServiceTests {
         final var userId = UserId.generateNew();
 
         final var sut = createSUT(
-            10000,
-            10000
         );
         final var token = sut.jwtService.generateAccessToken(userId);
 
