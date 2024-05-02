@@ -1,0 +1,12 @@
+spring:
+  application:
+    name: demobooking
+app:
+  security:
+    jwt:
+      privateKey: secretsecretsecretsecretsecretsecretsecretsecretsecretsecretsecretsecretsecret
+      publicKey: secretsecretsecretsecretsecretsecretsecretsecretsecretsecretsecretsecretsecret
+      accessToken:
+        expirationInMs: 100000
+      refreshToken:
+        expirationInMs: 100000

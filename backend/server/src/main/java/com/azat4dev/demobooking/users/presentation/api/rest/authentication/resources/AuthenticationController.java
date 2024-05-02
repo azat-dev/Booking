@@ -11,11 +11,9 @@ import com.azat4dev.demobooking.users.domain.services.UsersService;
 import com.azat4dev.demobooking.users.domain.values.EmailAddress;
 import com.azat4dev.demobooking.users.domain.values.Password;
 import com.azat4dev.demobooking.users.domain.values.UserId;
-import com.azat4dev.demobooking.users.presentation.api.rest.authentication.entities.AuthenticationResponse;
-import com.azat4dev.demobooking.users.presentation.api.rest.authentication.entities.SignUpRequest;
-import com.azat4dev.demobooking.users.presentation.api.rest.authentication.entities.SignUpResponse;
+import com.azat4dev.demobooking.users.presentation.api.rest.authentication.entities.*;
 import com.azat4dev.demobooking.users.presentation.security.entities.UserPrincipal;
-import com.azat4dev.demobooking.users.presentation.security.services.jwt.JWTService;
+import com.azat4dev.demobooking.users.presentation.security.services.jwt.JwtService;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import jakarta.validation.Valid;
@@ -29,6 +27,7 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.web.context.SecurityContextRepository;
 import org.springframework.stereotype.Component;
 import org.springframework.web.bind.annotation.ExceptionHandler;
+import org.springframework.web.bind.annotation.RequestBody;
 
 import java.net.URI;
 
@@ -36,7 +35,7 @@ import java.net.URI;
 public class AuthenticationController implements AuthenticationResource {
 
     @Autowired
-    private JWTService tokenProvider;
+    private JwtService tokenProvider;
 
     @Autowired
     private AuthenticationManager authenticationManager;
@@ -96,11 +95,13 @@ public class AuthenticationController implements AuthenticationResource {
             )
         );
 
+        final var authorities = new String[] {"ROLE_USER"};
+
         final var signUpResponse = new SignUpResponse(
             userId.toString(),
             new AuthenticationResponse(
-                tokenProvider.generateAccessToken(userId),
-                tokenProvider.generateRefreshToken(userId)
+                tokenProvider.generateAccessToken(userId, authorities),
+                tokenProvider.generateRefreshToken(userId, authorities)
             )
         );
 
@@ -125,9 +126,11 @@ public class AuthenticationController implements AuthenticationResource {
         final var userPrincipal = (UserPrincipal) authentication.getPrincipal();
         final var userId = userPrincipal.id();
 
+        final var authorities = new String[] {"ROLE_USER"};
+
         final var authenticationResponse = new AuthenticationResponse(
-            tokenProvider.generateAccessToken(userId),
-            tokenProvider.generateRefreshToken(userId)
+            tokenProvider.generateAccessToken(userId, authorities),
+            tokenProvider.generateRefreshToken(userId, authorities)
         );
 
         final var context = SecurityContextHolder.createEmptyContext();
@@ -141,5 +144,13 @@ public class AuthenticationController implements AuthenticationResource {
         );
 
         return authenticationResponse;
+    }
+
+    public ResponseEntity<LoginByEmailResponse> authenticate(
+        @Valid @RequestBody LoginByEmailRequest authenticationRequest,
+        HttpServletRequest request,
+        HttpServletResponse response
+    ) {
+        throw new RuntimeException("Not implemented");
     }
 }

@@ -7,19 +7,15 @@ import com.azat4dev.demobooking.users.domain.interfaces.services.PasswordService
 import com.azat4dev.demobooking.users.domain.services.EmailData;
 import com.azat4dev.demobooking.users.domain.values.EmailAddress;
 import com.azat4dev.demobooking.users.domain.values.Password;
-import com.azat4dev.demobooking.users.presentation.security.services.CustomUserDetailsService;
 import com.azat4dev.demobooking.users.presentation.security.services.CustomUserDetailsServiceImpl;
-import com.azat4dev.demobooking.users.presentation.security.services.JwtAuthenticationFilter;
-import com.azat4dev.demobooking.users.presentation.security.services.JwtAuthenticationProvider;
-import com.azat4dev.demobooking.users.presentation.security.services.jwt.JWTService;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.http.HttpMethod;
-import org.springframework.security.authentication.AuthenticationManager;
-import org.springframework.security.authentication.ProviderManager;
-import org.springframework.security.authentication.dao.DaoAuthenticationProvider;
+import org.springframework.security.config.Customizer;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
+import org.springframework.security.config.http.SessionCreationPolicy;
+import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.web.SecurityFilterChain;
@@ -36,21 +32,20 @@ import java.util.List;
 public class WebSecurityConfig {
 
     @Bean
-    SecurityFilterChain filterChain(
-        HttpSecurity http,
-        JwtAuthenticationFilter jwtAuthenticationFilter
-    ) throws Exception {
-        return http.cors(cors -> cors.configurationSource(corsConfigurationSource()))
-            .csrf(csrf -> csrf.disable())
-            .authorizeHttpRequests(
-                requests -> requests.requestMatchers(
-                        HttpMethod.POST,
-                        "/api/public/**"
-                    )
-                    .permitAll()
-                    .requestMatchers("/api/with-auth/**")
-                    .authenticated()
-            )
+    SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
+        return http
+            .cors(cors -> cors.configurationSource(corsConfigurationSource()))
+            .authorizeHttpRequests(c -> c.requestMatchers(
+                    HttpMethod.POST,
+                    "/api/public/**"
+                )
+                .permitAll()
+                .requestMatchers("/api/with-auth/**")
+                .authenticated())
+            .csrf(c -> c.ignoringRequestMatchers("/api/public/**", "/api/with-auth/**"))
+            .httpBasic(Customizer.withDefaults())
+            .oauth2ResourceServer(c -> c.jwt(Customizer.withDefaults()))
+            .sessionManagement(s -> s.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
             .build();
     }
 
@@ -97,34 +92,7 @@ public class WebSecurityConfig {
     }
 
     @Bean
-    public JwtAuthenticationFilter jwtAuthenticationFilter(AuthenticationManager authenticationManager) {
-        return new JwtAuthenticationFilter(authenticationManager);
-    }
-
-    @Bean
-    public AuthenticationManager authenticationManager(
-        CustomUserDetailsService customUserDetailsService,
-        PasswordEncoder passwordEncoder,
-        JWTService jwtService
-    ) {
-
-        JwtAuthenticationProvider jwtAuthenticationProvider = new JwtAuthenticationProvider(
-            jwtService,
-            customUserDetailsService
-        );
-
-        DaoAuthenticationProvider userNameAuthenticationProvider = new DaoAuthenticationProvider();
-        userNameAuthenticationProvider.setUserDetailsService(customUserDetailsService);
-        userNameAuthenticationProvider.setPasswordEncoder(passwordEncoder);
-
-        return new ProviderManager(
-            jwtAuthenticationProvider,
-            userNameAuthenticationProvider
-        );
-    }
-
-    @Bean
-    public CustomUserDetailsService customUserDetailsService(UsersRepository usersRepository) {
+    public UserDetailsService customUserDetailsService(UsersRepository usersRepository) {
         return new CustomUserDetailsServiceImpl(
             usersRepository
         );

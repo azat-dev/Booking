@@ -10,7 +10,7 @@ import com.azat4dev.demobooking.users.presentation.api.rest.authentication.entit
 import com.azat4dev.demobooking.users.presentation.api.rest.authentication.resources.AuthenticationController;
 import com.azat4dev.demobooking.users.presentation.security.entities.UserPrincipal;
 import com.azat4dev.demobooking.users.presentation.security.services.CustomUserDetailsService;
-import com.azat4dev.demobooking.users.presentation.security.services.jwt.JWTService;
+import com.azat4dev.demobooking.users.presentation.security.services.jwt.JwtService;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -60,7 +60,7 @@ public class AuthenticationControllerTests {
     private UsersService usersService;
 
     @MockBean
-    private JWTService tokenProvider;
+    private JwtService tokenProvider;
 
     @Test
     void authenticate_givenUserNotExists_thenReturnError() throws Exception {
@@ -160,6 +160,10 @@ public class AuthenticationControllerTests {
         );
     }
 
+    String[] userAuthorities() {
+        return new String[]{"ROLE_USER"};
+    }
+
     @Test
     void singUp_givenValidCredentials_thenCreateANewUser() throws Exception {
 
@@ -183,11 +187,12 @@ public class AuthenticationControllerTests {
 
         final var expectedAccessToken = "accessToken";
         final var expectedRefreshToken = "refreshToken";
+        final var authorities = userAuthorities();
 
-        given(tokenProvider.generateAccessToken(any()))
+        given(tokenProvider.generateAccessToken(any(), any()))
             .willReturn(expectedAccessToken);
 
-        given(tokenProvider.generateRefreshToken(any()))
+        given(tokenProvider.generateRefreshToken(any(), any()))
             .willReturn(expectedRefreshToken);
 
         final var userPrincipal = new UserPrincipal(
@@ -204,10 +209,10 @@ public class AuthenticationControllerTests {
 
         given(authenticationManager.authenticate(any())).willReturn(usernamePasswordToken);
 
-        given(tokenProvider.generateAccessToken(userId))
+        given(tokenProvider.generateAccessToken(userId, any()))
             .willReturn(expectedAccessToken);
 
-        given(tokenProvider.generateRefreshToken(userId))
+        given(tokenProvider.generateRefreshToken(userId, any()))
             .willReturn(expectedRefreshToken);
 
         // When
@@ -215,10 +220,10 @@ public class AuthenticationControllerTests {
 
         // Then
         then(tokenProvider).should(times(1))
-            .generateAccessToken(userId);
+            .generateAccessToken(userId, any());
 
         then(tokenProvider).should(times(1))
-            .generateRefreshToken(userId);
+            .generateRefreshToken(userId, any());
 
         then(passwordEncoder).should(times(1))
             .encode(eq(password.value()));
