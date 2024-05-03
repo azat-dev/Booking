@@ -1,6 +1,7 @@
 import Email from "../../values/Email";
 import Password from "../../values/Password";
 import User from "../../values/User";
+import UserId from "../../values/UserId";
 
 export interface AuthenticationByEmailResult {
     readonly accessToken: string;

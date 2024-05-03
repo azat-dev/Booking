@@ -1,0 +1,11 @@
+.openapi-generator-ignore
+apis/DefaultApi.ts
+apis/index.ts
+index.ts
+models/ApiPublicAuthTokenPostRequest.ts
+models/ApiPublicAuthTokenVerifyPostRequest.ts
+models/GetTokenResponse.ts
+models/SignUpResponse.ts
+models/SignUpResponseTokens.ts
+models/index.ts
+runtime.ts

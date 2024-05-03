@@ -1,0 +1,106 @@
+openapi: "3.0.0"
+info:
+  version: "1.0.0"
+  title: "Demo Booking API"
+  description: Describes the API of Daily Tasks
+
+paths:
+  /api/public/auth/token:
+    post:
+      summary: Get a new pair of tokens (access, refresh)
+      security: []
+      requestBody:
+        description: JSON payload
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required:
+                - email
+                - password
+              properties:
+                email:
+                  type: string
+                  format: email
+                password:
+                  type: string
+      responses:
+        "200":
+          description: Success
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/GetTokenResponse"
+  /api/public/auth/sign-up:
+    post:
+      summary: Sign up a new user
+      security: []
+      responses:
+        "201":
+          description: Success
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/SignUpResponse"
+        "401":
+          description: Wrong credentials
+  /api/public/auth/token/verify:
+    post:
+      summary: Check if a token is valid
+      security: []
+      requestBody:
+        description: JSON payload
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required:
+                - token
+              properties:
+                token:
+                  type: string
+      responses:
+        "200":
+          description: Valid Token
+        "401":
+          description: Not valid Token
+components:
+  schemas:
+    SignUpResponse:
+      type: object
+      required:
+        - userId
+        - tokens
+      properties:
+        userId:
+          type: string
+          format: uuid
+        tokens:
+          type: object
+          required:
+            - refresh
+            - access
+          properties:
+            refresh:
+              type: string
+            access:
+              type: string
+    GetTokenResponse:
+      type: object
+      required:
+        - access
+        - refresh
+      properties:
+        access:
+          type: string
+        refresh:
+          type: string
+  securitySchemes:
+    BearerAuth:
+      type: http
+      scheme: bearer
+      bearerFormat: JWT
+security:
+  - BearerAuth: []
