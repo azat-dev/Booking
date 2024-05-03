@@ -133,13 +133,10 @@ public class AuthenticationController implements AuthenticationResource {
                 tokenProvider.generateRefreshToken(userId, authorities)
             );
 
-            final var authenticationRequest = new BearerTokenAuthenticationToken(authenticationResponse.access());
-            final var authenticationManager = this.authConfig.getAuthenticationManager();
-
-            final var authenticationResult = authenticationManager.authenticate(authenticationRequest);
+            final var token = new BearerTokenAuthenticationToken(authenticationResponse.access());
 
             final var context = securityContextHolderStrategy.createEmptyContext();
-            context.setAuthentication(authenticationResult);
+            context.setAuthentication(token);
 
             this.securityContextRepository.saveContext(
                 context,
@@ -148,7 +145,7 @@ public class AuthenticationController implements AuthenticationResource {
             );
 
             if (this.logger.isDebugEnabled()) {
-                this.logger.debug(LogMessage.format("Set SecurityContextHolder to %s", authenticationResult));
+                this.logger.debug(LogMessage.format("Set SecurityContextHolder to %s", token));
             }
 
             return authenticationResponse;
