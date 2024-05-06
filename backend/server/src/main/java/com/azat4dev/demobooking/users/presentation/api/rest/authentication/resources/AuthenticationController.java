@@ -11,7 +11,6 @@ import com.azat4dev.demobooking.users.presentation.api.rest.authentication.entit
 import com.azat4dev.demobooking.users.presentation.security.services.CustomUserDetailsService;
 import com.azat4dev.demobooking.users.presentation.security.services.jwt.JwtService;
 import com.azat4dev.demobooking.users.presentation.security.services.jwt.UserIdNotFoundException;
-import com.azat4dev.demobooking.common.presentation.ErrorDTO;
 import com.azat4dev.demobooking.common.presentation.ValidationException;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
@@ -92,7 +91,7 @@ public class AuthenticationController implements AuthenticationResource {
                 )
             );
         } catch (UsersService.UserAlreadyExistsException e) {
-            throw ControllerException.create(HttpStatus.CONFLICT, "UserAlreadyExists", e.getMessage());
+            throw ControllerException.createError(HttpStatus.CONFLICT, "UserAlreadyExists", e.getMessage());
         }
 
         final var authorities = new String[]{"ROLE_USER"};

@@ -8,7 +8,7 @@ paths:
   /api/public/auth/token:
     post:
       summary: Get a new pair of tokens (access, refresh)
-      security: []
+      security: [ ]
       requestBody:
         description: JSON payload
         required: true
@@ -26,7 +26,7 @@ paths:
   /api/public/auth/sign-up:
     post:
       summary: Sign up a new user
-      security: []
+      security: [ ]
       requestBody:
         description: JSON payload
         required: true
@@ -58,7 +58,7 @@ paths:
   /api/public/auth/token/verify:
     post:
       summary: Check if a token is valid
-      security: []
+      security: [ ]
       requestBody:
         description: JSON payload
         required: true
@@ -79,7 +79,7 @@ paths:
   /api/with-auth/user:
     get:
       summary: Gets current user info
-      security: []
+      security: [ ]
       responses:
         "200":
           description: Current users info
@@ -250,4 +250,4 @@ components:
       scheme: bearer
       bearerFormat: JWT
 security:
-  - BearerAuth: []
+  - BearerAuth: [ ]

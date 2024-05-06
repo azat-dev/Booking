@@ -7,7 +7,7 @@ public class ValidationException extends RuntimeException {
 
     private final ValidationErrorDTO error;
 
-    public ValidationException(ValidationErrorDTO error) {
+    private ValidationException(ValidationErrorDTO error) {
         super();
         this.error = error;
     }

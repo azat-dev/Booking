@@ -1,5 +1,6 @@
 package com.azat4dev.demobooking.common.presentation;
 
+import com.azat4dev.demobooking.common.DomainException;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 
@@ -7,22 +8,30 @@ import java.util.Objects;
 
 public final class ControllerException extends Exception {
     private final HttpStatus status;
-    private final ErrorDTO body;
+    private final Object body;
 
-    public ControllerException(HttpStatus status, ErrorDTO body) {
+    public ControllerException(HttpStatus status, Object body) {
         this.status = status;
         this.body = body;
     }
 
-    public static ControllerException create(HttpStatus status, String errorCode, String errorMessage) {
+    public static ControllerException createError(HttpStatus status, String errorCode, String errorMessage) {
         return new ControllerException(status, new ErrorDTO(errorCode, errorMessage));
+    }
+
+    public static ControllerException createValidationError(HttpStatus status, String path, String errorCode, String errorMessage) {
+        return new ControllerException(status, ValidationErrorDTO.withError(errorCode, path, errorMessage));
+    }
+
+    public static ControllerException createValidationError(HttpStatus status, String path, DomainException exception) {
+        return new ControllerException(status, ValidationErrorDTO.withError(exception.getCode(), path, exception.getMessage()));
     }
 
     public HttpStatus status() {
         return status;
     }
 
-    public ErrorDTO body() {
+    public Object body() {
         return body;
     }
 

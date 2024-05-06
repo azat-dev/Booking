@@ -50,7 +50,9 @@ public final class Password {
     }
 
     public static abstract class ValidationException extends DomainException {
-        public ValidationException(String message) {super(message);}
+        public ValidationException(String message) {
+            super(message);
+        }
     }
 
     public static class LengthException extends ValidationException {

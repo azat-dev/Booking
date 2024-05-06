@@ -1,5 +1,6 @@
 package com.azat4dev.demobooking.users.presentation.api;
 
+import com.azat4dev.demobooking.common.presentation.ValidationErrorDTO;
 import com.azat4dev.demobooking.users.application.config.WebSecurityConfig;
 import com.azat4dev.demobooking.users.domain.UserHelpers;
 import com.azat4dev.demobooking.users.domain.interfaces.repositories.UsersRepository;
@@ -9,7 +10,6 @@ import com.azat4dev.demobooking.users.domain.values.UserIdFactory;
 import com.azat4dev.demobooking.users.presentation.api.rest.authentication.entities.FullNameDTO;
 import com.azat4dev.demobooking.users.presentation.api.rest.authentication.entities.LoginByEmailRequest;
 import com.azat4dev.demobooking.users.presentation.api.rest.authentication.entities.SignUpRequest;
-import com.azat4dev.demobooking.common.presentation.ValidationErrorDTO;
 import com.azat4dev.demobooking.users.presentation.api.rest.authentication.resources.AuthenticationController;
 import com.azat4dev.demobooking.users.presentation.security.entities.UserPrincipal;
 import com.azat4dev.demobooking.users.presentation.security.services.CustomUserDetailsService;
