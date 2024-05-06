@@ -14,10 +14,9 @@ import PageAccommodationDetailsViewModel from "../pages/page-accommodation-detai
 import AccommodationsRegistry from "../../domain/accommodations/AccommodationsRegistry";
 import AccommodationId from "../../domain/accommodations/AccommodationId";
 import ReservationService from "../../domain/booking/ReservationService";
-import Email from "../../domain/auth/values/Email";
-import Password from "../../domain/auth/values/Password";
 import SignUpByEmailData from "../../domain/auth/CurrentSession/Session/SignUpByEmailData";
 import { AuthenticateByEmailData } from "../../domain/auth/CurrentSession/Session/AuthService";
+import { Session } from "../../domain/auth/CurrentSession/Session/Session";
 
 class AppViewModelImpl implements AppViewModel {
     public activeDialog: Subject<ActiveDialogViewModel | null>;
@@ -28,7 +27,25 @@ class AppViewModelImpl implements AppViewModel {
         private reservationService: ReservationService
     ) {
         this.activeDialog = value(null);
+        currentSession.current.listen(
+            this.closeAuthenticationDialogsIfAuthenticated
+        );
     }
+
+    private closeAuthenticationDialogsIfAuthenticated = (
+        session: Session
+    ): void => {
+        const activeDialog = this.activeDialog.value;
+        if (
+            activeDialog &&
+            session.type === SessionStatus.AUTHENTICATED &&
+            [ActiveDialogType.Login, ActiveDialogType.SignUp].includes(
+                activeDialog.type
+            )
+        ) {
+            this.closeDialog();
+        }
+    };
 
     private closeDialog = (): void => {
         this.activeDialog.set(null);

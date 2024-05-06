@@ -34,7 +34,7 @@ const userInfoService: UserInfoService = {
     getUserInfo: async (userId): Promise<UserInfo> => {
         return {
             id: userId,
-            email: new Email("some-email"),
+            email: new Email("some-email@domain.com"),
             fullName: new FullName(new FirstName("Some"), new LastName("Name")),
             avatar: null,
         };

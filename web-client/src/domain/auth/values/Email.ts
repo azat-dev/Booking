@@ -4,13 +4,15 @@ import ValidationException from "../CurrentSession/Session/ValidationException";
 class Email {
     public readonly value: string;
 
+    public static readonly PATTERN = /^[\w-\.]+@([\w-]+\.)+[\w-]{2,4}$/;
+
     constructor(value: string) {
         const cleanedValue = value.trim();
 
         Assert.notBlank(cleanedValue, () => new Email.NotBlank());
         Assert.hasPattern(
             cleanedValue,
-            /^[^\s@]+@[^\s@]+\.[^\s@]+$/,
+            Email.PATTERN,
             () => new Email.FormatException()
         );
 

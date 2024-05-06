@@ -10,7 +10,7 @@ import UserInfoService from "./Session/UserInfoService";
 class CurrentSessionStoreImpl implements CurrentSessionStore {
     public current: Subject<Session>;
 
-    constructor(
+    public constructor(
         authService: AuthService,
         userInfoService: UserInfoService,
         localTokensRepository: TokensRepository

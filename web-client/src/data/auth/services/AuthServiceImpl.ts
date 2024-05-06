@@ -11,7 +11,12 @@ import TokensRepository from "../../../domain/auth/interfaces/repositories/Token
 import Email from "../../../domain/auth/values/Email";
 import UserInfo from "../../../domain/auth/values/User";
 import UserId from "../../../domain/auth/values/UserId";
-import { DefaultApi, ResponseError, ValidationError } from "../../API";
+import {
+    DefaultApi,
+    ResponseError,
+    UserAlreadyExistsError,
+    ValidationError,
+} from "../../API";
 
 class AuthServiceImpl implements AuthService {
     private testUser: UserInfo = {
@@ -68,7 +73,13 @@ class AuthServiceImpl implements AuthService {
             if (e instanceof ResponseError) {
                 if (e.response.status === 400) {
                     const error = (await e.response.json()) as ValidationError;
-                    console.error("Error signing up:", error);
+                    throw error;
+                }
+
+                if (e.response.status) {
+                    const error =
+                        (await e.response.json()) as UserAlreadyExistsError;
+                    throw error;
                 }
             }
 

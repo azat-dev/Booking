@@ -7,24 +7,24 @@ import {
     ModalDialog,
     DialogTitle,
     Stack,
-    FormControl,
-    FormLabel,
-    Input,
     Button,
     ModalClose,
     Link,
     Typography,
+    FormHelperText,
+    FormControl,
 } from "@mui/joy";
 
 import style from "./style.module.scss";
 import { desktop, mobile, tablet } from "../../utils/selectors";
 import useScreenType, { ScreenType } from "../../utils/hooks/useScreenType";
 import FormInput from "./form-input/FormInput";
+import { InfoOutlined } from "@mui/icons-material";
 
 const SignUpDialog = ({ vm }: PropsSignUpDialog) => {
-    const [isProcessing, showWrongCredentialsError] = useUpdatesFrom(
+    const [isProcessing, errorText] = useUpdatesFrom(
         vm.isProcessing,
-        vm.showWrongCredentialsError
+        vm.errorText
     );
 
     const screenType = useScreenType();
@@ -82,12 +82,17 @@ const SignUpDialog = ({ vm }: PropsSignUpDialog) => {
                             placeholder="Password"
                         />
 
-                        <Typography
-                            color="danger"
-                            sx={{ opacity: showWrongCredentialsError ? 1 : 0 }}
+                        <FormControl
+                            error={!!errorText}
+                            sx={{ opacity: !!errorText ? 1 : 0 }}
                         >
-                            Wrong credentials
-                        </Typography>
+                            <FormHelperText>
+                                <InfoOutlined />
+                                {errorText}
+                            </FormHelperText>
+                        </FormControl>
+                        <br />
+
                         <Button
                             type="submit"
                             size="lg"
@@ -96,6 +101,7 @@ const SignUpDialog = ({ vm }: PropsSignUpDialog) => {
                         >
                             Create Account
                         </Button>
+                        <br />
                         <Typography
                             endDecorator={
                                 <Link onClick={vm.logIn}>Log in</Link>
