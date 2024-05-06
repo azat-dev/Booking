@@ -41,18 +41,25 @@ const userInfoService: UserInfoService = {
     },
 };
 
-const currentSession = new CurrentSessionStoreImpl(
+const currentSessionStore = new CurrentSessionStoreImpl(
     authService,
     userInfoService,
     localAuthDataRespository
 );
+
+currentSessionStore.tryToLoadLastSession();
+
+console.log("Current session", currentSessionStore.current.value);
+currentSessionStore.current.listen((session) => {
+    console.log("Current session changed", session);
+});
 
 const accommodationsRegistry = new AccommodationsRegistryImpl();
 
 const reservationService = new ReservationServiceImpl();
 
 const vm = new AppViewModelImpl(
-    currentSession,
+    currentSessionStore,
     accommodationsRegistry,
     reservationService
 );

@@ -2,8 +2,6 @@ import * as React from "react";
 import { Box, IconButton, Menu, MenuButton, MenuItem, Theme } from "@mui/joy";
 import Typography from "@mui/joy/Typography";
 
-import Dropdown from "@mui/joy/Dropdown";
-import Avatar from "@mui/joy/Avatar";
 import MapsHomeWorkIcon from "@mui/icons-material/MapsHomeWork";
 
 import PropsNavigationBar from "./props";
@@ -11,8 +9,11 @@ import PropsNavigationBar from "./props";
 import style from "./style.module.scss";
 import { mobile, tablet, desktop } from "../../utils/selectors";
 import { Link } from "react-router-dom";
+import ProfileButtonAnonymous from "./profile-button-anonymous/ProfileButtonAnonymous";
+import useUpdatesFrom from "../../utils/binding/useUpdatesFrom";
 
 const NavigationBar = ({ vm }: PropsNavigationBar) => {
+    const [profileButton] = useUpdatesFrom(vm.profileButton);
     return (
         <Box
             sx={(theme) => ({
@@ -61,51 +62,10 @@ const NavigationBar = ({ vm }: PropsNavigationBar) => {
                     </Typography>
                 </Box>
             </Link>
-            <Dropdown>
-                <MenuButton
-                    variant="outlined"
-                    size="lg"
-                    sx={{
-                        maxHeight: "48px",
-                        borderRadius: "9999999px",
-                        backgroundColor: "transparent",
-                    }}
-                    startDecorator={
-                        <Avatar
-                            sx={{ maxWidth: "48px", maxHeight: "48px" }}
-                            variant="plain"
-                        />
-                    }
-                >
-                    <Typography
-                        sx={(theme) => {
-                            return {
-                                [mobile(theme)]: {
-                                    display: "none",
-                                },
-                            };
-                        }}
-                    >
-                        Login / Sign Up
-                    </Typography>
-                </MenuButton>
-                <Menu
-                    placement="bottom-end"
-                    size="sm"
-                    sx={{
-                        zIndex: "99999",
-                        p: 1,
-                        gap: 1,
-                        "--ListItem-radius": "var(--joy-radius-sm)",
-                        minWidth: "200px",
-                    }}
-                >
-                    <MenuItem onClick={vm.signUp}>
-                        <strong>Sign Up</strong>
-                    </MenuItem>
-                    <MenuItem onClick={vm.login}>Log In</MenuItem>
-                </Menu>
-            </Dropdown>
+
+            {profileButton?.type === "anonymous" && (
+                <ProfileButtonAnonymous vm={profileButton.vm} />
+            )}
         </Box>
     );
 };

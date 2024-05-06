@@ -26,6 +26,14 @@ class CurrentSessionStoreImpl implements CurrentSessionStore {
             )
         );
     }
+
+    public tryToLoadLastSession = async (): Promise<void> => {
+        if (this.current.value.type !== "anonymous") {
+            return;
+        }
+
+        this.current.value.tryToLoadLastSession();
+    };
 }
 
 export default CurrentSessionStoreImpl;

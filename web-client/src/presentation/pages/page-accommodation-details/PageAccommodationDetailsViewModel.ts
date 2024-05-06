@@ -21,7 +21,6 @@ const accommodationTypeToText = (type: AccommodationType): string => {
 };
 
 class PageAccommodationDetailsViewModel {
-    public readonly navigationBar: NavigationBarViewModel;
     public readonly photosGroup: PhotosGroupViewModel;
 
     public readonly title: string;
@@ -35,17 +34,14 @@ class PageAccommodationDetailsViewModel {
 
     public constructor(
         accommodation: Accommodation,
-        onLogin: () => void,
-        onSignUp: () => void,
+        public readonly navigationBar: NavigationBarViewModel,
         getCostDetails: (
             accommodation: AccommodationId,
             datesRange: DatesRange,
             guestsCount: GuestsQuantity
         ) => Promise<Cost>
     ) {
-        this.navigationBar = new NavigationBarViewModel(onLogin, onSignUp);
         this.photosGroup = new PhotosGroupViewModel(accommodation.photos);
-
         this.title = accommodation.title.value;
         this.description = accommodation.description.value;
         this.location = `${accommodationTypeToText(accommodation.type)}, ${

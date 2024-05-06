@@ -17,6 +17,8 @@ import ReservationService from "../../domain/booking/ReservationService";
 import SignUpByEmailData from "../../domain/auth/CurrentSession/Session/SignUpByEmailData";
 import { AuthenticateByEmailData } from "../../domain/auth/CurrentSession/Session/AuthService";
 import { Session } from "../../domain/auth/CurrentSession/Session/Session";
+import NavigationBarViewModel from "../components/navigation-bar/NavigationBarViewModel";
+import ProfileButtonAnonymousViewModel from "../components/navigation-bar/profile-button-anonymous/ProfileButtonAnonymousViewModel";
 
 class AppViewModelImpl implements AppViewModel {
     public activeDialog: Subject<ActiveDialogViewModel | null>;
@@ -103,10 +105,20 @@ class AppViewModelImpl implements AppViewModel {
         throw new Error("Not implemented");
     };
 
+    private makeNavigationBar = () => {
+        return new NavigationBarViewModel(
+            this.currentSession,
+            () =>
+                new ProfileButtonAnonymousViewModel(
+                    this.openLoginDialog,
+                    this.openSignUpDialog
+                )
+        );
+    };
+
     public makeMainPage = async (): Promise<PageMainViewModel> => {
         return new PageMainViewModelImpl(
-            this.openLoginDialog,
-            this.openSignUpDialog,
+            this.makeNavigationBar(),
             this.toggleFavorite
         );
     };
@@ -120,8 +132,7 @@ class AppViewModelImpl implements AppViewModel {
             );
         return new PageAccommodationDetailsViewModel(
             accommodation,
-            this.openLoginDialog,
-            this.openSignUpDialog,
+            this.makeNavigationBar(),
             this.reservationService.getAccommodationCost
         );
     };
