@@ -11,6 +11,7 @@ import { mobile, tablet, desktop } from "../../utils/selectors";
 import { Link } from "react-router-dom";
 import ProfileButtonAnonymous from "./profile-button-anonymous/ProfileButtonAnonymous";
 import useUpdatesFrom from "../../utils/binding/useUpdatesFrom";
+import ProfileButtonAuthenticated from "./profile-button-authenticated/ProfileButtonAuthenticated";
 
 const NavigationBar = ({ vm }: PropsNavigationBar) => {
     const [profileButton] = useUpdatesFrom(vm.profileButton);
@@ -65,6 +66,9 @@ const NavigationBar = ({ vm }: PropsNavigationBar) => {
 
             {profileButton?.type === "anonymous" && (
                 <ProfileButtonAnonymous vm={profileButton.vm} />
+            )}
+            {profileButton?.type === "authenticated" && (
+                <ProfileButtonAuthenticated vm={profileButton.vm} />
             )}
         </Box>
     );

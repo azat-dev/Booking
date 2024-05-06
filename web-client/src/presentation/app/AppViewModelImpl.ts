@@ -19,6 +19,8 @@ import { AuthenticateByEmailData } from "../../domain/auth/CurrentSession/Sessio
 import { Session } from "../../domain/auth/CurrentSession/Session/Session";
 import NavigationBarViewModel from "../components/navigation-bar/NavigationBarViewModel";
 import ProfileButtonAnonymousViewModel from "../components/navigation-bar/profile-button-anonymous/ProfileButtonAnonymousViewModel";
+import ProfileButtonAuthenticatedViewModel from "../components/navigation-bar/profile-button-authenticated/ProfileButtonAuthenticatedViewModel";
+import SessionAuthenticated from "../../domain/auth/CurrentSession/Session/SessionAuthenticated";
 
 class AppViewModelImpl implements AppViewModel {
     public activeDialog: Subject<ActiveDialogViewModel | null>;
@@ -112,7 +114,23 @@ class AppViewModelImpl implements AppViewModel {
                 new ProfileButtonAnonymousViewModel(
                     this.openLoginDialog,
                     this.openSignUpDialog
-                )
+                ),
+            () => {
+                const session = this.currentSession.current
+                    .value as SessionAuthenticated;
+                const userInfo = session.getUserInfo();
+
+                return new ProfileButtonAuthenticatedViewModel(
+                    userInfo.fullName,
+                    userInfo.avatar,
+                    () => {
+                        throw new Error("Not implemented");
+                    },
+                    () => {
+                        throw new Error("Not implemented");
+                    }
+                );
+            }
         );
     };
 

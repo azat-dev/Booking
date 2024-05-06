@@ -2,18 +2,25 @@ import CurrentSessionStore from "../../../domain/auth/CurrentSession/CurrentSess
 import Subject from "../../utils/binding/Subject";
 import value from "../../utils/binding/value";
 import ProfileButtonAnonymousViewModel from "./profile-button-anonymous/ProfileButtonAnonymousViewModel";
+import ProfileButtonAuthenticatedViewModel from "./profile-button-authenticated/ProfileButtonAuthenticatedViewModel";
 
-export type ProfileButtonPresentation = {
-    type: "anonymous";
-    vm: ProfileButtonAnonymousViewModel;
-};
+export type ProfileButtonPresentation =
+    | {
+          type: "anonymous";
+          vm: ProfileButtonAnonymousViewModel;
+      }
+    | {
+          type: "authenticated";
+          vm: ProfileButtonAuthenticatedViewModel;
+      };
 
 class NavigationBarViewModel {
     public profileButton: Subject<ProfileButtonPresentation | null>;
 
     public constructor(
         private currentSessionStore: CurrentSessionStore,
-        private makeAnonymousProfileButton: () => ProfileButtonAnonymousViewModel
+        private makeAnonymousProfileButton: () => ProfileButtonAnonymousViewModel,
+        private makeAuthenticatedProfileButton: () => ProfileButtonAuthenticatedViewModel
     ) {
         this.profileButton = value(null);
         currentSessionStore.current.listen(this.updateProfileButton);
@@ -29,7 +36,10 @@ class NavigationBarViewModel {
                 vm: this.makeAnonymousProfileButton(),
             });
         } else {
-            this.profileButton.set(null);
+            this.profileButton.set({
+                type: "authenticated",
+                vm: this.makeAuthenticatedProfileButton(),
+            });
         }
     };
 }
