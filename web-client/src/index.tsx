@@ -4,7 +4,7 @@ import "./index.css";
 import reportWebVitals from "./reportWebVitals";
 import AppViewModelImpl from "./presentation/app/AppViewModelImpl";
 import App from "./presentation/app/App";
-import LocalStorageTokensRepository from "./LocalStorageTokensRepository";
+import LocalAuthDataRepositoryImpl from "./LocalAuthDataRepositoryImpl";
 import AuthServiceImpl from "./data/auth/services/AuthServiceImpl";
 import CurrentSessionStoreImpl from "./domain/auth/CurrentSession/CurrentSessionStoreImpl";
 import AccommodationsRegistryImpl from "./domain/accommodations/AccommodationsRegistryImpl";
@@ -21,14 +21,14 @@ const root = ReactDOM.createRoot(
     document.getElementById("root") as HTMLElement
 );
 
-const tokensRepository = new LocalStorageTokensRepository();
+const localAuthDataRespository = new LocalAuthDataRepositoryImpl();
 
 const apiConfig: Configuration = new Configuration({
     basePath: "http://localhost:8080",
 });
 
 const api = new DefaultApi(apiConfig);
-const authService = new AuthServiceImpl(api, tokensRepository);
+const authService = new AuthServiceImpl(api, localAuthDataRespository);
 
 const userInfoService: UserInfoService = {
     getUserInfo: async (userId): Promise<UserInfo> => {
@@ -44,7 +44,7 @@ const userInfoService: UserInfoService = {
 const currentSession = new CurrentSessionStoreImpl(
     authService,
     userInfoService,
-    tokensRepository
+    localAuthDataRespository
 );
 
 const accommodationsRegistry = new AccommodationsRegistryImpl();

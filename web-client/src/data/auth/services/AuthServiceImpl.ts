@@ -7,7 +7,8 @@ import FirstName from "../../../domain/auth/CurrentSession/Session/FirstName";
 import FullName from "../../../domain/auth/CurrentSession/Session/FullName";
 import LastName from "../../../domain/auth/CurrentSession/Session/LastName";
 import SignUpByEmailData from "../../../domain/auth/CurrentSession/Session/SignUpByEmailData";
-import TokensRepository from "../../../domain/auth/interfaces/repositories/TokensRepository";
+import AccessToken from "../../../domain/auth/interfaces/repositories/AccessToken";
+import LocalAuthDataRepository from "../../../domain/auth/interfaces/repositories/LocalAuthDataRepository";
 import Email from "../../../domain/auth/values/Email";
 import UserInfo from "../../../domain/auth/values/User";
 import UserId from "../../../domain/auth/values/UserId";
@@ -28,7 +29,7 @@ class AuthServiceImpl implements AuthService {
 
     public constructor(
         private readonly api: DefaultApi,
-        private readonly tokensRepository: TokensRepository
+        private readonly localAuthDataRepository: LocalAuthDataRepository
     ) {}
 
     public authenticateByEmail = async (
@@ -63,7 +64,10 @@ class AuthServiceImpl implements AuthService {
                 },
             });
 
-            await this.tokensRepository.putAccessToken(result.tokens.access);
+            await this.localAuthDataRepository.put({
+                userId: new UserId(result.userId),
+                accessToken: new AccessToken(result.tokens.access),
+            });
 
             return {
                 userId: new UserId(result.userId),

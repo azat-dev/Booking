@@ -2,7 +2,7 @@ import Email from "../../values/Email";
 import Password from "../../values/Password";
 import SessionAnonymous from "./SessionAnonymous";
 import SessionStatus from "./SessionStatus";
-import TokensRepository from "../../interfaces/repositories/TokensRepository";
+import LocalAuthDataRepository from "../../interfaces/repositories/LocalAuthDataRepository";
 import AuthService, { AuthenticateByEmailData } from "./AuthService";
 import { Session } from "./Session";
 import SessionAuthenticatedImpl from "./SessionAuthenticatedImpl";
@@ -16,13 +16,13 @@ class SessionAnonymousImpl implements SessionAnonymous {
     public constructor(
         private authService: AuthService,
         private userInfoService: UserInfoService,
-        private tokensRepository: TokensRepository,
+        private localAuthDataRepository: LocalAuthDataRepository,
         private setNext: (next: Session) => void
     ) {}
 
     private logout = async (): Promise<void> => {
         await this.authService.logout();
-        await this.tokensRepository.clear();
+        await this.localAuthDataRepository.clear();
         this.setNext(this);
     };
 
@@ -76,11 +76,13 @@ class SessionAnonymousImpl implements SessionAnonymous {
         });
 
         try {
-            const token = await this.tokensRepository.getAccessToken();
-            if (!token) {
+            const authData = await this.localAuthDataRepository.get();
+            if (!authData) {
                 this.setNext(this);
                 return;
             }
+
+            const token = authData.accessToken.val;
 
             const user = await this.authService.authenticateByToken(token);
             this.setAuthenticated(user, token);

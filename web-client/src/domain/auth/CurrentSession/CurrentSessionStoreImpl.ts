@@ -1,6 +1,6 @@
 import Subject from "../../../presentation/utils/binding/Subject";
 import value from "../../../presentation/utils/binding/value";
-import TokensRepository from "../interfaces/repositories/TokensRepository";
+import LocalAuthDataRepository from "../interfaces/repositories/LocalAuthDataRepository";
 import CurrentSessionStore from "./CurrentSessionStore";
 import AuthService from "./Session/AuthService";
 import { Session } from "./Session/Session";
@@ -13,13 +13,13 @@ class CurrentSessionStoreImpl implements CurrentSessionStore {
     public constructor(
         authService: AuthService,
         userInfoService: UserInfoService,
-        localTokensRepository: TokensRepository
+        localAuthDataRepository: LocalAuthDataRepository
     ) {
         this.current = value(
             new SessionAnonymousImpl(
                 authService,
                 userInfoService,
-                localTokensRepository,
+                localAuthDataRepository,
                 (next) => {
                     this.current.set(next);
                 }
