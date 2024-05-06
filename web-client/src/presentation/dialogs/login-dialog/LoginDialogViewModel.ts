@@ -1,3 +1,4 @@
+import { AuthenticateByEmailData } from "../../../domain/auth/CurrentSession/Session/AuthService";
 import Email from "../../../domain/auth/values/Email";
 import Password from "../../../domain/auth/values/Password";
 import value from "../../utils/binding/value";
@@ -7,7 +8,7 @@ class LoginDialogViewModel {
     public showWrongCredentialsError = value(false);
 
     public constructor(
-        private login?: (email: Email, password: Password) => Promise<void>,
+        private login?: (data: AuthenticateByEmailData) => Promise<void>,
         private readonly onClose?: () => void,
         private readonly onSignUp?: () => void
     ) {}
@@ -19,10 +20,10 @@ class LoginDialogViewModel {
     public submit = async () => {
         this.isProcessing.set(true);
 
-        const success = await this.login?.(
-            new Email("email@some.com"),
-            new Password("password")
-        );
+        const success = await this.login?.({
+            email: new Email("email@some.com"),
+            password: new Password("password"),
+        });
         if (success) {
             return;
         }

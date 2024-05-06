@@ -8,8 +8,6 @@ import com.azat4dev.demobooking.users.domain.events.UserCreated;
 import com.azat4dev.demobooking.users.domain.events.UserCreatedPayload;
 import com.azat4dev.demobooking.users.domain.interfaces.repositories.NewUserData;
 import com.azat4dev.demobooking.users.domain.interfaces.repositories.UsersRepository;
-import com.azat4dev.demobooking.users.domain.values.WrongEmailFormatException;
-import com.azat4dev.demobooking.users.domain.values.WrongPasswordFormatException;
 
 public final class UsersServiceImpl implements UsersService {
 
@@ -28,20 +26,24 @@ public final class UsersServiceImpl implements UsersService {
     }
 
     @Override
-    public void handle(CreateUser command) throws WrongEmailFormatException, WrongPasswordFormatException {
+    public void handle(CreateUser command) throws UserAlreadyExistsException {
 
         final var userId = command.userId();
         final var currentDate = timeProvider.currentTime();
 
-        usersRepository.createUser(
-            new NewUserData(
-                userId,
-                currentDate,
-                command.email(),
-                command.encodedPassword(),
-                EmailVerificationStatus.NOT_VERIFIED
-            )
-        );
+        try {
+            usersRepository.createUser(
+                new NewUserData(
+                    userId,
+                    currentDate,
+                    command.email(),
+                    command.encodedPassword(),
+                    EmailVerificationStatus.NOT_VERIFIED
+                )
+            );
+        } catch (UsersRepository.UserAlreadyExistsException e) {
+            throw new UserAlreadyExistsException();
+        }
 
         eventsStore.publish(
             new UserCreated(

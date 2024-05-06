@@ -1,10 +1,20 @@
 package com.azat4dev.demobooking.users.domain.services;
 
+import com.azat4dev.demobooking.common.DomainException;
 import com.azat4dev.demobooking.users.domain.commands.CreateUser;
-import com.azat4dev.demobooking.users.domain.values.WrongEmailFormatException;
-import com.azat4dev.demobooking.users.domain.values.WrongPasswordFormatException;
 
 public interface UsersService {
 
-    void handle(CreateUser command) throws WrongEmailFormatException, WrongPasswordFormatException;
+    class UserAlreadyExistsException extends DomainException {
+        public UserAlreadyExistsException() {
+            super("User already exists");
+        }
+
+        @Override
+        public String getCode() {
+            return "UserAlreadyExists";
+        }
+    }
+
+    void handle(CreateUser command) throws UserAlreadyExistsException;
 }

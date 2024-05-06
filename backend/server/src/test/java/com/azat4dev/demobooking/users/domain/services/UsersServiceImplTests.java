@@ -8,8 +8,6 @@ import com.azat4dev.demobooking.users.domain.commands.CreateUser;
 import com.azat4dev.demobooking.users.domain.events.UserCreated;
 import com.azat4dev.demobooking.users.domain.interfaces.repositories.UsersRepository;
 import com.azat4dev.demobooking.users.domain.interfaces.services.EncodedPassword;
-import com.azat4dev.demobooking.users.domain.interfaces.services.PasswordService;
-import com.azat4dev.demobooking.users.domain.values.UserId;
 import org.junit.jupiter.api.Test;
 
 import java.util.Date;
@@ -29,7 +27,6 @@ public class UsersServiceImplTests {
         UsersRepository usersRepository = mock(UsersRepository.class);
         EventsStore eventsStore = mock(EventsStore.class);
 
-        final var passwordService = mock(PasswordService.class);
         final var timeProvider = mock(TimeProvider.class);
 
         return new SUT(
@@ -53,7 +50,7 @@ public class UsersServiceImplTests {
     }
 
     @Test
-    void given_valid_user_data__when_createUser__then_add_user_and_produce_event() {
+    void given_valid_user_data__when_createUser__then_add_user_and_produce_event() throws UsersRepository.UserAlreadyExistsException {
 
         // Given
         final var sut = createSUT();

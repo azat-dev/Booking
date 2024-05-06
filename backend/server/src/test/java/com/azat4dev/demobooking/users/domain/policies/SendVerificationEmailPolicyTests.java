@@ -6,11 +6,9 @@ import com.azat4dev.demobooking.users.domain.events.UserCreated;
 import com.azat4dev.demobooking.users.domain.events.UserCreatedPayload;
 import com.azat4dev.demobooking.users.domain.interfaces.services.EmailService;
 import com.azat4dev.demobooking.users.domain.services.EmailVerificationStatus;
-import com.azat4dev.demobooking.users.domain.entities.User;
 import com.azat4dev.demobooking.users.domain.services.VerificationEmailBuilder;
 import com.azat4dev.demobooking.users.domain.services.VerificationEmailBuilderResult;
 import com.azat4dev.demobooking.users.domain.values.EmailAddress;
-import com.azat4dev.demobooking.users.domain.values.UserId;
 import com.azat4dev.demobooking.users.domain.values.email.EmailBody;
 import org.junit.jupiter.api.Test;
 
@@ -26,12 +24,6 @@ import static org.mockito.Mockito.times;
 
 
 public class SendVerificationEmailPolicyTests {
-
-    record SUT(
-        SendVerificationEmailPolicy policy,
-        EmailService emailService,
-        VerificationEmailBuilder emailBuilder
-    ) {}
 
     SUT createSUT() {
         final var emailBuilder = mock(VerificationEmailBuilder.class);
@@ -104,5 +96,12 @@ public class SendVerificationEmailPolicyTests {
                     assertThat(m.body()).isEqualTo(builtEmail.body());
                 })
             );
+    }
+
+    record SUT(
+        SendVerificationEmailPolicy policy,
+        EmailService emailService,
+        VerificationEmailBuilder emailBuilder
+    ) {
     }
 }

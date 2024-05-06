@@ -1,31 +1,26 @@
 package com.azat4dev.demobooking.users.presentation.api.rest.authentication.resources;
 
 import com.azat4dev.demobooking.common.CommandId;
-import com.azat4dev.demobooking.common.DomainDataFormatException;
+import com.azat4dev.demobooking.common.presentation.ControllerException;
 import com.azat4dev.demobooking.users.domain.commands.CreateUser;
-import com.azat4dev.demobooking.users.domain.entities.FirstName;
-import com.azat4dev.demobooking.users.domain.entities.FullName;
-import com.azat4dev.demobooking.users.domain.entities.LastName;
 import com.azat4dev.demobooking.users.domain.interfaces.services.PasswordService;
 import com.azat4dev.demobooking.users.domain.services.UsersService;
-import com.azat4dev.demobooking.users.domain.values.EmailAddress;
-import com.azat4dev.demobooking.users.domain.values.Password;
 import com.azat4dev.demobooking.users.domain.values.UserId;
 import com.azat4dev.demobooking.users.domain.values.UserIdFactory;
 import com.azat4dev.demobooking.users.presentation.api.rest.authentication.entities.*;
 import com.azat4dev.demobooking.users.presentation.security.services.CustomUserDetailsService;
 import com.azat4dev.demobooking.users.presentation.security.services.jwt.JwtService;
 import com.azat4dev.demobooking.users.presentation.security.services.jwt.UserIdNotFoundException;
+import com.azat4dev.demobooking.common.presentation.ErrorDTO;
+import com.azat4dev.demobooking.common.presentation.ValidationException;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
-import jakarta.validation.Valid;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.log.LogMessage;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.security.config.annotation.authentication.configuration.AuthenticationConfiguration;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.core.context.SecurityContextHolderStrategy;
 import org.springframework.security.oauth2.server.resource.authentication.BearerTokenAuthenticationToken;
@@ -43,10 +38,6 @@ public class AuthenticationController implements AuthenticationResource {
 
     private final SecurityContextHolderStrategy securityContextHolderStrategy = SecurityContextHolder
         .getContextHolderStrategy();
-
-
-    @Autowired
-    private AuthenticationConfiguration authConfig;
 
     @Autowired
     private UserIdFactory userIdFactory;
@@ -66,48 +57,43 @@ public class AuthenticationController implements AuthenticationResource {
     @Autowired
     private CustomUserDetailsService userDetailsService;
 
-    @ExceptionHandler
-    public ResponseEntity<String> handleException(Exception ex) {
+    @ExceptionHandler({ValidationException.class})
+    public ResponseEntity<?> handleException(ValidationException ex) {
+        return ex.toResponseEntity();
+    }
 
-        if (ex instanceof DomainDataFormatException exception) {
-            return ResponseEntity.status(HttpStatus.BAD_REQUEST)
-                .body(exception.getMessage());
-        }
-
-        return ResponseEntity.internalServerError().build();
+    @ExceptionHandler({ControllerException.class})
+    public ResponseEntity<?> handleException(ControllerException ex) {
+        return ex.toResponseEntity();
     }
 
     @Override
     public ResponseEntity<SignUpResponse> signUp(
-        @Valid SignUpRequest signUpRequest,
+        SignUpRequest signUpRequest,
         HttpServletRequest request,
         HttpServletResponse response
     ) throws Exception {
 
-        final var password1 = signUpRequest.password1();
-        final var password2 = signUpRequest.password2();
+        final var email = signUpRequest.parseEmail();
+        final var password = signUpRequest.parsePassword();
+        final var fullName = signUpRequest.parseFullName();
 
-        if (!password1.equals(password2)) {
-            return ResponseEntity.status(HttpStatus.BAD_REQUEST.value())
-                .build();
-        }
-
-        final var password = Password.makeFromString(password1);
         final var encodedPassword = passwordService.encodePassword(password);
         final var userId = userIdFactory.generateNewUserId();
 
-        usersService.handle(
-            new CreateUser(
-                CommandId.generateNew(),
-                userId,
-                new FullName(
-                    new FirstName(signUpRequest.fullName().firstName()),
-                    new LastName(signUpRequest.fullName().lastName())
-                ),
-                EmailAddress.makeFromString(signUpRequest.email()),
-                encodedPassword
-            )
-        );
+        try {
+            usersService.handle(
+                new CreateUser(
+                    CommandId.generateNew(),
+                    userId,
+                    fullName,
+                    email,
+                    encodedPassword
+                )
+            );
+        } catch (UsersService.UserAlreadyExistsException e) {
+            throw ControllerException.create(HttpStatus.CONFLICT, "UserAlreadyExists", e.getMessage());
+        }
 
         final var authorities = new String[]{"ROLE_USER"};
         final var authenticationResult = this.authenticateUser(userId, authorities, request, response);
@@ -120,15 +106,15 @@ public class AuthenticationController implements AuthenticationResource {
         return ResponseEntity.created(URI.create("")).body(signUpResponse);
     }
 
-    private AuthenticationResponse authenticateUser(
+    private GeneratedTokensDTO authenticateUser(
         UserId userId,
         String[] authorities,
         HttpServletRequest request,
         HttpServletResponse response
-    ) throws Exception {
+    ) {
 
         try {
-            final var authenticationResponse = new AuthenticationResponse(
+            final var authenticationResponse = new GeneratedTokensDTO(
                 tokenProvider.generateAccessToken(userId, authorities),
                 tokenProvider.generateRefreshToken(userId, authorities)
             );
@@ -159,13 +145,13 @@ public class AuthenticationController implements AuthenticationResource {
     }
 
     public ResponseEntity<LoginByEmailResponse> authenticate(
-        @Valid @RequestBody LoginByEmailRequest authenticationRequest,
+        @RequestBody LoginByEmailRequest authenticationRequest,
         HttpServletRequest request,
         HttpServletResponse response
     ) throws Exception {
 
-        final var email = EmailAddress.makeFromString(authenticationRequest.email());
-        final var password = Password.makeFromString(authenticationRequest.password());
+        final var email = authenticationRequest.parseEmail();
+        final var password = authenticationRequest.parsePassword();
 
         try {
             final var user = userDetailsService.loadUserByEmail(email);

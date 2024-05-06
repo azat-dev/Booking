@@ -13,10 +13,11 @@ import PageMainViewModel from "../pages/page-main/PageMainViewModel";
 import PageAccommodationDetailsViewModel from "../pages/page-accommodation-details/PageAccommodationDetailsViewModel";
 import AccommodationsRegistry from "../../domain/accommodations/AccommodationsRegistry";
 import AccommodationId from "../../domain/accommodations/AccommodationId";
-import DatesRange from "../../domain/booking/values/DatesRange";
-import GuestsQuantity from "../../domain/booking/values/GuestsQuantity";
-import Cost from "../../domain/booking/values/Cost";
 import ReservationService from "../../domain/booking/ReservationService";
+import Email from "../../domain/auth/values/Email";
+import Password from "../../domain/auth/values/Password";
+import SignUpByEmailData from "../../domain/auth/CurrentSession/Session/SignUpByEmailData";
+import { AuthenticateByEmailData } from "../../domain/auth/CurrentSession/Session/AuthService";
 
 class AppViewModelImpl implements AppViewModel {
     public activeDialog: Subject<ActiveDialogViewModel | null>;
@@ -33,38 +34,42 @@ class AppViewModelImpl implements AppViewModel {
         this.activeDialog.set(null);
     };
 
+    private authenticateByEmail = async (data: AuthenticateByEmailData) => {
+        const session = this.currentSession.current.value;
+
+        if (session.type !== SessionStatus.ANONYMOUS) {
+            return;
+        }
+
+        await session.authenticate(data);
+    };
+
     public openLoginDialog = (): void => {
         this.activeDialog.set({
             type: ActiveDialogType.Login,
             vm: new LoginDialogViewModel(
-                async (email, password) => {
-                    const session = this.currentSession.current.value;
-
-                    if (session.type !== SessionStatus.ANONYMOUS) {
-                        return;
-                    }
-
-                    await session.authenticate(email, password);
-                },
+                this.authenticateByEmail,
                 this.closeDialog,
                 this.openSignUpDialog
             ),
         });
     };
 
+    private signUpByEmail = async (data: SignUpByEmailData): Promise<void> => {
+        const session = this.currentSession.current.value;
+
+        if (session.type !== SessionStatus.ANONYMOUS) {
+            return;
+        }
+
+        await session.signUpByEmail(data);
+    };
+
     public openSignUpDialog = (): void => {
         this.activeDialog.set({
             type: ActiveDialogType.SignUp,
             vm: new SignUpDialogViewModel(
-                async (email, password) => {
-                    const session = this.currentSession.current.value;
-
-                    if (session.type !== SessionStatus.ANONYMOUS) {
-                        return;
-                    }
-
-                    await session.authenticate(email, password);
-                },
+                this.signUpByEmail,
                 this.closeDialog,
                 this.openLoginDialog
             ),

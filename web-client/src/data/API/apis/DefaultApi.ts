@@ -15,24 +15,40 @@
 
 import * as runtime from '../runtime';
 import type {
-  ApiPublicAuthTokenPostRequest,
+  ApiPublicAuthSignUpPost400Response,
   ApiPublicAuthTokenVerifyPostRequest,
+  AuthenticateByEmailResponse,
   GetTokenResponse,
-  SignUpResponse,
+  SignUpByEmailRequest,
+  SignUpByEmailResponse,
+  UserAlreadyExistsError,
+  UserInfo,
 } from '../models/index';
 import {
-    ApiPublicAuthTokenPostRequestFromJSON,
-    ApiPublicAuthTokenPostRequestToJSON,
+    ApiPublicAuthSignUpPost400ResponseFromJSON,
+    ApiPublicAuthSignUpPost400ResponseToJSON,
     ApiPublicAuthTokenVerifyPostRequestFromJSON,
     ApiPublicAuthTokenVerifyPostRequestToJSON,
+    AuthenticateByEmailResponseFromJSON,
+    AuthenticateByEmailResponseToJSON,
     GetTokenResponseFromJSON,
     GetTokenResponseToJSON,
-    SignUpResponseFromJSON,
-    SignUpResponseToJSON,
+    SignUpByEmailRequestFromJSON,
+    SignUpByEmailRequestToJSON,
+    SignUpByEmailResponseFromJSON,
+    SignUpByEmailResponseToJSON,
+    UserAlreadyExistsErrorFromJSON,
+    UserAlreadyExistsErrorToJSON,
+    UserInfoFromJSON,
+    UserInfoToJSON,
 } from '../models/index';
 
-export interface ApiPublicAuthTokenPostOperationRequest {
-    apiPublicAuthTokenPostRequest: ApiPublicAuthTokenPostRequest;
+export interface ApiPublicAuthSignUpPostRequest {
+    signUpByEmailRequest: SignUpByEmailRequest;
+}
+
+export interface ApiPublicAuthTokenPostRequest {
+    authenticateByEmailResponse: AuthenticateByEmailResponse;
 }
 
 export interface ApiPublicAuthTokenVerifyPostOperationRequest {
@@ -47,37 +63,47 @@ export class DefaultApi extends runtime.BaseAPI {
     /**
      * Sign up a new user
      */
-    async apiPublicAuthSignUpPostRaw(initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<runtime.ApiResponse<SignUpResponse>> {
+    async apiPublicAuthSignUpPostRaw(requestParameters: ApiPublicAuthSignUpPostRequest, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<runtime.ApiResponse<SignUpByEmailResponse>> {
+        if (requestParameters['signUpByEmailRequest'] == null) {
+            throw new runtime.RequiredError(
+                'signUpByEmailRequest',
+                'Required parameter "signUpByEmailRequest" was null or undefined when calling apiPublicAuthSignUpPost().'
+            );
+        }
+
         const queryParameters: any = {};
 
         const headerParameters: runtime.HTTPHeaders = {};
+
+        headerParameters['Content-Type'] = 'application/json';
 
         const response = await this.request({
             path: `/api/public/auth/sign-up`,
             method: 'POST',
             headers: headerParameters,
             query: queryParameters,
+            body: SignUpByEmailRequestToJSON(requestParameters['signUpByEmailRequest']),
         }, initOverrides);
 
-        return new runtime.JSONApiResponse(response, (jsonValue) => SignUpResponseFromJSON(jsonValue));
+        return new runtime.JSONApiResponse(response, (jsonValue) => SignUpByEmailResponseFromJSON(jsonValue));
     }
 
     /**
      * Sign up a new user
      */
-    async apiPublicAuthSignUpPost(initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<SignUpResponse> {
-        const response = await this.apiPublicAuthSignUpPostRaw(initOverrides);
+    async apiPublicAuthSignUpPost(requestParameters: ApiPublicAuthSignUpPostRequest, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<SignUpByEmailResponse> {
+        const response = await this.apiPublicAuthSignUpPostRaw(requestParameters, initOverrides);
         return await response.value();
     }
 
     /**
      * Get a new pair of tokens (access, refresh)
      */
-    async apiPublicAuthTokenPostRaw(requestParameters: ApiPublicAuthTokenPostOperationRequest, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<runtime.ApiResponse<GetTokenResponse>> {
-        if (requestParameters['apiPublicAuthTokenPostRequest'] == null) {
+    async apiPublicAuthTokenPostRaw(requestParameters: ApiPublicAuthTokenPostRequest, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<runtime.ApiResponse<GetTokenResponse>> {
+        if (requestParameters['authenticateByEmailResponse'] == null) {
             throw new runtime.RequiredError(
-                'apiPublicAuthTokenPostRequest',
-                'Required parameter "apiPublicAuthTokenPostRequest" was null or undefined when calling apiPublicAuthTokenPost().'
+                'authenticateByEmailResponse',
+                'Required parameter "authenticateByEmailResponse" was null or undefined when calling apiPublicAuthTokenPost().'
             );
         }
 
@@ -92,7 +118,7 @@ export class DefaultApi extends runtime.BaseAPI {
             method: 'POST',
             headers: headerParameters,
             query: queryParameters,
-            body: ApiPublicAuthTokenPostRequestToJSON(requestParameters['apiPublicAuthTokenPostRequest']),
+            body: AuthenticateByEmailResponseToJSON(requestParameters['authenticateByEmailResponse']),
         }, initOverrides);
 
         return new runtime.JSONApiResponse(response, (jsonValue) => GetTokenResponseFromJSON(jsonValue));
@@ -101,7 +127,7 @@ export class DefaultApi extends runtime.BaseAPI {
     /**
      * Get a new pair of tokens (access, refresh)
      */
-    async apiPublicAuthTokenPost(requestParameters: ApiPublicAuthTokenPostOperationRequest, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<GetTokenResponse> {
+    async apiPublicAuthTokenPost(requestParameters: ApiPublicAuthTokenPostRequest, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<GetTokenResponse> {
         const response = await this.apiPublicAuthTokenPostRaw(requestParameters, initOverrides);
         return await response.value();
     }
@@ -139,6 +165,32 @@ export class DefaultApi extends runtime.BaseAPI {
      */
     async apiPublicAuthTokenVerifyPost(requestParameters: ApiPublicAuthTokenVerifyPostOperationRequest, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<void> {
         await this.apiPublicAuthTokenVerifyPostRaw(requestParameters, initOverrides);
+    }
+
+    /**
+     * Gets current user info
+     */
+    async apiWithAuthUserGetRaw(initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<runtime.ApiResponse<UserInfo>> {
+        const queryParameters: any = {};
+
+        const headerParameters: runtime.HTTPHeaders = {};
+
+        const response = await this.request({
+            path: `/api/with-auth/user`,
+            method: 'GET',
+            headers: headerParameters,
+            query: queryParameters,
+        }, initOverrides);
+
+        return new runtime.JSONApiResponse(response, (jsonValue) => UserInfoFromJSON(jsonValue));
+    }
+
+    /**
+     * Gets current user info
+     */
+    async apiWithAuthUserGet(initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<UserInfo> {
+        const response = await this.apiWithAuthUserGetRaw(initOverrides);
+        return await response.value();
     }
 
 }

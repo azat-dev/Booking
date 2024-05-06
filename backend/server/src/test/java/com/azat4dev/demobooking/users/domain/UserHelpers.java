@@ -29,6 +29,10 @@ public class UserHelpers {
     }
 
     public static UserId anyValidUserId() {
-        return UserId.fromString(UUID.randomUUID().toString());
+        try {
+            return UserId.fromString(UUID.randomUUID().toString());
+        } catch (UserId.WrongFormatException e) {
+            throw new RuntimeException(e);
+        }
     }
 }

@@ -4,7 +4,7 @@ import jakarta.validation.constraints.NotNull;
 
 public record SignUpResponse(
     @NotNull String userId,
-    @NotNull AuthenticationResponse authenticationInfo
+    @NotNull GeneratedTokensDTO tokens
 ) {
 
 }

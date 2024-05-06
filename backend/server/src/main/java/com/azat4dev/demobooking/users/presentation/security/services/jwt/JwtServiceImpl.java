@@ -65,7 +65,7 @@ public final class JwtServiceImpl implements JwtService {
     }
 
     @Override
-    public UserId getUserIdFromToken(String token) {
+    public UserId getUserIdFromToken(String token) throws UserId.WrongFormatException {
 
         final var decoded = jwtDecoder.decode(token);
         final var subject = decoded.getSubject();

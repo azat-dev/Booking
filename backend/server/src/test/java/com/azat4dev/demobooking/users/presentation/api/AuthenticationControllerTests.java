@@ -2,12 +2,14 @@ package com.azat4dev.demobooking.users.presentation.api;
 
 import com.azat4dev.demobooking.users.application.config.WebSecurityConfig;
 import com.azat4dev.demobooking.users.domain.UserHelpers;
+import com.azat4dev.demobooking.users.domain.interfaces.repositories.UsersRepository;
 import com.azat4dev.demobooking.users.domain.interfaces.services.EncodedPassword;
 import com.azat4dev.demobooking.users.domain.services.UsersService;
 import com.azat4dev.demobooking.users.domain.values.UserIdFactory;
-import com.azat4dev.demobooking.users.presentation.api.rest.authentication.entities.FullName;
+import com.azat4dev.demobooking.users.presentation.api.rest.authentication.entities.FullNameDTO;
 import com.azat4dev.demobooking.users.presentation.api.rest.authentication.entities.LoginByEmailRequest;
 import com.azat4dev.demobooking.users.presentation.api.rest.authentication.entities.SignUpRequest;
+import com.azat4dev.demobooking.common.presentation.ValidationErrorDTO;
 import com.azat4dev.demobooking.users.presentation.api.rest.authentication.resources.AuthenticationController;
 import com.azat4dev.demobooking.users.presentation.security.entities.UserPrincipal;
 import com.azat4dev.demobooking.users.presentation.security.services.CustomUserDetailsService;
@@ -76,9 +78,8 @@ public class AuthenticationControllerTests {
     @MockBean
     private UserIdFactory userIdFactory;
 
-    private String anyValidEmail() {
-        return "email@company.com";
-    }
+    @MockBean
+    private UsersRepository usersRepository;
 
     @Test
     void test_authenticate_givenUserNotExists_thenReturnError() throws Exception {
@@ -152,30 +153,57 @@ public class AuthenticationControllerTests {
             .andExpect(unauthenticated());
     }
 
-
     @Test
-    void test_singUp_givenNotMatchingPasswords_thenReturnError() throws Exception {
+    void test_singUp_givenWrongFormat_thenReturnError() throws Exception {
 
         // Given
-        final var password1 = "password";
-        final var password2 = "password2";
+        final var password = "";
         final var validEmail = "valid@email.com";
 
         final SignUpRequest request = new SignUpRequest(
-            new FullName(
+            new FullNameDTO(
                 "John",
                 "Doe"
             ),
             validEmail,
-            password1,
-            password2
+            password
         );
 
         // When
         final var response = performSignUpRequest(request);
 
         // Then
-        response.andExpect(status().isBadRequest());
+        response.andExpect(status().isBadRequest())
+            .andExpect(jsonPath("$.type").value(ValidationErrorDTO.TYPE))
+            .andExpect(jsonPath("$.errors").isNotEmpty());
+    }
+
+    @Test
+    void test_singUp_givenUserExists_thenReturnError() throws Exception {
+
+        // Given
+        final var validPassword = anyValidPassword();
+        final var validEmail = anyValidEmail();
+        final var fullName = anyValidFullName();
+
+        final var existingPrincipal = givenExistingPrincipal();
+
+        willThrow(new UsersService.UserAlreadyExistsException())
+            .given(usersService)
+            .handle(any());
+
+        final SignUpRequest request = new SignUpRequest(
+            fullName,
+            validEmail,
+            validPassword
+        );
+
+        // When
+        final var response = performSignUpRequest(request);
+
+        // Then
+        response.andExpect(status().isConflict())
+            .andExpect(jsonPath("$.code").value("UserAlreadyExists"));
     }
 
     private ResultActions performPostRequest(
@@ -196,12 +224,9 @@ public class AuthenticationControllerTests {
 
         // Given
         final var userId = anyValidUserId();
-        final var fullName = new FullName(
-            "John",
-            "Doe"
-        );
+        final var fullName = anyValidFullName();
+        final var validEmail = anyValidEmail();
         final var password = new EncodedPassword("password");
-        final var validEmail = "valid@email.com";
 
         final var expectedAccessToken = "accessToken";
         final var expectedRefreshToken = "refreshToken";
@@ -209,7 +234,6 @@ public class AuthenticationControllerTests {
         final var request = new SignUpRequest(
             fullName,
             validEmail,
-            password.value(),
             password.value()
         );
 
@@ -252,8 +276,8 @@ public class AuthenticationControllerTests {
             .andExpect(authenticated());
 
         action.andExpect(jsonPath("$.userId").isNotEmpty())
-            .andExpect(jsonPath("$.authenticationInfo.access").value(expectedAccessToken))
-            .andExpect(jsonPath("$.authenticationInfo.refresh").value(expectedRefreshToken));
+            .andExpect(jsonPath("$.tokens.access").value(expectedAccessToken))
+            .andExpect(jsonPath("$.tokens.refresh").value(expectedRefreshToken));
 
     }
 
@@ -262,11 +286,10 @@ public class AuthenticationControllerTests {
 
         // Given
         final var request = new SignUpRequest(
-            new FullName(
+            new FullNameDTO(
                 "",
                 ""
             ),
-            "",
             "",
             ""
         );
@@ -279,6 +302,23 @@ public class AuthenticationControllerTests {
     }
 
     // Helpers
+
+    private String anyValidPassword() {
+        return "123456";
+    }
+
+    private String anyValidEmail() {
+        return "email@company.com";
+    }
+
+    private FullNameDTO anyValidFullName() {
+        final var fullName = UserHelpers.anyFullName();
+
+        return new FullNameDTO(
+            fullName.firstName().getValue(),
+            fullName.lastName().getValue()
+        );
+    }
 
     private UserPrincipal givenExistingPrincipal() {
 

@@ -1,21 +1,43 @@
+import Assert from "../../utils/Assert";
+import ValidationException from "../CurrentSession/Session/ValidationException";
+
 class Email {
-    private value: string;
+    public readonly value: string;
 
     constructor(value: string) {
-        if (!Email.isValid(value)) {
-            throw new Error("Invalid email");
+        const cleanedValue = value.trim();
+
+        Assert.notBlank(cleanedValue, () => new Email.NotBlank());
+        Assert.hasPattern(
+            cleanedValue,
+            /^[^\s@]+@[^\s@]+\.[^\s@]+$/,
+            () => new Email.FormatException()
+        );
+
+        this.value = cleanedValue;
+    }
+
+    public static readonly ValidationException = ValidationException;
+
+    public static NotBlank = class extends Email.ValidationException {
+        public constructor() {
+            super("Email is required");
         }
 
-        this.value = value;
-    }
+        public getCode = (): string => {
+            return "NotBlank";
+        };
+    };
 
-    private static isValid(email: string): boolean {
-        return /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email);
-    }
+    public static FormatException = class extends Email.ValidationException {
+        public constructor() {
+            super("Invalid email format");
+        }
 
-    public getValue(): string {
-        return this.value;
-    }
+        public getCode = (): string => {
+            return "InvalidFormat";
+        };
+    };
 }
 
 export default Email;

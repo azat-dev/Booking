@@ -16,16 +16,16 @@ public class PasswordTests {
 
         // When
         final var exception = assertThrows(
-            WrongPasswordFormatException.class,
+            Password.WrongFormatException.class,
             () -> Password.makeFromString(wrongPassword)
         );
 
         // Then
-        assertThat(exception).isInstanceOf(WrongPasswordFormatException.class);
+        assertThat(exception).isInstanceOf(Password.WrongFormatException.class);
     }
 
     @Test
-    public void given_valid_password__when_create_new__then_return_object() throws WrongPasswordFormatException {
+    public void given_valid_password__when_create_new__then_return_object() throws Password.WrongFormatException, Password.LengthException {
 
         // Given
         final var validValue = "validpassword";

@@ -68,7 +68,6 @@ class DateRangePickerViewModel {
     };
 
     public clickAway = () => {
-        debugger;
         this.close();
     };
 }

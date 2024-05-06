@@ -1,10 +1,11 @@
+import FullName from "../CurrentSession/Session/FullName";
 import Avatar from "./Avatar";
 import Email from "./Email";
 import UserId from "./UserId";
 
-export default interface User {
+export default interface UserInfo {
     readonly id: UserId;
     readonly email: Email;
-    readonly name: string | null;
+    readonly fullName: FullName;
     readonly avatar: Avatar | null;
 }

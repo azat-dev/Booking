@@ -227,12 +227,17 @@ class JwtServiceTests {
         );
 
         given(sut.decoder.decode(any())).willReturn(validJwt);
+        
+        try {
+            // When
+            final var result = sut.service.getUserIdFromToken(token);
 
-        // When
-        final var result = sut.service.getUserIdFromToken(token);
+            // Then
+            assertThat(result).isEqualTo(userId);
 
-        // Then
-        assertThat(result).isEqualTo(userId);
+        } catch (UserId.WrongFormatException e) {
+            throw new RuntimeException(e);
+        }
     }
 
     private record SUT(

@@ -15,7 +15,7 @@ public class EmailAddressTests {
 
         // When
         final var exception = assertThrows(
-            WrongEmailFormatException.class,
+            EmailAddress.WrongFormatException.class,
             () -> EmailAddress.makeFromString(wrongEmail)
         );
 
@@ -24,7 +24,7 @@ public class EmailAddressTests {
     }
 
     @Test
-    public void given_valid_email__when_create_new__then_return_email() throws WrongEmailFormatException {
+    public void given_valid_email__when_create_new__then_return_email() throws EmailAddress.WrongFormatException {
 
         // Given
         final var validEmail = "valid@email.com";
@@ -38,7 +38,7 @@ public class EmailAddressTests {
     }
 
     @Test
-    public void given_equal_emails__when_isEqual__then_return_true() throws WrongEmailFormatException {
+    public void given_equal_emails__when_isEqual__then_return_true() throws EmailAddress.WrongFormatException {
 
         // Given
         final var validEmail = "valid@email.com";
@@ -48,13 +48,12 @@ public class EmailAddressTests {
         // When
         final var isEqual = email1.equals(email2);
 
-
         // Then
         assertThat(isEqual).isTrue();
     }
 
     @Test
-    public void given_equal_not_emails__when_isEqual__then_return_false() throws WrongEmailFormatException {
+    public void given_equal_not_emails__when_isEqual__then_return_false() throws EmailAddress.WrongFormatException {
 
         // Given
         final var validEmail1 = "valid1@email.com";

@@ -1,5 +1,7 @@
 package com.azat4dev.demobooking.users.domain.values;
 
+import com.azat4dev.demobooking.common.DomainException;
+import com.azat4dev.demobooking.common.utils.Assert;
 import org.apache.commons.validator.routines.EmailValidator;
 
 import java.util.Objects;
@@ -12,26 +14,27 @@ public final class EmailAddress {
         this.value = value;
     }
 
+    public static void validate(String value) throws WrongFormatException {
+
+        final var validator = EmailValidator.getInstance();
+
+        Assert.string(value, () -> new WrongFormatException(value))
+            .notNull()
+            .notBlank()
+            .isTrue(validator::isValid);
+    }
+
+    public static EmailAddress makeFromString(String text) throws WrongFormatException {
+        validate(text);
+        return new EmailAddress(text);
+    }
+
     public String getValue() {
         return value;
     }
 
     public String toString() {
         return value;
-    }
-
-    private static void validateEmail(String text) throws WrongEmailFormatException {
-
-        final var validator = EmailValidator.getInstance();
-
-        if (!validator.isValid(text)) {
-            throw new WrongEmailFormatException(text);
-        }
-    }
-
-    public static EmailAddress makeFromString(String text) throws WrongEmailFormatException {
-        validateEmail(text);
-        return new EmailAddress(text);
     }
 
     @Override
@@ -44,5 +47,30 @@ public final class EmailAddress {
     @Override
     public int hashCode() {
         return Objects.hashCode(getValue());
+    }
+
+    public abstract static class ValidationException extends DomainException {
+        public ValidationException(String message) {
+            super(message);
+        }
+    }
+
+    public static class WrongFormatException extends ValidationException {
+
+        private final String email;
+
+        public WrongFormatException(String email) {
+            super("Wrong email format");
+            this.email = email;
+        }
+
+        public String getEmail() {
+            return email;
+        }
+
+        @Override
+        public String getCode() {
+            return "WrongFormat";
+        }
     }
 }

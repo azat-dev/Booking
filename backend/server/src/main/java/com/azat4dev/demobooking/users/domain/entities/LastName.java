@@ -1,5 +1,8 @@
 package com.azat4dev.demobooking.users.domain.entities;
 
+import com.azat4dev.demobooking.common.DomainException;
+import com.azat4dev.demobooking.common.utils.Assert;
+
 import java.util.Objects;
 
 public final class LastName {
@@ -8,16 +11,13 @@ public final class LastName {
 
     private final String value;
 
-    public LastName(String value) throws LastNameCantBeEmptyException, LastNameMaxLengthException {
-        if (value.isEmpty()) {
-            throw new LastNameCantBeEmptyException();
-        }
+    public LastName(String value) throws CantBeEmptyException, MaxLengthException {
 
-        if (value.length() > MAX_LENGTH) {
-            throw new LastNameMaxLengthException(value);
-        }
+        final var cleanedValue = value.trim();
+        Assert.string(cleanedValue, CantBeEmptyException::new).notNull().notBlank();
+        Assert.string(cleanedValue, MaxLengthException::new).maxLength(MAX_LENGTH);
 
-        this.value = value;
+        this.value = cleanedValue;
     }
 
     public String getValue() {
@@ -28,11 +28,40 @@ public final class LastName {
     public boolean equals(Object o) {
         if (this == o) return true;
         if (!(o instanceof LastName lastName)) return false;
-        return Objects.equals(value, lastName.value);
+        return Objects.equals(getValue(), lastName.getValue());
     }
 
     @Override
     public int hashCode() {
-        return Objects.hashCode(value);
+        return Objects.hashCode(getValue());
+    }
+
+    public static abstract class ValidationException extends DomainException {
+        public ValidationException(String message) {
+            super(message);
+        }
+    }
+
+    public static class CantBeEmptyException extends ValidationException {
+        public CantBeEmptyException() {
+            super("Last name cannot be empty");
+        }
+
+        @Override
+        public String getCode() {
+            return "Empty";
+        }
+    }
+
+    public static class MaxLengthException extends ValidationException {
+        public MaxLengthException() {
+            super("Last name is too long");
+        }
+
+        @Override
+        public String getCode() {
+            return "MaxLength";
+        }
+
     }
 }

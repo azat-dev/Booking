@@ -1,40 +1,25 @@
 import SessionAuthenticated from "./SessionAuthenticated";
-import AuthService from "./AuthService";
-import { Session } from "./Session";
-import SessionAnonymousImpl from "./SessionAnonymousImpl";
 import SessionStatus from "./SessionStatus";
-import TokensRepository from "../../interfaces/repositories/TokensRepository";
-import User from "../../values/User";
+import UserInfo from "../../values/User";
 
 class SessionAuthenticatedImpl implements SessionAuthenticated {
     public readonly type = SessionStatus.AUTHENTICATED;
 
     public constructor(
         private accessToken: string,
-        private userInfo: User,
-        private authService: AuthService,
-        private tokensRepository: TokensRepository,
-        private setNext: (next: Session) => void
+        private userInfo: UserInfo,
+        private onLogout: () => void
     ) {}
 
     public logout = async (): Promise<void> => {
-        await this.authService.logout();
-        await this.tokensRepository.clear();
-
-        this.setNext(
-            new SessionAnonymousImpl(
-                this.authService,
-                this.tokensRepository,
-                this.setNext
-            )
-        );
+        this.onLogout();
     };
 
     public getAccessToken = (): string => {
         return this.accessToken;
     };
 
-    public getUserInfo = (): User => {
+    public getUserInfo = (): UserInfo => {
         return this.userInfo;
     };
 }

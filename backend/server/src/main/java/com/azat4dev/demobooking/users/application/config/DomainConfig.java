@@ -10,6 +10,7 @@ import com.azat4dev.demobooking.users.domain.values.UserIdFactoryImpl;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 
+
 @Configuration
 public class DomainConfig {
 

@@ -19,8 +19,12 @@ public class CustomUserDetailsServiceImpl implements CustomUserDetailsService {
     @Override
     public UserPrincipal loadUserByUsername(String username) throws UsernameNotFoundException {
 
-        final var userId = UserId.fromString(username);
-        return loadUserById(userId);
+        try {
+            final var userId = UserId.fromString(username);
+            return loadUserById(userId);
+        } catch (UserId.WrongFormatException e) {
+            throw new RuntimeException(e);
+        }
     }
 
     @Override

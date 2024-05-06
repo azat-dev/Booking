@@ -15,16 +15,7 @@ paths:
         content:
           application/json:
             schema:
-              type: object
-              required:
-                - email
-                - password
-              properties:
-                email:
-                  type: string
-                  format: email
-                password:
-                  type: string
+              $ref: "#/components/schemas/AuthenticateByEmailResponse"
       responses:
         "200":
           description: Success
@@ -36,15 +27,34 @@ paths:
     post:
       summary: Sign up a new user
       security: []
+      requestBody:
+        description: JSON payload
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/SignUpByEmailRequest"
       responses:
         "201":
           description: Success
           content:
             application/json:
               schema:
-                $ref: "#/components/schemas/SignUpResponse"
-        "401":
-          description: Wrong credentials
+                $ref: "#/components/schemas/SignUpByEmailResponse"
+        "400":
+          description: Wrong request
+          content:
+            application/json:
+              schema:
+                oneOf:
+                  - $ref: "#/components/schemas/ValidationError"
+        "409":
+          description: Conflict - User with provided email already exists
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/UserAlreadyExistsError"
+
   /api/public/auth/token/verify:
     post:
       summary: Check if a token is valid
@@ -66,8 +76,35 @@ paths:
           description: Valid Token
         "401":
           description: Not valid Token
+  /api/with-auth/user:
+    get:
+      summary: Gets current user info
+      security: []
+      responses:
+        "200":
+          description: Current users info
+          content:
+            application/json:
+              schema:
+                "$ref": "#/components/schemas/UserInfo"
+        "401":
+          description: Not valid Token
 components:
   schemas:
+    SignUpByEmailRequest:
+      type: object
+      required:
+        - email
+        - password
+        - fullName
+      properties:
+        email:
+          type: string
+          format: email
+        password:
+          type: string
+        fullName:
+          $ref: "#/components/schemas/FullName"
     SignUpResponse:
       type: object
       required:
@@ -97,6 +134,116 @@ components:
           type: string
         refresh:
           type: string
+    AuthenticateByEmailResponse:
+      type: object
+      required:
+        - email
+        - password
+      properties:
+        email:
+          type: string
+          format: email
+        password:
+          type: string
+    SignUpByEmailResponse:
+      type: object
+      required:
+        - userId
+        - tokens
+      properties:
+        userId:
+          type: string
+          format: uuid
+        tokens:
+          type: object
+          required:
+            - access
+            - refresh
+          properties:
+            access:
+              type: string
+            refresh:
+              type: string
+    FullName:
+      type: object
+      required:
+        - firstName
+        - lastName
+      properties:
+        firstName:
+          type: string
+          minLength: 1
+          maxLength: 50
+        lastName:
+          type: string
+          minLength: 1
+          maxLength: 50
+    UserInfo:
+      type: object
+      required:
+        - id
+        - fullName
+        - email
+      properties:
+        id:
+          type: string
+          format: uuid
+        fullName:
+          $ref: "#/components/schemas/FullName"
+        email:
+          type: string
+          format: email
+    ValidationError:
+      type: object
+      required:
+        - type
+        - errors
+      properties:
+        type:
+          type: string
+          default: validationError
+        errors:
+          type: array
+          items:
+            $ref: "#/components/schemas/ValidationErrorDetails"
+    ValidationErrorDetails:
+      type: object
+      required:
+        - path
+        - message
+        - code
+      properties:
+        path:
+          type: string
+        message:
+          type: string
+        code:
+          type: string
+    UserAlreadyExistsError:
+      type: object
+      required:
+        - code
+        - message
+      properties:
+        code:
+          type: string
+          default: UserAlreadyExists
+        message:
+          type: string
+    Error:
+      type: object
+      required:
+        - code
+        - message
+      properties:
+        code:
+          type: string
+        message:
+          type: string
+    Errors:
+      type: array
+      items:
+        $ref: "#/components/schemas/Error"
   securitySchemes:
     BearerAuth:
       type: http

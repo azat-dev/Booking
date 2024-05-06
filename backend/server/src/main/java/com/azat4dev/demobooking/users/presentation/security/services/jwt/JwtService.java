@@ -12,5 +12,5 @@ public interface JwtService {
 
     String generateRefreshToken(UserId userId, String[] authorities);
 
-    UserId getUserIdFromToken(String token);
+    UserId getUserIdFromToken(String token) throws UserId.WrongFormatException;
 }
