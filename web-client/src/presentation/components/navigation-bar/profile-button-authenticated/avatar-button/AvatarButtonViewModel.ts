@@ -9,7 +9,6 @@ class AvatarButtonViewModel {
     public photoUrl: Subject<string | null>;
 
     public constructor(fullName: FullName, avatar: Avatar | null) {
-        debugger;
         this.fullName = value(
             `${fullName.firstName.value} ${fullName.lastName.value}`
         );

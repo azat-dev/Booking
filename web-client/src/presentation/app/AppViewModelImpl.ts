@@ -21,6 +21,7 @@ import NavigationBarViewModel from "../components/navigation-bar/NavigationBarVi
 import ProfileButtonAnonymousViewModel from "../components/navigation-bar/profile-button-anonymous/ProfileButtonAnonymousViewModel";
 import ProfileButtonAuthenticatedViewModel from "../components/navigation-bar/profile-button-authenticated/ProfileButtonAuthenticatedViewModel";
 import SessionAuthenticated from "../../domain/auth/CurrentSession/Session/SessionAuthenticated";
+import ProfileButtonViewModel from "../components/navigation-bar/profile-button/ProfileButtonViewModel";
 
 class AppViewModelImpl implements AppViewModel {
     public activeDialog: Subject<ActiveDialogViewModel | null>;
@@ -118,7 +119,7 @@ class AppViewModelImpl implements AppViewModel {
     }
 
     private makeNavigationBar = () => {
-        return new NavigationBarViewModel(
+        const profileButton = new ProfileButtonViewModel(
             this.currentSession,
             () =>
                 new ProfileButtonAnonymousViewModel(
@@ -132,6 +133,7 @@ class AppViewModelImpl implements AppViewModel {
 
                 return new ProfileButtonAuthenticatedViewModel(
                     userInfo.fullName,
+                    userInfo.email,
                     userInfo.avatar,
                     () => {
                         throw new Error("Not implemented");
@@ -139,6 +141,10 @@ class AppViewModelImpl implements AppViewModel {
                     this.logout
                 );
             }
+        );
+
+        return new NavigationBarViewModel(
+            profileButton
         );
     };
 

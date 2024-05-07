@@ -1,20 +1,15 @@
 import * as React from "react";
-import { Box, IconButton, Menu, MenuButton, MenuItem, Theme } from "@mui/joy";
+import {Box, IconButton} from "@mui/joy";
 import Typography from "@mui/joy/Typography";
 
 import MapsHomeWorkIcon from "@mui/icons-material/MapsHomeWork";
 
 import PropsNavigationBar from "./props";
+import {desktop, mobile, tablet} from "../../utils/selectors";
+import {Link} from "react-router-dom";
+import ProfileButton from "./profile-button/ProfileButton";
 
-import style from "./style.module.scss";
-import { mobile, tablet, desktop } from "../../utils/selectors";
-import { Link } from "react-router-dom";
-import ProfileButtonAnonymous from "./profile-button-anonymous/ProfileButtonAnonymous";
-import useUpdatesFrom from "../../utils/binding/useUpdatesFrom";
-import ProfileButtonAuthenticated from "./profile-button-authenticated/ProfileButtonAuthenticated";
-
-const NavigationBar = ({ vm }: PropsNavigationBar) => {
-    const [profileButton] = useUpdatesFrom(vm.profileButton);
+const NavigationBar = ({vm}: PropsNavigationBar) => {
     return (
         <Box
             sx={(theme) => ({
@@ -45,7 +40,7 @@ const NavigationBar = ({ vm }: PropsNavigationBar) => {
                 },
             })}
         >
-            <Link to="/" style={{ color: "inherit", textDecoration: "none" }}>
+            <Link to="/" style={{color: "inherit", textDecoration: "none"}}>
                 <Box
                     sx={{
                         display: "flex",
@@ -56,7 +51,7 @@ const NavigationBar = ({ vm }: PropsNavigationBar) => {
                     }}
                 >
                     <IconButton size="sm" variant="soft" color="primary">
-                        <MapsHomeWorkIcon />
+                        <MapsHomeWorkIcon/>
                     </IconButton>
                     <Typography component="h1" fontWeight="xl" color="primary">
                         Demo Booking
@@ -64,12 +59,7 @@ const NavigationBar = ({ vm }: PropsNavigationBar) => {
                 </Box>
             </Link>
 
-            {profileButton?.type === "anonymous" && (
-                <ProfileButtonAnonymous vm={profileButton.vm} />
-            )}
-            {profileButton?.type === "authenticated" && (
-                <ProfileButtonAuthenticated vm={profileButton.vm} />
-            )}
+            <ProfileButton vm={vm.profileButton}/>
         </Box>
     );
 };

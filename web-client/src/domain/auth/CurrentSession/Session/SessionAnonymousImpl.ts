@@ -43,6 +43,7 @@ class SessionAnonymousImpl implements SessionAnonymous {
     public signUpByEmail = async (data: SignUpByEmailData): Promise<void> => {
         try {
             const signUpResult = await this.authService.signUpByEmail(data);
+            debugger
             const userInfo = await this.userInfoService.getUserInfo(
                 signUpResult.userId
             );

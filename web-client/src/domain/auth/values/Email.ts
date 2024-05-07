@@ -40,6 +40,10 @@ class Email {
             return "InvalidFormat";
         };
     };
+
+    public toString = (): string => {
+        return this.value;
+    };
 }
 
 export default Email;

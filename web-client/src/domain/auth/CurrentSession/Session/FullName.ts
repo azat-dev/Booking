@@ -6,6 +6,10 @@ class FullName {
         public readonly firstName: FirstName,
         public readonly lastName: LastName
     ) {}
+
+    public toString(): string {
+        return `${this.firstName.value} ${this.lastName.value}`;
+    }
 }
 
 export default FullName;
