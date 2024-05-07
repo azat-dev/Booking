@@ -9,7 +9,7 @@ import com.azat4dev.demobooking.users.domain.services.EmailVerificationStatus;
 import com.azat4dev.demobooking.users.domain.values.EmailAddress;
 import com.azat4dev.demobooking.users.domain.values.UserId;
 
-import java.util.Date;
+import java.time.LocalDateTime;
 import java.util.UUID;
 
 public class UserHelpers {
@@ -47,7 +47,7 @@ public class UserHelpers {
     public static User anyUser() {
         return new User(
             anyValidUserId(),
-            new Date(),
+            LocalDateTime.now(),
             anyValidEmail(),
             anyFullName(),
             anyEncodedPassword(),

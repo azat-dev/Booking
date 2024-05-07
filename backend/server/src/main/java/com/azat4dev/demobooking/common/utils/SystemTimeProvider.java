@@ -1,11 +1,11 @@
 package com.azat4dev.demobooking.common.utils;
 
-import java.util.Date;
+import java.time.LocalDateTime;
 
 public final class SystemTimeProvider implements TimeProvider {
 
     @Override
-    public Date currentTime() {
-        return new Date();
+    public LocalDateTime currentTime() {
+        return LocalDateTime.now();
     }
 }

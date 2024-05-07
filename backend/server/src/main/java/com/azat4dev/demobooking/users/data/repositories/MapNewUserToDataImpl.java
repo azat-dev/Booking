@@ -9,6 +9,10 @@ public class MapNewUserToDataImpl implements MapNewUserToData {
     public UserData map(NewUserData newUserData) {
         return new UserData(
             newUserData.userId().value(),
+            newUserData.createdAt(),
+            newUserData.createdAt(),
+            newUserData.fullName().firstName().getValue(),
+            newUserData.fullName().lastName().getValue(),
             newUserData.email().toString(),
             newUserData.encodedPassword().value(),
             newUserData.emailVerificationStatus()

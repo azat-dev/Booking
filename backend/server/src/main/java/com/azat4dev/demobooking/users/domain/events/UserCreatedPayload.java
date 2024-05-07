@@ -5,10 +5,10 @@ import com.azat4dev.demobooking.users.domain.services.EmailVerificationStatus;
 import com.azat4dev.demobooking.users.domain.values.EmailAddress;
 import com.azat4dev.demobooking.users.domain.values.UserId;
 
-import java.util.Date;
+import java.time.LocalDateTime;
 
 public record UserCreatedPayload(
-    Date createdAt,
+    LocalDateTime createdAt,
     UserId userId,
     FullName fullName,
     EmailAddress email,

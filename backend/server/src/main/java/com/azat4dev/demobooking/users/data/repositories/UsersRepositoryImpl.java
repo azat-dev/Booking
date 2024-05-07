@@ -1,5 +1,6 @@
 package com.azat4dev.demobooking.users.data.repositories;
 
+import com.azat4dev.demobooking.common.DomainException;
 import com.azat4dev.demobooking.users.data.repositories.jpa.JpaUsersRepository;
 import com.azat4dev.demobooking.users.domain.entities.User;
 import com.azat4dev.demobooking.users.domain.interfaces.repositories.NewUserData;
@@ -51,6 +52,12 @@ public class UsersRepositoryImpl implements UsersRepository {
     @Override
     public Optional<User> findByEmail(EmailAddress email) {
         final var foundUserResult = this.jpaUsersRepository.findByEmail(email.getValue());
-        return foundUserResult.map(this.mapUserDataToDomain::map);
+        return foundUserResult.map(userData -> {
+            try {
+                return this.mapUserDataToDomain.map(userData);
+            } catch (DomainException e) {
+                throw new RuntimeException(e);
+            }
+        });
     }
 }

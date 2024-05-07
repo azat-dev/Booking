@@ -5,6 +5,7 @@ import com.azat4dev.demobooking.users.domain.values.UserId;
 import org.springframework.security.oauth2.jwt.JwtClaimsSet;
 import org.springframework.security.oauth2.jwt.JwtDecoder;
 
+import java.time.ZoneOffset;
 import java.time.temporal.ChronoUnit;
 
 public final class JwtServiceImpl implements JwtService {
@@ -37,8 +38,8 @@ public final class JwtServiceImpl implements JwtService {
 
         final var claims = JwtClaimsSet.builder()
             .issuer("self")
-            .issuedAt(now.toInstant())
-            .expiresAt(now.toInstant().plus(accessTokenExpirationInMs, ChronoUnit.MILLIS))
+            .issuedAt(now.toInstant(ZoneOffset.UTC))
+            .expiresAt(now.toInstant(ZoneOffset.UTC).plus(accessTokenExpirationInMs, ChronoUnit.MILLIS))
             .subject(userId.toString())
             .claim("scope", scope)
             .build();
@@ -55,8 +56,8 @@ public final class JwtServiceImpl implements JwtService {
 
         JwtClaimsSet claims = JwtClaimsSet.builder()
             .issuer("self")
-            .issuedAt(now.toInstant())
-            .expiresAt(now.toInstant().plus(refreshTokenExpirationInMs, ChronoUnit.MILLIS))
+            .issuedAt(now.toInstant(ZoneOffset.UTC))
+            .expiresAt(now.toInstant(ZoneOffset.UTC).plus(refreshTokenExpirationInMs, ChronoUnit.MILLIS))
             .subject(userId.toString())
             .claim("scope", scope)
             .build();
@@ -79,9 +80,9 @@ public final class JwtServiceImpl implements JwtService {
             final var decoded = jwtDecoder.decode(authToken);
             final var expiresAt = decoded.getExpiresAt();
 
-            final var now = dateTimeProvider.currentTime();
+            final var now = dateTimeProvider.currentTime().toInstant(ZoneOffset.UTC);
             assert expiresAt != null;
-            return expiresAt.isAfter(now.toInstant());
+            return expiresAt.isAfter(now);
 
         } catch (Exception e) {
             return false;

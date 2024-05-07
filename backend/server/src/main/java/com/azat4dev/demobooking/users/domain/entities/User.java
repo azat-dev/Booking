@@ -5,11 +5,11 @@ import com.azat4dev.demobooking.users.domain.services.EmailVerificationStatus;
 import com.azat4dev.demobooking.users.domain.values.EmailAddress;
 import com.azat4dev.demobooking.users.domain.values.UserId;
 
-import java.util.Date;
+import java.time.LocalDateTime;
 
 public record User(
     UserId id,
-    Date createdAt,
+    LocalDateTime createdAt,
     EmailAddress email,
     FullName fullName,
     EncodedPassword encodedPassword,

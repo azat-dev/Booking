@@ -10,7 +10,7 @@ import com.azat4dev.demobooking.users.domain.interfaces.repositories.UsersReposi
 import com.azat4dev.demobooking.users.domain.interfaces.services.EncodedPassword;
 import org.junit.jupiter.api.Test;
 
-import java.util.Date;
+import java.time.LocalDateTime;
 import java.util.function.Consumer;
 
 import static com.azat4dev.demobooking.users.domain.UserHelpers.*;
@@ -45,8 +45,8 @@ public class UsersServiceImplTests {
         return new EncodedPassword("EncodedPassword");
     }
 
-    private Date anyDateTime() {
-        return new Date();
+    private LocalDateTime anyDateTime() {
+        return LocalDateTime.now();
     }
 
     @Test

@@ -13,7 +13,7 @@ import com.azat4dev.demobooking.users.domain.values.email.EmailBody;
 import org.junit.jupiter.api.Test;
 
 import java.time.Clock;
-import java.util.Date;
+import java.time.LocalDateTime;
 
 import static com.azat4dev.demobooking.users.domain.UserHelpers.anyValidUserId;
 import static org.assertj.core.api.Assertions.assertThat;
@@ -59,7 +59,7 @@ public class SendVerificationEmailPolicyTests {
             CommandId.generateNew(),
             Clock.systemUTC().millis(),
             new UserCreatedPayload(
-                new Date(),
+                LocalDateTime.now(),
                 userId,
                 UserHelpers.anyFullName(),
                 email,

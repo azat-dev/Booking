@@ -1,5 +1,6 @@
 package com.azat4dev.demobooking.users.data.repositories;
 
+import com.azat4dev.demobooking.common.DomainException;
 import com.azat4dev.demobooking.users.data.entities.UserData;
 import com.azat4dev.demobooking.users.data.repositories.jpa.JpaUsersRepository;
 import com.azat4dev.demobooking.users.domain.UserHelpers;
@@ -9,7 +10,7 @@ import com.azat4dev.demobooking.users.domain.services.EmailVerificationStatus;
 import org.junit.jupiter.api.Test;
 import org.springframework.dao.DataIntegrityViolationException;
 
-import java.util.Date;
+import java.time.LocalDateTime;
 import java.util.Optional;
 
 import static org.assertj.core.api.Assertions.assertThat;
@@ -41,8 +42,9 @@ public class UsersRepositoryImplTests {
     NewUserData anyNewUserData() {
         return new NewUserData(
             UserHelpers.anyValidUserId(),
-            new Date(),
+            LocalDateTime.now(),
             UserHelpers.anyValidEmail(),
+            UserHelpers.anyFullName(),
             UserHelpers.anyEncodedPassword(),
             EmailVerificationStatus.NOT_VERIFIED
         );
@@ -124,7 +126,7 @@ public class UsersRepositoryImplTests {
     }
 
     @Test
-    void test_findByEmail_givenExistingUser_thenReturnEmptyOptional() {
+    void test_findByEmail_givenExistingUser_thenReturnEmptyOptional() throws DomainException {
 
         // Given
         final var sut = createSUT();

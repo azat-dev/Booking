@@ -8,24 +8,30 @@ import static org.junit.jupiter.api.Assertions.assertThrows;
 
 public class PasswordTests {
 
-    @Test
-    public void given_wrong_password__when_create_new__then_throw_exception() {
+    public <T extends Password.ValidationException> void test_givenWrongPassword__thenThrowException(String wrongPassword, Class<T> exceptionClass) {
 
         // Given
-        final var wrongPassword = "1234 ";
+        // wrongPassword
 
         // When
         final var exception = assertThrows(
-            Password.WrongFormatException.class,
+            exceptionClass,
             () -> Password.makeFromString(wrongPassword)
         );
 
         // Then
-        assertThat(exception).isInstanceOf(Password.WrongFormatException.class);
+        assertThat(exception).isInstanceOf(exceptionClass);
     }
 
     @Test
-    public void given_valid_password__when_create_new__then_return_object() throws Password.WrongFormatException, Password.LengthException {
+    public void test_givenWrongPassword__thenThrowExceptionWithMessage() {
+
+        test_givenWrongPassword__thenThrowException("123", Password.LengthException.class);
+        test_givenWrongPassword__thenThrowException("123 5678", Password.WrongFormatException.class);
+    }
+
+    @Test
+    public void test_constructor_givenValidPassword_thenReturnObject() throws Password.WrongFormatException, Password.LengthException {
 
         // Given
         final var validValue = "validpassword";

@@ -9,6 +9,8 @@ import com.azat4dev.demobooking.users.domain.events.UserCreatedPayload;
 import com.azat4dev.demobooking.users.domain.interfaces.repositories.NewUserData;
 import com.azat4dev.demobooking.users.domain.interfaces.repositories.UsersRepository;
 
+import java.time.ZoneOffset;
+
 public final class UsersServiceImpl implements UsersService {
 
     private final TimeProvider timeProvider;
@@ -37,6 +39,7 @@ public final class UsersServiceImpl implements UsersService {
                     userId,
                     currentDate,
                     command.email(),
+                    command.fullName(),
                     command.encodedPassword(),
                     EmailVerificationStatus.NOT_VERIFIED
                 )
@@ -48,7 +51,7 @@ public final class UsersServiceImpl implements UsersService {
         eventsStore.publish(
             new UserCreated(
                 CommandId.generateNew(),
-                currentDate.getTime(),
+                currentDate.toInstant(ZoneOffset.UTC).toEpochMilli(),
                 new UserCreatedPayload(
                     currentDate,
                     userId,

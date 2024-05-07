@@ -10,7 +10,8 @@ import org.springframework.security.oauth2.jwt.Jwt;
 import org.springframework.security.oauth2.jwt.JwtDecoder;
 
 import java.time.Instant;
-import java.util.Date;
+import java.time.LocalDateTime;
+import java.time.ZoneOffset;
 import java.util.HashMap;
 
 import static com.azat4dev.demobooking.users.domain.UserHelpers.anyValidUserId;
@@ -52,7 +53,8 @@ class JwtServiceTests {
     SUT createSUT() {
         final var dateTimeProvider = mock(TimeProvider.class);
 
-        given(dateTimeProvider.currentTime()).willReturn(new Date());
+        given(dateTimeProvider.currentTime())
+            .willReturn(LocalDateTime.now());
 
         final var encoder = mock(EncodeJwt.class);
         final var decoder = mock(JwtDecoder.class);
@@ -143,11 +145,18 @@ class JwtServiceTests {
         // Given
         final var sut = createSUT();
         final var token = "token";
+        final var now = LocalDateTime.now();
+        final var createdAt = now.minusSeconds(100);
+        final var expiresAt = now.plusSeconds(10000);
+
         final var validJwt = anyJwt(
             "userId",
-            Instant.now(),
-            Instant.now().plusSeconds(10000)
+            createdAt.toInstant(ZoneOffset.UTC),
+            expiresAt.toInstant(ZoneOffset.UTC)
         );
+
+        given(sut.dateTimeProvider.currentTime())
+            .willReturn(now);
 
         given(sut.decoder.decode(any())).willReturn(validJwt);
 
@@ -166,18 +175,21 @@ class JwtServiceTests {
 
         // Given
         final var sut = createSUT();
-        final var now = new Date();
         final var token = "token";
         final var userId = anyValidUserId();
 
+        final var now = LocalDateTime.now();
+        final var createdAt = now.minusSeconds(10000);
+        final var expiresAt = now.minusSeconds(100);
+
         final var expiredJwt = anyJwt(
             userId.toString(),
-            now.toInstant(),
-            now.toInstant().plusSeconds(100)
+            createdAt.toInstant(ZoneOffset.UTC),
+            expiresAt.toInstant(ZoneOffset.UTC)
         );
 
         given(sut.dateTimeProvider.currentTime())
-            .willReturn(new Date(now.getTime() + 100000));
+            .willReturn(now);
 
         given(sut.decoder.decode(any()))
             .willReturn(expiredJwt);
@@ -227,7 +239,7 @@ class JwtServiceTests {
         );
 
         given(sut.decoder.decode(any())).willReturn(validJwt);
-        
+
         try {
             // When
             final var result = sut.service.getUserIdFromToken(token);

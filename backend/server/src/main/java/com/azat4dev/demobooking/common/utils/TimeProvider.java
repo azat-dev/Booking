@@ -1,7 +1,7 @@
 package com.azat4dev.demobooking.common.utils;
 
-import java.util.Date;
+import java.time.LocalDateTime;
 
 public interface TimeProvider {
-    Date currentTime();
+    LocalDateTime currentTime();
 }

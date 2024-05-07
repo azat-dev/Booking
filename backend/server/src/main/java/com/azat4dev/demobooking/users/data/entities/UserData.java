@@ -3,72 +3,61 @@ package com.azat4dev.demobooking.users.data.entities;
 import com.azat4dev.demobooking.users.domain.services.EmailVerificationStatus;
 import jakarta.annotation.Nonnull;
 import jakarta.persistence.*;
+import lombok.EqualsAndHashCode;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
+import lombok.Setter;
 
-import java.util.Objects;
+import java.time.LocalDateTime;
 import java.util.UUID;
 
+@EqualsAndHashCode
+@Getter
+@Setter
+@NoArgsConstructor
 @Entity
 @Table(name = "users", uniqueConstraints = {@UniqueConstraint(columnNames = "email")})
 public class UserData {
 
     private @Id UUID id;
+
+    @Column(name = "created_at", nullable = false)
+    private LocalDateTime createdAt;
+
+    @Column(name = "updated_at", nullable = false)
+    private LocalDateTime updatedAt;
+
     private @Nonnull String email;
-    private @Nonnull String encodedPassword;
+
+    @Column(name = "encoded_password", nullable = false)
+    private String encodedPassword;
+
+    @Column(name = "first_name", nullable = false)
+    private String firstName;
+
+    @Column(name = "last_name", nullable = false)
+    private String lastName;
 
     @Nonnull
     @Enumerated(EnumType.STRING)
     private EmailVerificationStatus emailVerificationStatus;
 
-    public UserData() {
-    }
 
     public UserData(
         UUID id,
+        @Nonnull LocalDateTime createdAt,
+        @Nonnull LocalDateTime updatedAt,
         @Nonnull String email,
+        @Nonnull String firstName,
+        @Nonnull String lastName,
         @Nonnull String encodedPassword,
         @Nonnull EmailVerificationStatus emailVerificationStatus
     ) {
         this.id = id;
         this.email = email;
+        this.firstName = firstName;
+        this.lastName = lastName;
         this.encodedPassword = encodedPassword;
         this.emailVerificationStatus = emailVerificationStatus;
-    }
-
-    public UUID getId() {
-        return id;
-    }
-
-    public void setId(UUID id) {
-        this.id = id;
-    }
-
-    @Nonnull
-    public String getEmail() {
-        return email;
-    }
-
-    public void setEmail(@Nonnull String email) {
-        this.email = email;
-    }
-
-    @Nonnull
-    public String getEncodedPassword() {
-        return encodedPassword;
-    }
-
-    public void setEncodedPassword(@Nonnull String encodedPassword) {
-        this.encodedPassword = encodedPassword;
-    }
-
-    @Override
-    public boolean equals(Object o) {
-        if (this == o) return true;
-        if (!(o instanceof UserData userData)) return false;
-        return Objects.equals(getId(), userData.getId()) && Objects.equals(getEmail(), userData.getEmail()) && Objects.equals(getEncodedPassword(), userData.getEncodedPassword());
-    }
-
-    @Override
-    public int hashCode() {
-        return Objects.hash(getId(), getEmail(), getEncodedPassword());
     }
 }

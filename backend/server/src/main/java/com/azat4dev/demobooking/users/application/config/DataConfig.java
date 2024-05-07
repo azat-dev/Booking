@@ -4,10 +4,7 @@ import com.azat4dev.demobooking.common.DomainEvent;
 import com.azat4dev.demobooking.common.EventsStore;
 import com.azat4dev.demobooking.common.utils.SystemTimeProvider;
 import com.azat4dev.demobooking.common.utils.TimeProvider;
-import com.azat4dev.demobooking.users.data.repositories.MapNewUserToData;
-import com.azat4dev.demobooking.users.data.repositories.MapNewUserToDataImpl;
-import com.azat4dev.demobooking.users.data.repositories.MapUserDataToDomain;
-import com.azat4dev.demobooking.users.data.repositories.UsersRepositoryImpl;
+import com.azat4dev.demobooking.users.data.repositories.*;
 import com.azat4dev.demobooking.users.data.repositories.jpa.JpaUsersRepository;
 import com.azat4dev.demobooking.users.domain.interfaces.repositories.UsersRepository;
 import com.azat4dev.demobooking.users.domain.interfaces.services.EmailService;
@@ -69,6 +66,6 @@ public class DataConfig {
 
     @Bean
     MapUserDataToDomain mapUserDataToDomain() {
-        return null;
+        return new MapUserDataToDomainImpl();
     }
 }
