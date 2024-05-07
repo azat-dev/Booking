@@ -55,6 +55,8 @@ public class UserData {
     ) {
         this.id = id;
         this.email = email;
+        this.createdAt = createdAt;
+        this.updatedAt = updatedAt;
         this.firstName = firstName;
         this.lastName = lastName;
         this.encodedPassword = encodedPassword;

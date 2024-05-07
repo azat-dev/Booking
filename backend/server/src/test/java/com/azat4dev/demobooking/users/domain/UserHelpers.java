@@ -8,14 +8,17 @@ import com.azat4dev.demobooking.users.domain.interfaces.services.EncodedPassword
 import com.azat4dev.demobooking.users.domain.services.EmailVerificationStatus;
 import com.azat4dev.demobooking.users.domain.values.EmailAddress;
 import com.azat4dev.demobooking.users.domain.values.UserId;
+import com.github.javafaker.Faker;
 
 import java.time.LocalDateTime;
 import java.util.UUID;
 
 public class UserHelpers {
+    public static final Faker faker = Faker.instance();
+
     public static EmailAddress anyValidEmail() {
         try {
-            return EmailAddress.makeFromString("user@examples.com");
+            return EmailAddress.makeFromString(faker.internet().emailAddress());
         } catch (Exception e) {
             throw new RuntimeException(e);
         }
@@ -24,8 +27,8 @@ public class UserHelpers {
     public static FullName anyFullName() {
         try {
             return new FullName(
-                new FirstName("John"),
-                new LastName("Doe")
+                new FirstName(faker.name().firstName()),
+                new LastName(faker.name().lastName())
             );
         } catch (Exception e) {
             throw new RuntimeException(e);
