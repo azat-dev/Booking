@@ -152,6 +152,43 @@ public class UsersRepositoryImplTests {
         assertThat(result.get()).isEqualTo(expectedUser);
     }
 
+    @Test
+    void test_findById_givenEmptyDb_thenReturnEmptyOptional() {
+
+        final var sut = createSUT();
+        final var id = UserHelpers.anyValidUserId();
+
+        given(sut.jpaUsersRepository.findById(any()))
+            .willReturn(Optional.empty());
+
+        // When
+        final var result = sut.repository.findById(id);
+
+        // Then
+        assertThat(result).isEmpty();
+    }
+
+    @Test
+    void test_findById_givenExistingUser_thenReturnUser() throws DomainException {
+
+        // Given
+        final var sut = createSUT();
+        final var expectedUser = UserHelpers.anyUser();
+
+        given(sut.jpaUsersRepository.findById(any()))
+            .willReturn(Optional.of(new UserData()));
+
+        given(sut.mapUserDataToDomain.map(any()))
+            .willReturn(expectedUser);
+
+        // When
+        final var result = sut.repository.findById(expectedUser.id());
+
+        // Then
+        assertThat(result).isNotEmpty();
+        assertThat(result.get()).isEqualTo(expectedUser);
+    }
+
     record SUT(
         UsersRepository repository,
         JpaUsersRepository jpaUsersRepository,
