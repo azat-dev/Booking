@@ -18,15 +18,11 @@ public class JpaUsersRepositoryTests {
     @Autowired
     private JpaUsersRepository jpaUsersRepository;
 
-    String anyEmail() {
-        return "example@email.com";
-    }
-
     @Test
     void test_findByEmail_givenEmptyDb_thenReturnEmpty() {
 
         // Given
-        final var email = anyEmail();
+        final var email = UserHelpers.anyValidEmail().getValue();
 
         // When
         final var result = jpaUsersRepository.findByEmail(email);
