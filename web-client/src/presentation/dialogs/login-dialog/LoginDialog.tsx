@@ -2,23 +2,11 @@ import React from "react";
 
 import PropsLoginDialog from "./props";
 import useUpdatesFrom from "../../utils/binding/useUpdatesFrom";
-import {
-    Modal,
-    ModalDialog,
-    DialogTitle,
-    Stack,
-    FormControl,
-    FormLabel,
-    Input,
-    Button,
-    ModalClose,
-    Link,
-    Typography,
-} from "@mui/joy";
+import {Alert, Button, DialogTitle, Link, Modal, ModalClose, ModalDialog, Stack, Typography,} from "@mui/joy";
+import FormInput from "../sign-up-dialog/form-input/FormInput";
+import {InfoOutlined} from "@mui/icons-material";
 
-import style from "./style.module.scss";
-
-const LoginDialog = ({ vm }: PropsLoginDialog) => {
+const LoginDialog = ({vm}: PropsLoginDialog) => {
     const [isProcessing, showWrongCredentialsError] = useUpdatesFrom(
         vm.isProcessing,
         vm.showWrongCredentialsError
@@ -27,7 +15,7 @@ const LoginDialog = ({ vm }: PropsLoginDialog) => {
     return (
         <Modal open={true} onClose={vm.close}>
             <ModalDialog size="lg">
-                <ModalClose />
+                <ModalClose/>
                 <DialogTitle>Welcome!</DialogTitle>
                 <Typography level="body-sm">Sign in to continue.</Typography>
                 <form
@@ -36,45 +24,47 @@ const LoginDialog = ({ vm }: PropsLoginDialog) => {
                         vm.submit();
                     }}
                 >
-                    <Stack spacing={2}>
-                        <FormControl disabled={isProcessing}>
-                            <FormLabel>Email</FormLabel>
-                            <Input
-                                autoFocus
-                                required
-                                type="email"
-                                name="email"
+                    <Stack spacing={1}>
+                        <Stack spacing={0.3}>
+                            <FormInput
+                                label="Email"
                                 placeholder="johndoe@email.com"
+                                type="email"
+                                vm={vm.emailInput}
                             />
-                        </FormControl>
-                        <FormControl disabled={isProcessing}>
-                            <FormLabel>Password</FormLabel>
-                            <Input
-                                required
+                            <FormInput
+                                label="Password"
+                                placeholder="Password..."
                                 type="password"
-                                placeholder="password"
+                                vm={vm.passwordInput}
                             />
-                        </FormControl>
-                        <Typography
-                            color="danger"
-                            sx={{ opacity: showWrongCredentialsError ? 1 : 0 }}
-                        >
-                            Wrong credentials
-                        </Typography>
-                        <Button
-                            type="submit"
-                            size="lg"
-                            loading={isProcessing}
-                            loadingPosition="start"
-                        >
-                            Log In
-                        </Button>
+                        </Stack>
+
+                        <Stack spacing={2}>
+                            {showWrongCredentialsError &&
+                                <Alert
+                                    variant="outlined"
+                                    color="danger"
+                                    startDecorator={<InfoOutlined/>}
+                                >
+                                    Wrong email or password
+                                </Alert>
+                            }
+                            <Button
+                                type="submit"
+                                size="lg"
+                                loading={isProcessing}
+                                loadingPosition="start"
+                            >
+                                Log In
+                            </Button>
+                        </Stack>
                         <Typography
                             endDecorator={
                                 <Link onClick={vm.signUp}>Sign up</Link>
                             }
                             fontSize="sm"
-                            sx={{ alignSelf: "center" }}
+                            sx={{alignSelf: "center"}}
                         >
                             Don&apos;t have an account?
                         </Typography>

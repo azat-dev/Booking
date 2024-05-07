@@ -1,10 +1,8 @@
-import Email from "../../values/Email";
-import Password from "../../values/Password";
 import SessionAnonymous from "./SessionAnonymous";
 import SessionStatus from "./SessionStatus";
 import LocalAuthDataRepository from "../../interfaces/repositories/LocalAuthDataRepository";
-import AuthService, { AuthenticateByEmailData } from "./AuthService";
-import { Session } from "./Session";
+import AuthService, {AuthenticateByEmailData} from "./AuthService";
+import {Session} from "./Session";
 import SessionAuthenticatedImpl from "./SessionAuthenticatedImpl";
 import SignUpByEmailData from "./SignUpByEmailData";
 import UserInfoService from "./UserInfoService";
@@ -18,22 +16,8 @@ class SessionAnonymousImpl implements SessionAnonymous {
         private userInfoService: UserInfoService,
         private localAuthDataRepository: LocalAuthDataRepository,
         private setNext: (next: Session) => void
-    ) {}
-
-    private logout = async (): Promise<void> => {
-        await this.authService.logout();
-        await this.localAuthDataRepository.clear();
-        this.setNext(this);
-    };
-
-    private setAuthenticated = async (
-        userInfo: UserInfo,
-        accessToken: string
-    ): Promise<void> => {
-        this.setNext(
-            new SessionAuthenticatedImpl(accessToken, userInfo, this.logout)
-        );
-    };
+    ) {
+    }
 
     public authenticate = async (
         data: AuthenticateByEmailData
@@ -49,7 +33,7 @@ class SessionAnonymousImpl implements SessionAnonymous {
                 result.userId
             );
 
-            this.setAuthenticated(userInfo, result.accessToken);
+            this.setAuthenticated(userInfo, result.tokens.access);
         } catch (error) {
             this.setNext(this);
             throw error;
@@ -92,6 +76,21 @@ class SessionAnonymousImpl implements SessionAnonymous {
             this.setNext(this);
             throw error;
         }
+    };
+
+    private logout = async (): Promise<void> => {
+        await this.authService.logout();
+        await this.localAuthDataRepository.clear();
+        this.setNext(this);
+    };
+
+    private setAuthenticated = async (
+        userInfo: UserInfo,
+        accessToken: string
+    ): Promise<void> => {
+        this.setNext(
+            new SessionAuthenticatedImpl(accessToken, userInfo, this.logout)
+        );
     };
 }
 

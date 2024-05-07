@@ -107,6 +107,16 @@ class AppViewModelImpl implements AppViewModel {
         throw new Error("Not implemented");
     };
 
+    private logout = async () => {
+        const session = this.currentSession.current.value;
+
+        if (session.type !== SessionStatus.AUTHENTICATED) {
+            return;
+        }
+
+        session.logout();
+    }
+
     private makeNavigationBar = () => {
         return new NavigationBarViewModel(
             this.currentSession,
@@ -126,9 +136,7 @@ class AppViewModelImpl implements AppViewModel {
                     () => {
                         throw new Error("Not implemented");
                     },
-                    () => {
-                        throw new Error("Not implemented");
-                    }
+                    this.logout
                 );
             }
         );

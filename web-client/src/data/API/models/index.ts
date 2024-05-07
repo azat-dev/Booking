@@ -2,13 +2,13 @@
 /* eslint-disable */
 export * from './ApiPublicAuthSignUpPost400Response';
 export * from './ApiPublicAuthTokenVerifyPostRequest';
-export * from './AuthenticateByEmailResponse';
+export * from './AuthenticateByEmailRequest';
 export * from './FullName';
 export * from './GetTokenResponse';
+export * from './GetTokenResponseTokens';
 export * from './ModelError';
 export * from './SignUpByEmailRequest';
 export * from './SignUpByEmailResponse';
-export * from './SignUpByEmailResponseTokens';
 export * from './SignUpResponse';
 export * from './SignUpResponseTokens';
 export * from './UserAlreadyExistsError';

@@ -13,12 +13,12 @@
  */
 
 import { mapValues } from '../runtime';
-import type { SignUpByEmailResponseTokens } from './SignUpByEmailResponseTokens';
+import type { GetTokenResponseTokens } from './GetTokenResponseTokens';
 import {
-    SignUpByEmailResponseTokensFromJSON,
-    SignUpByEmailResponseTokensFromJSONTyped,
-    SignUpByEmailResponseTokensToJSON,
-} from './SignUpByEmailResponseTokens';
+    GetTokenResponseTokensFromJSON,
+    GetTokenResponseTokensFromJSONTyped,
+    GetTokenResponseTokensToJSON,
+} from './GetTokenResponseTokens';
 
 /**
  * 
@@ -34,10 +34,10 @@ export interface SignUpByEmailResponse {
     userId: string;
     /**
      * 
-     * @type {SignUpByEmailResponseTokens}
+     * @type {GetTokenResponseTokens}
      * @memberof SignUpByEmailResponse
      */
-    tokens: SignUpByEmailResponseTokens;
+    tokens: GetTokenResponseTokens;
 }
 
 /**
@@ -60,7 +60,7 @@ export function SignUpByEmailResponseFromJSONTyped(json: any, ignoreDiscriminato
     return {
         
         'userId': json['userId'],
-        'tokens': SignUpByEmailResponseTokensFromJSON(json['tokens']),
+        'tokens': GetTokenResponseTokensFromJSON(json['tokens']),
     };
 }
 
@@ -71,7 +71,7 @@ export function SignUpByEmailResponseToJSON(value?: SignUpByEmailResponse | null
     return {
         
         'userId': value['userId'],
-        'tokens': SignUpByEmailResponseTokensToJSON(value['tokens']),
+        'tokens': GetTokenResponseTokensToJSON(value['tokens']),
     };
 }
 

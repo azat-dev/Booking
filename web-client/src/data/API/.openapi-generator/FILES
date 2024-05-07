@@ -3,13 +3,13 @@ apis/index.ts
 index.ts
 models/ApiPublicAuthSignUpPost400Response.ts
 models/ApiPublicAuthTokenVerifyPostRequest.ts
-models/AuthenticateByEmailResponse.ts
+models/AuthenticateByEmailRequest.ts
 models/FullName.ts
 models/GetTokenResponse.ts
+models/GetTokenResponseTokens.ts
 models/ModelError.ts
 models/SignUpByEmailRequest.ts
 models/SignUpByEmailResponse.ts
-models/SignUpByEmailResponseTokens.ts
 models/SignUpResponse.ts
 models/SignUpResponseTokens.ts
 models/UserAlreadyExistsError.ts

@@ -1,7 +1,7 @@
 import AuthService, {
     AuthenticateByEmailData,
     AuthenticationByEmailResult,
-    SignUpByEmailResult,
+    SignUpByEmailResult, WrongCredentialsError,
 } from "../../../domain/auth/CurrentSession/Session/AuthService";
 import FirstName from "../../../domain/auth/CurrentSession/Session/FirstName";
 import FullName from "../../../domain/auth/CurrentSession/Session/FullName";
@@ -35,10 +35,35 @@ class AuthServiceImpl implements AuthService {
     public authenticateByEmail = async (
         data: AuthenticateByEmailData
     ): Promise<AuthenticationByEmailResult> => {
-        return {
-            accessToken: "some-access",
-            userId: new UserId("some"),
-        };
+        try {
+            const result = await this.api.apiPublicAuthTokenPost({
+                authenticateByEmailRequest: {
+                    email: data.email.value,
+                    password: data.password,
+                },
+            });
+
+            await this.localAuthDataRepository.put({
+                userId: new UserId(result.userId),
+                accessToken: new AccessToken(result.tokens.access),
+            });
+
+            return {
+                userId: new UserId(result.userId),
+                tokens: result.tokens,
+            };
+        } catch (e) {
+
+            if (e instanceof ResponseError) {
+                if (e.response.status === 401) {
+                    throw new WrongCredentialsError();
+                }
+
+                throw e;
+            }
+
+            throw e;
+        }
     };
 
     public authenticateByToken = async (token: string): Promise<UserInfo> => {
@@ -46,7 +71,7 @@ class AuthServiceImpl implements AuthService {
     };
 
     public logout = async (): Promise<void> => {
-        return;
+        await this.localAuthDataRepository.clear();
     };
 
     public signUpByEmail = async (

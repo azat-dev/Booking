@@ -59,69 +59,52 @@ class SignUpDialogViewModel {
     };
 
     public resetErrors = () => {
-        this.inputs.forEach((input) => {
-            input.updateIsWrong(false);
-            input.updateErrorText(undefined);
-        });
+        this.inputs.forEach((input) => input.resetError());
     };
 
-    public validateInput = () => {
-        this.resetErrors();
 
-        let hasErrors = false;
+    public validateInput = () => {
+
+        let isValid = true;
+
+        const updateErrorTextFromException = (input: FormInputViewModel, e: any, ValidationException: any) => {
+            input.updateErrorText(e instanceof ValidationException ? e.message : undefined);
+            input.updateIsWrong(true);
+        }
 
         try {
             new Email(this.emailInput.getValue() ?? "");
+            this.emailInput.resetError();
         } catch (e) {
-            if (e instanceof Email.ValidationException) {
-                this.emailInput.updateErrorText(e.message);
-            } else {
-                this.emailInput.updateErrorText(undefined);
-            }
-
-            this.emailInput.updateIsWrong(true);
-            hasErrors = true;
+            updateErrorTextFromException(this.emailInput, e, Email.ValidationException);
+            isValid = false;
         }
 
         try {
             new FirstName(this.firstNameInput.getValue() ?? "");
+            this.firstNameInput.resetError();
         } catch (e) {
-            if (e instanceof FirstName.ValidationException) {
-                this.firstNameInput.updateErrorText(e.message);
-            } else {
-                this.firstNameInput.updateErrorText(undefined);
-            }
-            this.firstNameInput.updateIsWrong(true);
-            hasErrors = true;
+            updateErrorTextFromException(this.firstNameInput, e, FirstName.ValidationException);
+            isValid = false;
         }
 
         try {
             new LastName(this.lastNameInput.getValue() ?? "");
+            this.lastNameInput.resetError();
         } catch (e) {
-            if (e instanceof LastName.ValidationException) {
-                this.lastNameInput.updateErrorText(e.message);
-            } else {
-                this.lastNameInput.updateErrorText(undefined);
-            }
-
-            this.lastNameInput.updateIsWrong(true);
-            hasErrors = true;
+            updateErrorTextFromException(this.lastNameInput, e, LastName.ValidationException);
+            isValid = false;
         }
 
         try {
             new Password(this.passwordInput.getValue() ?? "");
+            this.passwordInput.resetError();
         } catch (e) {
-            if (e instanceof Password.ValidationException) {
-                this.passwordInput.updateErrorText(e.message);
-            } else {
-                this.passwordInput.updateErrorText(undefined);
-            }
-
-            this.passwordInput.updateIsWrong(true);
-            hasErrors = true;
+            updateErrorTextFromException(this.passwordInput, e, Password.ValidationException);
+            isValid = false;
         }
 
-        return !hasErrors;
+        return isValid;
     };
 
     public submit = async () => {

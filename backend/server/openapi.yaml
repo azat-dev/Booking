@@ -15,7 +15,7 @@ paths:
         content:
           application/json:
             schema:
-              $ref: "#/components/schemas/AuthenticateByEmailResponse"
+              $ref: "#/components/schemas/AuthenticateByEmailRequest"
       responses:
         "200":
           description: Success
@@ -127,14 +127,23 @@ components:
     GetTokenResponse:
       type: object
       required:
-        - access
-        - refresh
+        - tokens
+        - userId
       properties:
-        access:
+        userId:
           type: string
-        refresh:
-          type: string
-    AuthenticateByEmailResponse:
+          format: uuid
+        tokens:
+          type: object
+          required:
+            - access
+            - refresh
+          properties:
+            access:
+              type: string
+            refresh:
+              type: string
+    AuthenticateByEmailRequest:
       type: object
       required:
         - email

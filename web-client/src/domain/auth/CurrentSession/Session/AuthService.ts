@@ -1,15 +1,15 @@
 import Email from "../../values/Email";
-import Password from "../../values/Password";
-import UserInfo from "../../values/User";
 import UserId from "../../values/UserId";
 import SignUpByEmailData from "./SignUpByEmailData";
+import UserInfo from "../../values/User";
 
 export interface Tokens {
     access: string;
     refresh: string;
 }
+
 export interface AuthenticationByEmailResult {
-    readonly accessToken: string;
+    readonly tokens: Tokens;
     readonly userId: UserId;
 }
 
@@ -24,16 +24,25 @@ export interface SignUpByEmail {
 
 export interface AuthenticateByEmailData {
     email: Email;
-    password: Password;
+    password: string;
 }
 
-export interface AuthenticateByEmail {
-    (data: AuthenticateByEmailData): Promise<AuthenticationByEmailResult>;
+
+export class WrongCredentialsError extends Error {
+    constructor() {
+        super("Wrong credentials");
+    }
 }
 
 export default interface AuthService {
-    readonly authenticateByEmail: AuthenticateByEmail;
+
     readonly signUpByEmail: SignUpByEmail;
+
+    /**
+     * @throws WrongCredentialsError
+     */
+    authenticateByEmail(data: AuthenticateByEmailData): Promise<AuthenticationByEmailResult>;
+
 
     authenticateByToken(token: string): Promise<UserInfo>;
 

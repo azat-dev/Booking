@@ -28,8 +28,8 @@ const FormInput = ({ vm, label, type, placeholder }: PropsFormInput) => {
                 onChange={(event) => vm.change(event.target.value)}
                 error={isWrong}
             />
-            <FormHelperText sx={{ opacity: errorText ? 1 : 0 }}>
-                <InfoOutlined />
+            <FormHelperText sx={{ opacity: errorText ? 1 : 0, fontSize: 12 }}>
+                <InfoOutlined sx={{width: 15, height: 15}}/>
                 {errorText}
             </FormHelperText>
         </FormControl>

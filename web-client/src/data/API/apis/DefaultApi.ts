@@ -17,7 +17,7 @@ import * as runtime from '../runtime';
 import type {
   ApiPublicAuthSignUpPost400Response,
   ApiPublicAuthTokenVerifyPostRequest,
-  AuthenticateByEmailResponse,
+  AuthenticateByEmailRequest,
   GetTokenResponse,
   SignUpByEmailRequest,
   SignUpByEmailResponse,
@@ -29,8 +29,8 @@ import {
     ApiPublicAuthSignUpPost400ResponseToJSON,
     ApiPublicAuthTokenVerifyPostRequestFromJSON,
     ApiPublicAuthTokenVerifyPostRequestToJSON,
-    AuthenticateByEmailResponseFromJSON,
-    AuthenticateByEmailResponseToJSON,
+    AuthenticateByEmailRequestFromJSON,
+    AuthenticateByEmailRequestToJSON,
     GetTokenResponseFromJSON,
     GetTokenResponseToJSON,
     SignUpByEmailRequestFromJSON,
@@ -48,7 +48,7 @@ export interface ApiPublicAuthSignUpPostRequest {
 }
 
 export interface ApiPublicAuthTokenPostRequest {
-    authenticateByEmailResponse: AuthenticateByEmailResponse;
+    authenticateByEmailRequest: AuthenticateByEmailRequest;
 }
 
 export interface ApiPublicAuthTokenVerifyPostOperationRequest {
@@ -100,10 +100,10 @@ export class DefaultApi extends runtime.BaseAPI {
      * Get a new pair of tokens (access, refresh)
      */
     async apiPublicAuthTokenPostRaw(requestParameters: ApiPublicAuthTokenPostRequest, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<runtime.ApiResponse<GetTokenResponse>> {
-        if (requestParameters['authenticateByEmailResponse'] == null) {
+        if (requestParameters['authenticateByEmailRequest'] == null) {
             throw new runtime.RequiredError(
-                'authenticateByEmailResponse',
-                'Required parameter "authenticateByEmailResponse" was null or undefined when calling apiPublicAuthTokenPost().'
+                'authenticateByEmailRequest',
+                'Required parameter "authenticateByEmailRequest" was null or undefined when calling apiPublicAuthTokenPost().'
             );
         }
 
@@ -118,7 +118,7 @@ export class DefaultApi extends runtime.BaseAPI {
             method: 'POST',
             headers: headerParameters,
             query: queryParameters,
-            body: AuthenticateByEmailResponseToJSON(requestParameters['authenticateByEmailResponse']),
+            body: AuthenticateByEmailRequestToJSON(requestParameters['authenticateByEmailRequest']),
         }, initOverrides);
 
         return new runtime.JSONApiResponse(response, (jsonValue) => GetTokenResponseFromJSON(jsonValue));

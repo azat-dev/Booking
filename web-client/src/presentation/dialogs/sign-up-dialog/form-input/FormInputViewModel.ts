@@ -1,4 +1,3 @@
-import React, { useState } from "react";
 import Subject from "../../../utils/binding/Subject";
 import value from "../../../utils/binding/value";
 
@@ -48,6 +47,11 @@ class FormInputViewModel {
     public updateErrorText = (errorText: string | undefined) => {
         this.errorText.set(errorText);
     };
+
+    public resetError = () => {
+        this.updateIsWrong(false);
+        this.updateErrorText(undefined);
+    }
 }
 
 export default FormInputViewModel;

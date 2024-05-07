@@ -13,6 +13,13 @@
  */
 
 import { mapValues } from '../runtime';
+import type { GetTokenResponseTokens } from './GetTokenResponseTokens';
+import {
+    GetTokenResponseTokensFromJSON,
+    GetTokenResponseTokensFromJSONTyped,
+    GetTokenResponseTokensToJSON,
+} from './GetTokenResponseTokens';
+
 /**
  * 
  * @export
@@ -24,21 +31,21 @@ export interface GetTokenResponse {
      * @type {string}
      * @memberof GetTokenResponse
      */
-    access: string;
+    userId: string;
     /**
      * 
-     * @type {string}
+     * @type {GetTokenResponseTokens}
      * @memberof GetTokenResponse
      */
-    refresh: string;
+    tokens: GetTokenResponseTokens;
 }
 
 /**
  * Check if a given object implements the GetTokenResponse interface.
  */
 export function instanceOfGetTokenResponse(value: object): boolean {
-    if (!('access' in value)) return false;
-    if (!('refresh' in value)) return false;
+    if (!('userId' in value)) return false;
+    if (!('tokens' in value)) return false;
     return true;
 }
 
@@ -52,8 +59,8 @@ export function GetTokenResponseFromJSONTyped(json: any, ignoreDiscriminator: bo
     }
     return {
         
-        'access': json['access'],
-        'refresh': json['refresh'],
+        'userId': json['userId'],
+        'tokens': GetTokenResponseTokensFromJSON(json['tokens']),
     };
 }
 
@@ -63,8 +70,8 @@ export function GetTokenResponseToJSON(value?: GetTokenResponse | null): any {
     }
     return {
         
-        'access': value['access'],
-        'refresh': value['refresh'],
+        'userId': value['userId'],
+        'tokens': GetTokenResponseTokensToJSON(value['tokens']),
     };
 }
 
