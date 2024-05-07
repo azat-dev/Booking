@@ -3,6 +3,7 @@ package com.azat4dev.demobooking.users.domain;
 import com.azat4dev.demobooking.users.domain.entities.FirstName;
 import com.azat4dev.demobooking.users.domain.entities.FullName;
 import com.azat4dev.demobooking.users.domain.entities.LastName;
+import com.azat4dev.demobooking.users.domain.interfaces.services.EncodedPassword;
 import com.azat4dev.demobooking.users.domain.values.EmailAddress;
 import com.azat4dev.demobooking.users.domain.values.UserId;
 
@@ -34,5 +35,9 @@ public class UserHelpers {
         } catch (UserId.WrongFormatException e) {
             throw new RuntimeException(e);
         }
+    }
+
+    public static EncodedPassword anyEncodedPassword() {
+        return new EncodedPassword("encodedPassword");
     }
 }
