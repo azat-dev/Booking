@@ -4,39 +4,29 @@ import com.azat4dev.demobooking.common.DomainEvent;
 import com.azat4dev.demobooking.common.EventsStore;
 import com.azat4dev.demobooking.common.utils.SystemTimeProvider;
 import com.azat4dev.demobooking.common.utils.TimeProvider;
-import com.azat4dev.demobooking.users.domain.entities.User;
-import com.azat4dev.demobooking.users.domain.interfaces.repositories.NewUserData;
+import com.azat4dev.demobooking.users.data.repositories.MapNewUserToData;
+import com.azat4dev.demobooking.users.data.repositories.MapNewUserToDataImpl;
+import com.azat4dev.demobooking.users.data.repositories.UsersRepositoryImpl;
+import com.azat4dev.demobooking.users.data.repositories.jpa.JpaUsersRepository;
 import com.azat4dev.demobooking.users.domain.interfaces.repositories.UsersRepository;
 import com.azat4dev.demobooking.users.domain.interfaces.services.EmailService;
 import com.azat4dev.demobooking.users.domain.services.EmailData;
 import com.azat4dev.demobooking.users.domain.values.EmailAddress;
-import com.azat4dev.demobooking.users.domain.values.UserId;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
-
-import java.util.Optional;
 
 @Configuration
 public class DataConfig {
 
     @Bean
-    UsersRepository usersRepository() {
-        return new UsersRepository() {
-            @Override
-            public void createUser(NewUserData newUserData) {
-
-            }
-
-            @Override
-            public Optional<User> findById(UserId id) {
-                return Optional.empty();
-            }
-
-            @Override
-            public Optional<User> findByEmail(EmailAddress email) {
-                return Optional.empty();
-            }
-        };
+    UsersRepository usersRepository(
+        MapNewUserToData mapNewUserToData,
+        JpaUsersRepository jpaUsersRepository
+    ) {
+        return new UsersRepositoryImpl(
+            mapNewUserToData,
+            jpaUsersRepository
+        );
     }
 
     @Bean
@@ -67,5 +57,10 @@ public class DataConfig {
                 System.out.println("Email sent to " + email);
             }
         };
+    }
+
+    @Bean
+    MapNewUserToData mapNewUserToData() {
+        return new MapNewUserToDataImpl();
     }
 }

@@ -1,10 +1,8 @@
 package com.azat4dev.demobooking.users.data.entities;
 
+import com.azat4dev.demobooking.users.domain.services.EmailVerificationStatus;
 import jakarta.annotation.Nonnull;
-import jakarta.persistence.Entity;
-import jakarta.persistence.Id;
-import jakarta.persistence.Table;
-import jakarta.persistence.UniqueConstraint;
+import jakarta.persistence.*;
 
 import java.util.Objects;
 import java.util.UUID;
@@ -17,17 +15,23 @@ public class UserData {
     private @Nonnull String email;
     private @Nonnull String encodedPassword;
 
+    @Nonnull
+    @Enumerated(EnumType.STRING)
+    private EmailVerificationStatus emailVerificationStatus;
+
     public UserData() {
     }
 
     public UserData(
         UUID id,
         @Nonnull String email,
-        @Nonnull String encodedPassword
+        @Nonnull String encodedPassword,
+        @Nonnull EmailVerificationStatus emailVerificationStatus
     ) {
         this.id = id;
         this.email = email;
         this.encodedPassword = encodedPassword;
+        this.emailVerificationStatus = emailVerificationStatus;
     }
 
     public UUID getId() {
