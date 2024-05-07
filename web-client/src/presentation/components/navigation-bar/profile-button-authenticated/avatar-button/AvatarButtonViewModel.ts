@@ -12,7 +12,7 @@ class AvatarButtonViewModel {
         this.fullName = value(
             `${fullName.firstName.value} ${fullName.lastName.value}`
         );
-        this.shortName = value(fullName.firstName.value[0].toUpperCase());
+        this.shortName = value(`${fullName.firstName.value[0].toUpperCase()} ${fullName.lastName.value[0].toUpperCase()}`);
         this.photoUrl = value(avatar?.value ?? null);
     }
 

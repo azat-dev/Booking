@@ -22,8 +22,8 @@ import {
 class AuthServiceImpl implements AuthService {
     private testUser: UserInfo = {
         id: new UserId("some-id"),
-        email: new Email("some@email.com"),
-        fullName: new FullName(new FirstName("Some"), new LastName("Name")),
+        email: new Email("somelonglonglong@email.com"),
+        fullName: new FullName(new FirstName("SomeLong"), new LastName("Name")),
         avatar: null,
     };
 

@@ -27,6 +27,10 @@ class ProfileButtonAuthenticatedViewModel {
         this.onOpenProfile();
     };
 
+    public openHelp = () => {
+        console.log("Help");
+    }
+
     public logout = () => {
         this.onLogout();
     };
