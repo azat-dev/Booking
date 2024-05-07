@@ -186,9 +186,7 @@ public class AuthenticationControllerTests {
         final var validEmail = anyValidEmail();
         final var fullName = anyValidFullName();
 
-        final var existingPrincipal = givenExistingPrincipal();
-
-        willThrow(new UsersService.UserAlreadyExistsException())
+        willThrow(new UsersService.UserWithSameEmailAlreadyExistsException())
             .given(usersService)
             .handle(any());
 
@@ -203,7 +201,7 @@ public class AuthenticationControllerTests {
 
         // Then
         response.andExpect(status().isConflict())
-            .andExpect(jsonPath("$.code").value("UserAlreadyExists"));
+            .andExpect(jsonPath("$.code").value("UserWithSameEmailAlreadyExists"));
     }
 
     private ResultActions performPostRequest(

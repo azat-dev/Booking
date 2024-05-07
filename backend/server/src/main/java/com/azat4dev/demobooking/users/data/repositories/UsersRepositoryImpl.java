@@ -23,22 +23,20 @@ public class UsersRepositoryImpl implements UsersRepository {
     }
 
     @Override
-    public void createUser(NewUserData newUserData) throws UserWithSameEmailAndIdAlreadyExistsException {
+    public void createUser(NewUserData newUserData) throws UserWithSameEmailAlreadyExistsException {
 
         final var userData = mapNewUserToData.map(newUserData);
 
         try {
             jpaUsersRepository.saveAndFlush(userData);
-        } catch (Exception e) {
+        } catch (RuntimeException e) {
 
-            final var foundUserResult = jpaUsersRepository.findByIdAndEmail(
-                newUserData.userId().value(),
-                newUserData.email().getValue()
-            );
+            final var email = newUserData.email().getValue();
 
-            if (foundUserResult.isPresent()) {
-                throw new UserWithSameEmailAndIdAlreadyExistsException();
-            }
+            final var foundUserResult = jpaUsersRepository.findByEmail(email);
+            foundUserResult.orElseThrow(() -> e);
+
+            throw new UserWithSameEmailAlreadyExistsException();
         }
     }
 

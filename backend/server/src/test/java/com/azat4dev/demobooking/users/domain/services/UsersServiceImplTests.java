@@ -50,7 +50,7 @@ public class UsersServiceImplTests {
     }
 
     @Test
-    void given_valid_user_data__when_createUser__then_add_user_and_produce_event() throws UsersRepository.UserWithSameEmailAndIdAlreadyExistsException {
+    void given_valid_user_data__when_createUser__then_add_user_and_produce_event() throws UsersRepository.UserWithSameEmailAlreadyExistsException {
 
         // Given
         final var sut = createSUT();

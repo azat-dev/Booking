@@ -228,7 +228,7 @@ components:
           type: string
         code:
           type: string
-    UserAlreadyExistsError:
+    UserWithSameEmailAlreadyExists:
       type: object
       required:
         - code
@@ -236,7 +236,7 @@ components:
       properties:
         code:
           type: string
-          default: UserAlreadyExists
+          default: UserWithSameEmailAlreadyExists
         message:
           type: string
     Error:

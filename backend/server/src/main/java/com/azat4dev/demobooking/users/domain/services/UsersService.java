@@ -5,16 +5,17 @@ import com.azat4dev.demobooking.users.domain.commands.CreateUser;
 
 public interface UsersService {
 
-    class UserAlreadyExistsException extends DomainException {
-        public UserAlreadyExistsException() {
-            super("User already exists");
+    void handle(CreateUser command) throws UserWithSameEmailAlreadyExistsException;
+
+
+    class UserWithSameEmailAlreadyExistsException extends DomainException {
+        public UserWithSameEmailAlreadyExistsException() {
+            super("User with same email already exists");
         }
 
         @Override
         public String getCode() {
-            return "UserAlreadyExists";
+            return "UserWithSameEmailAlreadyExists";
         }
     }
-
-    void handle(CreateUser command) throws UserAlreadyExistsException;
 }

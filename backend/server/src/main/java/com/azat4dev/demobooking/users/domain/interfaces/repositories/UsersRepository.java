@@ -9,20 +9,20 @@ import java.util.Optional;
 
 public interface UsersRepository {
 
-    class UserWithSameEmailAndIdAlreadyExistsException extends DomainException {
-        public UserWithSameEmailAndIdAlreadyExistsException() {
-            super("User already exists");
-        }
-
-        @Override
-        public String getCode() {
-            return "UserAlreadyExists";
-        }
-    }
-
-    void createUser(NewUserData newUserData) throws UserWithSameEmailAndIdAlreadyExistsException;
+    void createUser(NewUserData newUserData) throws UserWithSameEmailAlreadyExistsException;
 
     Optional<User> findById(UserId id);
 
     Optional<User> findByEmail(EmailAddress email);
+
+    class UserWithSameEmailAlreadyExistsException extends DomainException {
+        public UserWithSameEmailAlreadyExistsException() {
+            super("User with same email already exists");
+        }
+
+        @Override
+        public String getCode() {
+            return "UserWithSameEmailAlreadyExists";
+        }
+    }
 }

@@ -26,7 +26,7 @@ public final class UsersServiceImpl implements UsersService {
     }
 
     @Override
-    public void handle(CreateUser command) throws UserAlreadyExistsException {
+    public void handle(CreateUser command) throws UserWithSameEmailAlreadyExistsException {
 
         final var userId = command.userId();
         final var currentDate = timeProvider.currentTime();
@@ -41,8 +41,8 @@ public final class UsersServiceImpl implements UsersService {
                     EmailVerificationStatus.NOT_VERIFIED
                 )
             );
-        } catch (UsersRepository.UserWithSameEmailAndIdAlreadyExistsException e) {
-            throw new UserAlreadyExistsException();
+        } catch (UsersRepository.UserWithSameEmailAlreadyExistsException e) {
+            throw new UserWithSameEmailAlreadyExistsException();
         }
 
         eventsStore.publish(

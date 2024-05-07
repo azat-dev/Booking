@@ -2,6 +2,7 @@ package com.azat4dev.demobooking.users.presentation.api.rest.authentication.reso
 
 import com.azat4dev.demobooking.common.CommandId;
 import com.azat4dev.demobooking.common.presentation.ControllerException;
+import com.azat4dev.demobooking.common.presentation.ValidationException;
 import com.azat4dev.demobooking.users.domain.commands.CreateUser;
 import com.azat4dev.demobooking.users.domain.interfaces.services.PasswordService;
 import com.azat4dev.demobooking.users.domain.services.UsersService;
@@ -11,7 +12,6 @@ import com.azat4dev.demobooking.users.presentation.api.rest.authentication.entit
 import com.azat4dev.demobooking.users.presentation.security.services.CustomUserDetailsService;
 import com.azat4dev.demobooking.users.presentation.security.services.jwt.JwtService;
 import com.azat4dev.demobooking.users.presentation.security.services.jwt.UserIdNotFoundException;
-import com.azat4dev.demobooking.common.presentation.ValidationException;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import org.apache.commons.logging.Log;
@@ -90,8 +90,12 @@ public class AuthenticationController implements AuthenticationResource {
                     encodedPassword
                 )
             );
-        } catch (UsersService.UserAlreadyExistsException e) {
-            throw ControllerException.createError(HttpStatus.CONFLICT, "UserAlreadyExists", e.getMessage());
+        } catch (UsersService.UserWithSameEmailAlreadyExistsException e) {
+            throw ControllerException.createError(
+                HttpStatus.CONFLICT,
+                "UserWithSameEmailAlreadyExists",
+                e.getMessage()
+            );
         }
 
         final var authorities = new String[]{"ROLE_USER"};

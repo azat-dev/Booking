@@ -8,11 +8,11 @@ import com.azat4dev.demobooking.users.domain.interfaces.repositories.UsersReposi
 import com.azat4dev.demobooking.users.domain.services.EmailVerificationStatus;
 import org.junit.jupiter.api.Test;
 import org.springframework.dao.DataIntegrityViolationException;
-import static org.junit.jupiter.api.Assertions.assertThrows;
 
 import java.util.Date;
 import java.util.Optional;
 
+import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.BDDMockito.*;
 import static org.mockito.Mockito.mock;
@@ -71,13 +71,15 @@ public class UsersRepositoryImplTests {
     }
 
     @Test
-    public void test_createUser_givenExistingUserWithSameIdAndEmail_thenThrowException() throws Exception {
+    public void test_createUser_givenExistingUserWithSameEmailAndDifferentId_thenThrowException() throws Exception {
 
         // Given
         final var sut = createSUT();
         final var newUserData = anyNewUserData();
         final var persistentUserData = new UserData();
-        persistentUserData.setId(newUserData.userId().value());
+
+        persistentUserData.setId(UserHelpers.anyValidUserId().value());
+        persistentUserData.setEmail(newUserData.email().getValue());
 
         given(sut.mapNewUserToData.map(any()))
             .willReturn(persistentUserData);
@@ -85,19 +87,16 @@ public class UsersRepositoryImplTests {
         given(sut.jpaUsersRepository.saveAndFlush(persistentUserData))
             .willThrow(new DataIntegrityViolationException("User exists"));
 
-        given(sut.jpaUsersRepository.findByIdAndEmail(any(), any()))
+        given(sut.jpaUsersRepository.findByEmail(any()))
             .willReturn(Optional.of(persistentUserData));
 
         // When
-        assertThrows(UsersRepository.UserWithSameEmailAndIdAlreadyExistsException.class,
+        assertThrows(UsersRepository.UserWithSameEmailAlreadyExistsException.class,
             () -> sut.repository.createUser(newUserData));
 
         // Then
         then(sut.jpaUsersRepository).should(times(1))
-            .findByIdAndEmail(
-                newUserData.userId().value(),
-                newUserData.email().getValue()
-            );
+            .findByEmail(newUserData.email().getValue());
     }
 
     record SUT(
