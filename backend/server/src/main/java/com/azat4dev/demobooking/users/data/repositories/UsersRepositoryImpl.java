@@ -7,6 +7,7 @@ import com.azat4dev.demobooking.users.domain.interfaces.repositories.NewUserData
 import com.azat4dev.demobooking.users.domain.interfaces.repositories.UsersRepository;
 import com.azat4dev.demobooking.users.domain.values.EmailAddress;
 import com.azat4dev.demobooking.users.domain.values.UserId;
+import jakarta.persistence.EntityNotFoundException;
 
 import java.util.Optional;
 
@@ -46,7 +47,21 @@ public class UsersRepositoryImpl implements UsersRepository {
 
     @Override
     public Optional<User> findById(UserId id) {
-        return Optional.empty();
+
+        try {
+            final var foundUser = this.jpaUsersRepository.getReferenceById(id.value());
+            if (foundUser == null) {
+                return Optional.empty();
+            }
+
+            try {
+                return Optional.of(this.mapUserDataToDomain.map(foundUser));
+            } catch (DomainException e) {
+                throw new RuntimeException(e);
+            }
+        } catch (EntityNotFoundException e) {
+            return Optional.empty();
+        }
     }
 
     @Override
