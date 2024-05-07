@@ -12,6 +12,7 @@ import org.springframework.dao.DataIntegrityViolationException;
 import java.util.Date;
 import java.util.Optional;
 
+import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.BDDMockito.*;
@@ -97,6 +98,26 @@ public class UsersRepositoryImplTests {
         // Then
         then(sut.jpaUsersRepository).should(times(1))
             .findByEmail(newUserData.email().getValue());
+    }
+
+    @Test
+    void test_findByEmail_givenEmptyDb_thenReturnEmptyOptional() {
+
+        // Given
+        final var sut = createSUT();
+        final var email = UserHelpers.anyValidEmail();
+
+        given(sut.jpaUsersRepository.findByEmail(any()))
+            .willReturn(Optional.empty());
+
+        // When
+        final var result = sut.repository.findByEmail(email);
+
+        // Then
+        then(sut.jpaUsersRepository).should(times(1))
+            .findByEmail(email.getValue());
+
+        assertThat(result).isEmpty();
     }
 
     record SUT(
