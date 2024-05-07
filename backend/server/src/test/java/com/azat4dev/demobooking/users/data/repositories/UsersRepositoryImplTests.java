@@ -9,8 +9,8 @@ import com.azat4dev.demobooking.users.domain.values.EmailAddress;
 import com.azat4dev.demobooking.users.domain.values.UserId;
 import jakarta.annotation.Nonnull;
 import jakarta.persistence.Entity;
-import jakarta.persistence.Table;
 import jakarta.persistence.Id;
+import jakarta.persistence.Table;
 import jakarta.persistence.UniqueConstraint;
 import org.junit.jupiter.api.Test;
 import org.springframework.data.jpa.repository.JpaRepository;
@@ -21,9 +21,8 @@ import java.util.Optional;
 import java.util.UUID;
 
 import static org.mockito.ArgumentMatchers.any;
-import static org.mockito.Mockito.mock;
-
 import static org.mockito.BDDMockito.*;
+import static org.mockito.Mockito.mock;
 
 
 @FunctionalInterface
@@ -43,7 +42,8 @@ class UserData {
     private @Nonnull String email;
     private @Nonnull String encodedPassword;
 
-    public UserData() {}
+    public UserData() {
+    }
 
     public UserData(
         UUID id,
@@ -110,6 +110,8 @@ class UsersRepositoryImpl implements UsersRepository {
     @Override
     public void createUser(NewUserData newUserData) throws UserAlreadyExistsException {
 
+        final var userData = mapNewUserToData.map(newUserData);
+        jpaUsersRepository.saveAndFlush(userData);
     }
 
     @Override
