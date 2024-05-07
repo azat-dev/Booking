@@ -2,19 +2,7 @@ import React from "react";
 
 import PropsSignUpDialog from "./props";
 import useUpdatesFrom from "../../utils/binding/useUpdatesFrom";
-import {
-    Alert,
-    Button,
-    DialogTitle,
-    FormControl,
-    FormHelperText,
-    Link,
-    Modal,
-    ModalClose,
-    ModalDialog,
-    Stack,
-    Typography,
-} from "@mui/joy";
+import {Alert, Button, DialogTitle, Link, Modal, ModalClose, ModalDialog, Stack, Typography,} from "@mui/joy";
 import {desktop, mobile, tablet} from "../../utils/selectors";
 import useScreenType, {ScreenType} from "../../utils/hooks/useScreenType";
 import FormInput from "./form-input/FormInput";
@@ -81,14 +69,16 @@ const SignUpDialog = ({vm}: PropsSignUpDialog) => {
                             placeholder="Password"
                         />
 
-                        <Alert
-                            variant="outlined"
-                            color="danger"
-                            startDecorator={<InfoOutlined/>}
-                            sx={{opacity: !!errorText ? 1 : 0}}
-                        >
-                            {errorText}
-                        </Alert>
+                        {!!errorText &&
+                            <Alert
+                                variant="outlined"
+                                color="danger"
+                                startDecorator={<InfoOutlined/>}
+                                sx={{opacity: !!errorText ? 1 : 0}}
+                            >
+                                {errorText}
+                            </Alert>
+                        }
                         <br/>
 
                         <Button
