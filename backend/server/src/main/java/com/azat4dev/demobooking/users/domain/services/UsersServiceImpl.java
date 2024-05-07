@@ -41,7 +41,7 @@ public final class UsersServiceImpl implements UsersService {
                     EmailVerificationStatus.NOT_VERIFIED
                 )
             );
-        } catch (UsersRepository.UserAlreadyExistsException e) {
+        } catch (UsersRepository.UserWithSameEmailAndIdAlreadyExistsException e) {
             throw new UserAlreadyExistsException();
         }
 

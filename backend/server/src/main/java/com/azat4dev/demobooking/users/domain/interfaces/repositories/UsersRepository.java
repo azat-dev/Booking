@@ -9,8 +9,8 @@ import java.util.Optional;
 
 public interface UsersRepository {
 
-    class UserAlreadyExistsException extends DomainException {
-        public UserAlreadyExistsException() {
+    class UserWithSameEmailAndIdAlreadyExistsException extends DomainException {
+        public UserWithSameEmailAndIdAlreadyExistsException() {
             super("User already exists");
         }
 
@@ -20,7 +20,7 @@ public interface UsersRepository {
         }
     }
 
-    void createUser(NewUserData newUserData) throws UserAlreadyExistsException;
+    void createUser(NewUserData newUserData) throws UserWithSameEmailAndIdAlreadyExistsException;
 
     Optional<User> findById(UserId id);
 

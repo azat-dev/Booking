@@ -23,7 +23,7 @@ public class UsersRepositoryImpl implements UsersRepository {
     }
 
     @Override
-    public void createUser(NewUserData newUserData) throws UserAlreadyExistsException {
+    public void createUser(NewUserData newUserData) throws UserWithSameEmailAndIdAlreadyExistsException {
 
         final var userData = mapNewUserToData.map(newUserData);
         jpaUsersRepository.saveAndFlush(userData);
