@@ -175,8 +175,8 @@ public class UsersRepositoryImplTests {
         final var sut = createSUT();
         final var expectedUser = UserHelpers.anyUser();
 
-        given(sut.jpaUsersRepository.findById(any()))
-            .willReturn(Optional.of(new UserData()));
+        given(sut.jpaUsersRepository.getReferenceById(any()))
+            .willReturn(new UserData());
 
         given(sut.mapUserDataToDomain.map(any()))
             .willReturn(expectedUser);
