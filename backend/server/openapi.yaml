@@ -79,7 +79,6 @@ paths:
   /api/with-auth/user:
     get:
       summary: Gets current user info
-      security: [ ]
       responses:
         "200":
           description: Current users info
