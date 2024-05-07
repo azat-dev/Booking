@@ -23,11 +23,13 @@ public class UsersRepositoryImplTests {
     SUT createSUT() {
 
         final var mapNewUserData = mock(MapNewUserToData.class);
+        final var mapUserDataToDomain = mock(MapUserDataToDomain.class);
         final var jpaUsersRepository = mock(JpaUsersRepository.class);
 
         return new SUT(
             new UsersRepositoryImpl(
                 mapNewUserData,
+                mapUserDataToDomain,
                 jpaUsersRepository
             ),
             jpaUsersRepository,

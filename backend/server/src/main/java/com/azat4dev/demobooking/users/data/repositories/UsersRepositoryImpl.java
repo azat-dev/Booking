@@ -12,12 +12,15 @@ import java.util.Optional;
 public class UsersRepositoryImpl implements UsersRepository {
 
     private final MapNewUserToData mapNewUserToData;
+    private final MapUserDataToDomain mapUserDataToDomain;
     private final JpaUsersRepository jpaUsersRepository;
 
     public UsersRepositoryImpl(
         MapNewUserToData mapNewUserToData,
+        MapUserDataToDomain mapUserDataToDomain,
         JpaUsersRepository jpaUsersRepository
     ) {
+        this.mapUserDataToDomain = mapUserDataToDomain;
         this.mapNewUserToData = mapNewUserToData;
         this.jpaUsersRepository = jpaUsersRepository;
     }
@@ -25,15 +28,15 @@ public class UsersRepositoryImpl implements UsersRepository {
     @Override
     public void createUser(NewUserData newUserData) throws UserWithSameEmailAlreadyExistsException {
 
-        final var userData = mapNewUserToData.map(newUserData);
+        final var userData = this.mapNewUserToData.map(newUserData);
 
         try {
-            jpaUsersRepository.saveAndFlush(userData);
+            this.jpaUsersRepository.saveAndFlush(userData);
         } catch (RuntimeException e) {
 
             final var email = newUserData.email().getValue();
 
-            final var foundUserResult = jpaUsersRepository.findByEmail(email);
+            final var foundUserResult = this.jpaUsersRepository.findByEmail(email);
             foundUserResult.orElseThrow(() -> e);
 
             throw new UserWithSameEmailAlreadyExistsException();
@@ -47,6 +50,7 @@ public class UsersRepositoryImpl implements UsersRepository {
 
     @Override
     public Optional<User> findByEmail(EmailAddress email) {
-        return Optional.empty();
+        final var foundUserResult = this.jpaUsersRepository.findByEmail(email.getValue());
+        return foundUserResult.map(this.mapUserDataToDomain::map);
     }
 }

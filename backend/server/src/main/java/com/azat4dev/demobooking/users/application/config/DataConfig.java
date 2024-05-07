@@ -6,6 +6,7 @@ import com.azat4dev.demobooking.common.utils.SystemTimeProvider;
 import com.azat4dev.demobooking.common.utils.TimeProvider;
 import com.azat4dev.demobooking.users.data.repositories.MapNewUserToData;
 import com.azat4dev.demobooking.users.data.repositories.MapNewUserToDataImpl;
+import com.azat4dev.demobooking.users.data.repositories.MapUserDataToDomain;
 import com.azat4dev.demobooking.users.data.repositories.UsersRepositoryImpl;
 import com.azat4dev.demobooking.users.data.repositories.jpa.JpaUsersRepository;
 import com.azat4dev.demobooking.users.domain.interfaces.repositories.UsersRepository;
@@ -21,10 +22,12 @@ public class DataConfig {
     @Bean
     UsersRepository usersRepository(
         MapNewUserToData mapNewUserToData,
+        MapUserDataToDomain mapUserDataToDomain,
         JpaUsersRepository jpaUsersRepository
     ) {
         return new UsersRepositoryImpl(
             mapNewUserToData,
+            mapUserDataToDomain,
             jpaUsersRepository
         );
     }
@@ -62,5 +65,10 @@ public class DataConfig {
     @Bean
     MapNewUserToData mapNewUserToData() {
         return new MapNewUserToDataImpl();
+    }
+
+    @Bean
+    MapUserDataToDomain mapUserDataToDomain() {
+        return null;
     }
 }
