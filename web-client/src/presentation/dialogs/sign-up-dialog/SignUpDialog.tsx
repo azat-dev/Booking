@@ -3,25 +3,24 @@ import React from "react";
 import PropsSignUpDialog from "./props";
 import useUpdatesFrom from "../../utils/binding/useUpdatesFrom";
 import {
-    Modal,
-    ModalDialog,
-    DialogTitle,
-    Stack,
+    Alert,
     Button,
-    ModalClose,
-    Link,
-    Typography,
-    FormHelperText,
+    DialogTitle,
     FormControl,
+    FormHelperText,
+    Link,
+    Modal,
+    ModalClose,
+    ModalDialog,
+    Stack,
+    Typography,
 } from "@mui/joy";
-
-import style from "./style.module.scss";
-import { desktop, mobile, tablet } from "../../utils/selectors";
-import useScreenType, { ScreenType } from "../../utils/hooks/useScreenType";
+import {desktop, mobile, tablet} from "../../utils/selectors";
+import useScreenType, {ScreenType} from "../../utils/hooks/useScreenType";
 import FormInput from "./form-input/FormInput";
-import { InfoOutlined } from "@mui/icons-material";
+import {InfoOutlined} from "@mui/icons-material";
 
-const SignUpDialog = ({ vm }: PropsSignUpDialog) => {
+const SignUpDialog = ({vm}: PropsSignUpDialog) => {
     const [isProcessing, errorText] = useUpdatesFrom(
         vm.isProcessing,
         vm.errorText
@@ -46,7 +45,7 @@ const SignUpDialog = ({ vm }: PropsSignUpDialog) => {
                     };
                 }}
             >
-                <ModalClose />
+                <ModalClose/>
                 <DialogTitle>Welcome!</DialogTitle>
                 <Typography level="h3">Create a free account</Typography>
                 <form
@@ -82,16 +81,15 @@ const SignUpDialog = ({ vm }: PropsSignUpDialog) => {
                             placeholder="Password"
                         />
 
-                        <FormControl
-                            error={!!errorText}
-                            sx={{ opacity: !!errorText ? 1 : 0 }}
+                        <Alert
+                            variant="outlined"
+                            color="danger"
+                            startDecorator={<InfoOutlined/>}
+                            sx={{opacity: !!errorText ? 1 : 0}}
                         >
-                            <FormHelperText>
-                                <InfoOutlined />
-                                {errorText}
-                            </FormHelperText>
-                        </FormControl>
-                        <br />
+                            {errorText}
+                        </Alert>
+                        <br/>
 
                         <Button
                             type="submit"
@@ -101,13 +99,13 @@ const SignUpDialog = ({ vm }: PropsSignUpDialog) => {
                         >
                             Create Account
                         </Button>
-                        <br />
+                        <br/>
                         <Typography
                             endDecorator={
                                 <Link onClick={vm.logIn}>Log in</Link>
                             }
                             fontSize="sm"
-                            sx={{ alignSelf: "center" }}
+                            sx={{alignSelf: "center"}}
                         >
                             Have an account?
                         </Typography>

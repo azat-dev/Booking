@@ -109,7 +109,6 @@ class SignUpDialogViewModel {
 
     public submit = async () => {
         this.isProcessing.set(true);
-        this.errorText.set(undefined);
 
         if (!this.validateInput()) {
             this.isProcessing.set(false);
@@ -127,6 +126,7 @@ class SignUpDialogViewModel {
             };
 
             await this.signUp?.(data);
+            this.errorText.set(undefined);
             this.isProcessing.set(false);
             return;
         } catch (e) {
