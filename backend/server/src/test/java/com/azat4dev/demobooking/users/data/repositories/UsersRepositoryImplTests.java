@@ -85,7 +85,7 @@ public class UsersRepositoryImplTests {
         given(sut.jpaUsersRepository.saveAndFlush(persistentUserData))
             .willThrow(new DataIntegrityViolationException("User exists"));
 
-        given(sut.jpaUsersRepository.findByEmail(any()))
+        given(sut.jpaUsersRepository.findByIdAndEmail(any(), any()))
             .willReturn(Optional.of(persistentUserData));
 
         // When
@@ -94,7 +94,10 @@ public class UsersRepositoryImplTests {
 
         // Then
         then(sut.jpaUsersRepository).should(times(1))
-            .findByEmail(newUserData.email().getValue());
+            .findByIdAndEmail(
+                newUserData.userId().value(),
+                newUserData.email().getValue()
+            );
     }
 
     record SUT(

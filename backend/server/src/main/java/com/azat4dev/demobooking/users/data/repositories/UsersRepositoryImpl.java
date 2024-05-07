@@ -26,7 +26,20 @@ public class UsersRepositoryImpl implements UsersRepository {
     public void createUser(NewUserData newUserData) throws UserWithSameEmailAndIdAlreadyExistsException {
 
         final var userData = mapNewUserToData.map(newUserData);
-        jpaUsersRepository.saveAndFlush(userData);
+
+        try {
+            jpaUsersRepository.saveAndFlush(userData);
+        } catch (Exception e) {
+
+            final var foundUserResult = jpaUsersRepository.findByIdAndEmail(
+                newUserData.userId().value(),
+                newUserData.email().getValue()
+            );
+
+            if (foundUserResult.isPresent()) {
+                throw new UserWithSameEmailAndIdAlreadyExistsException();
+            }
+        }
     }
 
     @Override
