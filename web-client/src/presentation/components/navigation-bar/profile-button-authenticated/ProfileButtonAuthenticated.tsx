@@ -22,8 +22,8 @@ const ProfileButtonAuthenticated = ({vm}: PropsProfileButtonAuthenticated) => {
                 sx={{
                     maxHeight: '48px',
                     borderRadius: '9999999px',
+                    padding: screenType === ScreenType.MOBILE ? 0 : '10px',
                     paddingLeft: screenType === ScreenType.MOBILE ? 0 : '5px',
-                    padding: screenType === ScreenType.MOBILE ? 0 : '5px',
                 }}
             >
                 <Box
