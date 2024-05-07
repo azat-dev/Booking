@@ -3,10 +3,13 @@ package com.azat4dev.demobooking.users.domain;
 import com.azat4dev.demobooking.users.domain.entities.FirstName;
 import com.azat4dev.demobooking.users.domain.entities.FullName;
 import com.azat4dev.demobooking.users.domain.entities.LastName;
+import com.azat4dev.demobooking.users.domain.entities.User;
 import com.azat4dev.demobooking.users.domain.interfaces.services.EncodedPassword;
+import com.azat4dev.demobooking.users.domain.services.EmailVerificationStatus;
 import com.azat4dev.demobooking.users.domain.values.EmailAddress;
 import com.azat4dev.demobooking.users.domain.values.UserId;
 
+import java.util.Date;
 import java.util.UUID;
 
 public class UserHelpers {
@@ -39,5 +42,16 @@ public class UserHelpers {
 
     public static EncodedPassword anyEncodedPassword() {
         return new EncodedPassword("encodedPassword");
+    }
+
+    public static User anyUser() {
+        return new User(
+            anyValidUserId(),
+            new Date(),
+            anyValidEmail(),
+            anyFullName(),
+            anyEncodedPassword(),
+            EmailVerificationStatus.NOT_VERIFIED
+        );
     }
 }

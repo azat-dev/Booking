@@ -33,7 +33,8 @@ public class UsersRepositoryImplTests {
                 jpaUsersRepository
             ),
             jpaUsersRepository,
-            mapNewUserData
+            mapNewUserData,
+            mapUserDataToDomain
         );
     }
 
@@ -122,10 +123,38 @@ public class UsersRepositoryImplTests {
         assertThat(result).isEmpty();
     }
 
+    @Test
+    void test_findByEmail_givenExistingUser_thenReturnEmptyOptional() {
+
+        // Given
+        final var sut = createSUT();
+        final var expectedUser = UserHelpers.anyUser();
+        final var email = expectedUser.email();
+
+        final var persistentUserData = new UserData();
+
+        given(sut.jpaUsersRepository.findByEmail(any()))
+            .willReturn(Optional.of(persistentUserData));
+
+        given(sut.mapUserDataToDomain.map(any()))
+            .willReturn(expectedUser);
+
+        // When
+        final var result = sut.repository.findByEmail(email);
+
+        // Then
+        then(sut.jpaUsersRepository).should(times(1))
+            .findByEmail(email.getValue());
+
+        assertThat(result).isNotEmpty();
+        assertThat(result.get()).isEqualTo(expectedUser);
+    }
+
     record SUT(
         UsersRepository repository,
         JpaUsersRepository jpaUsersRepository,
-        MapNewUserToData mapNewUserToData
+        MapNewUserToData mapNewUserToData,
+        MapUserDataToDomain mapUserDataToDomain
     ) {
     }
 }
