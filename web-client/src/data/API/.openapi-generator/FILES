@@ -12,8 +12,8 @@ models/SignUpByEmailRequest.ts
 models/SignUpByEmailResponse.ts
 models/SignUpResponse.ts
 models/SignUpResponseTokens.ts
-models/UserAlreadyExistsError.ts
 models/UserInfo.ts
+models/UserWithSameEmailAlreadyExistsError.ts
 models/ValidationError.ts
 models/ValidationErrorDetails.ts
 models/index.ts

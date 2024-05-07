@@ -11,7 +11,7 @@ export * from './SignUpByEmailRequest';
 export * from './SignUpByEmailResponse';
 export * from './SignUpResponse';
 export * from './SignUpResponseTokens';
-export * from './UserAlreadyExistsError';
 export * from './UserInfo';
+export * from './UserWithSameEmailAlreadyExistsError';
 export * from './ValidationError';
 export * from './ValidationErrorDetails';

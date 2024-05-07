@@ -21,8 +21,8 @@ import type {
   GetTokenResponse,
   SignUpByEmailRequest,
   SignUpByEmailResponse,
-  UserAlreadyExistsError,
   UserInfo,
+  UserWithSameEmailAlreadyExistsError,
 } from '../models/index';
 import {
     ApiPublicAuthSignUpPost400ResponseFromJSON,
@@ -37,10 +37,10 @@ import {
     SignUpByEmailRequestToJSON,
     SignUpByEmailResponseFromJSON,
     SignUpByEmailResponseToJSON,
-    UserAlreadyExistsErrorFromJSON,
-    UserAlreadyExistsErrorToJSON,
     UserInfoFromJSON,
     UserInfoToJSON,
+    UserWithSameEmailAlreadyExistsErrorFromJSON,
+    UserWithSameEmailAlreadyExistsErrorToJSON,
 } from '../models/index';
 
 export interface ApiPublicAuthSignUpPostRequest {

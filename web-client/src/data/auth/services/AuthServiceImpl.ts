@@ -15,7 +15,7 @@ import UserId from "../../../domain/auth/values/UserId";
 import {
     DefaultApi,
     ResponseError,
-    UserAlreadyExistsError,
+    UserWithSameEmailAlreadyExistsError,
     ValidationError,
 } from "../../API";
 
@@ -107,7 +107,7 @@ class AuthServiceImpl implements AuthService {
 
                 if (e.response.status) {
                     const error =
-                        (await e.response.json()) as UserAlreadyExistsError;
+                        (await e.response.json()) as UserWithSameEmailAlreadyExistsError;
                     throw error;
                 }
             }

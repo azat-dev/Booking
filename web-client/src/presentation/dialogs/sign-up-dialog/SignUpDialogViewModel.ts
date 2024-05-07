@@ -131,8 +131,8 @@ class SignUpDialogViewModel {
             return;
         } catch (e) {
             console.log("Error", e);
-            if ((e as any)?.code === "UserAlreadyExists") {
-                this.errorText.set("User with this email already exists.");
+            if ((e as any)?.code === "UserWithSameEmailAlreadyExists") {
+                this.errorText.set("User with same email already exists.");
                 this.isProcessing.set(false);
             } else {
                 this.errorText.set("Something went wrong. Please try again.");
