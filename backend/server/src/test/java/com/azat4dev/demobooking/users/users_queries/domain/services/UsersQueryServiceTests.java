@@ -1,44 +1,19 @@
 package com.azat4dev.demobooking.users.users_queries.domain.services;
 
-import com.azat4dev.demobooking.users.common.domain.values.UserId;
 import com.azat4dev.demobooking.users.users_commands.domain.UserHelpers;
 import com.azat4dev.demobooking.users.users_queries.domain.entities.User;
+import com.azat4dev.demobooking.users.users_queries.domain.interfaces.repositories.UsersReadRepository;
 import org.junit.jupiter.api.Test;
+
+import java.util.Optional;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.BDDMockito.given;
 import static org.mockito.Mockito.mock;
 
-import java.util.Optional;
-
-interface UsersReadRepository {
-    Optional<User> getById(UserId id);
-
-}
-
-class UsersQueryServiceImpl implements UsersQueryService {
-
-    private final UsersReadRepository usersReadRepository;
-
-    UsersQueryServiceImpl(
-        UsersReadRepository usersReadRepository
-    ) {
-        this.usersReadRepository = usersReadRepository;
-    }
-
-    @Override
-    public Optional<User> getById(UserId id) {
-        return usersReadRepository.getById(id);
-    }
-}
 
 public class UsersQueryServiceTests {
-
-    record SUT(
-        UsersQueryService service,
-        UsersReadRepository usersReadRepository
-    ) {}
 
     SUT makeSUT() {
         final var usersRepository = mock(UsersReadRepository.class);
@@ -89,5 +64,11 @@ public class UsersQueryServiceTests {
 
         // Then
         assertThat(result.orElseThrow()).isEqualTo(existingUser);
+    }
+
+    record SUT(
+        UsersQueryService service,
+        UsersReadRepository usersReadRepository
+    ) {
     }
 }
