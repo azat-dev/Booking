@@ -76,7 +76,7 @@ paths:
           description: Valid Token
         "401":
           description: Not valid Token
-  /api/with-auth/user:
+  /api/with-auth/users/current:
     get:
       summary: Gets current user info
       responses:

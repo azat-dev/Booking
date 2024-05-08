@@ -67,7 +67,7 @@ class AuthServiceImpl implements AuthService {
     };
 
     public authenticateByToken = async (token: string): Promise<UserInfo> => {
-        const userInfo = await this.api.apiWithAuthUserGet();
+        const userInfo = await this.api.apiWithAuthUsersCurrentGet();
         return {
             id: new UserId(userInfo.id),
             email: new Email(userInfo.email),

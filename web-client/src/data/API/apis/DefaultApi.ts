@@ -170,7 +170,7 @@ export class DefaultApi extends runtime.BaseAPI {
     /**
      * Gets current user info
      */
-    async apiWithAuthUserGetRaw(initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<runtime.ApiResponse<UserInfo>> {
+    async apiWithAuthUsersCurrentGetRaw(initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<runtime.ApiResponse<UserInfo>> {
         const queryParameters: any = {};
 
         const headerParameters: runtime.HTTPHeaders = {};
@@ -184,7 +184,7 @@ export class DefaultApi extends runtime.BaseAPI {
             }
         }
         const response = await this.request({
-            path: `/api/with-auth/user`,
+            path: `/api/with-auth/users/current`,
             method: 'GET',
             headers: headerParameters,
             query: queryParameters,
@@ -196,8 +196,8 @@ export class DefaultApi extends runtime.BaseAPI {
     /**
      * Gets current user info
      */
-    async apiWithAuthUserGet(initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<UserInfo> {
-        const response = await this.apiWithAuthUserGetRaw(initOverrides);
+    async apiWithAuthUsersCurrentGet(initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<UserInfo> {
+        const response = await this.apiWithAuthUsersCurrentGetRaw(initOverrides);
         return await response.value();
     }
 
