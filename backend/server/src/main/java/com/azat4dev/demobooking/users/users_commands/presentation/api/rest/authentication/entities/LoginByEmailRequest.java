@@ -8,7 +8,7 @@ public record LoginByEmailRequest(String email, String password) {
 
     public EmailAddress parseEmail() throws ValidationException {
         try {
-            return EmailAddress.makeFromString(email);
+            return EmailAddress.checkAndMakeFromString(email);
         } catch (EmailAddress.ValidationException e) {
             throw ValidationException.withPath("email", e);
         }

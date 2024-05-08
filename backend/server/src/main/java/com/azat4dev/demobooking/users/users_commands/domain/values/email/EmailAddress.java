@@ -24,8 +24,13 @@ public final class EmailAddress {
             .isTrue(validator::isValid);
     }
 
-    public static EmailAddress makeFromString(String text) throws WrongFormatException {
-        validate(text);
+    public static EmailAddress checkAndMakeFromString(String text) throws WrongFormatException {
+        final var cleanedText = text.trim().toLowerCase();
+        validate(cleanedText);
+        return new EmailAddress(cleanedText);
+    }
+
+    public static EmailAddress dangerMakeWithoutChecks(String text) {
         return new EmailAddress(text);
     }
 

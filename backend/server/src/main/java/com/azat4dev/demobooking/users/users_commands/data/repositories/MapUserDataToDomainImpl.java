@@ -17,10 +17,10 @@ public class MapUserDataToDomainImpl implements MapUserDataToDomain {
         return new User(
             UserId.fromUUID(userData.getId()),
             userData.getCreatedAt(),
-            EmailAddress.makeFromString(userData.getEmail()),
+            EmailAddress.dangerMakeWithoutChecks(userData.getEmail()),
             new FullName(
-                new FirstName(userData.getFirstName()),
-                new LastName(userData.getLastName())
+                FirstName.dangerMakeFromStringWithoutCheck(userData.getFirstName()),
+                LastName.dangerMakeFromStringWithoutCheck(userData.getLastName())
             ),
             new EncodedPassword(userData.getEncodedPassword()),
             userData.getEmailVerificationStatus()

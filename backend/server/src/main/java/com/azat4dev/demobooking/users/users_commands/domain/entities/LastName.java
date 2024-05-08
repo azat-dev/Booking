@@ -2,38 +2,39 @@ package com.azat4dev.demobooking.users.users_commands.domain.entities;
 
 import com.azat4dev.demobooking.common.DomainException;
 import com.azat4dev.demobooking.common.utils.Assert;
+import lombok.EqualsAndHashCode;
+import lombok.Getter;
 
-import java.util.Objects;
-
+@Getter
+@EqualsAndHashCode
 public final class LastName {
 
     public final static int MAX_LENGTH = 255;
 
     private final String value;
 
-    public LastName(String value) throws CantBeEmptyException, MaxLengthException {
+    private LastName(String value) {
+        this.value = value;
+    }
 
+    private static void validate(String value) throws LastName.CantBeEmptyException, LastName.MaxLengthException {
+        Assert.string(value, LastName.CantBeEmptyException::new).notNull().notBlank();
+        Assert.string(value, LastName.MaxLengthException::new).maxLength(MAX_LENGTH);
+    }
+
+    public static LastName checkAndMakeFromString(String value) throws LastName.CantBeEmptyException, LastName.MaxLengthException {
+
+        Assert.notNull(value, LastName.CantBeEmptyException::new);
         final var cleanedValue = value.trim();
-        Assert.string(cleanedValue, CantBeEmptyException::new).notNull().notBlank();
-        Assert.string(cleanedValue, MaxLengthException::new).maxLength(MAX_LENGTH);
 
-        this.value = cleanedValue;
+        validate(cleanedValue);
+        return new LastName(cleanedValue);
     }
 
-    public String getValue() {
-        return value;
-    }
+    public static LastName dangerMakeFromStringWithoutCheck(String value) {
 
-    @Override
-    public boolean equals(Object o) {
-        if (this == o) return true;
-        if (!(o instanceof LastName lastName)) return false;
-        return Objects.equals(getValue(), lastName.getValue());
-    }
-
-    @Override
-    public int hashCode() {
-        return Objects.hashCode(getValue());
+        assert value != null;
+        return new LastName(value);
     }
 
     public static abstract class ValidationException extends DomainException {

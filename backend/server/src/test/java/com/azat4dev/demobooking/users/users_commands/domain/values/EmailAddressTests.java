@@ -17,7 +17,7 @@ public class EmailAddressTests {
         // When
         final var exception = assertThrows(
             EmailAddress.WrongFormatException.class,
-            () -> EmailAddress.makeFromString(wrongEmail)
+            () -> EmailAddress.checkAndMakeFromString(wrongEmail)
         );
 
         // Then
@@ -31,7 +31,7 @@ public class EmailAddressTests {
         final var validEmail = "valid@email.com";
 
         // When
-        final var email = EmailAddress.makeFromString(validEmail);
+        final var email = EmailAddress.checkAndMakeFromString(validEmail);
 
         // Then
         assertThat(email).isNotNull();
@@ -43,8 +43,8 @@ public class EmailAddressTests {
 
         // Given
         final var validEmail = "valid@email.com";
-        final var email1 = EmailAddress.makeFromString(validEmail);
-        final var email2 = EmailAddress.makeFromString(validEmail);
+        final var email1 = EmailAddress.checkAndMakeFromString(validEmail);
+        final var email2 = EmailAddress.checkAndMakeFromString(validEmail);
 
         // When
         final var isEqual = email1.equals(email2);
@@ -60,8 +60,8 @@ public class EmailAddressTests {
         final var validEmail1 = "valid1@email.com";
         final var validEmail2 = "valid2@email.com";
 
-        final var email1 = EmailAddress.makeFromString(validEmail1);
-        final var email2 = EmailAddress.makeFromString(validEmail2);
+        final var email1 = EmailAddress.checkAndMakeFromString(validEmail1);
+        final var email2 = EmailAddress.checkAndMakeFromString(validEmail2);
 
         // When
         final var isEqual = email1.equals(email2);

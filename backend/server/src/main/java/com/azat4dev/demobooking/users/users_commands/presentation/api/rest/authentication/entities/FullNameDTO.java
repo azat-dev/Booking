@@ -18,8 +18,8 @@ public record FullNameDTO(
 
     public FullName toDomain() throws FullName.ValidationException, FirstName.ValidationException, LastName.ValidationException {
         return new FullName(
-            new FirstName(firstName),
-            new LastName(lastName)
+            FirstName.checkAndMakeFromString(firstName),
+            LastName.checkAndMakeFromString(lastName)
         );
     }
 }

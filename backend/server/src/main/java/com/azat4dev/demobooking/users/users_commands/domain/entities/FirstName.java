@@ -2,38 +2,41 @@ package com.azat4dev.demobooking.users.users_commands.domain.entities;
 
 import com.azat4dev.demobooking.common.DomainException;
 import com.azat4dev.demobooking.common.utils.Assert;
+import lombok.EqualsAndHashCode;
+import lombok.Getter;
+import lombok.ToString;
 
 import java.util.Objects;
 
+@Getter
+@EqualsAndHashCode
 public final class FirstName {
 
     public static final int MAX_LENGTH = 255;
     private final String value;
 
-    public FirstName(String value) throws CantBeEmptyException, MaxLengthException {
+    private FirstName(String value) {
+        this.value = value;
+    }
 
+    private static void validate(String value) throws CantBeEmptyException, MaxLengthException {
+        Assert.string(value, CantBeEmptyException::new).notNull().notBlank();
+        Assert.string(value, MaxLengthException::new).maxLength(MAX_LENGTH);
+    }
+
+    public static FirstName checkAndMakeFromString(String value) throws CantBeEmptyException, MaxLengthException {
+
+        Assert.notNull(value, CantBeEmptyException::new);
         final var cleanedValue = value.trim();
 
-        Assert.string(cleanedValue, CantBeEmptyException::new).notNull().notBlank();
-        Assert.string(cleanedValue, MaxLengthException::new).maxLength(MAX_LENGTH);
-
-        this.value = cleanedValue;
+        validate(cleanedValue);
+        return new FirstName(cleanedValue);
     }
 
-    public String getValue() {
-        return value;
-    }
+    public static FirstName dangerMakeFromStringWithoutCheck(String value) {
 
-    @Override
-    public boolean equals(Object o) {
-        if (this == o) return true;
-        if (!(o instanceof FirstName firstName)) return false;
-        return Objects.equals(getValue(), firstName.getValue());
-    }
-
-    @Override
-    public int hashCode() {
-        return Objects.hashCode(getValue());
+        assert value != null;
+        return new FirstName(value);
     }
 
     @Override

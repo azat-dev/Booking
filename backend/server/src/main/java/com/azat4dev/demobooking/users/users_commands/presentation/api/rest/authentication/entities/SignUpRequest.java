@@ -31,7 +31,7 @@ public record SignUpRequest(
 
     public EmailAddress parseEmail() throws ValidationException {
         try {
-            return EmailAddress.makeFromString(email);
+            return EmailAddress.checkAndMakeFromString(email);
         } catch (DomainException e) {
             throw ValidationException.withPath("email", e);
         }

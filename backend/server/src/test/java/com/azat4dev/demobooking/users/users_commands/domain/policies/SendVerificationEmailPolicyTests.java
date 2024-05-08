@@ -40,7 +40,7 @@ public class SendVerificationEmailPolicyTests {
 
     EmailAddress anyValidEmail() {
         try {
-            return EmailAddress.makeFromString("user@email.com");
+            return EmailAddress.checkAndMakeFromString("user@email.com");
         } catch (Exception e) {
             throw new RuntimeException(e);
         }

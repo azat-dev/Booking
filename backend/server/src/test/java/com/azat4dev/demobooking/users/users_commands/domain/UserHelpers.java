@@ -18,7 +18,7 @@ public class UserHelpers {
 
     public static EmailAddress anyValidEmail() {
         try {
-            return EmailAddress.makeFromString(faker.internet().emailAddress());
+            return EmailAddress.checkAndMakeFromString(faker.internet().emailAddress());
         } catch (Exception e) {
             throw new RuntimeException(e);
         }
@@ -27,8 +27,8 @@ public class UserHelpers {
     public static FullName anyFullName() {
         try {
             return new FullName(
-                new FirstName(faker.name().firstName()),
-                new LastName(faker.name().lastName())
+                FirstName.checkAndMakeFromString(faker.name().firstName()),
+                LastName.dangerMakeFromStringWithoutCheck(faker.name().lastName())
             );
         } catch (Exception e) {
             throw new RuntimeException(e);

@@ -15,11 +15,4 @@ public record FullNameDTO(
             fullName.lastName().getValue()
         );
     }
-
-    public FullName toDomain() throws FullName.ValidationException, FirstName.ValidationException, LastName.ValidationException {
-        return new FullName(
-            new FirstName(firstName),
-            new LastName(lastName)
-        );
-    }
 }
