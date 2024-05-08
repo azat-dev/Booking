@@ -8,14 +8,14 @@ import com.azat4dev.demobooking.users.users_commands.domain.entities.LastName;
 import com.azat4dev.demobooking.users.users_commands.domain.entities.User;
 import com.azat4dev.demobooking.users.users_commands.domain.interfaces.services.EncodedPassword;
 import com.azat4dev.demobooking.users.users_commands.domain.values.email.EmailAddress;
-import com.azat4dev.demobooking.users.users_commands.domain.values.UserId;
+import com.azat4dev.demobooking.users.common.domain.values.UserId;
 
 public class MapUserDataToDomainImpl implements MapUserDataToDomain {
 
     @Override
     public User map(UserData userData) throws DomainException {
         return new User(
-            UserId.fromString(userData.getId().toString()),
+            UserId.fromUUID(userData.getId()),
             userData.getCreatedAt(),
             EmailAddress.makeFromString(userData.getEmail()),
             new FullName(

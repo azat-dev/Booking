@@ -6,7 +6,7 @@ import com.azat4dev.demobooking.common.presentation.ValidationException;
 import com.azat4dev.demobooking.users.users_commands.domain.commands.CreateUser;
 import com.azat4dev.demobooking.users.users_commands.domain.interfaces.services.PasswordService;
 import com.azat4dev.demobooking.users.users_commands.domain.services.UsersService;
-import com.azat4dev.demobooking.users.users_commands.domain.values.UserId;
+import com.azat4dev.demobooking.users.common.domain.values.UserId;
 import com.azat4dev.demobooking.users.users_commands.domain.values.UserIdFactory;
 import com.azat4dev.demobooking.users.common.presentation.security.services.CustomUserDetailsService;
 import com.azat4dev.demobooking.users.common.presentation.security.services.jwt.JwtService;

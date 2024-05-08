@@ -1,7 +1,7 @@
 package com.azat4dev.demobooking.users.common.presentation.security.services.jwt;
 
 import com.azat4dev.demobooking.common.utils.TimeProvider;
-import com.azat4dev.demobooking.users.users_commands.domain.values.UserId;
+import com.azat4dev.demobooking.users.common.domain.values.UserId;
 import org.springframework.security.oauth2.jwt.JwtClaimsSet;
 import org.springframework.security.oauth2.jwt.JwtDecoder;
 

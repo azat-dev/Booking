@@ -4,7 +4,7 @@ import com.azat4dev.demobooking.users.common.presentation.security.entities.User
 import com.azat4dev.demobooking.users.common.presentation.security.services.jwt.UserIdNotFoundException;
 import com.azat4dev.demobooking.users.users_commands.domain.interfaces.repositories.UsersRepository;
 import com.azat4dev.demobooking.users.users_commands.domain.values.email.EmailAddress;
-import com.azat4dev.demobooking.users.users_commands.domain.values.UserId;
+import com.azat4dev.demobooking.users.common.domain.values.UserId;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 
 

@@ -1,4 +1,4 @@
-package com.azat4dev.demobooking.users.users_commands.domain.values;
+package com.azat4dev.demobooking.users.common.domain.values;
 
 import com.azat4dev.demobooking.common.DomainException;
 import com.azat4dev.demobooking.common.utils.Assert;
@@ -7,20 +7,21 @@ import java.util.UUID;
 
 public record UserId(UUID value) {
 
-    static UserId generateNew() {
-        return new UserId(UUID.randomUUID());
-    }
-
     public static UserId fromString(String id) throws WrongFormatException {
 
-        Assert.string(id, () -> new WrongFormatException(id))
-            .notNull();
+        Assert.notNull(id, () -> new WrongFormatException(id));
 
         try {
             return new UserId(UUID.fromString(id));
         } catch (IllegalArgumentException e) {
             throw new WrongFormatException(id);
         }
+    }
+
+    public static UserId fromUUID(UUID id) throws WrongFormatException {
+
+        Assert.notNull(id, () -> new WrongFormatException("null"));
+        return new UserId(id);
     }
 
     @Override

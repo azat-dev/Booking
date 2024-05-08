@@ -7,7 +7,7 @@ import com.azat4dev.demobooking.users.users_commands.domain.entities.User;
 import com.azat4dev.demobooking.users.users_commands.domain.interfaces.services.EncodedPassword;
 import com.azat4dev.demobooking.users.users_commands.domain.services.EmailVerificationStatus;
 import com.azat4dev.demobooking.users.users_commands.domain.values.email.EmailAddress;
-import com.azat4dev.demobooking.users.users_commands.domain.values.UserId;
+import com.azat4dev.demobooking.users.common.domain.values.UserId;
 import com.github.javafaker.Faker;
 
 import java.time.LocalDateTime;
@@ -37,7 +37,7 @@ public class UserHelpers {
 
     public static UserId anyValidUserId() {
         try {
-            return UserId.fromString(UUID.randomUUID().toString());
+            return UserId.fromUUID(UUID.randomUUID());
         } catch (UserId.WrongFormatException e) {
             throw new RuntimeException(e);
         }
