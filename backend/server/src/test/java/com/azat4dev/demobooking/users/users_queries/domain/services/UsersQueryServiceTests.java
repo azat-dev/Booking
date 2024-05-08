@@ -29,7 +29,7 @@ class UsersQueryServiceImpl implements UsersQueryService {
 
     @Override
     public Optional<User> getById(UserId id) {
-        return Optional.empty();
+        return usersReadRepository.getById(id);
     }
 }
 
