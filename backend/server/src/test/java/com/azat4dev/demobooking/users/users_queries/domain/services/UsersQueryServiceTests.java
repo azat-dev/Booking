@@ -1,7 +1,7 @@
 package com.azat4dev.demobooking.users.users_queries.domain.services;
 
 import com.azat4dev.demobooking.users.users_commands.domain.UserHelpers;
-import com.azat4dev.demobooking.users.users_queries.domain.entities.User;
+import com.azat4dev.demobooking.users.users_queries.domain.entities.PersonalUserInfo;
 import com.azat4dev.demobooking.users.users_queries.domain.interfaces.repositories.UsersReadRepository;
 import org.junit.jupiter.api.Test;
 
@@ -27,10 +27,11 @@ public class UsersQueryServiceTests {
         return "anyemail@gmail.com";
     }
 
-    User anyUser() {
-        return new User(
+    PersonalUserInfo anyPersonalUserInfo() {
+        return new PersonalUserInfo(
             UserHelpers.anyValidUserId(),
-            UserHelpers.anyValidEmail().getValue()
+            anyEmail(),
+            UserHelpers.anyFullName()
         );
     }
 
@@ -40,7 +41,7 @@ public class UsersQueryServiceTests {
         final var sut = makeSUT();
         final var userId = UserHelpers.anyValidUserId();
 
-        given(sut.usersReadRepository.getById(any()))
+        given(sut.usersReadRepository.getPersonalUserInfoById(any()))
             .willReturn(Optional.empty());
 
         // When
@@ -54,9 +55,9 @@ public class UsersQueryServiceTests {
     void test_getById_givenExistingUser_thenReturnUser() {
         // Given
         final var sut = makeSUT();
-        final var existingUser = anyUser();
+        final var existingUser = anyPersonalUserInfo();
 
-        given(sut.usersReadRepository.getById(any()))
+        given(sut.usersReadRepository.getPersonalUserInfoById(any()))
             .willReturn(Optional.of(existingUser));
 
         // When

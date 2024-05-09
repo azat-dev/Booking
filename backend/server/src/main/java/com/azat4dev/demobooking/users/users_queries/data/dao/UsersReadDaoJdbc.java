@@ -1,8 +1,8 @@
 package com.azat4dev.demobooking.users.users_queries.data.dao;
 
-import com.azat4dev.demobooking.users.users_queries.data.dao.entities.PersonalUserInfo;
+import com.azat4dev.demobooking.users.users_queries.data.dao.records.UserRecord;
+import com.azat4dev.demobooking.users.users_queries.domain.entities.PersonalUserInfo;
 import org.springframework.dao.EmptyResultDataAccessException;
-import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.jdbc.core.RowMapper;
 import org.springframework.jdbc.core.namedparam.NamedParameterJdbcTemplate;
 
@@ -10,10 +10,10 @@ import java.util.Map;
 import java.util.Optional;
 import java.util.UUID;
 
-class UsersReadDaoJdbc implements UsersReadDao {
+public class UsersReadDaoJdbc implements UsersReadDao {
 
     private final NamedParameterJdbcTemplate jdbcTemplate;
-    private final RowMapper<PersonalUserInfo> personalUserInfoRowMapper = (rs, rowNum) -> new PersonalUserInfo(
+    private final RowMapper<UserRecord> personalUserInfoRowMapper = (rs, rowNum) -> new UserRecord(
         UUID.fromString(rs.getString("id")),
         rs.getString("email"),
         rs.getString("first_name"),
@@ -25,10 +25,10 @@ class UsersReadDaoJdbc implements UsersReadDao {
     }
 
     @Override
-    public Optional<PersonalUserInfo> getPersonalUserInfoById(UUID userId) {
+    public Optional<UserRecord> getById(UUID userId) {
 
         final var sql = """
-                SELECT id, email, first_name, last_name
+                SELECT *
                 FROM users
                 WHERE id = :userId
             """;

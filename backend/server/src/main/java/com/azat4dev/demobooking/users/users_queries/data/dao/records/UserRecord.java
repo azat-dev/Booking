@@ -1,8 +1,8 @@
-package com.azat4dev.demobooking.users.users_queries.data.dao.entities;
+package com.azat4dev.demobooking.users.users_queries.data.dao.records;
 
 import java.util.UUID;
 
-public record PersonalUserInfo(
+public record UserRecord(
     UUID id,
     String email,
     String firstName,

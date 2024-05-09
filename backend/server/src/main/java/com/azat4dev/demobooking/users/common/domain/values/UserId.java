@@ -19,7 +19,6 @@ public record UserId(UUID value) {
     }
 
     public static UserId fromUUID(UUID id) throws WrongFormatException {
-
         Assert.notNull(id, () -> new WrongFormatException("null"));
         return new UserId(id);
     }
