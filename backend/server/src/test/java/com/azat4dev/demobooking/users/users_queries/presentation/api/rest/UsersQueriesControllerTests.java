@@ -94,5 +94,4 @@ public class UsersQueriesControllerTests {
                 .with(csrf())
         );
     }
-
 }
