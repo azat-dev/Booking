@@ -1,6 +1,8 @@
 package com.azat4dev.demobooking.users.users_queries.data.dao;
 
 import com.azat4dev.demobooking.users.users_queries.data.dao.entities.PersonalUserInfo;
+import org.springframework.dao.EmptyResultDataAccessException;
+import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.jdbc.core.RowMapper;
 import org.springframework.jdbc.core.namedparam.NamedParameterJdbcTemplate;
 
@@ -29,14 +31,18 @@ class UsersReadDaoJdbc implements UsersReadDao {
                 SELECT id, email, first_name, last_name
                 FROM users
                 WHERE id = :userId
-                LIMIT 1
             """;
 
-        final var foundUser = jdbcTemplate.queryForObject(
-            sql,
-            Map.of("userId", userId),
-            personalUserInfoRowMapper
-        );
-        return Optional.ofNullable(foundUser);
+        try {
+            final var foundUser = jdbcTemplate.queryForObject(
+                sql,
+                Map.of("userId", userId),
+                personalUserInfoRowMapper
+            );
+
+            return Optional.ofNullable(foundUser);
+        } catch (EmptyResultDataAccessException e) {
+            return Optional.empty();
+        }
     }
 }
