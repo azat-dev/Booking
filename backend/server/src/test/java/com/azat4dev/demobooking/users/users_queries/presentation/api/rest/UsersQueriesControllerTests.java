@@ -1,0 +1,103 @@
+package com.azat4dev.demobooking.users.users_queries.presentation.api.rest;
+
+import com.azat4dev.demobooking.users.common.domain.values.UserId;
+import com.azat4dev.demobooking.users.common.presentation.security.services.CustomUserDetailsService;
+import com.azat4dev.demobooking.users.common.presentation.security.services.jwt.JwtService;
+import com.azat4dev.demobooking.users.users_commands.application.config.WebSecurityConfig;
+import com.azat4dev.demobooking.users.users_commands.domain.UserHelpers;
+import com.azat4dev.demobooking.users.users_commands.domain.interfaces.repositories.UsersRepository;
+import com.azat4dev.demobooking.users.users_commands.domain.services.UsersService;
+import com.azat4dev.demobooking.users.users_commands.domain.values.UserIdFactory;
+import com.azat4dev.demobooking.users.users_queries.presentation.api.rest.resources.UsersQueriesController;
+import com.fasterxml.jackson.databind.ObjectMapper;
+import org.junit.jupiter.api.Test;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
+import org.springframework.boot.test.mock.mockito.MockBean;
+import org.springframework.context.annotation.Import;
+import org.springframework.security.authentication.AuthenticationManager;
+import org.springframework.security.crypto.password.PasswordEncoder;
+import org.springframework.security.oauth2.jwt.JwtDecoder;
+import org.springframework.security.oauth2.jwt.JwtEncoder;
+import org.springframework.test.web.servlet.MockMvc;
+import org.springframework.test.web.servlet.ResultActions;
+
+import java.util.Optional;
+
+import static org.springframework.security.test.web.servlet.request.SecurityMockMvcRequestPostProcessors.csrf;
+import static org.springframework.security.test.web.servlet.request.SecurityMockMvcRequestPostProcessors.jwt;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
+
+@WebMvcTest(UsersQueriesController.class)
+@Import(WebSecurityConfig.class)
+public class UsersQueriesControllerTests {
+
+    @Autowired
+    private ObjectMapper objectMapper;
+
+    @Autowired
+    private MockMvc mockMvc;
+
+    @MockBean
+    private AuthenticationManager authenticationManager;
+
+    @MockBean
+    private CustomUserDetailsService customUserDetailsService;
+
+    @MockBean
+    private PasswordEncoder passwordEncoder;
+
+    @MockBean
+    private UsersService usersService;
+
+    @MockBean
+    private JwtService tokenProvider;
+
+    @MockBean
+    private JwtEncoder jwtEncoder;
+
+    @MockBean
+    private JwtDecoder jwtDecoder;
+
+    @MockBean
+    private UserIdFactory userIdFactory;
+
+    @MockBean
+    private UsersRepository usersRepository;
+
+    @Test
+    public void test_getCurrentUserInfo_givenUserDoesNotExist_thenReturn404() throws Exception {
+
+        // Given
+        final var userId = UserHelpers.anyValidUserId();
+
+        // When
+        final var result = performGetCurrentUserInfoRequest(Optional.of(userId));
+
+        // Then
+        result.andExpect(status().isNotFound());
+    }
+
+
+    private ResultActions performGetCurrentUserInfoRequest(Optional<UserId> userId) throws Exception {
+        final String url = "/api/with-auth/users/current";
+        return performGetRequest(
+            url,
+            userId
+        );
+    }
+
+    private ResultActions performGetRequest(
+        String url,
+        Optional<UserId> userId
+    ) throws Exception {
+        return mockMvc.perform(
+            get(url).with(jwt().jwt(c -> {
+                    userId.ifPresent(id -> c.subject(id.toString()));
+                }))
+                .with(csrf())
+        );
+    }
+
+}

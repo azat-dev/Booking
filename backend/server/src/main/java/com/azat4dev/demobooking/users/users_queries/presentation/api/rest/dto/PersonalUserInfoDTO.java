@@ -1,18 +1,18 @@
 package com.azat4dev.demobooking.users.users_queries.presentation.api.rest.dto;
 
-import com.azat4dev.demobooking.users.users_commands.domain.entities.User;
 import com.azat4dev.demobooking.users.users_commands.presentation.api.rest.authentication.entities.FullNameDTO;
+import com.azat4dev.demobooking.users.users_queries.domain.entities.PersonalUserInfo;
 
-public record CurrentUserDTO(
+public record PersonalUserInfoDTO(
     String id,
     String email,
     FullNameDTO fullName
 ) {
 
-    public static CurrentUserDTO from(User user) {
-        return new CurrentUserDTO(
+    public static PersonalUserInfoDTO from(PersonalUserInfo user) {
+        return new PersonalUserInfoDTO(
             user.id().toString(),
-            user.email().getValue(),
+            user.email(),
             FullNameDTO.fromDomain(user.fullName())
         );
     }
