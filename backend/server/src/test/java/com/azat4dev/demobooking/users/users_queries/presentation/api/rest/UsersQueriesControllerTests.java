@@ -36,19 +36,7 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 public class UsersQueriesControllerTests {
 
     @Autowired
-    private ObjectMapper objectMapper;
-
-    @Autowired
     private MockMvc mockMvc;
-
-    @MockBean
-    private AuthenticationManager authenticationManager;
-
-    @MockBean
-    private CustomUserDetailsService customUserDetailsService;
-
-    @MockBean
-    private PasswordEncoder passwordEncoder;
 
     @MockBean
     private UsersQueryService usersService;
@@ -61,12 +49,6 @@ public class UsersQueriesControllerTests {
 
     @MockBean
     private JwtDecoder jwtDecoder;
-
-    @MockBean
-    private UserIdFactory userIdFactory;
-
-    @MockBean
-    private UsersRepository usersRepository;
 
     @Test
     public void test_getCurrentUserInfo_givenUserDoesNotExist_thenReturn404() throws Exception {
