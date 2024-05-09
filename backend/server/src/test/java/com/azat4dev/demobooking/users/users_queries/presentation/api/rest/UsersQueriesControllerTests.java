@@ -6,8 +6,8 @@ import com.azat4dev.demobooking.users.common.presentation.security.services.jwt.
 import com.azat4dev.demobooking.users.users_commands.application.config.WebSecurityConfig;
 import com.azat4dev.demobooking.users.users_commands.domain.UserHelpers;
 import com.azat4dev.demobooking.users.users_commands.domain.interfaces.repositories.UsersRepository;
-import com.azat4dev.demobooking.users.users_commands.domain.services.UsersService;
 import com.azat4dev.demobooking.users.users_commands.domain.values.UserIdFactory;
+import com.azat4dev.demobooking.users.users_queries.domain.services.UsersQueryService;
 import com.azat4dev.demobooking.users.users_queries.presentation.api.rest.resources.UsersQueriesController;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.junit.jupiter.api.Test;
@@ -24,6 +24,8 @@ import org.springframework.test.web.servlet.ResultActions;
 
 import java.util.Optional;
 
+import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.BDDMockito.given;
 import static org.springframework.security.test.web.servlet.request.SecurityMockMvcRequestPostProcessors.csrf;
 import static org.springframework.security.test.web.servlet.request.SecurityMockMvcRequestPostProcessors.jwt;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
@@ -49,7 +51,7 @@ public class UsersQueriesControllerTests {
     private PasswordEncoder passwordEncoder;
 
     @MockBean
-    private UsersService usersService;
+    private UsersQueryService usersService;
 
     @MockBean
     private JwtService tokenProvider;
@@ -71,6 +73,8 @@ public class UsersQueriesControllerTests {
 
         // Given
         final var userId = UserHelpers.anyValidUserId();
+
+        given(usersService.getPersonalInfoById(any())).willReturn(Optional.empty());
 
         // When
         final var result = performGetCurrentUserInfoRequest(Optional.of(userId));

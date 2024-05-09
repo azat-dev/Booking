@@ -36,7 +36,7 @@ public class UsersQueryServiceTests {
     }
 
     @Test
-    void test_getById_givenNotExistingUser_thenReturnEmpty() {
+    void test_getPersonalInfoById_givenNotExistingUser_thenReturnEmpty() {
         // Given
         final var sut = makeSUT();
         final var userId = UserHelpers.anyValidUserId();
@@ -45,14 +45,14 @@ public class UsersQueryServiceTests {
             .willReturn(Optional.empty());
 
         // When
-        final var result = sut.service.getById(userId);
+        final var result = sut.service.getPersonalInfoById(userId);
 
         // Then
         assertThat(result).isEmpty();
     }
 
     @Test
-    void test_getById_givenExistingUser_thenReturnUser() {
+    void test_getPersonalInfoById_givenExistingUser_thenReturnUser() {
         // Given
         final var sut = makeSUT();
         final var existingUser = anyPersonalUserInfo();
@@ -61,7 +61,7 @@ public class UsersQueryServiceTests {
             .willReturn(Optional.of(existingUser));
 
         // When
-        final var result = sut.service.getById(existingUser.id());
+        final var result = sut.service.getPersonalInfoById(existingUser.id());
 
         // Then
         assertThat(result.orElseThrow()).isEqualTo(existingUser);

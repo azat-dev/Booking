@@ -7,5 +7,5 @@ import java.util.Optional;
 
 public interface UsersQueryService {
 
-    Optional<PersonalUserInfo> getById(UserId id);
+    Optional<PersonalUserInfo> getPersonalInfoById(UserId id);
 }

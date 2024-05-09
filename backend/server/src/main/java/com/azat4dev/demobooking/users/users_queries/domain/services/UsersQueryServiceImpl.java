@@ -17,7 +17,7 @@ public final class UsersQueryServiceImpl implements UsersQueryService {
     }
 
     @Override
-    public Optional<PersonalUserInfo> getById(UserId id) {
+    public Optional<PersonalUserInfo> getPersonalInfoById(UserId id) {
         return usersReadRepository.getPersonalUserInfoById(id);
     }
 }
