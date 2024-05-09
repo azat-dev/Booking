@@ -4,6 +4,7 @@ import com.azat4dev.demobooking.common.CommandId;
 import com.azat4dev.demobooking.common.presentation.ControllerException;
 import com.azat4dev.demobooking.common.presentation.ValidationException;
 import com.azat4dev.demobooking.users.users_commands.domain.commands.CreateUser;
+import com.azat4dev.demobooking.users.users_commands.domain.interfaces.services.EncodedPassword;
 import com.azat4dev.demobooking.users.users_commands.domain.interfaces.services.PasswordService;
 import com.azat4dev.demobooking.users.users_commands.domain.services.UsersService;
 import com.azat4dev.demobooking.users.common.domain.values.UserId;
@@ -159,9 +160,9 @@ public class AuthenticationController implements AuthenticationResource {
         try {
             final var user = userDetailsService.loadUserByEmail(email);
 
-            final var encodedPassword = passwordService.encodePassword(password);
+            final var encodedPassword = new EncodedPassword(user.getPassword());
 
-            if (!encodedPassword.value().equals(user.getPassword())) {
+            if (!passwordService.matches(password, encodedPassword)) {
                 return ResponseEntity.status(HttpStatus.UNAUTHORIZED).build();
             }
 

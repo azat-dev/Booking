@@ -85,7 +85,7 @@ paths:
           content:
             application/json:
               schema:
-                "$ref": "#/components/schemas/UserInfo"
+                "$ref": "#/components/schemas/PersonalUserInfo"
         "401":
           description: Not valid Token
 components:
@@ -186,7 +186,7 @@ components:
           type: string
           minLength: 1
           maxLength: 50
-    UserInfo:
+    PersonalUserInfo:
       type: object
       required:
         - id

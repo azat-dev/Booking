@@ -1,20 +1,22 @@
 package com.azat4dev.demobooking.users.users_commands.domain.presentation.api;
 
 import com.azat4dev.demobooking.common.presentation.ValidationErrorDTO;
+import com.azat4dev.demobooking.users.common.presentation.security.entities.UserPrincipal;
+import com.azat4dev.demobooking.users.common.presentation.security.services.CustomUserDetailsService;
+import com.azat4dev.demobooking.users.common.presentation.security.services.jwt.JwtService;
+import com.azat4dev.demobooking.users.common.presentation.security.services.jwt.UserIdNotFoundException;
 import com.azat4dev.demobooking.users.users_commands.application.config.WebSecurityConfig;
 import com.azat4dev.demobooking.users.users_commands.domain.UserHelpers;
 import com.azat4dev.demobooking.users.users_commands.domain.interfaces.repositories.UsersRepository;
 import com.azat4dev.demobooking.users.users_commands.domain.interfaces.services.EncodedPassword;
+import com.azat4dev.demobooking.users.users_commands.domain.interfaces.services.PasswordService;
 import com.azat4dev.demobooking.users.users_commands.domain.services.UsersService;
+import com.azat4dev.demobooking.users.users_commands.domain.values.Password;
 import com.azat4dev.demobooking.users.users_commands.domain.values.UserIdFactory;
 import com.azat4dev.demobooking.users.users_commands.presentation.api.rest.authentication.entities.FullNameDTO;
 import com.azat4dev.demobooking.users.users_commands.presentation.api.rest.authentication.entities.LoginByEmailRequest;
 import com.azat4dev.demobooking.users.users_commands.presentation.api.rest.authentication.entities.SignUpRequest;
 import com.azat4dev.demobooking.users.users_commands.presentation.api.rest.authentication.resources.AuthenticationController;
-import com.azat4dev.demobooking.users.common.presentation.security.entities.UserPrincipal;
-import com.azat4dev.demobooking.users.common.presentation.security.services.CustomUserDetailsService;
-import com.azat4dev.demobooking.users.common.presentation.security.services.jwt.JwtService;
-import com.azat4dev.demobooking.users.common.presentation.security.services.jwt.UserIdNotFoundException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -25,7 +27,6 @@ import org.springframework.http.MediaType;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
-import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.oauth2.jwt.JwtDecoder;
 import org.springframework.security.oauth2.jwt.JwtEncoder;
 import org.springframework.security.oauth2.server.resource.authentication.BearerTokenAuthenticationToken;
@@ -61,10 +62,10 @@ public class AuthenticationControllerTests {
     private CustomUserDetailsService customUserDetailsService;
 
     @MockBean
-    private PasswordEncoder passwordEncoder;
+    private UsersService usersService;
 
     @MockBean
-    private UsersService usersService;
+    private PasswordService passwordService;
 
     @MockBean
     private JwtService tokenProvider;
@@ -107,8 +108,8 @@ public class AuthenticationControllerTests {
         // Given
         final var email = UserHelpers.anyValidEmail();
         final var user = givenExistingPrincipal();
+
         final var wrongPassword = "wrongPassword";
-        final var wrongEncodedPassword = user.getPassword() + "wrong";
 
         final var authenticationRequest = new LoginByEmailRequest(
             email.getValue(),
@@ -118,8 +119,8 @@ public class AuthenticationControllerTests {
         given(customUserDetailsService.loadUserByEmail(any()))
             .willReturn(user);
 
-        given(passwordEncoder.encode(any()))
-            .willReturn(wrongEncodedPassword);
+        given(passwordService.matches(any(), any()))
+            .willReturn(false);
 
         // When
         final var response = performAuthenticateRequest(authenticationRequest);
@@ -224,7 +225,7 @@ public class AuthenticationControllerTests {
         final var userId = anyValidUserId();
         final var fullName = anyValidFullName();
         final var validEmail = anyValidEmail();
-        final var password = new EncodedPassword("password");
+        final var password = Password.makeFromString("password");
 
         final var expectedAccessToken = "accessToken";
         final var expectedRefreshToken = "refreshToken";
@@ -232,7 +233,7 @@ public class AuthenticationControllerTests {
         final var request = new SignUpRequest(
             fullName,
             validEmail,
-            password.value()
+            password.getValue()
         );
 
         given(userIdFactory.generateNewUserId())
@@ -267,8 +268,8 @@ public class AuthenticationControllerTests {
         then(tokenProvider).should(times(1))
             .generateRefreshToken(eq(userId), any());
 
-        then(passwordEncoder).should(times(1))
-            .encode(eq(password.value()));
+        then(passwordService).should(times(1))
+            .encodePassword(password);
 
         action.andExpect(status().isCreated())
             .andExpect(authenticated());

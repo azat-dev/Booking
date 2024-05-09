@@ -8,11 +8,11 @@ models/FullName.ts
 models/GetTokenResponse.ts
 models/GetTokenResponseTokens.ts
 models/ModelError.ts
+models/PersonalUserInfo.ts
 models/SignUpByEmailRequest.ts
 models/SignUpByEmailResponse.ts
 models/SignUpResponse.ts
 models/SignUpResponseTokens.ts
-models/UserInfo.ts
 models/UserWithSameEmailAlreadyExistsError.ts
 models/ValidationError.ts
 models/ValidationErrorDetails.ts

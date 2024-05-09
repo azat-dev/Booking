@@ -4,4 +4,6 @@ import com.azat4dev.demobooking.users.users_commands.domain.values.Password;
 
 public interface PasswordService {
     EncodedPassword encodePassword(Password password);
+
+    boolean matches(Password password, EncodedPassword encodedPassword);
 }

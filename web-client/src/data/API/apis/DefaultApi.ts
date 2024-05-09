@@ -19,9 +19,9 @@ import type {
   ApiPublicAuthTokenVerifyPostRequest,
   AuthenticateByEmailRequest,
   GetTokenResponse,
+  PersonalUserInfo,
   SignUpByEmailRequest,
   SignUpByEmailResponse,
-  UserInfo,
   UserWithSameEmailAlreadyExistsError,
 } from '../models/index';
 import {
@@ -33,12 +33,12 @@ import {
     AuthenticateByEmailRequestToJSON,
     GetTokenResponseFromJSON,
     GetTokenResponseToJSON,
+    PersonalUserInfoFromJSON,
+    PersonalUserInfoToJSON,
     SignUpByEmailRequestFromJSON,
     SignUpByEmailRequestToJSON,
     SignUpByEmailResponseFromJSON,
     SignUpByEmailResponseToJSON,
-    UserInfoFromJSON,
-    UserInfoToJSON,
     UserWithSameEmailAlreadyExistsErrorFromJSON,
     UserWithSameEmailAlreadyExistsErrorToJSON,
 } from '../models/index';
@@ -170,7 +170,7 @@ export class DefaultApi extends runtime.BaseAPI {
     /**
      * Gets current user info
      */
-    async apiWithAuthUsersCurrentGetRaw(initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<runtime.ApiResponse<UserInfo>> {
+    async apiWithAuthUsersCurrentGetRaw(initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<runtime.ApiResponse<PersonalUserInfo>> {
         const queryParameters: any = {};
 
         const headerParameters: runtime.HTTPHeaders = {};
@@ -190,13 +190,13 @@ export class DefaultApi extends runtime.BaseAPI {
             query: queryParameters,
         }, initOverrides);
 
-        return new runtime.JSONApiResponse(response, (jsonValue) => UserInfoFromJSON(jsonValue));
+        return new runtime.JSONApiResponse(response, (jsonValue) => PersonalUserInfoFromJSON(jsonValue));
     }
 
     /**
      * Gets current user info
      */
-    async apiWithAuthUsersCurrentGet(initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<UserInfo> {
+    async apiWithAuthUsersCurrentGet(initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<PersonalUserInfo> {
         const response = await this.apiWithAuthUsersCurrentGetRaw(initOverrides);
         return await response.value();
     }

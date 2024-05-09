@@ -1,5 +1,6 @@
 package com.azat4dev.demobooking.users.users_commands.application.config;
 
+import com.azat4dev.demobooking.users.users_commands.data.services.PasswordServiceImpl;
 import com.azat4dev.demobooking.users.users_commands.domain.interfaces.services.EncodedPassword;
 import com.azat4dev.demobooking.users.users_commands.domain.interfaces.services.PasswordService;
 import com.azat4dev.demobooking.users.users_commands.domain.values.Password;
@@ -61,18 +62,28 @@ public class WebSecurityConfig {
     }
 
     @Bean
-    PasswordEncoder passwordEncoder() {
-        return new BCryptPasswordEncoder();
+    PasswordEncoder passwordEncoder(PasswordService passwordService) {
+        return new PasswordEncoder() {
+            @Override
+            public String encode(CharSequence rawPassword) {
+                return passwordService.encodePassword(
+                    Password.makeFromString(rawPassword.toString())
+                ).value();
+            }
+
+            @Override
+            public boolean matches(CharSequence rawPassword, String encodedPassword) {
+                return passwordService.matches(
+                    Password.makeFromString(rawPassword.toString()),
+                    new EncodedPassword(encodedPassword)
+                );
+            }
+        };
     }
 
     @Bean
-    PasswordService passwordService(PasswordEncoder passwordEncoder) {
-        return new PasswordService() {
-            @Override
-            public EncodedPassword encodePassword(Password password) {
-                return new EncodedPassword(passwordEncoder.encode(password.getValue()));
-            }
-        };
+    PasswordService passwordService() {
+        return new PasswordServiceImpl(new BCryptPasswordEncoder());
     }
 
     @Bean

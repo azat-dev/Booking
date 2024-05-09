@@ -26,7 +26,6 @@ const localAuthDataRespository = new LocalAuthDataRepositoryImpl();
 const apiConfig: Configuration = new Configuration({
     basePath: "http://localhost:8080",
     accessToken: async () => {
-        debugger
         const authData = await localAuthDataRespository.get();
         return authData?.accessToken.val ?? "";
 
