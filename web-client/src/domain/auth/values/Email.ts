@@ -2,21 +2,29 @@ import Assert from "../../utils/Assert";
 import ValidationException from "../CurrentSession/Session/ValidationException";
 
 class Email {
-    public readonly value: string;
 
     public static readonly PATTERN = /^[\w-\.]+@([\w-]+\.)+[\w-]{2,4}$/;
 
-    constructor(value: string) {
-        const cleanedValue = value.trim();
+    private constructor(public readonly value: string) {
+    }
 
-        Assert.notBlank(cleanedValue, () => new Email.NotBlank());
+    private static validate = (value: string): void  => {
+        Assert.notBlank(value, () => new Email.NotBlank());
         Assert.hasPattern(
-            cleanedValue,
+            value,
             Email.PATTERN,
             () => new Email.FormatException()
         );
+    }
 
-        this.value = cleanedValue;
+    public static checkAndCreateFromString(value: string): Email {
+        const cleanedValue = value.trim().toLowerCase();
+        Email.validate(cleanedValue);
+        return new Email(value);
+    }
+
+    public static dangerouslyCreate(value: string): Email {
+        return new Email(value);
     }
 
     public static readonly ValidationException = ValidationException;

@@ -134,7 +134,7 @@ class AppViewModelImpl implements AppViewModel {
                 return new ProfileButtonAuthenticatedViewModel(
                     userInfo.fullName,
                     userInfo.email,
-                    userInfo.avatar,
+                    userInfo.photoUrl,
                     () => {
                         throw new Error("Not implemented");
                     },

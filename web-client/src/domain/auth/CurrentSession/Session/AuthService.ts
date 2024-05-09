@@ -1,7 +1,7 @@
 import Email from "../../values/Email";
 import UserId from "../../values/UserId";
 import SignUpByEmailData from "./SignUpByEmailData";
-import UserInfo from "../../values/User";
+import PersonalUserInfo from "./entities/PersonalUserInfo";
 
 export interface Tokens {
     access: string;
@@ -44,7 +44,7 @@ export default interface AuthService {
     authenticateByEmail(data: AuthenticateByEmailData): Promise<AuthenticationByEmailResult>;
 
 
-    authenticateByToken(token: string): Promise<UserInfo>;
+    authenticateByToken(token: string): Promise<PersonalUserInfo>;
 
     logout(): Promise<void>;
 }

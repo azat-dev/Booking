@@ -1,7 +1,8 @@
 import AuthService, {
     AuthenticateByEmailData,
     AuthenticationByEmailResult,
-    SignUpByEmailResult, WrongCredentialsError,
+    SignUpByEmailResult,
+    WrongCredentialsError,
 } from "../../../domain/auth/CurrentSession/Session/AuthService";
 import FirstName from "../../../domain/auth/CurrentSession/Session/FirstName";
 import FullName from "../../../domain/auth/CurrentSession/Session/FullName";
@@ -10,27 +11,16 @@ import SignUpByEmailData from "../../../domain/auth/CurrentSession/Session/SignU
 import AccessToken from "../../../domain/auth/interfaces/repositories/AccessToken";
 import LocalAuthDataRepository from "../../../domain/auth/interfaces/repositories/LocalAuthDataRepository";
 import Email from "../../../domain/auth/values/Email";
-import UserInfo from "../../../domain/auth/values/User";
 import UserId from "../../../domain/auth/values/UserId";
-import {
-    DefaultApi,
-    ResponseError,
-    UserWithSameEmailAlreadyExistsError,
-    ValidationError,
-} from "../../API";
+import {DefaultApi, ResponseError, UserWithSameEmailAlreadyExistsError, ValidationError,} from "../../API";
+import PersonalUserInfo from "../../../domain/auth/CurrentSession/Session/entities/PersonalUserInfo";
 
 class AuthServiceImpl implements AuthService {
-    private testUser: UserInfo = {
-        id: new UserId("some-id"),
-        email: new Email("somelonglonglong@email.com"),
-        fullName: new FullName(new FirstName("SomeLong"), new LastName("Name")),
-        avatar: null,
-    };
-
     public constructor(
         private readonly api: DefaultApi,
         private readonly localAuthDataRepository: LocalAuthDataRepository
-    ) {}
+    ) {
+    }
 
     public authenticateByEmail = async (
         data: AuthenticateByEmailData
@@ -44,12 +34,12 @@ class AuthServiceImpl implements AuthService {
             });
 
             await this.localAuthDataRepository.put({
-                userId: new UserId(result.userId),
+                userId: UserId.fromString(result.userId),
                 accessToken: new AccessToken(result.tokens.access),
             });
 
             return {
-                userId: new UserId(result.userId),
+                userId: UserId.fromString(result.userId),
                 tokens: result.tokens,
             };
         } catch (e) {
@@ -66,17 +56,17 @@ class AuthServiceImpl implements AuthService {
         }
     };
 
-    public authenticateByToken = async (token: string): Promise<UserInfo> => {
+    public authenticateByToken = async (token: string): Promise<PersonalUserInfo> => {
         const userInfo = await this.api.apiWithAuthUsersCurrentGet();
-        return {
-            id: new UserId(userInfo.id),
-            email: new Email(userInfo.email),
-            fullName: new FullName(
-                new FirstName(userInfo.fullName.firstName),
-                new LastName(userInfo.fullName.lastName)
+        return new PersonalUserInfo(
+            UserId.fromString(userInfo.id),
+            Email.dangerouslyCreate(userInfo.email),
+            new FullName(
+                FirstName.dangerouslyCreate(userInfo.fullName.firstName),
+                LastName.dangerouslyCreate(userInfo.fullName.lastName)
             ),
-            avatar: null,
-        }
+            null
+        )
     };
 
     public logout = async (): Promise<void> => {
@@ -99,12 +89,12 @@ class AuthServiceImpl implements AuthService {
             });
 
             await this.localAuthDataRepository.put({
-                userId: new UserId(result.userId),
+                userId: UserId.fromString(result.userId),
                 accessToken: new AccessToken(result.tokens.access),
             });
 
             return {
-                userId: new UserId(result.userId),
+                userId: UserId.fromString(result.userId),
                 tokens: result.tokens,
             };
         } catch (e) {

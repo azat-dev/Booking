@@ -35,7 +35,7 @@ export default class LocalAuthDataRepositoryImpl
 
         const parsedData = JSON.parse(encodedData);
         return {
-            userId: new UserId(parsedData.userId),
+            userId: UserId.fromString(parsedData.userId),
             accessToken: new AccessToken(parsedData.accessToken),
         };
     };

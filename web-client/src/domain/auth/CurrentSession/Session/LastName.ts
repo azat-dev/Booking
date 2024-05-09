@@ -5,24 +5,31 @@ class LastName {
     public static readonly MAX_LENGTH = 50;
     public static readonly MIN_LENGTH = 1;
 
-    public readonly value: string;
+    private constructor(public readonly value: string) {
+    }
 
-    public constructor(value: string) {
-        const cleanedValue = value.trim();
+    private static validate =(value: string): void  =>{
 
-        Assert.notBlank(cleanedValue, () => new LastName.MinLengthException());
+        Assert.notBlank(value, () => new LastName.MinLengthException());
         Assert.minLength(
-            cleanedValue,
+            value,
             LastName.MIN_LENGTH,
             () => new LastName.MinLengthException()
         );
         Assert.maxLength(
-            cleanedValue,
+            value,
             LastName.MAX_LENGTH,
             () => new LastName.MaxLengthException()
         );
+    }
 
-        this.value = cleanedValue;
+    static dangerouslyCreate = (value: string): LastName => {
+        return new LastName(value);
+    }
+
+    static checkAndCreate = (value: string): LastName => {
+        LastName.validate(value);
+        return new LastName(value);
     }
 
     static readonly ValidationException = ValidationException;

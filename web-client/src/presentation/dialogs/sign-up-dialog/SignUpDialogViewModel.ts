@@ -73,7 +73,7 @@ class SignUpDialogViewModel {
         }
 
         try {
-            new Email(this.emailInput.getValue() ?? "");
+            Email.checkAndCreateFromString(this.emailInput.getValue() ?? "");
             this.emailInput.resetError();
         } catch (e) {
             updateErrorTextFromException(this.emailInput, e, Email.ValidationException);
@@ -81,7 +81,7 @@ class SignUpDialogViewModel {
         }
 
         try {
-            new FirstName(this.firstNameInput.getValue() ?? "");
+            FirstName.checkAndCreate(this.firstNameInput.getValue() ?? "");
             this.firstNameInput.resetError();
         } catch (e) {
             updateErrorTextFromException(this.firstNameInput, e, FirstName.ValidationException);
@@ -89,7 +89,7 @@ class SignUpDialogViewModel {
         }
 
         try {
-            new LastName(this.lastNameInput.getValue() ?? "");
+            LastName.checkAndCreate(this.lastNameInput.getValue() ?? "");
             this.lastNameInput.resetError();
         } catch (e) {
             updateErrorTextFromException(this.lastNameInput, e, LastName.ValidationException);
@@ -118,10 +118,10 @@ class SignUpDialogViewModel {
         try {
             const data = {
                 fullName: new FullName(
-                    new FirstName(this.firstNameInput.getValue() ?? ""),
-                    new LastName(this.lastNameInput.getValue() ?? "")
+                    FirstName.checkAndCreate(this.firstNameInput.getValue() ?? ""),
+                    LastName.checkAndCreate(this.lastNameInput.getValue() ?? "")
                 ),
-                email: new Email(this.emailInput.getValue() ?? ""),
+                email: Email.checkAndCreateFromString(this.emailInput.getValue() ?? ""),
                 password: new Password(this.passwordInput.getValue() ?? ""),
             };
 

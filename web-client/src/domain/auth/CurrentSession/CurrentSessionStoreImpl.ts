@@ -5,14 +5,14 @@ import CurrentSessionStore from "./CurrentSessionStore";
 import AuthService from "./Session/AuthService";
 import { Session } from "./Session/Session";
 import SessionAnonymousImpl from "./Session/SessionAnonymousImpl";
-import UserInfoService from "./Session/UserInfoService";
+import PersonalUserInfoService from "./Session/PersonalUserInfoService";
 
 class CurrentSessionStoreImpl implements CurrentSessionStore {
     public current: Subject<Session>;
 
     public constructor(
         authService: AuthService,
-        userInfoService: UserInfoService,
+        userInfoService: PersonalUserInfoService,
         localAuthDataRepository: LocalAuthDataRepository
     ) {
         this.current = value(

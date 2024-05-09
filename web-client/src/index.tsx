@@ -10,12 +10,13 @@ import CurrentSessionStoreImpl from "./domain/auth/CurrentSession/CurrentSession
 import AccommodationsRegistryImpl from "./domain/accommodations/AccommodationsRegistryImpl";
 import ReservationServiceImpl from "./domain/booking/ReservationServiceImpl";
 import { Configuration, DefaultApi } from "./data/API";
-import UserInfoService from "./domain/auth/CurrentSession/Session/UserInfoService";
+import PersonalUserInfoService from "./domain/auth/CurrentSession/Session/PersonalUserInfoService";
 import UserInfo from "./domain/auth/values/User";
 import FullName from "./domain/auth/CurrentSession/Session/FullName";
 import FirstName from "./domain/auth/CurrentSession/Session/FirstName";
 import Email from "./domain/auth/values/Email";
 import LastName from "./domain/auth/CurrentSession/Session/LastName";
+import UserInfoServiceImpl from "./data/auth/services/UserInfoServiceImpl";
 
 const root = ReactDOM.createRoot(
     document.getElementById("root") as HTMLElement
@@ -35,16 +36,7 @@ const apiConfig: Configuration = new Configuration({
 const api = new DefaultApi(apiConfig);
 const authService = new AuthServiceImpl(api, localAuthDataRespository);
 
-const userInfoService: UserInfoService = {
-    getUserInfo: async (userId): Promise<UserInfo> => {
-        return {
-            id: userId,
-            email: new Email("some-email@domain.com"),
-            fullName: new FullName(new FirstName("Some"), new LastName("Name")),
-            avatar: null,
-        };
-    },
-};
+const userInfoService: PersonalUserInfoService = new UserInfoServiceImpl(api);
 
 const currentSessionStore = new CurrentSessionStoreImpl(
     authService,

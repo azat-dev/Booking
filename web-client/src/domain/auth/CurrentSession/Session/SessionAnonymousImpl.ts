@@ -5,15 +5,15 @@ import AuthService, {AuthenticateByEmailData} from "./AuthService";
 import {Session} from "./Session";
 import SessionAuthenticatedImpl from "./SessionAuthenticatedImpl";
 import SignUpByEmailData from "./SignUpByEmailData";
-import UserInfoService from "./UserInfoService";
-import UserInfo from "../../values/User";
+import PersonalUserInfoService from "./PersonalUserInfoService";
+import PersonalUserInfo from "./entities/PersonalUserInfo";
 
 class SessionAnonymousImpl implements SessionAnonymous {
     public readonly type = SessionStatus.ANONYMOUS;
 
     public constructor(
         private authService: AuthService,
-        private userInfoService: UserInfoService,
+        private userInfoService: PersonalUserInfoService,
         private localAuthDataRepository: LocalAuthDataRepository,
         private setNext: (next: Session) => void
     ) {
@@ -33,7 +33,7 @@ class SessionAnonymousImpl implements SessionAnonymous {
                 result.userId
             );
 
-            this.setAuthenticated(userInfo, result.tokens.access);
+            await this.setAuthenticated(userInfo, result.tokens.access);
         } catch (error) {
             this.setNext(this);
             throw error;
@@ -48,7 +48,7 @@ class SessionAnonymousImpl implements SessionAnonymous {
                 signUpResult.userId
             );
 
-            this.setAuthenticated(userInfo, signUpResult.tokens.access);
+            await this.setAuthenticated(userInfo, signUpResult.tokens.access);
         } catch (error) {
             this.setNext(this);
             throw error;
@@ -70,7 +70,7 @@ class SessionAnonymousImpl implements SessionAnonymous {
             const token = authData.accessToken.val;
 
             const user = await this.authService.authenticateByToken(token);
-            this.setAuthenticated(user, token);
+            await this.setAuthenticated(user, token);
 
             // FXIME: Handle network errors
         } catch (error) {
@@ -86,7 +86,7 @@ class SessionAnonymousImpl implements SessionAnonymous {
     };
 
     private setAuthenticated = async (
-        userInfo: UserInfo,
+        userInfo: PersonalUserInfo,
         accessToken: string
     ): Promise<void> => {
         this.setNext(

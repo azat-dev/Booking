@@ -60,7 +60,7 @@ class LoginDialogViewModel {
         }
 
         try {
-            new Email(this.emailInput.getValue() ?? "");
+            Email.checkAndCreateFromString(this.emailInput.getValue() ?? "");
             this.emailInput.resetError();
         } catch (e) {
             isValid = false;
@@ -92,7 +92,7 @@ class LoginDialogViewModel {
             return;
         }
 
-        const email = new Email(this.emailInput.getValue() ?? "");
+        const email = Email.checkAndCreateFromString(this.emailInput.getValue() ?? "");
         const password = this.passwordInput.getValue() ?? "";
 
         try {

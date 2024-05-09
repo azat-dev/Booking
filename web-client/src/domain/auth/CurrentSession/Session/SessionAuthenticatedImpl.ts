@@ -1,15 +1,16 @@
 import SessionAuthenticated from "./SessionAuthenticated";
 import SessionStatus from "./SessionStatus";
-import UserInfo from "../../values/User";
+import PersonalUserInfo from "./entities/PersonalUserInfo";
 
 class SessionAuthenticatedImpl implements SessionAuthenticated {
     public readonly type = SessionStatus.AUTHENTICATED;
 
     public constructor(
         private accessToken: string,
-        private userInfo: UserInfo,
+        private userInfo: PersonalUserInfo,
         private onLogout: () => void
-    ) {}
+    ) {
+    }
 
     public logout = async (): Promise<void> => {
         this.onLogout();
@@ -19,7 +20,7 @@ class SessionAuthenticatedImpl implements SessionAuthenticated {
         return this.accessToken;
     };
 
-    public getUserInfo = (): UserInfo => {
+    public getUserInfo = (): PersonalUserInfo => {
         return this.userInfo;
     };
 }
