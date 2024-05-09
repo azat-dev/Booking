@@ -1,22 +1,16 @@
 package com.azat4dev.demobooking.users.users_queries.presentation.api.rest;
 
 import com.azat4dev.demobooking.users.common.domain.values.UserId;
-import com.azat4dev.demobooking.users.common.presentation.security.services.CustomUserDetailsService;
 import com.azat4dev.demobooking.users.common.presentation.security.services.jwt.JwtService;
 import com.azat4dev.demobooking.users.users_commands.application.config.WebSecurityConfig;
 import com.azat4dev.demobooking.users.users_commands.domain.UserHelpers;
-import com.azat4dev.demobooking.users.users_commands.domain.interfaces.repositories.UsersRepository;
-import com.azat4dev.demobooking.users.users_commands.domain.values.UserIdFactory;
 import com.azat4dev.demobooking.users.users_queries.domain.services.UsersQueryService;
 import com.azat4dev.demobooking.users.users_queries.presentation.api.rest.resources.UsersQueriesController;
-import com.fasterxml.jackson.databind.ObjectMapper;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.context.annotation.Import;
-import org.springframework.security.authentication.AuthenticationManager;
-import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.oauth2.jwt.JwtDecoder;
 import org.springframework.security.oauth2.jwt.JwtEncoder;
 import org.springframework.test.web.servlet.MockMvc;
@@ -65,6 +59,17 @@ public class UsersQueriesControllerTests {
         result.andExpect(status().isNotFound());
     }
 
+    @Test
+    public void test_getCurrentUserInfo_givenUserIsNotAuthenticated_thenReturn401() throws Exception {
+
+        // Given
+
+        // When
+        final var result = performGetCurrentUserInfoRequest(Optional.empty());
+
+        // Then
+        result.andExpect(status().isUnauthorized());
+    }
 
     private ResultActions performGetCurrentUserInfoRequest(Optional<UserId> userId) throws Exception {
         final String url = "/api/with-auth/users/current";
@@ -78,10 +83,14 @@ public class UsersQueriesControllerTests {
         String url,
         Optional<UserId> userId
     ) throws Exception {
+        if (userId.isEmpty()) {
+            return mockMvc.perform(
+                get(url)
+                    .with(csrf())
+            );
+        }
         return mockMvc.perform(
-            get(url).with(jwt().jwt(c -> {
-                    userId.ifPresent(id -> c.subject(id.toString()));
-                }))
+            get(url).with(jwt().jwt(c -> c.subject(userId.get().toString())))
                 .with(csrf())
         );
     }
