@@ -9,6 +9,7 @@ import org.springframework.stereotype.Component;
 @Component
 public class UsersQueriesController implements UsersQueiresResource {
 
+
     @Override
     public ResponseEntity<CurrentUserDTO> getUser(JwtAuthenticationToken authentication) {
         return ResponseEntity.ok(new CurrentUserDTO("SOME ID", "example@gmail.com", new FullNameDTO("xyz", "yzzzz")));

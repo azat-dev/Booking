@@ -150,7 +150,7 @@ class JwtServiceTests {
         final var expiresAt = now.plusSeconds(10000);
 
         final var validJwt = anyJwt(
-            "userId",
+            "id",
             createdAt.toInstant(ZoneOffset.UTC),
             expiresAt.toInstant(ZoneOffset.UTC)
         );
