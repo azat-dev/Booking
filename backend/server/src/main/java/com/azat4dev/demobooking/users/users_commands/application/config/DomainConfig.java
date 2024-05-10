@@ -1,8 +1,7 @@
 package com.azat4dev.demobooking.users.users_commands.application.config;
 
-import com.azat4dev.demobooking.common.EventsStore;
 import com.azat4dev.demobooking.common.utils.TimeProvider;
-import com.azat4dev.demobooking.users.users_commands.domain.interfaces.repositories.UsersRepository;
+import com.azat4dev.demobooking.users.users_commands.domain.interfaces.repositories.UnitOfWork;
 import com.azat4dev.demobooking.users.users_commands.domain.services.UsersService;
 import com.azat4dev.demobooking.users.users_commands.domain.services.UsersServiceImpl;
 import com.azat4dev.demobooking.users.users_commands.domain.values.UserIdFactory;
@@ -21,14 +20,12 @@ public class DomainConfig {
 
     @Bean
     public UsersService usersService(
-        UsersRepository usersRepository,
-        EventsStore eventsStore,
-        TimeProvider timeProvider
+        TimeProvider timeProvider,
+        UnitOfWork unitOfWork
     ) {
         return new UsersServiceImpl(
             timeProvider,
-            usersRepository,
-            eventsStore
+            unitOfWork
         );
     }
 }

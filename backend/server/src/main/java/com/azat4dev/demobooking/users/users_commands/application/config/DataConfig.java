@@ -14,6 +14,7 @@ import com.azat4dev.demobooking.users.users_commands.domain.interfaces.services.
 import com.azat4dev.demobooking.users.users_commands.domain.services.EmailData;
 import com.azat4dev.demobooking.users.users_commands.domain.values.email.EmailAddress;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.transaction.PlatformTransactionManager;
