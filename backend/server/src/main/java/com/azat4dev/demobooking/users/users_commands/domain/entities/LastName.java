@@ -45,6 +45,11 @@ public final class LastName implements Serializable {
         }
     }
 
+    @Override
+    public String toString() {
+        return value;
+    }
+
     public static class CantBeEmptyException extends ValidationException {
         public CantBeEmptyException() {
             super("Last name cannot be empty");

@@ -58,8 +58,8 @@ public class JpaUsersRepositoryTests {
             LocalDateTime.now(),
             LocalDateTime.now(),
             user.email().getValue(),
-            user.fullName().firstName().getValue(),
-            user.fullName().lastName().getValue(),
+            user.fullName().getFirstName().getValue(),
+            user.fullName().getLastName().getValue(),
             user.encodedPassword().value(),
             EmailVerificationStatus.NOT_VERIFIED
         );

@@ -12,8 +12,8 @@ public final class MapNewUserToDataImpl implements MapNewUserToData {
             newUserData.createdAt(),
             newUserData.createdAt(),
             newUserData.email().toString(),
-            newUserData.fullName().firstName().getValue(),
-            newUserData.fullName().lastName().getValue(),
+            newUserData.fullName().getFirstName().getValue(),
+            newUserData.fullName().getLastName().getValue(),
             newUserData.encodedPassword().value(),
             newUserData.emailVerificationStatus()
         );

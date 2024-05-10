@@ -9,6 +9,8 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 
+import java.sql.ResultSet;
+import java.sql.SQLException;
 import java.time.Instant;
 import java.time.LocalDateTime;
 import java.time.ZoneOffset;
@@ -18,7 +20,7 @@ import java.time.ZoneOffset;
 @Setter
 @NoArgsConstructor
 @Entity
-@Table(name = "outbox_events")
+@Table(name = "outbox_eventsxxxxx")
 public class OutboxEventData {
 
     @Column(name = "event_order", nullable = false)
@@ -76,7 +78,17 @@ public class OutboxEventData {
         };
     }
 
-    enum EventType {
+    public enum EventType {
         USER_CREATED
+    }
+
+    public static OutboxEventData makeFromData(ResultSet rs) throws SQLException {
+        return new OutboxEventData(
+            rs.getString("event_id"),
+            rs.getTimestamp("created_at").toLocalDateTime(),
+            OutboxEventData.EventType.valueOf(rs.getString("event_type")),
+            rs.getString("payload"),
+            rs.getBoolean("is_published")
+        );
     }
 }

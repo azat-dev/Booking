@@ -314,8 +314,8 @@ public class AuthenticationControllerTests {
         final var fullName = UserHelpers.anyFullName();
 
         return new FullNameDTO(
-            fullName.firstName().getValue(),
-            fullName.lastName().getValue()
+            fullName.getFirstName().getValue(),
+            fullName.getLastName().getValue()
         );
     }
 

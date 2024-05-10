@@ -3,7 +3,8 @@ package com.azat4dev.demobooking.users.users_commands.application.config;
 import com.azat4dev.demobooking.common.utils.SystemTimeProvider;
 import com.azat4dev.demobooking.common.utils.TimeProvider;
 import com.azat4dev.demobooking.users.users_commands.data.repositories.*;
-import com.azat4dev.demobooking.users.users_commands.data.repositories.jpa.JpaOutboxEventsRepository;
+import com.azat4dev.demobooking.users.users_commands.data.repositories.dao.OutboxEventsDao;
+import com.azat4dev.demobooking.users.users_commands.data.repositories.dao.OutboxEventsDaoJdbc;
 import com.azat4dev.demobooking.users.users_commands.data.repositories.jpa.JpaUsersRepository;
 import com.azat4dev.demobooking.users.users_commands.domain.interfaces.repositories.OutboxEventsRepository;
 import com.azat4dev.demobooking.users.users_commands.domain.interfaces.repositories.UnitOfWork;
@@ -14,6 +15,7 @@ import com.azat4dev.demobooking.users.users_commands.domain.values.email.EmailAd
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.jdbc.core.namedparam.NamedParameterJdbcTemplate;
 import org.springframework.transaction.PlatformTransactionManager;
 
 @Configuration
@@ -58,22 +60,25 @@ public class DataConfig {
     }
 
     @Bean
-    DomainEventSerializer domainEventSerializer(ObjectMapper objectMapper) {
-        return new DomainEventSerializerImpl(objectMapper);
+    DomainEventSerializer domainEventSerializer() {
+        return new DomainEventSerializerImpl();
+    }
+
+    @Bean
+    OutboxEventsDao outboxEventsDao(NamedParameterJdbcTemplate jdbcTemplate) {
+        return new OutboxEventsDaoJdbc(jdbcTemplate);
     }
 
     @Bean
     OutboxEventsRepository outboxEventsRepository(
         TimeProvider timeProvider,
         DomainEventSerializer domainEventSerializer,
-        JpaOutboxEventsRepository jpaOutboxEventsRepository
+        OutboxEventsDao outboxEventsDao
     ) {
-
-
         return new OutboxEventsRepositoryImpl(
             timeProvider,
             domainEventSerializer,
-            jpaOutboxEventsRepository
+            outboxEventsDao
         );
     }
 

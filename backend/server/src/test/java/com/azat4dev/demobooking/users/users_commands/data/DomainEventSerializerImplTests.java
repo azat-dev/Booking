@@ -7,7 +7,6 @@ import com.azat4dev.demobooking.users.users_commands.data.repositories.DomainEve
 import com.azat4dev.demobooking.users.users_commands.domain.events.UserCreated;
 import com.azat4dev.demobooking.users.users_commands.domain.events.UserCreatedPayload;
 import com.azat4dev.demobooking.users.users_commands.domain.services.EmailVerificationStatus;
-import com.fasterxml.jackson.databind.ObjectMapper;
 import org.junit.jupiter.api.Test;
 
 import java.time.Instant;
@@ -19,7 +18,7 @@ import static org.assertj.core.api.Assertions.assertThat;
 public class DomainEventSerializerImplTests {
 
     DomainEventSerializer createSUT() {
-        return new DomainEventSerializerImpl(new ObjectMapper());
+        return new DomainEventSerializerImpl();
     }
 
     EventId anyEventId() {
@@ -45,8 +44,9 @@ public class DomainEventSerializerImplTests {
 
         // When
         final var serialized = sut.serialize(event);
+        final var deserializedValue = sut.deserialize(serialized, UserCreated.class);
 
         // Then
-        assertThat(serialized).isNotNull();
+        assertThat(deserializedValue).isEqualTo(event);
     }
 }

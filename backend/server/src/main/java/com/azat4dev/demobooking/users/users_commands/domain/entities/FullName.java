@@ -2,10 +2,11 @@ package com.azat4dev.demobooking.users.users_commands.domain.entities;
 
 import com.azat4dev.demobooking.common.DomainException;
 import com.azat4dev.demobooking.common.utils.Assert;
+import lombok.EqualsAndHashCode;
 
 import java.io.Serializable;
-import java.util.Objects;
 
+@EqualsAndHashCode
 public final class FullName implements Serializable {
 
     private final FirstName firstName;
@@ -19,31 +20,12 @@ public final class FullName implements Serializable {
         this.lastName = lastName;
     }
 
-    public FirstName firstName() {
+    public FirstName getFirstName() {
         return firstName;
     }
 
-    public LastName lastName() {
+    public LastName getLastName() {
         return lastName;
-    }
-
-    @Override
-    public boolean equals(Object obj) {
-        if (obj == this) return true;
-        if (obj == null || obj.getClass() != this.getClass()) return false;
-        var that = (FullName) obj;
-        return Objects.equals(this.firstName, that.firstName) &&
-            Objects.equals(this.lastName, that.lastName);
-    }
-
-    @Override
-    public int hashCode() {
-        return Objects.hash(firstName, lastName);
-    }
-
-    @Override
-    public String toString() {
-        return firstName + " " + lastName;
     }
 
     public static class ValidationException extends DomainException {

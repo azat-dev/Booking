@@ -1,11 +1,12 @@
 package com.azat4dev.demobooking.common;
 
+import lombok.EqualsAndHashCode;
 import lombok.Getter;
 import lombok.Setter;
 
 import java.io.Serializable;
-import java.util.UUID;
 
+@EqualsAndHashCode
 public abstract class DomainEvent<Payload extends Serializable> implements Serializable {
 
     @Getter
