@@ -8,24 +8,16 @@ import com.azat4dev.demobooking.users.users_commands.domain.interfaces.repositor
 import com.azat4dev.demobooking.users.users_commands.domain.values.email.EmailAddress;
 import com.azat4dev.demobooking.users.common.domain.values.UserId;
 import jakarta.persistence.EntityNotFoundException;
+import lombok.RequiredArgsConstructor;
 
 import java.util.Optional;
 
+@RequiredArgsConstructor
 public class UsersRepositoryImpl implements UsersRepository {
 
     private final MapNewUserToData mapNewUserToData;
     private final MapUserDataToDomain mapUserDataToDomain;
     private final JpaUsersRepository jpaUsersRepository;
-
-    public UsersRepositoryImpl(
-        MapNewUserToData mapNewUserToData,
-        MapUserDataToDomain mapUserDataToDomain,
-        JpaUsersRepository jpaUsersRepository
-    ) {
-        this.mapUserDataToDomain = mapUserDataToDomain;
-        this.mapNewUserToData = mapNewUserToData;
-        this.jpaUsersRepository = jpaUsersRepository;
-    }
 
     @Override
     public void createUser(NewUserData newUserData) throws UserWithSameEmailAlreadyExistsException {

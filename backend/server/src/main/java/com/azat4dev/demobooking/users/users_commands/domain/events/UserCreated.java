@@ -1,6 +1,5 @@
 package com.azat4dev.demobooking.users.users_commands.domain.events;
 
-import com.azat4dev.demobooking.common.CommandId;
 import com.azat4dev.demobooking.common.DomainEvent;
 
 public final class UserCreated extends DomainEvent {
@@ -13,7 +12,6 @@ public final class UserCreated extends DomainEvent {
         UserCreatedPayload payload
     ) {
         super(eventId, timestamp);
-
         this.payload = payload;
     }
 

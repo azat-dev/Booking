@@ -1,18 +1,13 @@
 package com.azat4dev.demobooking.users.users_commands.data.repositories;
 
 import com.azat4dev.demobooking.common.DomainEvent;
-import com.azat4dev.demobooking.users.users_commands.domain.events.UserCreated;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import lombok.RequiredArgsConstructor;
 
+@RequiredArgsConstructor
 public class DomainEventSerializerImpl implements DomainEventSerializer {
 
     private final ObjectMapper objectMapper;
-
-    public DomainEventSerializerImpl(
-        ObjectMapper objectMapper
-    ) {
-        this.objectMapper = objectMapper;
-    }
 
     @Override
     public String serialize(DomainEvent event) {

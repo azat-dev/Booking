@@ -7,22 +7,16 @@ import com.azat4dev.demobooking.users.users_commands.domain.events.UserCreatedPa
 import com.azat4dev.demobooking.users.users_commands.domain.interfaces.repositories.NewUserData;
 import com.azat4dev.demobooking.users.users_commands.domain.interfaces.repositories.UnitOfWork;
 import com.azat4dev.demobooking.users.users_commands.domain.interfaces.repositories.UsersRepository;
+import lombok.RequiredArgsConstructor;
 
 import java.time.ZoneOffset;
 import java.util.UUID;
 
+@RequiredArgsConstructor
 public final class UsersServiceImpl implements UsersService {
 
     private final TimeProvider timeProvider;
     private final UnitOfWork unitOfWork;
-
-    public UsersServiceImpl(
-        TimeProvider timeProvider,
-        UnitOfWork unitOfWork
-    ) {
-        this.timeProvider = timeProvider;
-        this.unitOfWork = unitOfWork;
-    }
 
     @Override
     public void handle(CreateUser command) throws UserWithSameEmailAlreadyExistsException {

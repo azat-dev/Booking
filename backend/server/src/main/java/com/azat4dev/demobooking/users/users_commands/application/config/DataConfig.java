@@ -86,6 +86,8 @@ public class DataConfig {
         DomainEventSerializer domainEventSerializer,
         JpaOutboxEventsRepository jpaOutboxEventsRepository
     ) {
+
+
         return new OutboxEventsRepositoryImpl(
             timeProvider,
             domainEventSerializer,
