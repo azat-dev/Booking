@@ -1,7 +1,5 @@
 package com.azat4dev.demobooking.users.users_commands.application.config;
 
-import com.azat4dev.demobooking.common.DomainEvent;
-import com.azat4dev.demobooking.common.EventsStore;
 import com.azat4dev.demobooking.common.utils.SystemTimeProvider;
 import com.azat4dev.demobooking.common.utils.TimeProvider;
 import com.azat4dev.demobooking.users.users_commands.data.repositories.*;
@@ -14,7 +12,6 @@ import com.azat4dev.demobooking.users.users_commands.domain.interfaces.services.
 import com.azat4dev.demobooking.users.users_commands.domain.services.EmailData;
 import com.azat4dev.demobooking.users.users_commands.domain.values.email.EmailAddress;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.transaction.PlatformTransactionManager;
@@ -38,21 +35,6 @@ public class DataConfig {
     @Bean
     TimeProvider timeProvider() {
         return new SystemTimeProvider();
-    }
-
-    @Bean
-    EventsStore eventsStore() {
-        return new EventsStore() {
-            @Override
-            public void publish(DomainEvent event) {
-
-            }
-
-            @Override
-            public void close() {
-
-            }
-        };
     }
 
     @Bean

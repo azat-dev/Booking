@@ -1,7 +1,7 @@
 package com.azat4dev.demobooking.users.users_queries.data.dao;
 
 import com.azat4dev.demobooking.users.users_queries.data.dao.records.UserRecord;
-import com.azat4dev.demobooking.users.users_queries.domain.entities.PersonalUserInfo;
+import lombok.RequiredArgsConstructor;
 import org.springframework.dao.EmptyResultDataAccessException;
 import org.springframework.jdbc.core.RowMapper;
 import org.springframework.jdbc.core.namedparam.NamedParameterJdbcTemplate;
@@ -10,6 +10,7 @@ import java.util.Map;
 import java.util.Optional;
 import java.util.UUID;
 
+@RequiredArgsConstructor
 public class UsersReadDaoJdbc implements UsersReadDao {
 
     private final NamedParameterJdbcTemplate jdbcTemplate;
@@ -19,10 +20,6 @@ public class UsersReadDaoJdbc implements UsersReadDao {
         rs.getString("first_name"),
         rs.getString("last_name")
     );
-
-    public UsersReadDaoJdbc(NamedParameterJdbcTemplate jdbcTemplate) {
-        this.jdbcTemplate = jdbcTemplate;
-    }
 
     @Override
     public Optional<UserRecord> getById(UUID userId) {
