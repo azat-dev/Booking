@@ -3,9 +3,10 @@ package com.azat4dev.demobooking.users.users_commands.domain.entities;
 import com.azat4dev.demobooking.common.DomainException;
 import com.azat4dev.demobooking.common.utils.Assert;
 
+import java.io.Serializable;
 import java.util.Objects;
 
-public final class FullName {
+public final class FullName implements Serializable {
 
     private final FirstName firstName;
     private final LastName lastName;

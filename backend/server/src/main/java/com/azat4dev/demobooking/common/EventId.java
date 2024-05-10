@@ -1,6 +1,19 @@
 package com.azat4dev.demobooking.common;
 
-import java.util.UUID;
+import lombok.EqualsAndHashCode;
+import lombok.Getter;
 
-public record EventId(UUID value) {
+@EqualsAndHashCode
+public class EventId {
+
+    @Getter
+    private final String value;
+
+    private EventId(String value) {
+        this.value = value;
+    }
+
+    public static EventId dangerouslyCreateFrom(String value) {
+        return new EventId(value);
+    }
 }

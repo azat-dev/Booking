@@ -2,6 +2,8 @@ package com.azat4dev.demobooking.users.users_commands.domain.services;
 
 import com.azat4dev.demobooking.common.CommandId;
 import com.azat4dev.demobooking.common.DomainEvent;
+import com.azat4dev.demobooking.common.EventId;
+import com.azat4dev.demobooking.common.EventIdGenerator;
 import com.azat4dev.demobooking.common.utils.TimeProvider;
 import com.azat4dev.demobooking.users.users_commands.domain.UserHelpers;
 import com.azat4dev.demobooking.users.users_commands.domain.commands.CreateUser;
@@ -30,6 +32,9 @@ public class UsersServiceImplTests {
 
         final var unitOfWork = mock(UnitOfWork.class);
         final var outboxEventsRepository = mock(OutboxEventsRepository.class);
+        final var eventIdGenerator = mock(EventIdGenerator.class);
+
+        final var markOutboxNeedsSynchronization = mock(UsersServiceImpl.MarkOutboxNeedsSynchronization.class);
 
         given(unitOfWork.getUsersRepository()).willReturn(usersRepository);
         given(unitOfWork.getOutboxEventsRepository()).willReturn(outboxEventsRepository);
@@ -39,12 +44,16 @@ public class UsersServiceImplTests {
         return new SUT(
             new UsersServiceImpl(
                 timeProvider,
-                unitOfWork
+                unitOfWork,
+                eventIdGenerator,
+                markOutboxNeedsSynchronization
             ),
             unitOfWork,
             outboxEventsRepository,
             usersRepository,
-            timeProvider
+            timeProvider,
+            eventIdGenerator,
+            markOutboxNeedsSynchronization
         );
     }
 
@@ -79,11 +88,15 @@ public class UsersServiceImplTests {
         final var currentTime = anyDateTime();
         final var sut = createSUT();
         final var validCommand = anyCreateUserCommand();
+        final var expectedEventId = EventId.dangerouslyCreateFrom("expectedEventId");
 
         willDoNothing().given(sut.outboxEventsRepository).publish(any());
 
         given(sut.timeProvider.currentTime())
             .willReturn(currentTime);
+
+        given(sut.eventIdGenerator.generate())
+            .willReturn(expectedEventId);
 
         // When
         try {
@@ -123,6 +136,9 @@ public class UsersServiceImplTests {
 
         then(sut.unitOfWork).should(times(1))
             .save();
+
+        then(sut.markOutboxNeedsSynchronization).should(times(1))
+            .execute();
     }
 
     @Test
@@ -153,7 +169,9 @@ public class UsersServiceImplTests {
         UnitOfWork unitOfWork,
         OutboxEventsRepository outboxEventsRepository,
         UsersRepository usersRepository,
-        TimeProvider timeProvider
+        TimeProvider timeProvider,
+        EventIdGenerator eventIdGenerator,
+        UsersServiceImpl.MarkOutboxNeedsSynchronization markOutboxNeedsSynchronization
     ) {
     }
 }

@@ -6,11 +6,12 @@ import lombok.EqualsAndHashCode;
 import lombok.Getter;
 import lombok.ToString;
 
+import java.io.Serializable;
 import java.util.Objects;
 
 @Getter
 @EqualsAndHashCode
-public final class FirstName {
+public final class FirstName implements Serializable {
 
     public static final int MAX_LENGTH = 255;
     private final String value;

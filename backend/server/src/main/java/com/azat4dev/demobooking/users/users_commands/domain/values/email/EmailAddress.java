@@ -4,9 +4,10 @@ import com.azat4dev.demobooking.common.DomainException;
 import com.azat4dev.demobooking.common.utils.Assert;
 import org.apache.commons.validator.routines.EmailValidator;
 
+import java.io.Serializable;
 import java.util.Objects;
 
-public final class EmailAddress {
+public final class EmailAddress implements Serializable {
 
     private final String value;
 

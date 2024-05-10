@@ -4,11 +4,12 @@ import lombok.Getter;
 import lombok.Setter;
 
 import java.io.Serializable;
+import java.util.UUID;
 
-public abstract class DomainEvent implements Serializable {
+public abstract class DomainEvent<Payload extends Serializable> implements Serializable {
 
     @Getter
-    protected String id;
+    protected EventId id;
 
     @Getter
     @Setter
@@ -18,7 +19,7 @@ public abstract class DomainEvent implements Serializable {
     }
 
     public DomainEvent(
-        String id,
+        EventId id,
         long timestampMs
     ) {
         this.id = id;
@@ -29,6 +30,6 @@ public abstract class DomainEvent implements Serializable {
 
     public abstract int getVersion();
 
-    public abstract Object getPayload();
+    public abstract Payload getPayload();
 
 }

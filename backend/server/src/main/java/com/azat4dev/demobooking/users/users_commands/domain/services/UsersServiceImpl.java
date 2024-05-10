@@ -1,5 +1,6 @@
 package com.azat4dev.demobooking.users.users_commands.domain.services;
 
+import com.azat4dev.demobooking.common.EventIdGenerator;
 import com.azat4dev.demobooking.common.utils.TimeProvider;
 import com.azat4dev.demobooking.users.users_commands.domain.commands.CreateUser;
 import com.azat4dev.demobooking.users.users_commands.domain.events.UserCreated;
@@ -10,13 +11,19 @@ import com.azat4dev.demobooking.users.users_commands.domain.interfaces.repositor
 import lombok.RequiredArgsConstructor;
 
 import java.time.ZoneOffset;
-import java.util.UUID;
 
 @RequiredArgsConstructor
 public final class UsersServiceImpl implements UsersService {
 
+    @FunctionalInterface
+    public interface MarkOutboxNeedsSynchronization {
+        void execute();
+    }
+
     private final TimeProvider timeProvider;
     private final UnitOfWork unitOfWork;
+    private final EventIdGenerator eventIdGenerator;
+    private final MarkOutboxNeedsSynchronization markOutboxNeedsSynchronization;
 
     @Override
     public void handle(CreateUser command) throws UserWithSameEmailAlreadyExistsException {
@@ -40,7 +47,7 @@ public final class UsersServiceImpl implements UsersService {
 
             outboxEventsRepository.publish(
                 new UserCreated(
-                    UUID.randomUUID().toString(),
+                    eventIdGenerator.generate(),
                     currentDate.toInstant(ZoneOffset.UTC).toEpochMilli(),
                     new UserCreatedPayload(
                         currentDate,
@@ -53,6 +60,7 @@ public final class UsersServiceImpl implements UsersService {
             );
 
             unitOfWork.save();
+
         } catch (UsersRepository.UserWithSameEmailAlreadyExistsException e) {
             unitOfWork.rollback();
             throw new UserWithSameEmailAlreadyExistsException();
@@ -60,5 +68,7 @@ public final class UsersServiceImpl implements UsersService {
             unitOfWork.rollback();
             throw e;
         }
+
+        markOutboxNeedsSynchronization.execute();
     }
 }

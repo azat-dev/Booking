@@ -1,6 +1,9 @@
 package com.azat4dev.demobooking.users.users_commands.domain.policies;
 
 import com.azat4dev.demobooking.common.CommandId;
+import com.azat4dev.demobooking.common.EventId;
+import com.azat4dev.demobooking.common.RandomEventIdGenerator;
+import com.azat4dev.demobooking.users.common.domain.values.UserId;
 import com.azat4dev.demobooking.users.users_commands.domain.UserHelpers;
 import com.azat4dev.demobooking.users.users_commands.domain.events.UserCreated;
 import com.azat4dev.demobooking.users.users_commands.domain.events.UserCreatedPayload;
@@ -47,8 +50,12 @@ public class SendVerificationEmailPolicyTests {
         }
     }
 
+    EventId anyEventId() {
+        return new RandomEventIdGenerator().generate();
+    }
+
     @Test
-    void given_valid_user__when_SendVerificationEmailPolicyImpl_triggered__then_build_email_and_send() {
+    void given_valid_user__when_SendVerificationEmailPolicyImpl_triggered__thenBuildEmailAndSend() {
 
         // Given
         final var sut = createSUT();
@@ -56,7 +63,7 @@ public class SendVerificationEmailPolicyTests {
         final var userId = UserHelpers.anyValidUserId();
 
         final var event = new UserCreated(
-            UUID.randomUUID().toString(),
+            anyEventId(),
             Clock.systemUTC().millis(),
             new UserCreatedPayload(
                 LocalDateTime.now(),

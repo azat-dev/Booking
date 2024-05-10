@@ -1,13 +1,14 @@
 package com.azat4dev.demobooking.users.users_commands.domain.events;
 
 import com.azat4dev.demobooking.common.DomainEvent;
+import com.azat4dev.demobooking.common.EventId;
 
-public final class UserCreated extends DomainEvent {
+public final class UserCreated extends DomainEvent<UserCreatedPayload> {
 
     private final UserCreatedPayload payload;
 
     public UserCreated(
-        String eventId,
+        EventId eventId,
         long timestamp,
         UserCreatedPayload payload
     ) {

@@ -1,5 +1,7 @@
 package com.azat4dev.demobooking.users.users_commands.data;
 
+import com.azat4dev.demobooking.common.EventId;
+import com.azat4dev.demobooking.common.RandomEventIdGenerator;
 import com.azat4dev.demobooking.users.users_commands.data.repositories.DomainEventSerializer;
 import com.azat4dev.demobooking.users.users_commands.data.repositories.DomainEventSerializerImpl;
 import com.azat4dev.demobooking.users.users_commands.domain.events.UserCreated;
@@ -10,7 +12,6 @@ import org.junit.jupiter.api.Test;
 
 import java.time.Instant;
 import java.time.LocalDateTime;
-import java.util.UUID;
 
 import static com.azat4dev.demobooking.users.users_commands.domain.UserHelpers.*;
 import static org.assertj.core.api.Assertions.assertThat;
@@ -21,13 +22,17 @@ public class DomainEventSerializerImplTests {
         return new DomainEventSerializerImpl(new ObjectMapper());
     }
 
+    EventId anyEventId() {
+        return new RandomEventIdGenerator().generate();
+    }
+
     @Test
     void test_serialize() {
 
         // Given
         final var sut = createSUT();
         final var event = new UserCreated(
-            UUID.randomUUID().toString(),
+            anyEventId(),
             Instant.now().toEpochMilli(),
             new UserCreatedPayload(
                 LocalDateTime.now(),

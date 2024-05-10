@@ -5,9 +5,11 @@ import com.azat4dev.demobooking.common.utils.Assert;
 import lombok.EqualsAndHashCode;
 import lombok.Getter;
 
+import java.io.Serializable;
+
 @Getter
 @EqualsAndHashCode
-public final class LastName {
+public final class LastName implements Serializable {
 
     public final static int MAX_LENGTH = 255;
 

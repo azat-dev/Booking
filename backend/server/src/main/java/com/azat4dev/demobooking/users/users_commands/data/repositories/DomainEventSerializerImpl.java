@@ -4,6 +4,8 @@ import com.azat4dev.demobooking.common.DomainEvent;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import lombok.RequiredArgsConstructor;
 
+import java.io.Serializable;
+
 @RequiredArgsConstructor
 public class DomainEventSerializerImpl implements DomainEventSerializer {
 
@@ -18,8 +20,12 @@ public class DomainEventSerializerImpl implements DomainEventSerializer {
         }
     }
 
-//    @Override
-//    DomainEvent deserializeDomainEvent(String event) {
-//        return null;
-//    }
+    @Override
+    public <Payload extends Serializable, Event extends DomainEvent<Payload>> DomainEvent<Payload> deserialize(String event, Class<Event> eventClass) {
+        try {
+            return this.objectMapper.readValue(event, eventClass);
+        } catch (Exception e) {
+            throw new RuntimeException(e);
+        }
+    }
 }

@@ -7,6 +7,7 @@ import com.azat4dev.demobooking.users.users_commands.domain.services.EmailVerifi
 import com.azat4dev.demobooking.users.users_commands.domain.values.email.EmailAddress;
 import lombok.Getter;
 
+import java.io.Serializable;
 import java.time.LocalDateTime;
 import java.util.Map;
 
@@ -16,7 +17,7 @@ public record UserCreatedPayload(
     FullName fullName,
     EmailAddress email,
     EmailVerificationStatus emailVerificationStatus
-) implements DomainEventPayload {
+) implements DomainEventPayload, Serializable {
     public Object toDTO() {
         return Map.of(
             "createdAt", this.createdAt,
