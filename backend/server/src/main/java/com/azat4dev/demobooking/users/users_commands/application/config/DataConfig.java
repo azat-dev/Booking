@@ -8,6 +8,7 @@ import com.azat4dev.demobooking.users.users_commands.data.repositories.*;
 import com.azat4dev.demobooking.users.users_commands.data.repositories.jpa.JpaOutboxEventsRepository;
 import com.azat4dev.demobooking.users.users_commands.data.repositories.jpa.JpaUsersRepository;
 import com.azat4dev.demobooking.users.users_commands.domain.interfaces.repositories.OutboxEventsRepository;
+import com.azat4dev.demobooking.users.users_commands.domain.interfaces.repositories.UnitOfWork;
 import com.azat4dev.demobooking.users.users_commands.domain.interfaces.repositories.UsersRepository;
 import com.azat4dev.demobooking.users.users_commands.domain.interfaces.services.EmailService;
 import com.azat4dev.demobooking.users.users_commands.domain.services.EmailData;
@@ -15,6 +16,7 @@ import com.azat4dev.demobooking.users.users_commands.domain.values.email.EmailAd
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.transaction.PlatformTransactionManager;
 
 @Configuration
 public class DataConfig {
@@ -87,6 +89,19 @@ public class DataConfig {
             timeProvider,
             domainEventSerializer,
             jpaOutboxEventsRepository
+        );
+    }
+
+    @Bean
+    UnitOfWork unitOfWork(
+        PlatformTransactionManager transactionManager,
+        OutboxEventsRepository outboxEventsRepository,
+        UsersRepository usersRepository
+    ) {
+        return new UnitOfWorkImpl(
+            transactionManager,
+            outboxEventsRepository,
+            usersRepository
         );
     }
 }
