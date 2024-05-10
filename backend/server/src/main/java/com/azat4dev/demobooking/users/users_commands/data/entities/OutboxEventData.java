@@ -12,7 +12,7 @@ import java.time.LocalDateTime;
 @NoArgsConstructor
 @Entity
 @Table(name = "outbox_events")
-public class OutboxEvent {
+public class OutboxEventData {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -27,7 +27,7 @@ public class OutboxEvent {
     @Nonnull
     private String payload;
 
-    public OutboxEvent(
+    public OutboxEventData(
         LocalDateTime createdAt,
         String eventType,
         String payload

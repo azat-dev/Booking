@@ -10,6 +10,7 @@ import com.azat4dev.demobooking.users.users_commands.domain.interfaces.repositor
 import com.azat4dev.demobooking.users.users_commands.domain.interfaces.repositories.UsersRepository;
 
 import java.time.ZoneOffset;
+import java.util.UUID;
 
 public final class UsersServiceImpl implements UsersService {
 
@@ -50,7 +51,7 @@ public final class UsersServiceImpl implements UsersService {
 
         eventsStore.publish(
             new UserCreated(
-                CommandId.generateNew(),
+                UUID.randomUUID().toString(),
                 currentDate.toInstant(ZoneOffset.UTC).toEpochMilli(),
                 new UserCreatedPayload(
                     currentDate,

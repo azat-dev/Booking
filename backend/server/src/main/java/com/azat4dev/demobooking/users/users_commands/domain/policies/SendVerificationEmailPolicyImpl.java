@@ -22,15 +22,15 @@ public class SendVerificationEmailPolicyImpl implements SendVerificationEmailPol
     public void execute(UserCreated event) {
 
         final var payload = event.getPayload();
-        final var userId = payload.userId();
-        final var builtData = emailBuilder.build(userId);
-
-        emailService.send(
-            payload.email(),
-            new EmailData(
-                builtData.subject(),
-                builtData.body()
-            )
-        );
+//        final var userId = payload.userId();
+//        final var builtData = emailBuilder.build(userId);
+//
+//        emailService.send(
+//            payload.email(),
+//            new EmailData(
+//                builtData.subject(),
+//                builtData.body()
+//            )
+//        );
     }
 }

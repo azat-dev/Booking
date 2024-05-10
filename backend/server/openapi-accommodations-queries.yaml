@@ -1,0 +1,116 @@
+openapi: "3.0.0"
+info:
+  version: "1.0.0"
+  title: "Demo Booking API"
+  description: Describes the API of Daily Tasks
+
+paths:
+  /api/public/accommodations/:accommodationId:
+    get:
+      summary: Get accommodation details
+      parameters:
+        - name: accommodationId
+          in: path
+          required: true
+          schema:
+            type: string
+            format: uuid
+          description: Accommodation ID
+      responses:
+        "200":
+          description: Accommodation details
+          content:
+            application/json:
+              schema:
+                "$ref": "#/components/schemas/AccommodationDetails"
+        "401":
+          description: Not valid Token
+        "404":
+          description: Not found
+components:
+  schemas:
+    LocationDetails:
+      type: object
+      required:
+        - country
+        - city
+      properties:
+        country:
+          type: string
+        city:
+          type: string
+    AccommodationDetails:
+      type: object
+      required:
+        - id
+        - title
+        - type
+        - photos
+        - location
+        - hostId
+      properties:
+        id:
+          type: string
+          format: uuid
+        type:
+          type: string
+          format: uuid
+        title:
+          type: string
+        photos:
+          type: array
+          items:
+            type: string
+            format: uri
+        location:
+          $ref: "#/components/schemas/LocationDetails"
+        hostId:
+          type: string
+          format: uuid
+    ValidationError:
+      type: object
+      required:
+        - type
+        - errors
+      properties:
+        type:
+          type: string
+          default: validationError
+        errors:
+          type: array
+          items:
+            $ref: "#/components/schemas/ValidationErrorDetails"
+    ValidationErrorDetails:
+      type: object
+      required:
+        - path
+        - message
+        - code
+      properties:
+        path:
+          type: string
+        message:
+          type: string
+        code:
+          type: string
+    Error:
+      type: object
+      required:
+        - code
+        - message
+      properties:
+        code:
+          type: string
+        message:
+          type: string
+    Errors:
+      type: array
+      items:
+        $ref: "#/components/schemas/Error"
+  securitySchemes:
+    BearerAuth:
+      type: http
+      scheme: bearer
+      bearerFormat: JWT
+security:
+  - BearerAuth: [ ]

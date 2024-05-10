@@ -14,6 +14,7 @@ import org.junit.jupiter.api.Test;
 
 import java.time.Clock;
 import java.time.LocalDateTime;
+import java.util.UUID;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.ArgumentMatchers.assertArg;
@@ -55,7 +56,7 @@ public class SendVerificationEmailPolicyTests {
         final var userId = UserHelpers.anyValidUserId();
 
         final var event = new UserCreated(
-            CommandId.generateNew(),
+            UUID.randomUUID().toString(),
             Clock.systemUTC().millis(),
             new UserCreatedPayload(
                 LocalDateTime.now(),

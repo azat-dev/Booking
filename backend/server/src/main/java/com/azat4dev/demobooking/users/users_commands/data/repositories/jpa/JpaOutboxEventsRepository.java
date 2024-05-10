@@ -1,0 +1,8 @@
+package com.azat4dev.demobooking.users.users_commands.data.repositories.jpa;
+
+import com.azat4dev.demobooking.users.users_commands.data.entities.OutboxEventData;
+import org.springframework.data.jpa.repository.JpaRepository;
+
+public interface JpaOutboxEventsRepository extends JpaRepository<OutboxEventData, Long> {
+
+}

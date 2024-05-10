@@ -6,17 +6,15 @@ import com.azat4dev.demobooking.common.DomainEvent;
 public final class UserCreated extends DomainEvent {
 
     private final UserCreatedPayload payload;
-    private final CommandId sourceCommandId;
 
     public UserCreated(
-        CommandId sourceCommandId,
+        String eventId,
         long timestamp,
         UserCreatedPayload payload
     ) {
-        super(timestamp);
+        super(eventId, timestamp);
 
         this.payload = payload;
-        this.sourceCommandId = sourceCommandId;
     }
 
     @Override
@@ -32,9 +30,5 @@ public final class UserCreated extends DomainEvent {
     @Override
     public UserCreatedPayload getPayload() {
         return this.payload;
-    }
-
-    public CommandId getSourceCommandId() {
-        return sourceCommandId;
     }
 }
