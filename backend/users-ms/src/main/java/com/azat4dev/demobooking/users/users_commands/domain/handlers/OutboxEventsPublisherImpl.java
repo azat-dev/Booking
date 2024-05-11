@@ -9,7 +9,7 @@ import lombok.RequiredArgsConstructor;
 import java.util.List;
 
 @RequiredArgsConstructor
-public class OutboxEventsPublisherImpl implements OutboxEventsPublisher {
+public final class OutboxEventsPublisherImpl implements OutboxEventsPublisher {
 
     private final OutboxEventsRepository outboxEventsRepository;
     private final DomainEventsBus bus;
