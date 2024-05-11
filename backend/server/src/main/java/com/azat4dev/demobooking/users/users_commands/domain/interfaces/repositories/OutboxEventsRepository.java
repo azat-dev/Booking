@@ -9,7 +9,7 @@ public interface OutboxEventsRepository {
 
     void publish(DomainEvent<?> event);
 
-    void markAsPublished(EventId eventId);
+    void markAsPublished(List<EventId> eventId);
 
     List<? extends DomainEvent<?>> getNotPublishedEvents(int limit);
 }

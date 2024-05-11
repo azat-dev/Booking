@@ -10,6 +10,7 @@ import com.azat4dev.demobooking.users.users_commands.domain.commands.CreateUser;
 import com.azat4dev.demobooking.users.users_commands.domain.events.UserCreated;
 import com.azat4dev.demobooking.users.users_commands.domain.interfaces.repositories.OutboxEventsRepository;
 import com.azat4dev.demobooking.users.users_commands.domain.interfaces.repositories.UnitOfWork;
+import com.azat4dev.demobooking.users.users_commands.domain.interfaces.repositories.UnitOfWorkFactory;
 import com.azat4dev.demobooking.users.users_commands.domain.interfaces.repositories.UsersRepository;
 import com.azat4dev.demobooking.users.users_commands.domain.interfaces.services.EncodedPassword;
 import org.junit.jupiter.api.Test;
@@ -31,6 +32,9 @@ public class UsersServiceImplTests {
         UsersRepository usersRepository = mock(UsersRepository.class);
 
         final var unitOfWork = mock(UnitOfWork.class);
+        final var unitOfWorkFactory = mock(UnitOfWorkFactory.class);
+        given(unitOfWorkFactory.make()).willReturn(unitOfWork);
+
         final var outboxEventsRepository = mock(OutboxEventsRepository.class);
         final var eventIdGenerator = mock(EventIdGenerator.class);
 
@@ -44,9 +48,9 @@ public class UsersServiceImplTests {
         return new SUT(
             new UsersServiceImpl(
                 timeProvider,
-                unitOfWork,
                 eventIdGenerator,
-                markOutboxNeedsSynchronization
+                markOutboxNeedsSynchronization,
+                unitOfWorkFactory
             ),
             unitOfWork,
             outboxEventsRepository,

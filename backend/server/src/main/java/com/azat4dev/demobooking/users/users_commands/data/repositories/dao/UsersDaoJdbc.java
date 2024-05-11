@@ -8,6 +8,8 @@ import org.springframework.dao.EmptyResultDataAccessException;
 import org.springframework.jdbc.core.RowMapper;
 import org.springframework.jdbc.core.namedparam.NamedParameterJdbcTemplate;
 
+import java.time.ZoneOffset;
+import java.util.Date;
 import java.util.Map;
 import java.util.Optional;
 import java.util.UUID;
@@ -38,8 +40,8 @@ public final class UsersDaoJdbc implements UsersDao {
                 """,
                 Map.of(
                     "id", userData.id(),
-                    "created_at", userData.createdAt(),
-                    "updated_at", userData.updatedAt(),
+                    "created_at",  Date.from(userData.createdAt().toInstant(ZoneOffset.UTC)),
+                    "updated_at", Date.from(userData.updatedAt().toInstant(ZoneOffset.UTC)),
                     "email", userData.email(),
                     "password", userData.encodedPassword(),
                     "first_name", userData.firstName(),

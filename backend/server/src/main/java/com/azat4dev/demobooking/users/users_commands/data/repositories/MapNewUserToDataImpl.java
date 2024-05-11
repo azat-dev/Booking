@@ -7,15 +7,6 @@ public final class MapNewUserToDataImpl implements MapNewUserToData {
 
     @Override
     public UserData map(NewUserData newUserData) {
-        return new UserData(
-            newUserData.userId().value(),
-            newUserData.createdAt(),
-            newUserData.createdAt(),
-            newUserData.email().toString(),
-            newUserData.fullName().getFirstName().getValue(),
-            newUserData.fullName().getLastName().getValue(),
-            newUserData.encodedPassword().value(),
-            newUserData.emailVerificationStatus()
-        );
+        return UserData.makeFrom(newUserData, newUserData.createdAt());
     }
 }

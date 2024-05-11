@@ -8,6 +8,7 @@ import com.azat4dev.demobooking.users.users_commands.data.repositories.dao.Outbo
 import com.azat4dev.demobooking.users.users_commands.data.repositories.dao.UsersDao;
 import com.azat4dev.demobooking.users.users_commands.domain.interfaces.repositories.OutboxEventsRepository;
 import com.azat4dev.demobooking.users.users_commands.domain.interfaces.repositories.UnitOfWork;
+import com.azat4dev.demobooking.users.users_commands.domain.interfaces.repositories.UnitOfWorkFactory;
 import com.azat4dev.demobooking.users.users_commands.domain.interfaces.repositories.UsersRepository;
 import com.azat4dev.demobooking.users.users_commands.domain.interfaces.services.EmailService;
 import com.azat4dev.demobooking.users.users_commands.domain.services.EmailData;
@@ -82,15 +83,21 @@ public class DataConfig {
     }
 
     @Bean
-    UnitOfWork unitOfWork(
+    UnitOfWorkFactory unitOfWorkFactory(
         PlatformTransactionManager transactionManager,
         OutboxEventsRepository outboxEventsRepository,
         UsersRepository usersRepository
     ) {
-        return new UnitOfWorkImpl(
-            transactionManager,
-            outboxEventsRepository,
-            usersRepository
-        );
+
+        return new UnitOfWorkFactory() {
+            @Override
+            public UnitOfWork make() {
+                return new UnitOfWorkImpl(
+                    transactionManager,
+                    outboxEventsRepository,
+                    usersRepository
+                );
+            }
+        };
     }
 }

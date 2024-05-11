@@ -9,6 +9,7 @@ import com.azat4dev.demobooking.users.users_commands.domain.handlers.OutboxEvent
 import com.azat4dev.demobooking.users.users_commands.domain.handlers.OutboxEventsPublisherImpl;
 import com.azat4dev.demobooking.users.users_commands.domain.interfaces.repositories.OutboxEventsRepository;
 import com.azat4dev.demobooking.users.users_commands.domain.interfaces.repositories.UnitOfWork;
+import com.azat4dev.demobooking.users.users_commands.domain.interfaces.repositories.UnitOfWorkFactory;
 import com.azat4dev.demobooking.users.users_commands.domain.services.UsersService;
 import com.azat4dev.demobooking.users.users_commands.domain.services.UsersServiceImpl;
 import com.azat4dev.demobooking.users.users_commands.domain.values.UserIdFactory;
@@ -37,15 +38,15 @@ public class DomainConfig {
     @Bean
     public UsersService usersService(
         TimeProvider timeProvider,
-        UnitOfWork unitOfWork,
+        UnitOfWorkFactory unitOfWorkFactory,
         EventIdGenerator eventIdGenerator,
         OutboxEventsPublisher outboxEventsPublisher
     ) {
         return new UsersServiceImpl(
             timeProvider,
-            unitOfWork,
             eventIdGenerator,
-            outboxEventsPublisher::publishEvents
+            outboxEventsPublisher::publishEvents,
+            unitOfWorkFactory
         );
     }
 

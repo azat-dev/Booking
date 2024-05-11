@@ -1,6 +1,15 @@
 spring:
   application:
     name: demobooking
+  datasource:
+    url: jdbc:postgresql://localhost:5432/usersdb
+    username: username
+    password: password
+  sql:
+    init:
+      mode: always
+      platform: postgres
+      schema-locations: classpath:/schema.sql
 app:
   security:
     jwt:

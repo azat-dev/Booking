@@ -25,13 +25,7 @@ public class UsersRepositoryImpl implements UsersRepository {
 
         try {
             this.usersDao.addNew(userData);
-        } catch (RuntimeException e) {
-
-            final var email = newUserData.email().getValue();
-
-            final var foundUserResult = this.usersDao.findByEmail(email);
-            foundUserResult.orElseThrow(() -> e);
-
+        } catch (UsersDao.UserAlreadyExistsException e) {
             throw new UserWithSameEmailAlreadyExistsException();
         }
     }

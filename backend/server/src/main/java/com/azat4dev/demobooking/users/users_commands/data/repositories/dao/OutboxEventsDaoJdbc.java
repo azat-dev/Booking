@@ -5,6 +5,8 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.jdbc.core.RowMapper;
 import org.springframework.jdbc.core.namedparam.NamedParameterJdbcTemplate;
 
+import java.time.ZoneOffset;
+import java.util.Date;
 import java.util.List;
 import java.util.Map;
 
@@ -23,9 +25,9 @@ public final class OutboxEventsDaoJdbc implements OutboxEventsDao {
             """;
         final var values = Map.of(
             "event_id", event.eventId(),
-            "event_type", "UserCreated",
+            "event_type", event.eventType().name(),
             "payload", event.payload(),
-            "created_at", event.createdAt().toString(),
+            "created_at", Date.from(event.createdAt().toInstant(ZoneOffset.UTC)),
             "is_published", false
         );
 

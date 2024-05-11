@@ -8,7 +8,6 @@ import com.azat4dev.demobooking.users.users_commands.domain.UserHelpers;
 import com.azat4dev.demobooking.users.users_commands.domain.services.EmailVerificationStatus;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.test.autoconfigure.jdbc.JdbcTest;
 import org.springframework.context.annotation.Import;
 import org.springframework.test.context.jdbc.Sql;
 
@@ -17,15 +16,17 @@ import java.time.LocalDateTime;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 
-@JdbcTest
+
+@PostgresTest
 @Import(DaoConfig.class)
-@Sql({ "classpath:users/h2/drop-schema.sql", "classpath:schema.sql"})
 public class UsersDaoJdbcTests {
 
     @Autowired
     private UsersDao dao;
 
     @Test
+    @Sql("/db/drop-schema.sql")
+    @Sql("/db/schema.sql")
     void test_findByEmail_givenEmptyDb_thenReturnEmpty() {
 
         // Given
@@ -39,6 +40,9 @@ public class UsersDaoJdbcTests {
     }
 
     @Test
+    @Sql("/db/drop-schema.sql")
+    @Sql("/db/schema.sql")
+    @Sql("/db/data.sql")
     void test_findByEmail_givenValidEmail_thenReturnUser() {
 
         // Given
@@ -55,6 +59,9 @@ public class UsersDaoJdbcTests {
     }
 
     @Test
+    @Sql("/db/drop-schema.sql")
+    @Sql("/db/schema.sql")
+    @Sql("/db/data.sql")
     void test_addNew_givenExistingUser_thenThrowException() {
 
         // Given

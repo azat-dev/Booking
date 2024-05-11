@@ -25,8 +25,8 @@ public class OutboxEventsRepositoryImpl implements OutboxEventsRepository {
     }
 
     @Override
-    public void markAsPublished(EventId eventId) {
-        outboxEventsDao.markAsPublished(List.of(eventId.getValue()));
+    public void markAsPublished(List<EventId> eventIds) {
+        outboxEventsDao.markAsPublished(eventIds.stream().map(EventId::getValue).toList());
     }
 
     @Override

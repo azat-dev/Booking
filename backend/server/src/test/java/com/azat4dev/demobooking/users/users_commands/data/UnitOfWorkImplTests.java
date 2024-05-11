@@ -2,6 +2,7 @@ package com.azat4dev.demobooking.users.users_commands.data;
 
 import com.azat4dev.demobooking.users.users_commands.application.config.DaoConfig;
 import com.azat4dev.demobooking.users.users_commands.application.config.DataConfig;
+import com.azat4dev.demobooking.users.users_commands.data.jpa.PostgresTest;
 import com.azat4dev.demobooking.users.users_commands.data.repositories.UnitOfWorkImpl;
 import com.azat4dev.demobooking.users.users_commands.domain.interfaces.repositories.OutboxEventsRepository;
 import com.azat4dev.demobooking.users.users_commands.domain.interfaces.repositories.UnitOfWork;
@@ -9,8 +10,6 @@ import com.azat4dev.demobooking.users.users_commands.domain.interfaces.repositor
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.test.autoconfigure.data.jdbc.DataJdbcTest;
-import org.springframework.boot.test.autoconfigure.jdbc.JdbcTest;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Import;
 import org.springframework.test.context.jdbc.Sql;
@@ -19,9 +18,9 @@ import org.springframework.transaction.PlatformTransactionManager;
 import static com.azat4dev.demobooking.users.users_commands.data.DataHelpers.anyNewUserData;
 import static org.assertj.core.api.Assertions.assertThat;
 
+
+@PostgresTest
 @Import({DataConfig.class, DaoConfig.class, TestObjectMapperConfig.class})
-@JdbcTest
-@Sql({ "classpath:users/h2/drop-schema.sql", "classpath:schema.sql"})
 public class UnitOfWorkImplTests {
 
     @Autowired
@@ -33,43 +32,49 @@ public class UnitOfWorkImplTests {
     @Autowired
     PlatformTransactionManager platformTransactionManager;
 
-    SUT createSUT() {
-        var jpaUnitOfWork = new UnitOfWorkImpl(
+    UnitOfWork createSUT() {
+
+        return new UnitOfWorkImpl(
             platformTransactionManager,
             outboxEventsRepository,
             usersRepository
         );
-
-        return new SUT(jpaUnitOfWork);
     }
 
     @Test
+    @Sql("/db/drop-schema.sql")
+    @Sql("/db/schema.sql")
     void test_rollback_givenWriteOperation_thenRollbackAllWrites() {
         // Given
+
         var sut = createSUT();
         final var newUserData = anyNewUserData();
 
-        final var usersRepository = sut.unitOfWork.getUsersRepository();
+        final var usersRepository = sut.getUsersRepository();
         usersRepository.createUser(newUserData);
 
         // When
-        sut.unitOfWork.rollback();
+        sut.rollback();
 
         // Then
-        assertThat(usersRepository.findById(newUserData.userId())).isEmpty();
+        final var sut2 = createSUT();
+        final var foundUserData = sut2.getUsersRepository().findById(newUserData.userId());
+        assertThat(foundUserData).isEmpty();
     }
 
     @Test
+    @Sql(scripts = {"/db/drop-schema.sql"})
+    @Sql(scripts = {"/db/schema.sql"})
     void test_save_givenWriteOperation_thenPerformWriteToDb() {
         // Given
         var sut = createSUT();
         final var newUserData = anyNewUserData();
 
-        final var usersRepository = sut.unitOfWork.getUsersRepository();
+        final var usersRepository = sut.getUsersRepository();
         usersRepository.createUser(newUserData);
 
         // When
-        sut.unitOfWork.save();
+        sut.save();
 
         // Then
         assertThat(usersRepository.findById(newUserData.userId())).isNotEmpty();
