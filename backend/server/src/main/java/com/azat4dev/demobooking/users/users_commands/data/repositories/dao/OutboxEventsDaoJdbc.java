@@ -22,10 +22,10 @@ public final class OutboxEventsDaoJdbc implements OutboxEventsDao {
                 VALUES (:event_id, :event_type, :payload, :created_at, :is_published)
             """;
         final var values = Map.of(
-            "event_id", event.getEventId(),
+            "event_id", event.eventId(),
             "event_type", "UserCreated",
-            "payload", event.getPayload(),
-            "created_at", event.getCreatedAt().toString(),
+            "payload", event.payload(),
+            "created_at", event.createdAt().toString(),
             "is_published", false
         );
 

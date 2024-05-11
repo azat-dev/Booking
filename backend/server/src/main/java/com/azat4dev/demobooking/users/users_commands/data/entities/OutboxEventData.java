@@ -3,11 +3,6 @@ package com.azat4dev.demobooking.users.users_commands.data.entities;
 import com.azat4dev.demobooking.common.DomainEvent;
 import com.azat4dev.demobooking.users.users_commands.data.repositories.DomainEventSerializer;
 import com.azat4dev.demobooking.users.users_commands.domain.events.UserCreated;
-import jakarta.persistence.*;
-import lombok.EqualsAndHashCode;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
-import lombok.Setter;
 
 import java.sql.ResultSet;
 import java.sql.SQLException;
@@ -15,48 +10,13 @@ import java.time.Instant;
 import java.time.LocalDateTime;
 import java.time.ZoneOffset;
 
-@EqualsAndHashCode
-@Getter
-@Setter
-@NoArgsConstructor
-@Entity
-@Table(name = "outbox_eventsxxxxx")
-public class OutboxEventData {
 
-    @Column(name = "event_order", nullable = false)
-    private long order;
-
-    @Id
-    @Column(name = "event_id", nullable = false)
-    private String eventId;
-
-    @Column(name = "created_at", nullable = false)
-    private LocalDateTime createdAt;
-
-    @Enumerated(EnumType.STRING)
-    @Column(name = "event_type", nullable = false)
-    private EventType eventType;
-
-    @Column(name = "payload", nullable = false)
-    private String payload;
-
-    @Column(name = "is_published", nullable = false)
-    private boolean isPublished;
-
-    public OutboxEventData(
-        String eventId,
-        LocalDateTime createdAt,
-        EventType eventType,
-        String payload,
-        boolean isPublished
-    ) {
-        this.order = Instant.now().toEpochMilli();
-        this.eventId = eventId;
-        this.createdAt = createdAt;
-        this.eventType = eventType;
-        this.payload = payload;
-        this.isPublished = isPublished;
-    }
+public record OutboxEventData(
+    String eventId,
+    LocalDateTime createdAt,
+    EventType eventType,
+    String payload,
+    boolean isPublished) {
 
     public static OutboxEventData makeFromDomain(DomainEvent<?> event, DomainEventSerializer serializer) {
 
@@ -72,16 +32,6 @@ public class OutboxEventData {
         );
     }
 
-    public DomainEvent<?> toDomainEvent(DomainEventSerializer serializer) {
-        return switch (this.eventType) {
-            case USER_CREATED -> serializer.deserialize(this.payload, UserCreated.class);
-        };
-    }
-
-    public enum EventType {
-        USER_CREATED
-    }
-
     public static OutboxEventData makeFromData(ResultSet rs) throws SQLException {
         return new OutboxEventData(
             rs.getString("event_id"),
@@ -90,5 +40,15 @@ public class OutboxEventData {
             rs.getString("payload"),
             rs.getBoolean("is_published")
         );
+    }
+
+    public DomainEvent<?> toDomainEvent(DomainEventSerializer serializer) {
+        return switch (this.eventType) {
+            case USER_CREATED -> serializer.deserialize(this.payload, UserCreated.class);
+        };
+    }
+
+    public enum EventType {
+        USER_CREATED
     }
 }

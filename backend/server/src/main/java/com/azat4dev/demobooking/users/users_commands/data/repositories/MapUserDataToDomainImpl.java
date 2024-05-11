@@ -15,15 +15,15 @@ public class MapUserDataToDomainImpl implements MapUserDataToDomain {
     @Override
     public User map(UserData userData) throws DomainException {
         return new User(
-            UserId.fromUUID(userData.getId()),
-            userData.getCreatedAt(),
-            EmailAddress.dangerMakeWithoutChecks(userData.getEmail()),
+            UserId.fromUUID(userData.id()),
+            userData.createdAt(),
+            EmailAddress.dangerMakeWithoutChecks(userData.email()),
             new FullName(
-                FirstName.dangerMakeFromStringWithoutCheck(userData.getFirstName()),
-                LastName.dangerMakeFromStringWithoutCheck(userData.getLastName())
+                FirstName.dangerMakeFromStringWithoutCheck(userData.firstName()),
+                LastName.dangerMakeFromStringWithoutCheck(userData.lastName())
             ),
-            new EncodedPassword(userData.getEncodedPassword()),
-            userData.getEmailVerificationStatus()
+            new EncodedPassword(userData.encodedPassword()),
+            userData.emailVerificationStatus()
         );
     }
 }

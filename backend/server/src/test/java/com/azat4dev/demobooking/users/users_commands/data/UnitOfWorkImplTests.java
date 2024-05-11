@@ -1,5 +1,6 @@
 package com.azat4dev.demobooking.users.users_commands.data;
 
+import com.azat4dev.demobooking.users.users_commands.application.config.DaoConfig;
 import com.azat4dev.demobooking.users.users_commands.application.config.DataConfig;
 import com.azat4dev.demobooking.users.users_commands.data.repositories.UnitOfWorkImpl;
 import com.azat4dev.demobooking.users.users_commands.domain.interfaces.repositories.OutboxEventsRepository;
@@ -8,16 +9,19 @@ import com.azat4dev.demobooking.users.users_commands.domain.interfaces.repositor
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
+import org.springframework.boot.test.autoconfigure.data.jdbc.DataJdbcTest;
+import org.springframework.boot.test.autoconfigure.jdbc.JdbcTest;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Import;
+import org.springframework.test.context.jdbc.Sql;
 import org.springframework.transaction.PlatformTransactionManager;
 
 import static com.azat4dev.demobooking.users.users_commands.data.DataHelpers.anyNewUserData;
 import static org.assertj.core.api.Assertions.assertThat;
 
-@Import({DataConfig.class, TestObjectMapperConfig.class})
-@DataJpaTest
+@Import({DataConfig.class, DaoConfig.class, TestObjectMapperConfig.class})
+@JdbcTest
+@Sql({ "classpath:users/h2/drop-schema.sql", "classpath:schema.sql"})
 public class UnitOfWorkImplTests {
 
     @Autowired

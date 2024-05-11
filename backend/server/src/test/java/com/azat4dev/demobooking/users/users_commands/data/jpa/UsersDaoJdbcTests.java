@@ -1,23 +1,29 @@
 package com.azat4dev.demobooking.users.users_commands.data.jpa;
 
 
+import com.azat4dev.demobooking.users.users_commands.application.config.DaoConfig;
 import com.azat4dev.demobooking.users.users_commands.data.entities.UserData;
+import com.azat4dev.demobooking.users.users_commands.data.repositories.dao.UsersDao;
 import com.azat4dev.demobooking.users.users_commands.domain.UserHelpers;
 import com.azat4dev.demobooking.users.users_commands.domain.services.EmailVerificationStatus;
-import com.azat4dev.demobooking.users.users_commands.data.repositories.jpa.JpaUsersRepository;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
+import org.springframework.boot.test.autoconfigure.jdbc.JdbcTest;
+import org.springframework.context.annotation.Import;
+import org.springframework.test.context.jdbc.Sql;
 
 import java.time.LocalDateTime;
 
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 
-@DataJpaTest
-public class JpaUsersRepositoryTests {
+@JdbcTest
+@Import(DaoConfig.class)
+@Sql({ "classpath:users/h2/drop-schema.sql", "classpath:schema.sql"})
+public class UsersDaoJdbcTests {
 
     @Autowired
-    private JpaUsersRepository jpaUsersRepository;
+    private UsersDao dao;
 
     @Test
     void test_findByEmail_givenEmptyDb_thenReturnEmpty() {
@@ -26,7 +32,7 @@ public class JpaUsersRepositoryTests {
         final var email = UserHelpers.anyValidEmail().getValue();
 
         // When
-        final var result = jpaUsersRepository.findByEmail(email);
+        final var result = dao.findByEmail(email);
 
         // Then
         assertThat(result).isEmpty();
@@ -39,14 +45,29 @@ public class JpaUsersRepositoryTests {
         final var existingUser1 = givenExistingUser();
         final var existingUser2 = givenExistingUser();
 
-
         // When
-        final var result1 = jpaUsersRepository.findByEmail(existingUser1.getEmail());
-        final var result2 = jpaUsersRepository.findByEmail(existingUser2.getEmail());
+        final var result1 = dao.findByEmail(existingUser1.email());
+        final var result2 = dao.findByEmail(existingUser2.email());
 
         // Then
         assertThat(result1.get()).isEqualTo(existingUser1);
         assertThat(result2.get()).isEqualTo(existingUser2);
+    }
+
+    @Test
+    void test_addNew_givenExistingUser_thenThrowException() {
+
+        // Given
+        final var existingUser = givenExistingUser();
+
+        // When
+        final var exception = assertThrows(
+            UsersDao.UserAlreadyExistsException.class,
+            () -> dao.addNew(existingUser)
+        );
+
+        // Then
+        assertThat(exception).isNotNull();
     }
 
     UserData givenExistingUser() {
@@ -64,6 +85,7 @@ public class JpaUsersRepositoryTests {
             EmailVerificationStatus.NOT_VERIFIED
         );
 
-        return jpaUsersRepository.saveAndFlush(userData);
+        dao.addNew(userData);
+        return userData;
     }
 }

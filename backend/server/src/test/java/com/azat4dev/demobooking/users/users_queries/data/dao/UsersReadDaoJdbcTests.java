@@ -13,7 +13,7 @@ import static org.assertj.core.api.Assertions.assertThat;
 
 
 @JdbcTest
-@Sql({"classpath:users/h2/drop-schema.sql", "classpath:users/h2/schema.sql", "classpath:users/h2/data.sql"})
+@Sql({"classpath:users/h2/drop-schema.sql", "classpath:schema.sql", "classpath:users/h2/data.sql"})
 public class UsersReadDaoJdbcTests {
 
     @Autowired
