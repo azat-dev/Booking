@@ -9,7 +9,6 @@ import com.azat4dev.demobooking.users.users_commands.data.repositories.dao.Users
 import com.azat4dev.demobooking.users.users_commands.domain.UserHelpers;
 import com.azat4dev.demobooking.users.users_commands.domain.interfaces.repositories.UsersRepository;
 import org.junit.jupiter.api.Test;
-import org.springframework.dao.DataIntegrityViolationException;
 
 import java.time.LocalDateTime;
 import java.util.Optional;
@@ -39,10 +38,6 @@ public class UsersRepositoryImplTests {
             mapNewUserData,
             mapUserDataToDomain
         );
-    }
-
-    void anyUserData() {
-
     }
 
     @Test
@@ -81,19 +76,15 @@ public class UsersRepositoryImplTests {
         given(sut.mapNewUserToData.map(any()))
             .willReturn(persistentUserData);
 
-        willThrow(new DataIntegrityViolationException("User exists")).given(sut.usersDao)
+        willThrow(new UsersDao.UserAlreadyExistsException()).given(sut.usersDao)
             .addNew(any());
 
-        given(sut.usersDao.findByEmail(any()))
-            .willReturn(Optional.of(persistentUserData));
-
         // When
-        assertThrows(UsersRepository.UserWithSameEmailAlreadyExistsException.class,
+        final var exception = assertThrows(UsersRepository.UserWithSameEmailAlreadyExistsException.class,
             () -> sut.repository.createUser(newUserData));
 
         // Then
-        then(sut.usersDao).should(times(1))
-            .findByEmail(newUserData.email().getValue());
+        assertThat(exception).isInstanceOf(UsersRepository.UserWithSameEmailAlreadyExistsException.class);
     }
 
     @Test

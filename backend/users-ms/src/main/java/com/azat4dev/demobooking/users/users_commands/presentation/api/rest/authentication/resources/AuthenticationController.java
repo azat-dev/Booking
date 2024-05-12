@@ -1,17 +1,16 @@
 package com.azat4dev.demobooking.users.users_commands.presentation.api.rest.authentication.resources;
 
-import com.azat4dev.demobooking.common.CommandId;
 import com.azat4dev.demobooking.common.presentation.ControllerException;
 import com.azat4dev.demobooking.common.presentation.ValidationException;
+import com.azat4dev.demobooking.users.common.domain.values.UserId;
+import com.azat4dev.demobooking.users.common.presentation.security.services.CustomUserDetailsService;
+import com.azat4dev.demobooking.users.common.presentation.security.services.jwt.JwtService;
+import com.azat4dev.demobooking.users.common.presentation.security.services.jwt.UserIdNotFoundException;
 import com.azat4dev.demobooking.users.users_commands.domain.commands.CreateUser;
 import com.azat4dev.demobooking.users.users_commands.domain.interfaces.services.EncodedPassword;
 import com.azat4dev.demobooking.users.users_commands.domain.interfaces.services.PasswordService;
 import com.azat4dev.demobooking.users.users_commands.domain.services.UsersService;
-import com.azat4dev.demobooking.users.common.domain.values.UserId;
 import com.azat4dev.demobooking.users.users_commands.domain.values.UserIdFactory;
-import com.azat4dev.demobooking.users.common.presentation.security.services.CustomUserDetailsService;
-import com.azat4dev.demobooking.users.common.presentation.security.services.jwt.JwtService;
-import com.azat4dev.demobooking.users.common.presentation.security.services.jwt.UserIdNotFoundException;
 import com.azat4dev.demobooking.users.users_commands.presentation.api.rest.authentication.entities.*;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
@@ -84,7 +83,6 @@ public class AuthenticationController implements AuthenticationResource {
         try {
             usersService.handle(
                 new CreateUser(
-                    CommandId.generateNew(),
                     userId,
                     fullName,
                     email,

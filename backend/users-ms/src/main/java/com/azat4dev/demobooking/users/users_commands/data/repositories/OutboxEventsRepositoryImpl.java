@@ -1,8 +1,7 @@
 package com.azat4dev.demobooking.users.users_commands.data.repositories;
 
-import com.azat4dev.demobooking.common.DomainEvent;
+import com.azat4dev.demobooking.common.DomainEventNew;
 import com.azat4dev.demobooking.common.EventId;
-import com.azat4dev.demobooking.common.utils.TimeProvider;
 import com.azat4dev.demobooking.users.users_commands.data.entities.OutboxEventData;
 import com.azat4dev.demobooking.users.users_commands.data.repositories.dao.OutboxEventsDao;
 import com.azat4dev.demobooking.users.users_commands.domain.interfaces.repositories.OutboxEventsRepository;
@@ -13,12 +12,11 @@ import java.util.List;
 @RequiredArgsConstructor
 public class OutboxEventsRepositoryImpl implements OutboxEventsRepository {
 
-    private final TimeProvider timeProvider;
     private final DomainEventSerializer domainEventSerializer;
     private final OutboxEventsDao outboxEventsDao;
 
     @Override
-    public void publish(DomainEvent<?> event) {
+    public void publish(DomainEventNew<?> event) {
 
         final var eventRecord = OutboxEventData.makeFromDomain(event, this.domainEventSerializer);
         this.outboxEventsDao.put(eventRecord);
@@ -30,11 +28,11 @@ public class OutboxEventsRepositoryImpl implements OutboxEventsRepository {
     }
 
     @Override
-    public List<? extends DomainEvent<?>> getNotPublishedEvents(int limit) {
+    public List<? extends DomainEventNew<?>> getNotPublishedEvents(int limit) {
 
         return this.outboxEventsDao.findNotPublishedEvents(limit)
             .stream()
-            .map(rc -> rc.toDomainEvent(this.domainEventSerializer))
+            .map(rc -> this.domainEventSerializer.deserialize(rc.payload()))
             .toList();
     }
 }

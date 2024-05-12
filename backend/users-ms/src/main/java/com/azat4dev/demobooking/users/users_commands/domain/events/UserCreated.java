@@ -1,35 +1,18 @@
 package com.azat4dev.demobooking.users.users_commands.domain.events;
 
-import com.azat4dev.demobooking.common.DomainEvent;
-import com.azat4dev.demobooking.common.EventId;
-import lombok.EqualsAndHashCode;
+import com.azat4dev.demobooking.common.DomainEventPayload;
+import com.azat4dev.demobooking.users.common.domain.values.UserId;
+import com.azat4dev.demobooking.users.users_commands.domain.entities.FullName;
+import com.azat4dev.demobooking.users.users_commands.domain.services.EmailVerificationStatus;
+import com.azat4dev.demobooking.users.users_commands.domain.values.email.EmailAddress;
 
-@EqualsAndHashCode(callSuper = true)
-public final class UserCreated extends DomainEvent<UserCreatedPayload> {
+import java.time.LocalDateTime;
 
-    private final UserCreatedPayload payload;
-
-    public UserCreated(
-        EventId eventId,
-        long timestamp,
-        UserCreatedPayload payload
-    ) {
-        super(eventId, timestamp);
-        this.payload = payload;
-    }
-
-    @Override
-    public String getType() {
-        return "UserCreated";
-    }
-
-    @Override
-    public int getVersion() {
-        return 0;
-    }
-
-    @Override
-    public UserCreatedPayload getPayload() {
-        return this.payload;
-    }
+public record UserCreated(
+    LocalDateTime createdAt,
+    UserId userId,
+    FullName fullName,
+    EmailAddress email,
+    EmailVerificationStatus emailVerificationStatus
+) implements DomainEventPayload {
 }

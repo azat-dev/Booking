@@ -1,7 +1,7 @@
 package com.azat4dev.demobooking.users.users_commands.domain.services;
 
-import com.azat4dev.demobooking.common.CommandId;
-import com.azat4dev.demobooking.common.DomainEvent;
+import com.azat4dev.demobooking.common.DomainEventNew;
+import com.azat4dev.demobooking.common.DomainEventsFactoryImpl;
 import com.azat4dev.demobooking.common.EventId;
 import com.azat4dev.demobooking.common.EventIdGenerator;
 import com.azat4dev.demobooking.common.utils.TimeProvider;
@@ -48,9 +48,12 @@ public class UsersServiceImplTests {
         return new SUT(
             new UsersServiceImpl(
                 timeProvider,
-                eventIdGenerator,
                 markOutboxNeedsSynchronization,
-                unitOfWorkFactory
+                unitOfWorkFactory,
+                new DomainEventsFactoryImpl(
+                    eventIdGenerator,
+                    timeProvider
+                )
             ),
             unitOfWork,
             outboxEventsRepository,
@@ -72,12 +75,10 @@ public class UsersServiceImplTests {
     private CreateUser anyCreateUserCommand() {
         final var email = UserHelpers.anyValidEmail();
         final var encodedPassword = anyEncodedPassword();
-        final var commandId = CommandId.generateNew();
         final var userId = UserHelpers.anyValidUserId();
         final var fullName = UserHelpers.anyFullName();
 
         return new CreateUser(
-            commandId,
             userId,
             fullName,
             email,
@@ -110,10 +111,9 @@ public class UsersServiceImplTests {
         }
 
         // Then
-        final Consumer<DomainEvent> assertUserCreatedEvent = (event) -> {
-            assertThat(event).isInstanceOf(UserCreated.class);
-            final var userCreated = (UserCreated) event;
-            final var payload = userCreated.getPayload();
+        final Consumer<DomainEventNew<UserCreated>> assertUserCreatedEvent = (event) -> {
+
+            final var payload = event.payload();
 
             assertThat(payload.userId()).isEqualTo(validCommand.userId());
             assertThat(payload.email()).isEqualTo(validCommand.email());

@@ -8,8 +8,7 @@ import org.springframework.dao.EmptyResultDataAccessException;
 import org.springframework.jdbc.core.RowMapper;
 import org.springframework.jdbc.core.namedparam.NamedParameterJdbcTemplate;
 
-import java.time.ZoneOffset;
-import java.util.Date;
+import java.sql.Timestamp;
 import java.util.Map;
 import java.util.Optional;
 import java.util.UUID;
@@ -21,8 +20,10 @@ public final class UsersDaoJdbc implements UsersDao {
 
     private final RowMapper<UserData> rowMapper = (rs, rowNum) -> new UserData(
         UUID.fromString(rs.getString("id")),
-        rs.getTimestamp("created_at").toLocalDateTime(),
-        rs.getTimestamp("updated_at").toLocalDateTime(),
+        rs.getTimestamp("created_at").toLocalDateTime()
+            .withNano(rs.getInt("created_at_nano")),
+        rs.getTimestamp("updated_at").toLocalDateTime()
+            .withNano(rs.getInt("updated_at_nano")),
         rs.getString("email"),
         rs.getString("password"),
         rs.getString("first_name"),
@@ -35,13 +36,15 @@ public final class UsersDaoJdbc implements UsersDao {
         try {
             jdbcTemplate.update(
                 """
-                    INSERT INTO users (id, created_at, updated_at, email, password, first_name, last_name, email_verification_status)
-                    VALUES (:id, :created_at, :updated_at, :email, :password, :first_name, :last_name, :email_verification_status)
-                """,
+                        INSERT INTO users (id, created_at, created_at_nano, updated_at, updated_at_nano, email, password, first_name, last_name, email_verification_status)
+                        VALUES (:id, :created_at, :created_at_nano, :updated_at, :updated_at_nano, :email, :password, :first_name, :last_name, :email_verification_status)
+                    """,
                 Map.of(
                     "id", userData.id(),
-                    "created_at",  Date.from(userData.createdAt().toInstant(ZoneOffset.UTC)),
-                    "updated_at", Date.from(userData.updatedAt().toInstant(ZoneOffset.UTC)),
+                    "created_at", Timestamp.valueOf(userData.createdAt().withNano(0)),
+                    "created_at_nano", userData.createdAt().getNano(),
+                    "updated_at", Timestamp.valueOf(userData.updatedAt().withNano(0)),
+                    "updated_at_nano", userData.updatedAt().getNano(),
                     "email", userData.email(),
                     "password", userData.encodedPassword(),
                     "first_name", userData.firstName(),

@@ -1,15 +1,22 @@
 spring:
   application:
-    name: demobooking
+    name: users_microservice
+
   datasource:
     url: jdbc:postgresql://localhost:5432/usersdb
     username: username
     password: password
+
   sql:
     init:
       mode: always
       platform: postgres
       schema-locations: classpath:/schema.sql
+
+  kafka:
+    bootstrap-servers: localhost:9092
+    consumer:
+      group-id: letters-group-id
 app:
   security:
     jwt:

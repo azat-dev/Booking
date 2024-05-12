@@ -1,9 +1,9 @@
 package com.azat4dev.demobooking.users.users_queries.data.dao;
 
+import com.azat4dev.demobooking.users.users_commands.data.jpa.PostgresTest;
 import com.azat4dev.demobooking.users.users_queries.data.dao.records.UserRecord;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.test.autoconfigure.jdbc.JdbcTest;
 import org.springframework.jdbc.core.namedparam.NamedParameterJdbcTemplate;
 import org.springframework.test.context.jdbc.Sql;
 
@@ -11,9 +11,7 @@ import java.util.UUID;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
-
-@JdbcTest
-@Sql({"/db/drop-schema.sql", "/db/schema.sql", "/db/data.sql"})
+@PostgresTest
 public class UsersReadDaoJdbcTests {
 
     @Autowired
@@ -33,6 +31,7 @@ public class UsersReadDaoJdbcTests {
     }
 
     @Test
+    @Sql({"/db/drop-schema.sql", "/db/schema.sql", "/db/data.sql"})
     void test_getById_givenNotExistingUserId_thenReturn() {
 
         // Given
@@ -47,6 +46,7 @@ public class UsersReadDaoJdbcTests {
     }
 
     @Test
+    @Sql({"/db/drop-schema.sql", "/db/schema.sql", "/db/data.sql"})
     void test_getById_givenExistingUserId_thenReturn() {
 
         // Given

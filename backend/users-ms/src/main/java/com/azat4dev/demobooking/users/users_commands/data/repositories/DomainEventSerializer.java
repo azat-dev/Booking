@@ -1,14 +1,11 @@
 package com.azat4dev.demobooking.users.users_commands.data.repositories;
 
-import com.azat4dev.demobooking.common.DomainEvent;
-
-import java.io.Serializable;
+import com.azat4dev.demobooking.common.DomainEventNew;
 
 
 public interface DomainEventSerializer {
 
-    String serialize(DomainEvent<?> event);
+    String serialize(DomainEventNew<?> event);
 
-    <Payload extends Serializable, Event extends DomainEvent<Payload>>
-    DomainEvent<Payload> deserialize(String event, Class<Event> eventClass);
+    DomainEventNew<?> deserialize(String event);
 }

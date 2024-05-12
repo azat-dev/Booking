@@ -1,6 +1,6 @@
 package com.azat4dev.demobooking.users.users_commands.data;
 
-import com.azat4dev.demobooking.common.DomainEvent;
+import com.azat4dev.demobooking.common.DomainEventNew;
 import com.azat4dev.demobooking.common.DomainEventsBus;
 import com.azat4dev.demobooking.users.users_commands.data.repositories.DomainEventSerializer;
 import lombok.RequiredArgsConstructor;
@@ -13,10 +13,10 @@ public final class KafkaDomainEventsBus implements DomainEventsBus {
     private final DomainEventSerializer domainEventSerializer;
 
     @Override
-    public void publish(DomainEvent<?> event) {
+    public void publish(DomainEventNew<?> event) {
+
         kafkaTemplate.send(
-            event.getType(),
-            event.getId().getValue(),
+            event.payload().getClass().getSimpleName(),
             domainEventSerializer.serialize(event)
         );
     }

@@ -1,30 +1,31 @@
 package com.azat4dev.demobooking.users.users_commands.data.repositories;
 
-import com.azat4dev.demobooking.common.DomainEvent;
+import com.azat4dev.demobooking.common.DomainEventNew;
+import com.azat4dev.demobooking.common.DomainEventPayload;
 import com.azat4dev.demobooking.common.EventId;
 import com.azat4dev.demobooking.users.common.domain.values.UserId;
+import com.azat4dev.demobooking.users.users_commands.domain.commands.SendVerificationEmail;
 import com.azat4dev.demobooking.users.users_commands.domain.entities.FirstName;
 import com.azat4dev.demobooking.users.users_commands.domain.entities.FullName;
 import com.azat4dev.demobooking.users.users_commands.domain.entities.LastName;
 import com.azat4dev.demobooking.users.users_commands.domain.events.UserCreated;
-import com.azat4dev.demobooking.users.users_commands.domain.events.UserCreatedPayload;
+import com.azat4dev.demobooking.users.users_commands.domain.services.EmailVerificationStatus;
 import com.azat4dev.demobooking.users.users_commands.domain.values.email.EmailAddress;
 import com.fasterxml.jackson.core.JsonParser;
 import com.fasterxml.jackson.core.JsonToken;
 import com.fasterxml.jackson.databind.DeserializationContext;
+import com.fasterxml.jackson.databind.DeserializationFeature;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.databind.SerializationFeature;
 import com.fasterxml.jackson.databind.deser.std.StdDeserializer;
-import com.fasterxml.jackson.databind.deser.std.StdScalarDeserializer;
-import com.fasterxml.jackson.databind.deser.std.StringDeserializer;
 import com.fasterxml.jackson.databind.module.SimpleModule;
-import com.fasterxml.jackson.databind.ser.std.ToStringSerializerBase;
+import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
 
 import java.io.IOException;
 import java.io.Serializable;
 import java.time.LocalDateTime;
 import java.util.HashMap;
 import java.util.Map;
-import java.util.function.Function;
 
 
 public class DomainEventSerializerImpl implements DomainEventSerializer {
@@ -32,134 +33,75 @@ public class DomainEventSerializerImpl implements DomainEventSerializer {
     private final ObjectMapper objectMapper;
 
     public DomainEventSerializerImpl() {
-        this.objectMapper = new ObjectMapper();
+
+        final var objectMapper = new ObjectMapper();
+
+        objectMapper.registerModule(new JavaTimeModule());
 
         SimpleModule module = new SimpleModule();
 
-        addValue(module, LocalDateTime.class, LocalDateTime::toString, LocalDateTime::parse);
-        addValue(module, FirstName.class, FirstName::getValue, FirstName::dangerMakeFromStringWithoutCheck);
-        addValue(module, LastName.class, LastName::getValue, LastName::dangerMakeFromStringWithoutCheck);
-        addValue(module, EmailAddress.class, EmailAddress::getValue, EmailAddress::dangerMakeWithoutChecks);
-        addValue(module, UserId.class, (v) -> v.value().toString(), UserId::fromString);
-        addValue(module, EventId.class, (v) -> v.getValue(), EventId::dangerouslyCreateFrom);
+        module.addDeserializer(DomainEventDTO.class, new CustomClassDeserializer(DomainEventDTO.class) {
 
-        module.addDeserializer(UserCreated.class, new CustomClassDeserializer(UserCreated.class) {
             @Override
-            Class<?> getClassForProperty(String propertyName) {
-                return switch (propertyName) {
-                    case "id" -> EventId.class;
-                    case "timestampMs" -> Long.class;
-                    case "payload" -> UserCreatedPayload.class;
-                    case "createdAt" -> LocalDateTime.class;
-                    case "type" -> null;
-                    case "version" -> null;
-                    default -> throw new RuntimeException("Unexpected property: " + propertyName);
-                };
+            Class<?> getClassForProperty(String propertyName, Map parsedValues) {
+
+                final var eventType = (String) parsedValues.get("type");
+
+                switch (propertyName) {
+                    case "payload" -> {
+                        return switch (eventType) {
+                            case "UserCreated" -> UserCreatedDTO.class;
+                            case "SendVerificationEmail" -> SendVerificationEmailDTO.class;
+                            default -> throw new RuntimeException("Unexpected domain event type: " + eventType);
+                        };
+                    }
+                    default -> {
+                        try {
+                            return this._valueClass.getDeclaredField(propertyName).getType();
+                        } catch (NoSuchFieldException e) {
+                            throw new RuntimeException(e);
+                        }
+                    }
+                }
             }
 
             @Override
             Object createInstance(Map values) {
-                return new UserCreated(
-                    (EventId) values.get("id"),
-                    (Long) values.get("timestampMs"),
-                    (UserCreatedPayload) values.get("payload")
-                );
-            }
-        });
+                final var eventType = (String) values.get("type");
+                final var payload = (Serializable) values.get("payload");
 
-
-        module.addDeserializer(FullName.class, new CustomClassDeserializer(FullName.class) {
-            @Override
-            Class<?> getClassForProperty(String propertyName) {
-                return switch (propertyName) {
-                    case "firstName" -> FirstName.class;
-                    case "lastName" -> LastName.class;
-                    default -> null;
-                };
-            }
-
-            @Override
-            Object createInstance(Map values) {
-                return new FullName(
-                    (FirstName) values.get("firstName"),
-                    (LastName) values.get("lastName")
+                return new DomainEventDTO(
+                    (String) values.get("id"),
+                    eventType,
+                    (LocalDateTime) values.get("issuedAt"),
+                    payload
                 );
             }
         });
 
         objectMapper.registerModule(module);
-    }
 
-    private static <T> void addValue(SimpleModule module, Class<T> clazz, Function<T, String> valueSupplier, Function<String, T> parseValue) {
-        module.addSerializer(new StringValue<T>(clazz) {
-            @Override
-            public String getValue(T object) {
-                return valueSupplier.apply(object);
-            }
-        });
-
-        module.addDeserializer(clazz, new StringValueDeserializer<T>(clazz) {
-            @Override
-            T getValue(String value) {
-                return parseValue.apply(value);
-            }
-        });
+        this.objectMapper = objectMapper.configure(SerializationFeature.WRITE_DATE_TIMESTAMPS_AS_NANOSECONDS, true)
+            .configure(DeserializationFeature.READ_DATE_TIMESTAMPS_AS_NANOSECONDS, true);
     }
 
     @Override
-    public String serialize(DomainEvent<?> event) {
+    public String serialize(DomainEventNew<?> event) {
         try {
-            return this.objectMapper.writeValueAsString(event);
-        } catch (Exception e) {
+            return objectMapper.writeValueAsString(DomainEventDTO.makeFrom(event));
+        } catch (IOException e) {
             throw new RuntimeException(e);
         }
     }
 
     @Override
-    public <Payload extends Serializable, Event extends DomainEvent<Payload>> DomainEvent<Payload> deserialize(String event, Class<Event> eventClass) {
+    public DomainEventNew<?> deserialize(String event) {
         try {
-            return this.objectMapper.readValue(event, eventClass);
+            final var dto = this.objectMapper.readValue(event, DomainEventDTO.class);
+            return dto.toDomain();
         } catch (Exception e) {
             throw new RuntimeException(e);
         }
-    }
-
-    private static class StringValue<T> extends ToStringSerializerBase {
-
-        public StringValue(Class<T> type) {
-            super(type);
-        }
-
-        @Override
-        public String valueToString(Object value) {
-            return getValue((T) value);
-        }
-
-        public String getValue(T object) {
-            return object.toString();
-        }
-    }
-
-    private abstract static class StringValueDeserializer<T> extends StdScalarDeserializer<T> {
-
-        private final StringDeserializer stringDeserializer = new StringDeserializer();
-
-        public StringValueDeserializer(Class<T> claszz) {
-            super(claszz);
-        }
-
-        @Override
-        public T deserialize(JsonParser p, DeserializationContext ctxt) throws IOException {
-            final var stringValue = stringDeserializer.deserialize(p, ctxt);
-
-            if (stringValue == null) {
-                return null;
-            }
-
-            return getValue(stringValue);
-        }
-
-        abstract T getValue(String value);
     }
 
     private static abstract class CustomClassDeserializer<T> extends StdDeserializer<T> {
@@ -186,8 +128,9 @@ public class DomainEventSerializerImpl implements DomainEventSerializer {
                     case VALUE_NUMBER_INT:
                     case VALUE_STRING:
                     case START_OBJECT:
+                    case START_ARRAY:
                         final var propertyName = p.getCurrentName();
-                        final var classForProperty = getClassForProperty(propertyName);
+                        final var classForProperty = getClassForProperty(propertyName, values);
                         if (classForProperty == null) {
                             break;
                         }
@@ -203,8 +146,120 @@ public class DomainEventSerializerImpl implements DomainEventSerializer {
             return createInstance(values);
         }
 
-        abstract Class<?> getClassForProperty(String propertyName);
+        abstract Class<?> getClassForProperty(String propertyName, Map<String, Object> parsedValues);
 
         abstract T createInstance(Map<String, Object> values);
+    }
+}
+
+
+record FullNameDTO(
+    String firstName,
+    String lastName
+) implements Serializable {
+
+    public FullNameDTO(FullName fullName) {
+        this(fullName.getFirstName().getValue(), fullName.getLastName().getValue());
+    }
+
+    public FullName toDomain() {
+        return new FullName(
+            FirstName.dangerMakeFromStringWithoutCheck(firstName),
+            LastName.checkAndMakeFromString(lastName)
+        );
+    }
+}
+
+record UserCreatedDTO(
+    LocalDateTime createdAt,
+    String userId,
+    FullNameDTO fullName,
+    String email,
+    String emailVerificationStatus
+) implements Serializable {
+
+    public UserCreated toDomain() {
+        return new UserCreated(
+            createdAt,
+            UserId.fromString(userId),
+            fullName.toDomain(),
+            EmailAddress.dangerMakeWithoutChecks(email),
+            EmailVerificationStatus.valueOf(emailVerificationStatus)
+        );
+    }
+}
+
+record SendVerificationEmailDTO(
+    String userId,
+    String email,
+    FullNameDTO fullName
+) implements Serializable {
+
+    public SendVerificationEmail toDomain() {
+        return new SendVerificationEmail(
+            UserId.fromString(userId),
+            EmailAddress.dangerMakeWithoutChecks(email),
+            fullName.toDomain()
+        );
+    }
+}
+
+record DomainEventDTO(
+    String id,
+    String type,
+    LocalDateTime issuedAt,
+    Serializable payload
+) implements Serializable {
+
+    private static Serializable serialize(DomainEventPayload payload) {
+
+        switch (payload) {
+            case UserCreated userCreatedPayload -> {
+                return new UserCreatedDTO(
+                    userCreatedPayload.createdAt(),
+                    userCreatedPayload.userId().value().toString(),
+                    new FullNameDTO(userCreatedPayload.fullName()),
+                    userCreatedPayload.email().getValue(),
+                    userCreatedPayload.emailVerificationStatus().name()
+                );
+            }
+
+            case SendVerificationEmail sendVerificationEmail -> {
+                return new SendVerificationEmailDTO(
+                    sendVerificationEmail.userId().value().toString(),
+                    sendVerificationEmail.email().getValue(),
+                    new FullNameDTO(sendVerificationEmail.fullName())
+                );
+            }
+
+            default ->
+                throw new RuntimeException("Unexpected domain event payload type: " + payload.getClass().getName());
+        }
+    }
+
+
+    public static DomainEventDTO makeFrom(DomainEventNew event) {
+        return new DomainEventDTO(
+            event.id().getValue(),
+            event.payload().getClass().getSimpleName(),
+            event.issuedAt(),
+            serialize(event.payload())
+        );
+    }
+
+    private DomainEventPayload payloadToDomain() {
+        return switch (type) {
+            case "UserCreated" -> ((UserCreatedDTO) payload).toDomain();
+            case "SendVerificationEmail" -> ((SendVerificationEmailDTO) payload).toDomain();
+            default -> throw new RuntimeException("Unexpected domain event type: " + type);
+        };
+    }
+
+    public DomainEventNew<?> toDomain() {
+        return new DomainEventNew<>(
+            EventId.dangerouslyCreateFrom(id),
+            issuedAt,
+            payloadToDomain()
+        );
     }
 }

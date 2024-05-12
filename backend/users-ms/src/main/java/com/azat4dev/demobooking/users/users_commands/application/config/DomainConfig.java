@@ -1,14 +1,13 @@
 package com.azat4dev.demobooking.users.users_commands.application.config;
 
-import com.azat4dev.demobooking.common.DomainEvent;
-import com.azat4dev.demobooking.common.DomainEventsBus;
-import com.azat4dev.demobooking.common.EventIdGenerator;
-import com.azat4dev.demobooking.common.RandomEventIdGenerator;
+import com.azat4dev.demobooking.common.*;
 import com.azat4dev.demobooking.common.utils.TimeProvider;
+import com.azat4dev.demobooking.users.users_commands.data.KafkaDomainEventsBus;
+import com.azat4dev.demobooking.users.users_commands.data.repositories.DomainEventSerializer;
+import com.azat4dev.demobooking.users.users_commands.domain.events.UserCreated;
 import com.azat4dev.demobooking.users.users_commands.domain.handlers.OutboxEventsPublisher;
 import com.azat4dev.demobooking.users.users_commands.domain.handlers.OutboxEventsPublisherImpl;
 import com.azat4dev.demobooking.users.users_commands.domain.interfaces.repositories.OutboxEventsRepository;
-import com.azat4dev.demobooking.users.users_commands.domain.interfaces.repositories.UnitOfWork;
 import com.azat4dev.demobooking.users.users_commands.domain.interfaces.repositories.UnitOfWorkFactory;
 import com.azat4dev.demobooking.users.users_commands.domain.services.UsersService;
 import com.azat4dev.demobooking.users.users_commands.domain.services.UsersServiceImpl;
@@ -18,6 +17,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.kafka.core.KafkaTemplate;
 
 
 @Configuration
@@ -36,32 +36,41 @@ public class DomainConfig {
     }
 
     @Bean
+    DomainEventsFactory domainEventsFactory(
+        EventIdGenerator eventIdGenerator,
+        TimeProvider timeProvider
+    ) {
+        return new DomainEventsFactoryImpl(eventIdGenerator, timeProvider);
+    }
+
+    @Bean
     public UsersService usersService(
         TimeProvider timeProvider,
         UnitOfWorkFactory unitOfWorkFactory,
-        EventIdGenerator eventIdGenerator,
-        OutboxEventsPublisher outboxEventsPublisher
+        OutboxEventsPublisher outboxEventsPublisher,
+        DomainEventsFactory domainEventsFactory
     ) {
         return new UsersServiceImpl(
             timeProvider,
-            eventIdGenerator,
             outboxEventsPublisher::publishEvents,
-            unitOfWorkFactory
+            unitOfWorkFactory,
+            domainEventsFactory
         );
     }
 
     @Bean
-    DomainEventsBus domainEventsBus() {
-        return new DomainEventsBus() {
-            @Override
-            public void publish(DomainEvent<?> event) {
-                LOGGER.info("Publishing event: {}", event);
-            }
-        };
+    public DomainEventsBus domainEventsBus(
+        KafkaTemplate<String, String> kafkaTemplate,
+        DomainEventSerializer domainEventSerializer
+    ) {
+        return new KafkaDomainEventsBus(
+            kafkaTemplate,
+            domainEventSerializer
+        );
     }
 
     @Bean
-    OutboxEventsPublisher outboxEventsPublisher(
+    public OutboxEventsPublisher outboxEventsPublisher(
         OutboxEventsRepository outboxEventsRepository,
         DomainEventsBus domainEventsBus
     ) {

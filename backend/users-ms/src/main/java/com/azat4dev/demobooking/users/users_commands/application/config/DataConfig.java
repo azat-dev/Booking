@@ -71,12 +71,10 @@ public class DataConfig {
 
     @Bean
     OutboxEventsRepository outboxEventsRepository(
-        TimeProvider timeProvider,
         DomainEventSerializer domainEventSerializer,
         OutboxEventsDao outboxEventsDao
     ) {
         return new OutboxEventsRepositoryImpl(
-            timeProvider,
             domainEventSerializer,
             outboxEventsDao
         );

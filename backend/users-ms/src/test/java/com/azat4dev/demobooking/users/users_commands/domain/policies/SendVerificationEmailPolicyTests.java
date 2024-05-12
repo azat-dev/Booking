@@ -1,27 +1,18 @@
 package com.azat4dev.demobooking.users.users_commands.domain.policies;
 
-import com.azat4dev.demobooking.common.CommandId;
-import com.azat4dev.demobooking.common.EventId;
-import com.azat4dev.demobooking.common.RandomEventIdGenerator;
-import com.azat4dev.demobooking.users.common.domain.values.UserId;
+import com.azat4dev.demobooking.common.*;
+import com.azat4dev.demobooking.common.utils.SystemTimeProvider;
 import com.azat4dev.demobooking.users.users_commands.domain.UserHelpers;
+import com.azat4dev.demobooking.users.users_commands.domain.commands.SendVerificationEmail;
 import com.azat4dev.demobooking.users.users_commands.domain.events.UserCreated;
-import com.azat4dev.demobooking.users.users_commands.domain.events.UserCreatedPayload;
-import com.azat4dev.demobooking.users.users_commands.domain.interfaces.services.EmailService;
 import com.azat4dev.demobooking.users.users_commands.domain.services.EmailVerificationStatus;
-import com.azat4dev.demobooking.users.users_commands.domain.services.VerificationEmailBuilder;
-import com.azat4dev.demobooking.users.users_commands.domain.services.VerificationEmailBuilderResult;
-import com.azat4dev.demobooking.users.users_commands.domain.values.email.EmailAddress;
-import com.azat4dev.demobooking.users.users_commands.domain.values.email.EmailBody;
 import org.junit.jupiter.api.Test;
 
-import java.time.Clock;
 import java.time.LocalDateTime;
-import java.util.UUID;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.ArgumentMatchers.assertArg;
-import static org.mockito.BDDMockito.*;
+import static org.mockito.BDDMockito.then;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.times;
 
@@ -29,25 +20,18 @@ import static org.mockito.Mockito.times;
 public class SendVerificationEmailPolicyTests {
 
     SUT createSUT() {
-        final var emailBuilder = mock(VerificationEmailBuilder.class);
-        final var emailService = mock(EmailService.class);
+        final var bus = mock(DomainEventsBus.class);
 
         return new SUT(
             new SendVerificationEmailPolicyImpl(
-                emailService,
-                emailBuilder
+                bus,
+                new DomainEventsFactoryImpl(
+                    new RandomEventIdGenerator(),
+                    new SystemTimeProvider()
+                )
             ),
-            emailService,
-            emailBuilder
+            bus
         );
-    }
-
-    EmailAddress anyValidEmail() {
-        try {
-            return EmailAddress.checkAndMakeFromString("user@email.com");
-        } catch (Exception e) {
-            throw new RuntimeException(e);
-        }
     }
 
     EventId anyEventId() {
@@ -55,60 +39,45 @@ public class SendVerificationEmailPolicyTests {
     }
 
     @Test
-    void given_valid_user__when_SendVerificationEmailPolicyImpl_triggered__thenBuildEmailAndSend() {
+    void given_valid_user__when_SendVerificationEmailPolicyImpl_triggered__thenEmitSendVerificationEmailCommand() {
 
         // Given
         final var sut = createSUT();
-        final var email = anyValidEmail();
+        final var email = UserHelpers.anyValidEmail();
         final var userId = UserHelpers.anyValidUserId();
+        final var fullName = UserHelpers.anyFullName();
 
-        final var event = new UserCreated(
+        final var inputEvent = new DomainEventNew<>(
             anyEventId(),
-            Clock.systemUTC().millis(),
-            new UserCreatedPayload(
+            LocalDateTime.now(),
+            new UserCreated(
                 LocalDateTime.now(),
                 userId,
-                UserHelpers.anyFullName(),
+                fullName,
                 email,
                 EmailVerificationStatus.NOT_VERIFIED
             )
         );
 
-        final var builtEmail = new VerificationEmailBuilderResult(
-            "subject",
-            new EmailBody("body")
+        final var expectedOutput = new SendVerificationEmail(
+            userId,
+            email,
+            fullName
         );
-
-        given(sut.emailBuilder.build(any()))
-            .willReturn(builtEmail);
-
-        willDoNothing()
-            .given(sut.emailService).send(any(), any());
-
-
         // When
-        sut.policy.execute(event);
+        sut.policy.execute(inputEvent);
 
         // Then
-        then(sut.emailBuilder)
+        then(sut.bus)
             .should(times(1))
-            .build(userId);
-
-        then(sut.emailService)
-            .should(times(1))
-            .send(
-                eq(email),
-                assertArg(m -> {
-                    assertThat(m.subject()).isEqualTo(builtEmail.subject());
-                    assertThat(m.body()).isEqualTo(builtEmail.body());
-                })
-            );
+            .publish(assertArg(m -> {
+                assertThat(m.payload()).isEqualTo(expectedOutput);
+            }));
     }
 
     record SUT(
         SendVerificationEmailPolicy policy,
-        EmailService emailService,
-        VerificationEmailBuilder emailBuilder
+        DomainEventsBus bus
     ) {
     }
 }
