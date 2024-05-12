@@ -7,7 +7,6 @@ public interface UsersService {
 
     void handle(CreateUser command) throws UserWithSameEmailAlreadyExistsException;
 
-
     class UserWithSameEmailAlreadyExistsException extends DomainException {
         public UserWithSameEmailAlreadyExistsException() {
             super("User with same email already exists");

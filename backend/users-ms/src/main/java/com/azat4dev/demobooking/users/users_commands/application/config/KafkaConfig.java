@@ -8,12 +8,13 @@ import org.apache.kafka.common.serialization.StringSerializer;
 import org.springframework.boot.autoconfigure.kafka.KafkaProperties;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
-import org.springframework.kafka.core.DefaultKafkaProducerFactory;
-import org.springframework.kafka.core.KafkaTemplate;
-import org.springframework.kafka.core.ProducerFactory;
+import org.springframework.kafka.core.*;
+import org.springframework.kafka.listener.ConcurrentMessageListenerContainer;
+import org.springframework.kafka.listener.ContainerProperties;
 
 import java.util.HashMap;
 import java.util.Map;
+import java.util.function.Function;
 
 @Configuration
 @RequiredArgsConstructor
@@ -21,9 +22,16 @@ public class KafkaConfig {
 
     private final KafkaProperties kafkaProperties;
 
-    @Bean // configs for the LetterSender
     public Map<String, Object> producerConfigs() {
+
         Map<String, Object> props = new HashMap<>(kafkaProperties.buildProducerProperties());
+        props.put(ProducerConfig.KEY_SERIALIZER_CLASS_CONFIG, StringSerializer.class);
+        props.put(ProducerConfig.VALUE_SERIALIZER_CLASS_CONFIG, StringSerializer.class);
+        return props;
+    }
+
+    public Map<String, Object> consumerConfigs() {
+        Map<String, Object> props = new HashMap<>(kafkaProperties.buildConsumerProperties());
         props.put(ProducerConfig.KEY_SERIALIZER_CLASS_CONFIG, StringSerializer.class);
         props.put(ProducerConfig.VALUE_SERIALIZER_CLASS_CONFIG, StringSerializer.class);
         return props;
@@ -42,5 +50,18 @@ public class KafkaConfig {
     @Bean
     NewTopic sendingTopic() {
         return new NewTopic(UserCreated.class.getSimpleName(), 1, (short) 1);
+    }
+
+    @Bean
+    public ConsumerFactory<String, String> consumerFactory() {
+        return new DefaultKafkaConsumerFactory<>(consumerConfigs());
+    }
+
+    @Bean
+    public Function<String, ConcurrentMessageListenerContainer<String, String>> containerFactory() {
+        return (String topic) -> new ConcurrentMessageListenerContainer<>(
+            consumerFactory(),
+            new ContainerProperties(topic)
+        );
     }
 }

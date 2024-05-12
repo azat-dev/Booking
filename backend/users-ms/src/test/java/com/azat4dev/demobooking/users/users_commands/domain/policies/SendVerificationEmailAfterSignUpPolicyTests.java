@@ -17,13 +17,13 @@ import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.times;
 
 
-public class SendVerificationEmailPolicyTests {
+public class SendVerificationEmailAfterSignUpPolicyTests {
 
     SUT createSUT() {
         final var bus = mock(DomainEventsBus.class);
 
         return new SUT(
-            new SendVerificationEmailPolicyImpl(
+            new SendVerificationEmailAfterSignUpPolicy(
                 bus,
                 new DomainEventsFactoryImpl(
                     new RandomEventIdGenerator(),
@@ -76,7 +76,7 @@ public class SendVerificationEmailPolicyTests {
     }
 
     record SUT(
-        SendVerificationEmailPolicy policy,
+        SendVerificationEmailAfterSignUpPolicy policy,
         DomainEventsBus bus
     ) {
     }

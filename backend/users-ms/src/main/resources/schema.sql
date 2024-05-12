@@ -1,4 +1,4 @@
-CREATE TABLE outbox_events
+CREATE TABLE IF NOT EXISTS outbox_events
 (
     event_order    BIGSERIAL    NOT NULL,
     event_id       VARCHAR(255) NOT NULL,
@@ -10,7 +10,7 @@ CREATE TABLE outbox_events
     PRIMARY KEY (event_id)
 );
 
-CREATE TABLE users
+CREATE TABLE IF NOT EXISTS users
 (
     id                        UUID PRIMARY KEY,
     created_at                TIMESTAMP    NOT NULL,

@@ -3,13 +3,14 @@ package com.azat4dev.demobooking.users.users_commands.domain.policies;
 import com.azat4dev.demobooking.common.DomainEventNew;
 import com.azat4dev.demobooking.common.DomainEventsBus;
 import com.azat4dev.demobooking.common.DomainEventsFactory;
+import com.azat4dev.demobooking.common.Policy;
 import com.azat4dev.demobooking.users.users_commands.domain.core.commands.SendVerificationEmail;
 import com.azat4dev.demobooking.users.users_commands.domain.core.events.UserCreated;
 import com.azat4dev.demobooking.users.users_commands.domain.core.values.EmailVerificationStatus;
 import lombok.RequiredArgsConstructor;
 
 @RequiredArgsConstructor
-public class SendVerificationEmailPolicyImpl implements SendVerificationEmailPolicy {
+public class SendVerificationEmailAfterSignUpPolicy implements Policy<DomainEventNew<UserCreated>> {
 
     private final DomainEventsBus bus;
     private final DomainEventsFactory domainEventsFactory;
