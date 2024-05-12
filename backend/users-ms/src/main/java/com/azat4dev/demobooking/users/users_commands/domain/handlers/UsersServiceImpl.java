@@ -1,9 +1,10 @@
-package com.azat4dev.demobooking.users.users_commands.domain.services;
+package com.azat4dev.demobooking.users.users_commands.domain.handlers;
 
 import com.azat4dev.demobooking.common.DomainEventsFactory;
 import com.azat4dev.demobooking.common.utils.TimeProvider;
-import com.azat4dev.demobooking.users.users_commands.domain.commands.CreateUser;
-import com.azat4dev.demobooking.users.users_commands.domain.events.UserCreated;
+import com.azat4dev.demobooking.users.users_commands.domain.core.commands.CreateUser;
+import com.azat4dev.demobooking.users.users_commands.domain.core.events.UserCreated;
+import com.azat4dev.demobooking.users.users_commands.domain.core.values.EmailVerificationStatus;
 import com.azat4dev.demobooking.users.users_commands.domain.interfaces.repositories.NewUserData;
 import com.azat4dev.demobooking.users.users_commands.domain.interfaces.repositories.UnitOfWorkFactory;
 import com.azat4dev.demobooking.users.users_commands.domain.interfaces.repositories.UsersRepository;

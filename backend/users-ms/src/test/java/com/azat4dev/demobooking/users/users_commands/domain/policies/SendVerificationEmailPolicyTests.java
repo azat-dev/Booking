@@ -3,9 +3,9 @@ package com.azat4dev.demobooking.users.users_commands.domain.policies;
 import com.azat4dev.demobooking.common.*;
 import com.azat4dev.demobooking.common.utils.SystemTimeProvider;
 import com.azat4dev.demobooking.users.users_commands.domain.UserHelpers;
-import com.azat4dev.demobooking.users.users_commands.domain.commands.SendVerificationEmail;
-import com.azat4dev.demobooking.users.users_commands.domain.events.UserCreated;
-import com.azat4dev.demobooking.users.users_commands.domain.services.EmailVerificationStatus;
+import com.azat4dev.demobooking.users.users_commands.domain.core.commands.SendVerificationEmail;
+import com.azat4dev.demobooking.users.users_commands.domain.core.events.UserCreated;
+import com.azat4dev.demobooking.users.users_commands.domain.core.values.EmailVerificationStatus;
 import org.junit.jupiter.api.Test;
 
 import java.time.LocalDateTime;

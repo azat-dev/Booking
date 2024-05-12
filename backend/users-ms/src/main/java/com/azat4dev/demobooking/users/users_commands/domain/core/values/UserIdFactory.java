@@ -1,4 +1,4 @@
-package com.azat4dev.demobooking.users.users_commands.domain.values;
+package com.azat4dev.demobooking.users.users_commands.domain.core.values;
 
 import com.azat4dev.demobooking.users.common.domain.values.UserId;
 

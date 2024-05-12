@@ -1,10 +1,10 @@
-package com.azat4dev.demobooking.users.users_commands.domain.events;
+package com.azat4dev.demobooking.users.users_commands.domain.core.events;
 
 import com.azat4dev.demobooking.common.DomainEventPayload;
 import com.azat4dev.demobooking.users.common.domain.values.UserId;
-import com.azat4dev.demobooking.users.users_commands.domain.entities.FullName;
-import com.azat4dev.demobooking.users.users_commands.domain.services.EmailVerificationStatus;
-import com.azat4dev.demobooking.users.users_commands.domain.values.email.EmailAddress;
+import com.azat4dev.demobooking.users.users_commands.domain.core.values.FullName;
+import com.azat4dev.demobooking.users.users_commands.domain.core.values.EmailVerificationStatus;
+import com.azat4dev.demobooking.users.users_commands.domain.core.values.email.EmailAddress;
 
 import java.time.LocalDateTime;
 

@@ -1,7 +1,7 @@
 package com.azat4dev.demobooking.users.users_commands.presentation.api.rest.authentication.entities;
 
-import com.azat4dev.demobooking.users.users_commands.domain.values.email.EmailAddress;
-import com.azat4dev.demobooking.users.users_commands.domain.values.Password;
+import com.azat4dev.demobooking.users.users_commands.domain.core.values.email.EmailAddress;
+import com.azat4dev.demobooking.users.users_commands.domain.core.values.Password;
 import com.azat4dev.demobooking.common.presentation.ValidationException;
 
 public record LoginByEmailRequest(String email, String password) {

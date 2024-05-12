@@ -1,9 +1,9 @@
 package com.azat4dev.demobooking.users.users_queries.domain.interfaces.repositories;
 
 import com.azat4dev.demobooking.users.common.domain.values.UserId;
-import com.azat4dev.demobooking.users.users_commands.domain.entities.FirstName;
-import com.azat4dev.demobooking.users.users_commands.domain.entities.FullName;
-import com.azat4dev.demobooking.users.users_commands.domain.entities.LastName;
+import com.azat4dev.demobooking.users.users_commands.domain.core.values.FirstName;
+import com.azat4dev.demobooking.users.users_commands.domain.core.values.FullName;
+import com.azat4dev.demobooking.users.users_commands.domain.core.values.LastName;
 import com.azat4dev.demobooking.users.users_queries.data.dao.records.UserRecord;
 import com.azat4dev.demobooking.users.users_queries.domain.entities.PersonalUserInfo;
 

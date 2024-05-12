@@ -1,8 +1,9 @@
-package com.azat4dev.demobooking.users.users_commands.domain.entities;
+package com.azat4dev.demobooking.users.users_commands.domain.core.entities;
 
+import com.azat4dev.demobooking.users.users_commands.domain.core.values.FullName;
 import com.azat4dev.demobooking.users.users_commands.domain.interfaces.services.EncodedPassword;
-import com.azat4dev.demobooking.users.users_commands.domain.services.EmailVerificationStatus;
-import com.azat4dev.demobooking.users.users_commands.domain.values.email.EmailAddress;
+import com.azat4dev.demobooking.users.users_commands.domain.core.values.EmailVerificationStatus;
+import com.azat4dev.demobooking.users.users_commands.domain.core.values.email.EmailAddress;
 import com.azat4dev.demobooking.users.common.domain.values.UserId;
 
 import java.time.LocalDateTime;

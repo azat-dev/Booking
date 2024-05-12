@@ -3,7 +3,7 @@ package com.azat4dev.demobooking.users.users_commands.application.config;
 import com.azat4dev.demobooking.users.users_commands.data.services.PasswordServiceImpl;
 import com.azat4dev.demobooking.users.users_commands.domain.interfaces.services.EncodedPassword;
 import com.azat4dev.demobooking.users.users_commands.domain.interfaces.services.PasswordService;
-import com.azat4dev.demobooking.users.users_commands.domain.values.Password;
+import com.azat4dev.demobooking.users.users_commands.domain.core.values.Password;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.http.HttpMethod;

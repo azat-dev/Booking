@@ -1,6 +1,6 @@
 package com.azat4dev.demobooking.users.users_commands.domain.values;
 
-import com.azat4dev.demobooking.users.users_commands.domain.values.email.EmailAddress;
+import com.azat4dev.demobooking.users.users_commands.domain.core.values.email.EmailAddress;
 import org.junit.jupiter.api.Test;
 
 import static org.assertj.core.api.Assertions.assertThat;

@@ -1,6 +1,6 @@
 package com.azat4dev.demobooking.users.users_commands.application.config;
 
-import com.azat4dev.demobooking.users.users_commands.domain.events.UserCreated;
+import com.azat4dev.demobooking.users.users_commands.domain.core.events.UserCreated;
 import lombok.RequiredArgsConstructor;
 import org.apache.kafka.clients.admin.NewTopic;
 import org.apache.kafka.clients.producer.ProducerConfig;

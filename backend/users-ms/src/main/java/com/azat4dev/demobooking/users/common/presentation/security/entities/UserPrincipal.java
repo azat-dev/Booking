@@ -1,6 +1,6 @@
 package com.azat4dev.demobooking.users.common.presentation.security.entities;
 
-import com.azat4dev.demobooking.users.users_commands.domain.entities.User;
+import com.azat4dev.demobooking.users.users_commands.domain.core.entities.User;
 import com.azat4dev.demobooking.users.users_commands.domain.interfaces.services.EncodedPassword;
 import com.azat4dev.demobooking.users.common.domain.values.UserId;
 import org.springframework.security.core.GrantedAuthority;

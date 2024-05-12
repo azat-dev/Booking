@@ -6,8 +6,8 @@ import com.azat4dev.demobooking.common.EventId;
 import com.azat4dev.demobooking.common.RandomEventIdGenerator;
 import com.azat4dev.demobooking.users.users_commands.data.repositories.DomainEventSerializer;
 import com.azat4dev.demobooking.users.users_commands.data.repositories.DomainEventSerializerImpl;
-import com.azat4dev.demobooking.users.users_commands.domain.events.UserCreated;
-import com.azat4dev.demobooking.users.users_commands.domain.services.EmailVerificationStatus;
+import com.azat4dev.demobooking.users.users_commands.domain.core.events.UserCreated;
+import com.azat4dev.demobooking.users.users_commands.domain.core.values.EmailVerificationStatus;
 import org.junit.jupiter.api.Test;
 
 import java.time.LocalDateTime;

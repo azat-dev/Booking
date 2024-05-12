@@ -1,4 +1,4 @@
-package com.azat4dev.demobooking.users.users_commands.domain.handlers;
+package com.azat4dev.demobooking.users.users_commands.domain.producers;
 
 import com.azat4dev.demobooking.common.DomainEventNew;
 import com.azat4dev.demobooking.common.DomainEventsBus;

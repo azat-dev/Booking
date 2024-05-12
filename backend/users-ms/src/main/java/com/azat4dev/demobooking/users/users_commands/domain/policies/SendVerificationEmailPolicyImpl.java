@@ -3,9 +3,9 @@ package com.azat4dev.demobooking.users.users_commands.domain.policies;
 import com.azat4dev.demobooking.common.DomainEventNew;
 import com.azat4dev.demobooking.common.DomainEventsBus;
 import com.azat4dev.demobooking.common.DomainEventsFactory;
-import com.azat4dev.demobooking.users.users_commands.domain.commands.SendVerificationEmail;
-import com.azat4dev.demobooking.users.users_commands.domain.events.UserCreated;
-import com.azat4dev.demobooking.users.users_commands.domain.services.EmailVerificationStatus;
+import com.azat4dev.demobooking.users.users_commands.domain.core.commands.SendVerificationEmail;
+import com.azat4dev.demobooking.users.users_commands.domain.core.events.UserCreated;
+import com.azat4dev.demobooking.users.users_commands.domain.core.values.EmailVerificationStatus;
 import lombok.RequiredArgsConstructor;
 
 @RequiredArgsConstructor

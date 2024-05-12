@@ -1,4 +1,4 @@
-package com.azat4dev.demobooking.users.users_commands.domain.values.email;
+package com.azat4dev.demobooking.users.users_commands.domain.core.values.email;
 
 import com.azat4dev.demobooking.common.DomainException;
 import com.azat4dev.demobooking.common.utils.Assert;

@@ -1,7 +1,7 @@
 package com.azat4dev.demobooking.users.users_commands.data.repositories.dao;
 
 import com.azat4dev.demobooking.users.users_commands.data.entities.UserData;
-import com.azat4dev.demobooking.users.users_commands.domain.services.EmailVerificationStatus;
+import com.azat4dev.demobooking.users.users_commands.domain.core.values.EmailVerificationStatus;
 import lombok.RequiredArgsConstructor;
 import org.springframework.dao.DuplicateKeyException;
 import org.springframework.dao.EmptyResultDataAccessException;

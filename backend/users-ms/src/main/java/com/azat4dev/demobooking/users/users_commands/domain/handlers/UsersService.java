@@ -1,7 +1,7 @@
-package com.azat4dev.demobooking.users.users_commands.domain.services;
+package com.azat4dev.demobooking.users.users_commands.domain.handlers;
 
 import com.azat4dev.demobooking.common.DomainException;
-import com.azat4dev.demobooking.users.users_commands.domain.commands.CreateUser;
+import com.azat4dev.demobooking.users.users_commands.domain.core.commands.CreateUser;
 
 public interface UsersService {
 

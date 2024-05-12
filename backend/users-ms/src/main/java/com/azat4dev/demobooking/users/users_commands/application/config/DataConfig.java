@@ -12,7 +12,7 @@ import com.azat4dev.demobooking.users.users_commands.domain.interfaces.repositor
 import com.azat4dev.demobooking.users.users_commands.domain.interfaces.repositories.UsersRepository;
 import com.azat4dev.demobooking.users.users_commands.domain.interfaces.services.EmailService;
 import com.azat4dev.demobooking.users.users_commands.domain.services.EmailData;
-import com.azat4dev.demobooking.users.users_commands.domain.values.email.EmailAddress;
+import com.azat4dev.demobooking.users.users_commands.domain.core.values.email.EmailAddress;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.jdbc.core.namedparam.NamedParameterJdbcTemplate;

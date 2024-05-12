@@ -5,7 +5,7 @@ import com.azat4dev.demobooking.users.users_commands.application.config.DaoConfi
 import com.azat4dev.demobooking.users.users_commands.data.entities.UserData;
 import com.azat4dev.demobooking.users.users_commands.data.repositories.dao.UsersDao;
 import com.azat4dev.demobooking.users.users_commands.domain.UserHelpers;
-import com.azat4dev.demobooking.users.users_commands.domain.services.EmailVerificationStatus;
+import com.azat4dev.demobooking.users.users_commands.domain.core.values.EmailVerificationStatus;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Import;

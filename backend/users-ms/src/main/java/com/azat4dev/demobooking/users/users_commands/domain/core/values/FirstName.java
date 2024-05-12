@@ -1,13 +1,11 @@
-package com.azat4dev.demobooking.users.users_commands.domain.entities;
+package com.azat4dev.demobooking.users.users_commands.domain.core.values;
 
 import com.azat4dev.demobooking.common.DomainException;
 import com.azat4dev.demobooking.common.utils.Assert;
 import lombok.EqualsAndHashCode;
 import lombok.Getter;
-import lombok.ToString;
 
 import java.io.Serializable;
-import java.util.Objects;
 
 @Getter
 @EqualsAndHashCode
