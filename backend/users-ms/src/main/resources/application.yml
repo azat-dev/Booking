@@ -26,3 +26,15 @@ app:
         expirationInMs: 100000
       refreshToken:
         expirationInMs: 100000
+
+  mail:
+    username: username
+    password: password
+    host: 0.0.0.0
+    port: 1025
+    protocol: smtp
+
+  verification_email:
+    outgoing:
+      fromName: username
+      fromAddress: noreply@mail.com

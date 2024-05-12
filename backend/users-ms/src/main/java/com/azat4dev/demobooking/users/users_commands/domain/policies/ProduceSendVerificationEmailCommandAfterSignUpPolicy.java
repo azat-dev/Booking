@@ -10,7 +10,7 @@ import com.azat4dev.demobooking.users.users_commands.domain.core.values.EmailVer
 import lombok.RequiredArgsConstructor;
 
 @RequiredArgsConstructor
-public class SendVerificationEmailAfterSignUpPolicy implements Policy<DomainEventNew<UserCreated>> {
+public final class ProduceSendVerificationEmailCommandAfterSignUpPolicy implements Policy<DomainEventNew<UserCreated>> {
 
     private final DomainEventsBus bus;
     private final DomainEventsFactory domainEventsFactory;
