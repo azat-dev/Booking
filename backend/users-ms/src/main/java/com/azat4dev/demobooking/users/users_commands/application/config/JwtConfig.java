@@ -2,6 +2,7 @@ package com.azat4dev.demobooking.users.users_commands.application.config;
 
 
 import com.azat4dev.demobooking.common.utils.TimeProvider;
+import com.azat4dev.demobooking.users.common.presentation.security.services.jwt.EncodeJwt;
 import com.azat4dev.demobooking.users.common.presentation.security.services.jwt.JwtService;
 import com.azat4dev.demobooking.users.common.presentation.security.services.jwt.JwtServiceImpl;
 import com.nimbusds.jose.jwk.JWKSet;
@@ -35,20 +36,28 @@ public class JwtConfig {
     }
 
     @Bean
+    EncodeJwt encodeJwt(JwtEncoder jwtEncoder) {
+        return new EncodeJwt() {
+            @Override
+            public String execute(JwtClaimsSet claims) {
+                return jwtEncoder.encode(JwtEncoderParameters.from(claims)).getTokenValue();
+            }
+        };
+    }
+
+    @Bean
     public JwtService jwtService(
         TimeProvider timeProvider,
         @Value("${app.security.jwt.accessToken.expirationInMs}") long jwtAccessTokenExpirationInMs,
         @Value("${app.security.jwt.refreshToken.expirationInMs}") long jwtRefreshTokenExpirationInMs,
-        JwtEncoder jwtEncoder,
+        EncodeJwt encodeJwt,
         JwtDecoder jwtDecoder
     ) {
         return new JwtServiceImpl(
             jwtAccessTokenExpirationInMs,
             jwtRefreshTokenExpirationInMs,
             timeProvider,
-            claims -> {
-                return jwtEncoder.encode(JwtEncoderParameters.from(claims)).getTokenValue();
-            },
+            encodeJwt,
             jwtDecoder
         );
     }

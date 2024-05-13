@@ -3,9 +3,13 @@ package com.azat4dev.demobooking.users.users_commands.application.config.domain;
 import com.azat4dev.demobooking.common.domain.AutoConnectCommandHandlersToBus;
 import com.azat4dev.demobooking.common.domain.event.DomainEventsBus;
 import com.azat4dev.demobooking.common.domain.event.DomainEventsFactory;
+import com.azat4dev.demobooking.common.utils.TimeProvider;
 import com.azat4dev.demobooking.users.users_commands.domain.core.values.email.EmailAddress;
+import com.azat4dev.demobooking.users.users_commands.domain.handlers.CompleteEmailVerificationHandler;
 import com.azat4dev.demobooking.users.users_commands.domain.handlers.SendVerificationEmailHandler;
+import com.azat4dev.demobooking.users.users_commands.domain.interfaces.repositories.UsersRepository;
 import com.azat4dev.demobooking.users.users_commands.domain.interfaces.services.EmailService;
+import com.azat4dev.demobooking.users.users_commands.domain.interfaces.services.GetInfoForEmailVerificationToken;
 import com.azat4dev.demobooking.users.users_commands.domain.interfaces.services.ProvideEmailVerificationToken;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
@@ -18,9 +22,8 @@ import java.net.URL;
 public class CommandHandlersConfig {
 
     @Bean
-    SendVerificationEmailHandler sendVerificationEmailPolicy(
-        @Value
-            ("${app.verification_email.base_verification_link_url}")
+    SendVerificationEmailHandler sendVerificationEmailCommandHandler(
+        @Value("${app.verification_email.base_verification_link_url}")
         URL baseVerificationLinkUrl,
         @Value("${app.verification_email.outgoing.fromAddress}")
         String fromAddress,
@@ -39,6 +42,23 @@ public class CommandHandlersConfig {
             provideEmailVerificationToken,
             domainEventsBus,
             domainEventsFactory
+        );
+    }
+
+    @Bean
+    CompleteEmailVerificationHandler completeEmailVerificationCommandHandler(
+        GetInfoForEmailVerificationToken getTokenInfo,
+        DomainEventsBus domainEventsBus,
+        DomainEventsFactory domainEventsFactory,
+        UsersRepository usersRepository,
+        TimeProvider timeProvider
+    ) {
+        return new CompleteEmailVerificationHandler(
+            getTokenInfo,
+            usersRepository,
+            domainEventsBus,
+            domainEventsFactory,
+            timeProvider
         );
     }
 }

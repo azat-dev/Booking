@@ -35,6 +35,7 @@ app:
     protocol: smtp
 
   verification_email:
+    token_expiration_in_ms: 600000
     outgoing:
       fromName: username
       fromAddress: noreply@mail.com

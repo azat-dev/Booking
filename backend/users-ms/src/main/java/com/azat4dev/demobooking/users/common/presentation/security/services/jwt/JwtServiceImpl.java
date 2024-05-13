@@ -2,12 +2,14 @@ package com.azat4dev.demobooking.users.common.presentation.security.services.jwt
 
 import com.azat4dev.demobooking.common.utils.TimeProvider;
 import com.azat4dev.demobooking.users.common.domain.values.UserId;
+import lombok.RequiredArgsConstructor;
 import org.springframework.security.oauth2.jwt.JwtClaimsSet;
 import org.springframework.security.oauth2.jwt.JwtDecoder;
 
 import java.time.ZoneOffset;
 import java.time.temporal.ChronoUnit;
 
+@RequiredArgsConstructor
 public final class JwtServiceImpl implements JwtService {
 
     private final long accessTokenExpirationInMs;
@@ -15,20 +17,6 @@ public final class JwtServiceImpl implements JwtService {
     private final TimeProvider dateTimeProvider;
     private final EncodeJwt encodeJwt;
     private final JwtDecoder jwtDecoder;
-
-    public JwtServiceImpl(
-        long accessTokenExpirationInMs,
-        long refreshTokenExpirationInMs,
-        TimeProvider dateTimeProvider,
-        EncodeJwt encodeJwt,
-        JwtDecoder jwtDecoder
-    ) {
-        this.accessTokenExpirationInMs = accessTokenExpirationInMs;
-        this.refreshTokenExpirationInMs = refreshTokenExpirationInMs;
-        this.dateTimeProvider = dateTimeProvider;
-        this.jwtDecoder = jwtDecoder;
-        this.encodeJwt = encodeJwt;
-    }
 
     @Override
     public String generateAccessToken(UserId userId, String[] authorities) {
