@@ -28,6 +28,11 @@ public final class FullName implements Serializable {
         return lastName;
     }
 
+    @Override
+    public String toString() {
+        return firstName.toString() + " " + lastName.toString();
+    }
+
     public static class ValidationException extends DomainException {
         public ValidationException(String message) {
             super(message);

@@ -5,7 +5,7 @@ import com.azat4dev.demobooking.users.common.presentation.security.entities.User
 import com.azat4dev.demobooking.users.common.presentation.security.services.CustomUserDetailsService;
 import com.azat4dev.demobooking.users.common.presentation.security.services.jwt.JwtService;
 import com.azat4dev.demobooking.users.common.presentation.security.services.jwt.UserIdNotFoundException;
-import com.azat4dev.demobooking.users.users_commands.application.config.WebSecurityConfig;
+import com.azat4dev.demobooking.users.users_commands.application.config.presentation.WebSecurityConfig;
 import com.azat4dev.demobooking.users.users_commands.domain.UserHelpers;
 import com.azat4dev.demobooking.users.users_commands.domain.interfaces.repositories.UsersRepository;
 import com.azat4dev.demobooking.users.users_commands.domain.interfaces.services.EncodedPassword;

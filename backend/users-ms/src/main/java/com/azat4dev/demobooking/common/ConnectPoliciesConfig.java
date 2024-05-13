@@ -1,10 +1,5 @@
-package com.azat4dev.demobooking.users.users_commands.application.config;
+package com.azat4dev.demobooking.common;
 
-import com.azat4dev.demobooking.common.DomainEventNew;
-import com.azat4dev.demobooking.common.DomainEventPayload;
-import com.azat4dev.demobooking.common.DomainEventsBus;
-import com.azat4dev.demobooking.common.Policy;
-import com.azat4dev.demobooking.users.users_commands.domain.core.events.UserCreated;
 import jakarta.annotation.PostConstruct;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -12,8 +7,9 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Configuration;
 
 import java.lang.reflect.ParameterizedType;
-import java.util.*;
-import java.util.stream.Collectors;
+import java.util.HashMap;
+import java.util.LinkedList;
+import java.util.List;
 
 @Configuration
 public class ConnectPoliciesConfig {
@@ -28,7 +24,6 @@ public class ConnectPoliciesConfig {
 
     @PostConstruct
     public void connectPoliciesToBus() {
-        LOGGER.info("DomainConfig initialized");
 
         final var groupedPolicies = new HashMap<Class<DomainEventPayload>, List<Policy<DomainEventNew<?>>>>();
 
@@ -45,7 +40,7 @@ public class ConnectPoliciesConfig {
                 }
 
                 final var domainEvent = (ParameterizedType) policyInterface.getActualTypeArguments()[0];
-                final var payload = ((ParameterizedType) domainEvent).getActualTypeArguments()[0];
+                final var payload = domainEvent.getActualTypeArguments()[0];
 
                 final var items = groupedPolicies.getOrDefault(payload, new LinkedList<>());
                 items.add(policy);
@@ -53,7 +48,6 @@ public class ConnectPoliciesConfig {
                 groupedPolicies.put((Class<DomainEventPayload>) payload, items);
             }
         }
-
 
         for (var entry : groupedPolicies.entrySet()) {
             final var eventType = entry.getKey();
@@ -63,5 +57,7 @@ public class ConnectPoliciesConfig {
                 domainEventsBus.listen(eventType, listener::execute);
             }
         }
+
+        LOGGER.info("Connected {" + policies + "} policies to the bus", policies.size());
     }
 }

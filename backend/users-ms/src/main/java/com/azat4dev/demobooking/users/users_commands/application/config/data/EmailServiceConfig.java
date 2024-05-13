@@ -1,4 +1,4 @@
-package com.azat4dev.demobooking.users.users_commands.application.config;
+package com.azat4dev.demobooking.users.users_commands.application.config.data;
 
 import com.azat4dev.demobooking.users.users_commands.data.services.EmailServiceImpl;
 import com.azat4dev.demobooking.users.users_commands.domain.interfaces.services.EmailService;
@@ -7,7 +7,7 @@ import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 
 @Configuration
-public class EmailConfig {
+public class EmailServiceConfig {
 
     @Value("${app.mail.host}")
     private String host;

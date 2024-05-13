@@ -1,4 +1,4 @@
-package com.azat4dev.demobooking.users.users_commands.application.config;
+package com.azat4dev.demobooking.users.users_commands.application.config.data;
 
 import com.azat4dev.demobooking.users.users_commands.domain.core.events.UserCreated;
 import lombok.RequiredArgsConstructor;

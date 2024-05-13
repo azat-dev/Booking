@@ -1,4 +1,4 @@
-package com.azat4dev.demobooking.users.users_commands.application.config;
+package com.azat4dev.demobooking.users.users_commands.application.config.domain;
 
 import com.azat4dev.demobooking.common.*;
 import com.azat4dev.demobooking.common.utils.TimeProvider;
