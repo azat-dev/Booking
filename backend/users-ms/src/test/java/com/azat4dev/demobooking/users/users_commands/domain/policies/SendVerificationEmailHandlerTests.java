@@ -39,13 +39,15 @@ public class SendVerificationEmailHandlerTests {
             .willReturn(new EmailVerificationToken(tokenValue));
         final var domainEventsBus = mock(DomainEventsBus.class);
 
+
         final var handler = new SendVerificationEmailHandler(
             baseUrl,
             fromAddress,
             fromName,
             emailService,
             tokenService,
-            domainEventsBus
+            domainEventsBus,
+            EventHelpers.eventsFactory
         );
 
         return new SUT(
@@ -86,7 +88,7 @@ public class SendVerificationEmailHandlerTests {
         // Then
         then(sut.emailService).should(times(1))
             .send(
-                command.payload().email(),
+                eq(command.payload().email()),
                 assertArg(m -> {
                     assertThat(m.fromName()).contains(sut.fromName);
                     assertThat(m.from()).isEqualTo(sut.fromAddress);
@@ -94,14 +96,13 @@ public class SendVerificationEmailHandlerTests {
                 })
             );
 
-        then(sut.bus).should(times(1)).publish(
-            EventHelpers.eventsFactory.issue(
-                new VerificationEmailSent(
-                    command.payload().userId(),
-                    command.payload().email()
-                )
-            )
+        final var expectedEvent = new VerificationEmailSent(
+            command.payload().userId(),
+            command.payload().email()
         );
+
+        then(sut.bus).should(times(1))
+            .publish(assertArg(e -> assertThat(e.payload()).isEqualTo(expectedEvent)));
     }
 
     @Test
@@ -118,15 +119,14 @@ public class SendVerificationEmailHandlerTests {
         sut.handler.handle(command);
 
         // Then
-        then(sut.bus).should(times(1)).publish(
-            EventHelpers.eventsFactory.issue(
-                new FailedToSendVerificationEmail(
-                    command.payload().userId(),
-                    command.payload().email(),
-                    command.payload().attempt() + 1
-                )
-            )
+        final var expectedEvent = new FailedToSendVerificationEmail(
+            command.payload().userId(),
+            command.payload().email(),
+            command.payload().attempt() + 1
         );
+
+        then(sut.bus).should(times(1))
+            .publish(assertArg(e -> assertThat(e.payload()).isEqualTo(expectedEvent)));
     }
 
     record SUT(

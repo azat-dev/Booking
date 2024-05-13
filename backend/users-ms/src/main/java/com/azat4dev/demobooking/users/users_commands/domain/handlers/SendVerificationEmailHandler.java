@@ -1,10 +1,9 @@
 package com.azat4dev.demobooking.users.users_commands.domain.handlers;
 
-import com.azat4dev.demobooking.common.CommandHandler;
-import com.azat4dev.demobooking.common.DomainEventNew;
-import com.azat4dev.demobooking.common.DomainEventsBus;
-import com.azat4dev.demobooking.common.Policy;
+import com.azat4dev.demobooking.common.*;
 import com.azat4dev.demobooking.users.users_commands.domain.core.commands.SendVerificationEmail;
+import com.azat4dev.demobooking.users.users_commands.domain.core.events.FailedToSendVerificationEmail;
+import com.azat4dev.demobooking.users.users_commands.domain.core.events.VerificationEmailSent;
 import com.azat4dev.demobooking.users.users_commands.domain.core.values.email.EmailAddress;
 import com.azat4dev.demobooking.users.users_commands.domain.core.values.email.EmailBody;
 import com.azat4dev.demobooking.users.users_commands.domain.interfaces.services.EmailService;
@@ -26,7 +25,8 @@ public class SendVerificationEmailHandler implements CommandHandler<DomainEventN
     private final String fromName;
     private final EmailService emailService;
     private final EmailVerificationTokensService emailVerificationTokensService;
-    private final DomainEventsBus domainEventsBus;
+    private final DomainEventsBus bus;
+    private final DomainEventsFactory domainEventsFactory;
 
     @Override
     public void handle(DomainEventNew<SendVerificationEmail> command) {
@@ -57,6 +57,26 @@ public class SendVerificationEmailHandler implements CommandHandler<DomainEventN
 
         } catch (Throwable e) {
             logger.error("Can' send verification email", e);
+
+            bus.publish(
+                domainEventsFactory.issue(
+                    new FailedToSendVerificationEmail(
+                        payload.userId(),
+                        payload.email(),
+                        payload.attempt() + 1
+                    )
+                )
+            );
+            return;
         }
+
+        bus.publish(
+            domainEventsFactory.issue(
+                new VerificationEmailSent(
+                    payload.userId(),
+                    payload.email()
+                )
+            )
+        );
     }
 }

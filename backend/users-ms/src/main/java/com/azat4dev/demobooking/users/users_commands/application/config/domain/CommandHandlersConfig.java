@@ -27,7 +27,8 @@ public class CommandHandlersConfig {
         String fromName,
         EmailService emailService,
         EmailVerificationTokensService emailVerificationTokensService,
-        DomainEventsBus domainEventsBus
+        DomainEventsBus domainEventsBus,
+        DomainEventsFactory domainEventsFactory
     ) {
         return new SendVerificationEmailHandler(
             baseVerificationLinkUrl,
@@ -35,7 +36,8 @@ public class CommandHandlersConfig {
             fromName,
             emailService,
             emailVerificationTokensService,
-            domainEventsBus
+            domainEventsBus,
+            domainEventsFactory
         );
     }
 }
