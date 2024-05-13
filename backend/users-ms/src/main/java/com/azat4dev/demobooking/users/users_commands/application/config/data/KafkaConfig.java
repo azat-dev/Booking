@@ -1,6 +1,9 @@
 package com.azat4dev.demobooking.users.users_commands.application.config.data;
 
+import com.azat4dev.demobooking.users.users_commands.domain.core.commands.SendVerificationEmail;
+import com.azat4dev.demobooking.users.users_commands.domain.core.events.FailedToSendVerificationEmail;
 import com.azat4dev.demobooking.users.users_commands.domain.core.events.UserCreated;
+import com.azat4dev.demobooking.users.users_commands.domain.core.events.VerificationEmailSent;
 import lombok.RequiredArgsConstructor;
 import org.apache.kafka.clients.admin.NewTopic;
 import org.apache.kafka.clients.producer.ProducerConfig;
@@ -13,6 +16,7 @@ import org.springframework.kafka.listener.ConcurrentMessageListenerContainer;
 import org.springframework.kafka.listener.ContainerProperties;
 
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 import java.util.function.Function;
 
@@ -50,6 +54,23 @@ public class KafkaConfig {
     @Bean
     NewTopic sendingTopic() {
         return new NewTopic(UserCreated.class.getSimpleName(), 1, (short) 1);
+    }
+
+    @Bean
+    KafkaAdmin.NewTopics newTopicList() {
+
+        final List<Class<?>> events = List.of(
+            UserCreated.class,
+            SendVerificationEmail.class,
+            VerificationEmailSent.class,
+            FailedToSendVerificationEmail.class
+        );
+
+        final var topics = events.stream().map(
+            clazz -> new NewTopic(clazz.getSimpleName(), 1, (short) 1)
+        ).toList().toArray(new NewTopic[0]);
+
+        return new KafkaAdmin.NewTopics(topics);
     }
 
     @Bean
