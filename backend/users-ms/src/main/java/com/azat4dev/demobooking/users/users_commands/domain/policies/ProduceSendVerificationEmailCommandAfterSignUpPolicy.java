@@ -27,7 +27,8 @@ public final class ProduceSendVerificationEmailCommandAfterSignUpPolicy implemen
             new SendVerificationEmail(
                 payload.userId(),
                 payload.email(),
-                payload.fullName()
+                payload.fullName(),
+                0
             )
         );
         bus.publish(command);

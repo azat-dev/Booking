@@ -1,6 +1,8 @@
 package com.azat4dev.demobooking.users.users_commands.domain.handlers;
 
+import com.azat4dev.demobooking.common.CommandHandler;
 import com.azat4dev.demobooking.common.DomainEventNew;
+import com.azat4dev.demobooking.common.DomainEventsBus;
 import com.azat4dev.demobooking.common.Policy;
 import com.azat4dev.demobooking.users.users_commands.domain.core.commands.SendVerificationEmail;
 import com.azat4dev.demobooking.users.users_commands.domain.core.values.email.EmailAddress;
@@ -12,11 +14,10 @@ import lombok.RequiredArgsConstructor;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import java.net.MalformedURLException;
 import java.net.URL;
 
 @RequiredArgsConstructor
-public class SendVerificationEmailHandler implements Policy<DomainEventNew<SendVerificationEmail>> {
+public class SendVerificationEmailHandler implements CommandHandler<DomainEventNew<SendVerificationEmail>> {
 
     private static final Logger logger = LoggerFactory.getLogger(SendVerificationEmailHandler.class);
 
@@ -25,9 +26,10 @@ public class SendVerificationEmailHandler implements Policy<DomainEventNew<SendV
     private final String fromName;
     private final EmailService emailService;
     private final EmailVerificationTokensService emailVerificationTokensService;
+    private final DomainEventsBus domainEventsBus;
 
     @Override
-    public void execute(DomainEventNew<SendVerificationEmail> command) {
+    public void handle(DomainEventNew<SendVerificationEmail> command) {
 
         final var payload = command.payload();
 
@@ -53,10 +55,8 @@ public class SendVerificationEmailHandler implements Policy<DomainEventNew<SendV
                 )
             );
 
-        } catch (MalformedURLException e) {
-            logger.error("Can' build verification email link", e);
-            throw new RuntimeException(e);
+        } catch (Throwable e) {
+            logger.error("Can' send verification email", e);
         }
-
     }
 }

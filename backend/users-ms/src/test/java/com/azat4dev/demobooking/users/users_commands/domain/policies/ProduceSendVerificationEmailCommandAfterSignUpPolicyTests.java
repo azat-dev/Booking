@@ -39,7 +39,7 @@ public class ProduceSendVerificationEmailCommandAfterSignUpPolicyTests {
     }
 
     @Test
-    void given_valid_user__when_SendVerificationEmailPolicyImpl_triggered__thenEmitSendVerificationEmailCommand() {
+    void test_givenUserCreated_thenEmitSendVerificationEmailCommand() {
 
         // Given
         final var sut = createSUT();
@@ -62,7 +62,8 @@ public class ProduceSendVerificationEmailCommandAfterSignUpPolicyTests {
         final var expectedOutput = new SendVerificationEmail(
             userId,
             email,
-            fullName
+            fullName,
+            0
         );
         // When
         sut.policy.execute(inputEvent);

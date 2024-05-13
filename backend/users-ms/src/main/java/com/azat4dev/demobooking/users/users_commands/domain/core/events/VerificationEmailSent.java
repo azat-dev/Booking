@@ -1,14 +1,11 @@
-package com.azat4dev.demobooking.users.users_commands.domain.core.commands;
+package com.azat4dev.demobooking.users.users_commands.domain.core.events;
 
 import com.azat4dev.demobooking.common.DomainEventPayload;
 import com.azat4dev.demobooking.users.common.domain.values.UserId;
-import com.azat4dev.demobooking.users.users_commands.domain.core.values.FullName;
 import com.azat4dev.demobooking.users.users_commands.domain.core.values.email.EmailAddress;
 
-public record SendVerificationEmail(
+public record VerificationEmailSent(
     UserId userId,
-    EmailAddress email,
-    FullName fullName,
-    int attempt
+    EmailAddress emailAddress
 ) implements DomainEventPayload {
 }

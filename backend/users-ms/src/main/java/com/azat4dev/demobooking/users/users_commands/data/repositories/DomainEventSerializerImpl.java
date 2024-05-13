@@ -199,7 +199,8 @@ record SendVerificationEmailDTO(
         return new SendVerificationEmail(
             UserId.fromString(userId),
             EmailAddress.dangerMakeWithoutChecks(email),
-            fullName.toDomain()
+            fullName.toDomain(),
+            0
         );
     }
 }

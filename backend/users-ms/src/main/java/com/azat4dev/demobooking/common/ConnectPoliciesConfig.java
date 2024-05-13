@@ -6,10 +6,12 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Configuration;
 
+import java.io.Closeable;
 import java.lang.reflect.ParameterizedType;
 import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.List;
+import java.util.Map;
 
 @Configuration
 public class ConnectPoliciesConfig {
@@ -22,8 +24,9 @@ public class ConnectPoliciesConfig {
     @Autowired
     DomainEventsBus domainEventsBus;
 
-    @PostConstruct
-    public void connectPoliciesToBus() {
+    List<Closeable> cancellations = new LinkedList<>();
+
+    private static Map<Class<DomainEventPayload>, List<Policy<DomainEventNew<?>>>> groupPolicies(List<Policy<DomainEventNew<?>>> policies) {
 
         final var groupedPolicies = new HashMap<Class<DomainEventPayload>, List<Policy<DomainEventNew<?>>>>();
 
@@ -49,15 +52,25 @@ public class ConnectPoliciesConfig {
             }
         }
 
-        for (var entry : groupedPolicies.entrySet()) {
+        return groupedPolicies;
+    }
+
+    @PostConstruct
+    public void connectPoliciesToBus() {
+
+        final var groupedPolicies = groupPolicies(policies);
+
+        for (final var entry : groupedPolicies.entrySet()) {
             final var eventType = entry.getKey();
             final var listeners = entry.getValue();
 
             for (var listener : listeners) {
-                domainEventsBus.listen(eventType, listener::execute);
+                final var cancellation = domainEventsBus.listen(eventType, listener::execute);
+                cancellations.add(cancellation);
             }
         }
 
-        LOGGER.info("Connected {" + policies + "} policies to the bus", policies.size());
+        LOGGER.info("Connected {} policies to the bus",
+            policies.stream().map(Object::getClass).map(Class::getSimpleName).toList());
     }
 }
