@@ -1,4 +1,4 @@
-package com.azat4dev.demobooking.common;
+package com.azat4dev.demobooking.common.domain.event;
 
 import lombok.EqualsAndHashCode;
 import lombok.Getter;

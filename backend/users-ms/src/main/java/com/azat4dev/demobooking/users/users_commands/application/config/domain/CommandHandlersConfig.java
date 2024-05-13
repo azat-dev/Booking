@@ -1,7 +1,8 @@
 package com.azat4dev.demobooking.users.users_commands.application.config.domain;
 
-import com.azat4dev.demobooking.common.*;
-import com.azat4dev.demobooking.users.users_commands.domain.core.commands.SendVerificationEmail;
+import com.azat4dev.demobooking.common.domain.AutoConnectCommandHandlersToBus;
+import com.azat4dev.demobooking.common.domain.event.DomainEventsBus;
+import com.azat4dev.demobooking.common.domain.event.DomainEventsFactory;
 import com.azat4dev.demobooking.users.users_commands.domain.core.values.email.EmailAddress;
 import com.azat4dev.demobooking.users.users_commands.domain.handlers.SendVerificationEmailHandler;
 import com.azat4dev.demobooking.users.users_commands.domain.interfaces.services.EmailService;

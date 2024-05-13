@@ -1,18 +1,22 @@
 package com.azat4dev.demobooking.users.users_commands.domain.core.values;
 
-import com.azat4dev.demobooking.common.DomainException;
+import com.azat4dev.demobooking.common.domain.DomainException;
 import com.azat4dev.demobooking.common.utils.Assert;
+import lombok.AccessLevel;
+import lombok.EqualsAndHashCode;
+import lombok.Getter;
+import lombok.RequiredArgsConstructor;
 
+@Getter
+@RequiredArgsConstructor(access = AccessLevel.PRIVATE)
+@EqualsAndHashCode(of = "value")
 public final class Password {
 
     public final static int MIN_LENGTH = 6;
     public final static int MAX_LENGTH = 255;
     public final static String PATTERN = "\\S+";
-    private final String value;
 
-    private Password(String value) {
-        this.value = value;
-    }
+    private final String value;
 
     public static void validate(String password) throws WrongFormatException, LengthException {
 
@@ -31,23 +35,7 @@ public final class Password {
         return new Password(password);
     }
 
-    public String getValue() {
-        return value;
-    }
-
-    @Override
-    public boolean equals(Object obj) {
-
-        if (!(obj instanceof Password other)) {
-            return false;
-        }
-
-        if (this == obj) {
-            return true;
-        }
-
-        return this.value.equals(other.getValue());
-    }
+    // Exceptions
 
     public static abstract class ValidationException extends DomainException {
         public ValidationException(String message) {
@@ -55,7 +43,7 @@ public final class Password {
         }
     }
 
-    public static class LengthException extends ValidationException {
+    public static final class LengthException extends ValidationException {
         public LengthException() {
             super("Length must be between " + MIN_LENGTH + " and " + MAX_LENGTH);
         }
@@ -66,7 +54,7 @@ public final class Password {
         }
     }
 
-    public static class WrongFormatException extends ValidationException {
+    public static final class WrongFormatException extends ValidationException {
         public WrongFormatException() {
             super("Wrong password format");
         }

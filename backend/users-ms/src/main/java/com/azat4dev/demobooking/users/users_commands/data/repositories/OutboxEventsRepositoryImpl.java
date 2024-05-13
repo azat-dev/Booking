@@ -1,7 +1,7 @@
 package com.azat4dev.demobooking.users.users_commands.data.repositories;
 
-import com.azat4dev.demobooking.common.DomainEventNew;
-import com.azat4dev.demobooking.common.EventId;
+import com.azat4dev.demobooking.common.domain.event.DomainEventNew;
+import com.azat4dev.demobooking.common.domain.event.EventId;
 import com.azat4dev.demobooking.users.users_commands.data.entities.OutboxEventData;
 import com.azat4dev.demobooking.users.users_commands.data.repositories.dao.OutboxEventsDao;
 import com.azat4dev.demobooking.users.users_commands.domain.interfaces.repositories.OutboxEventsRepository;

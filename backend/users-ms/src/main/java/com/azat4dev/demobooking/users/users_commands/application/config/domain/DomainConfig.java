@@ -1,11 +1,11 @@
 package com.azat4dev.demobooking.users.users_commands.application.config.domain;
 
-import com.azat4dev.demobooking.common.*;
+import com.azat4dev.demobooking.common.domain.core.UserIdFactory;
+import com.azat4dev.demobooking.common.domain.core.UserIdFactoryImpl;
+import com.azat4dev.demobooking.common.domain.event.*;
 import com.azat4dev.demobooking.common.utils.TimeProvider;
 import com.azat4dev.demobooking.users.users_commands.data.KafkaDomainEventsBus;
 import com.azat4dev.demobooking.users.users_commands.data.repositories.DomainEventSerializer;
-import com.azat4dev.demobooking.users.users_commands.domain.core.values.UserIdFactory;
-import com.azat4dev.demobooking.users.users_commands.domain.core.values.UserIdFactoryImpl;
 import com.azat4dev.demobooking.users.users_commands.domain.handlers.UsersService;
 import com.azat4dev.demobooking.users.users_commands.domain.handlers.UsersServiceImpl;
 import com.azat4dev.demobooking.users.users_commands.domain.interfaces.repositories.OutboxEventsRepository;

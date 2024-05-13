@@ -1,6 +1,6 @@
 package com.azat4dev.demobooking.users.users_commands.data.repositories;
 
-import com.azat4dev.demobooking.common.DomainEventNew;
+import com.azat4dev.demobooking.common.domain.event.DomainEventNew;
 
 
 public interface DomainEventSerializer {

@@ -1,6 +1,6 @@
 package com.azat4dev.demobooking.users.users_commands.data;
 
-import com.azat4dev.demobooking.common.DomainException;
+import com.azat4dev.demobooking.common.domain.DomainException;
 import com.azat4dev.demobooking.users.users_commands.data.entities.UserData;
 import com.azat4dev.demobooking.users.users_commands.data.repositories.MapNewUserToData;
 import com.azat4dev.demobooking.users.users_commands.data.repositories.MapUserDataToDomain;

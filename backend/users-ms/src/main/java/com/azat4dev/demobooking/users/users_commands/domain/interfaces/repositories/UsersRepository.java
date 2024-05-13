@@ -1,6 +1,6 @@
 package com.azat4dev.demobooking.users.users_commands.domain.interfaces.repositories;
 
-import com.azat4dev.demobooking.common.DomainException;
+import com.azat4dev.demobooking.common.domain.DomainException;
 import com.azat4dev.demobooking.users.users_commands.domain.core.entities.User;
 import com.azat4dev.demobooking.users.users_commands.domain.core.values.email.EmailAddress;
 import com.azat4dev.demobooking.users.common.domain.values.UserId;

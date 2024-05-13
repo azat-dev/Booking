@@ -1,19 +1,19 @@
 package com.azat4dev.demobooking.users.users_commands.domain.core.values.email;
 
-import com.azat4dev.demobooking.common.DomainException;
+import com.azat4dev.demobooking.common.domain.DomainException;
 import com.azat4dev.demobooking.common.utils.Assert;
+import lombok.*;
 import org.apache.commons.validator.routines.EmailValidator;
 
 import java.io.Serializable;
-import java.util.Objects;
 
+@RequiredArgsConstructor(access = AccessLevel.PRIVATE)
+@EqualsAndHashCode(of = "value")
+@Getter
+@ToString(of = "value")
 public final class EmailAddress implements Serializable {
 
     private final String value;
-
-    private EmailAddress(String value) {
-        this.value = value;
-    }
 
     public static void validate(String value) throws WrongFormatException {
 
@@ -35,32 +35,13 @@ public final class EmailAddress implements Serializable {
         return new EmailAddress(text);
     }
 
-    public String getValue() {
-        return value;
-    }
-
-    public String toString() {
-        return value;
-    }
-
-    @Override
-    public boolean equals(Object o) {
-        if (this == o) return true;
-        if (!(o instanceof EmailAddress that)) return false;
-        return Objects.equals(getValue(), that.getValue());
-    }
-
-    @Override
-    public int hashCode() {
-        return Objects.hashCode(getValue());
-    }
-
     public abstract static class ValidationException extends DomainException {
         public ValidationException(String message) {
             super(message);
         }
     }
 
+    @Getter
     public static class WrongFormatException extends ValidationException {
 
         private final String email;
@@ -68,10 +49,6 @@ public final class EmailAddress implements Serializable {
         public WrongFormatException(String email) {
             super("Wrong email format");
             this.email = email;
-        }
-
-        public String getEmail() {
-            return email;
         }
 
         @Override

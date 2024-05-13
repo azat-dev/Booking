@@ -1,8 +1,8 @@
 package com.azat4dev.demobooking.users.users_commands.data.repositories;
 
-import com.azat4dev.demobooking.common.DomainEventNew;
-import com.azat4dev.demobooking.common.DomainEventPayload;
-import com.azat4dev.demobooking.common.EventId;
+import com.azat4dev.demobooking.common.domain.event.DomainEventNew;
+import com.azat4dev.demobooking.common.domain.event.DomainEventPayload;
+import com.azat4dev.demobooking.common.domain.event.EventId;
 import com.azat4dev.demobooking.users.common.domain.values.UserId;
 import com.azat4dev.demobooking.users.users_commands.domain.core.commands.SendVerificationEmail;
 import com.azat4dev.demobooking.users.users_commands.domain.core.values.FirstName;

@@ -7,12 +7,13 @@ import com.azat4dev.demobooking.users.common.presentation.security.services.jwt.
 import com.azat4dev.demobooking.users.common.presentation.security.services.jwt.UserIdNotFoundException;
 import com.azat4dev.demobooking.users.users_commands.application.config.presentation.WebSecurityConfig;
 import com.azat4dev.demobooking.users.users_commands.domain.UserHelpers;
+import com.azat4dev.demobooking.users.users_commands.domain.core.commands.CreateUser;
 import com.azat4dev.demobooking.users.users_commands.domain.interfaces.repositories.UsersRepository;
 import com.azat4dev.demobooking.users.users_commands.domain.interfaces.services.EncodedPassword;
 import com.azat4dev.demobooking.users.users_commands.domain.interfaces.services.PasswordService;
 import com.azat4dev.demobooking.users.users_commands.domain.handlers.UsersService;
 import com.azat4dev.demobooking.users.users_commands.domain.core.values.Password;
-import com.azat4dev.demobooking.users.users_commands.domain.core.values.UserIdFactory;
+import com.azat4dev.demobooking.common.domain.core.UserIdFactory;
 import com.azat4dev.demobooking.users.users_commands.presentation.api.rest.authentication.entities.FullNameDTO;
 import com.azat4dev.demobooking.users.users_commands.presentation.api.rest.authentication.entities.LoginByEmailRequest;
 import com.azat4dev.demobooking.users.users_commands.presentation.api.rest.authentication.entities.SignUpRequest;
@@ -189,7 +190,7 @@ public class AuthenticationControllerTests {
 
         willThrow(new UsersService.UserWithSameEmailAlreadyExistsException())
             .given(usersService)
-            .handle(any());
+            .handle(any(CreateUser.class));
 
         final SignUpRequest request = new SignUpRequest(
             fullName,
@@ -239,7 +240,7 @@ public class AuthenticationControllerTests {
         given(userIdFactory.generateNewUserId())
             .willReturn(userId);
 
-        willDoNothing().given(usersService).handle(any());
+        willDoNothing().given(usersService).handle(any(CreateUser.class));
 
         given(tokenProvider.generateAccessToken(any(), any()))
             .willReturn(expectedAccessToken);

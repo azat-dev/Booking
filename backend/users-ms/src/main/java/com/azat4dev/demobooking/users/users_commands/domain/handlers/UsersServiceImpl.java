@@ -1,7 +1,8 @@
 package com.azat4dev.demobooking.users.users_commands.domain.handlers;
 
-import com.azat4dev.demobooking.common.DomainEventsFactory;
+import com.azat4dev.demobooking.common.domain.event.DomainEventsFactory;
 import com.azat4dev.demobooking.common.utils.TimeProvider;
+import com.azat4dev.demobooking.users.users_commands.domain.core.commands.CompleteEmailVerification;
 import com.azat4dev.demobooking.users.users_commands.domain.core.commands.CreateUser;
 import com.azat4dev.demobooking.users.users_commands.domain.core.events.UserCreated;
 import com.azat4dev.demobooking.users.users_commands.domain.core.values.EmailVerificationStatus;
@@ -65,6 +66,11 @@ public final class UsersServiceImpl implements UsersService {
         }
 
         markOutboxNeedsSynchronization.execute();
+    }
+
+    @Override
+    public void handle(CompleteEmailVerification command) throws InvalidEmailVerificationTokenException, EmailVerificationTokenExpiredException {
+        throw new UnsupportedOperationException("Not implemented yet");
     }
 
     @FunctionalInterface

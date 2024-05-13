@@ -1,9 +1,9 @@
 package com.azat4dev.demobooking.users.users_commands.domain.services;
 
-import com.azat4dev.demobooking.common.DomainEventNew;
-import com.azat4dev.demobooking.common.DomainEventsFactoryImpl;
-import com.azat4dev.demobooking.common.EventId;
-import com.azat4dev.demobooking.common.EventIdGenerator;
+import com.azat4dev.demobooking.common.domain.event.DomainEventNew;
+import com.azat4dev.demobooking.common.domain.event.DomainEventsFactoryImpl;
+import com.azat4dev.demobooking.common.domain.event.EventId;
+import com.azat4dev.demobooking.common.domain.event.EventIdGenerator;
 import com.azat4dev.demobooking.common.utils.TimeProvider;
 import com.azat4dev.demobooking.users.users_commands.domain.UserHelpers;
 import com.azat4dev.demobooking.users.users_commands.domain.core.commands.CreateUser;

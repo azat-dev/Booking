@@ -1,6 +1,6 @@
 package com.azat4dev.demobooking.common.presentation;
 
-import com.azat4dev.demobooking.common.DomainException;
+import com.azat4dev.demobooking.common.domain.DomainException;
 import org.springframework.http.ResponseEntity;
 
 public class ValidationException extends RuntimeException {

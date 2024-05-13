@@ -1,4 +1,4 @@
-package com.azat4dev.demobooking.common;
+package com.azat4dev.demobooking.common.domain;
 
 public abstract class DomainException extends RuntimeException {
 

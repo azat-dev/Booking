@@ -1,6 +1,6 @@
 package com.azat4dev.demobooking.users.users_commands.domain.policies;
 
-import com.azat4dev.demobooking.common.*;
+import com.azat4dev.demobooking.common.domain.event.*;
 import com.azat4dev.demobooking.common.utils.SystemTimeProvider;
 import com.azat4dev.demobooking.users.users_commands.domain.UserHelpers;
 import com.azat4dev.demobooking.users.users_commands.domain.core.commands.SendVerificationEmail;

@@ -1,12 +1,14 @@
 package com.azat4dev.demobooking.users.users_commands.domain.core.values;
 
-import com.azat4dev.demobooking.common.DomainException;
+import com.azat4dev.demobooking.common.domain.DomainException;
 import com.azat4dev.demobooking.common.utils.Assert;
-import lombok.EqualsAndHashCode;
+import lombok.*;
 
 import java.io.Serializable;
 
 @EqualsAndHashCode
+@ToString(of = {"firstName", "lastName"})
+@Getter
 public final class FullName implements Serializable {
 
     private final FirstName firstName;
@@ -20,18 +22,7 @@ public final class FullName implements Serializable {
         this.lastName = lastName;
     }
 
-    public FirstName getFirstName() {
-        return firstName;
-    }
-
-    public LastName getLastName() {
-        return lastName;
-    }
-
-    @Override
-    public String toString() {
-        return firstName.toString() + " " + lastName.toString();
-    }
+    // Exceptions
 
     public static class ValidationException extends DomainException {
         public ValidationException(String message) {
@@ -44,7 +35,7 @@ public final class FullName implements Serializable {
         }
     }
 
-    public static class FirstNameCantBeNullException extends ValidationException {
+    public static final class FirstNameCantBeNullException extends ValidationException {
         public FirstNameCantBeNullException() {
             super("The first name cannot be null");
         }
@@ -55,7 +46,7 @@ public final class FullName implements Serializable {
         }
     }
 
-    public static class LastNameCantBeNullException extends ValidationException {
+    public static final class LastNameCantBeNullException extends ValidationException {
         public LastNameCantBeNullException() {
             super("The last name cannot be null");
         }

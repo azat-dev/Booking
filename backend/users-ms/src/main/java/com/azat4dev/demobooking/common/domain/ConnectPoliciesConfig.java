@@ -1,5 +1,8 @@
-package com.azat4dev.demobooking.common;
+package com.azat4dev.demobooking.common.domain;
 
+import com.azat4dev.demobooking.common.domain.event.DomainEventNew;
+import com.azat4dev.demobooking.common.domain.event.DomainEventPayload;
+import com.azat4dev.demobooking.common.domain.event.DomainEventsBus;
 import jakarta.annotation.PostConstruct;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;

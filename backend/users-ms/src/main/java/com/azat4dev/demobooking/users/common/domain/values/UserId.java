@@ -1,6 +1,6 @@
 package com.azat4dev.demobooking.users.common.domain.values;
 
-import com.azat4dev.demobooking.common.DomainException;
+import com.azat4dev.demobooking.common.domain.DomainException;
 import com.azat4dev.demobooking.common.utils.Assert;
 
 import java.util.UUID;

@@ -1,9 +1,9 @@
 package com.azat4dev.demobooking.users.users_commands.data;
 
-import com.azat4dev.demobooking.common.DomainEventNew;
-import com.azat4dev.demobooking.common.DomainEventPayload;
-import com.azat4dev.demobooking.common.EventId;
-import com.azat4dev.demobooking.common.RandomEventIdGenerator;
+import com.azat4dev.demobooking.common.domain.event.DomainEventNew;
+import com.azat4dev.demobooking.common.domain.event.DomainEventPayload;
+import com.azat4dev.demobooking.common.domain.event.EventId;
+import com.azat4dev.demobooking.common.domain.event.RandomEventIdGenerator;
 import com.azat4dev.demobooking.users.users_commands.data.repositories.DomainEventSerializer;
 import com.azat4dev.demobooking.users.users_commands.data.repositories.DomainEventSerializerImpl;
 import com.azat4dev.demobooking.users.users_commands.domain.core.events.UserCreated;

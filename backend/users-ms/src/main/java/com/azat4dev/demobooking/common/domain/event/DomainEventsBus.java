@@ -1,4 +1,4 @@
-package com.azat4dev.demobooking.common;
+package com.azat4dev.demobooking.common.domain.event;
 
 import java.io.Closeable;
 import java.util.function.Consumer;

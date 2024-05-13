@@ -10,7 +10,7 @@ import com.azat4dev.demobooking.users.users_commands.domain.core.commands.Create
 import com.azat4dev.demobooking.users.users_commands.domain.interfaces.services.EncodedPassword;
 import com.azat4dev.demobooking.users.users_commands.domain.interfaces.services.PasswordService;
 import com.azat4dev.demobooking.users.users_commands.domain.handlers.UsersService;
-import com.azat4dev.demobooking.users.users_commands.domain.core.values.UserIdFactory;
+import com.azat4dev.demobooking.common.domain.core.UserIdFactory;
 import com.azat4dev.demobooking.users.users_commands.presentation.api.rest.authentication.entities.*;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;

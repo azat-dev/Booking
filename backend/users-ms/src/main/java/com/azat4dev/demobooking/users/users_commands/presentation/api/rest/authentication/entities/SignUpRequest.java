@@ -1,6 +1,6 @@
 package com.azat4dev.demobooking.users.users_commands.presentation.api.rest.authentication.entities;
 
-import com.azat4dev.demobooking.common.DomainException;
+import com.azat4dev.demobooking.common.domain.DomainException;
 import com.azat4dev.demobooking.common.presentation.ControllerException;
 import com.azat4dev.demobooking.common.presentation.ValidationException;
 import com.azat4dev.demobooking.common.utils.Assert;

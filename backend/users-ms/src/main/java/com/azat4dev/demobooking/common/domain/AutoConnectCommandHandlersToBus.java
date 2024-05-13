@@ -1,4 +1,4 @@
-package com.azat4dev.demobooking.common;
+package com.azat4dev.demobooking.common.domain;
 
 import org.springframework.context.annotation.Import;
 
