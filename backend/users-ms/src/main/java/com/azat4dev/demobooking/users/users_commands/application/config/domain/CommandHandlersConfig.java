@@ -6,7 +6,7 @@ import com.azat4dev.demobooking.common.domain.event.DomainEventsFactory;
 import com.azat4dev.demobooking.users.users_commands.domain.core.values.email.EmailAddress;
 import com.azat4dev.demobooking.users.users_commands.domain.handlers.SendVerificationEmailHandler;
 import com.azat4dev.demobooking.users.users_commands.domain.interfaces.services.EmailService;
-import com.azat4dev.demobooking.users.users_commands.domain.interfaces.services.EmailVerificationTokensService;
+import com.azat4dev.demobooking.users.users_commands.domain.interfaces.services.ProvideEmailVerificationToken;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -27,7 +27,7 @@ public class CommandHandlersConfig {
         @Value("${app.verification_email.outgoing.fromName}")
         String fromName,
         EmailService emailService,
-        EmailVerificationTokensService emailVerificationTokensService,
+        ProvideEmailVerificationToken provideEmailVerificationToken,
         DomainEventsBus domainEventsBus,
         DomainEventsFactory domainEventsFactory
     ) {
@@ -36,7 +36,7 @@ public class CommandHandlersConfig {
             EmailAddress.checkAndMakeFromString(fromAddress),
             fromName,
             emailService,
-            emailVerificationTokensService,
+            provideEmailVerificationToken,
             domainEventsBus,
             domainEventsFactory
         );

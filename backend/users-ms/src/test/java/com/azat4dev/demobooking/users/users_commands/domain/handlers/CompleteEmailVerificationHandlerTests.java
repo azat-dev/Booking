@@ -2,15 +2,19 @@ package com.azat4dev.demobooking.users.users_commands.domain.handlers;
 
 import com.azat4dev.demobooking.common.domain.event.DomainEventNew;
 import com.azat4dev.demobooking.common.domain.event.DomainEventsBus;
+import com.azat4dev.demobooking.common.utils.SystemTimeProvider;
+import com.azat4dev.demobooking.common.utils.TimeProvider;
 import com.azat4dev.demobooking.users.users_commands.domain.UserHelpers;
 import com.azat4dev.demobooking.users.users_commands.domain.core.commands.CompleteEmailVerification;
 import com.azat4dev.demobooking.users.users_commands.domain.core.events.UserVerifiedEmail;
 import com.azat4dev.demobooking.users.users_commands.domain.core.values.EmailVerificationStatus;
 import com.azat4dev.demobooking.users.users_commands.domain.interfaces.repositories.UsersRepository;
 import com.azat4dev.demobooking.users.users_commands.domain.interfaces.services.EmailVerificationToken;
-import com.azat4dev.demobooking.users.users_commands.domain.interfaces.services.EmailVerificationTokensService;
+import com.azat4dev.demobooking.users.users_commands.domain.interfaces.services.EmailVerificationTokenInfo;
+import com.azat4dev.demobooking.users.users_commands.domain.interfaces.services.GetInfoForEmailVerificationToken;
 import org.junit.jupiter.api.Test;
 
+import java.time.LocalDateTime;
 import java.util.Optional;
 
 import static com.azat4dev.demobooking.users.users_commands.domain.EventHelpers.eventsFactory;
@@ -24,20 +28,24 @@ public class CompleteEmailVerificationHandlerTests {
 
     SUT createSUT() {
 
-        final var tokensService = mock(EmailVerificationTokensService.class);
+        final var getTokenInfo = mock(GetInfoForEmailVerificationToken.class);
         final var usersRepository = mock(UsersRepository.class);
-
         final var bus = mock(DomainEventsBus.class);
+
+        final var timeProvider = new SystemTimeProvider();
 
         return new SUT(
             new CompleteEmailVerificationHandler(
-                tokensService,
+                getTokenInfo,
                 usersRepository,
-                bus
+                bus,
+                eventsFactory,
+                timeProvider
             ),
-            tokensService,
+            getTokenInfo,
             usersRepository,
-            bus
+            bus,
+            timeProvider
         );
     }
 
@@ -55,9 +63,9 @@ public class CompleteEmailVerificationHandlerTests {
         final var command = anyCompleteEmailVerification();
         final var event = (DomainEventNew<CompleteEmailVerification>) eventsFactory.issue(command);
 
-        willThrow(new EmailVerificationTokensService.TokenIsNotValidException())
-            .given(sut.tokensService)
-            .verify(any(), any(), any());
+        willThrow(new GetInfoForEmailVerificationToken.TokenIsNotValidException())
+            .given(sut.getTokenInfo)
+            .execute(any());
 
         // When
         final var exception = assertThrows(CompleteEmailVerificationHandler.TokenIsNotValidException.class, () -> {
@@ -76,9 +84,16 @@ public class CompleteEmailVerificationHandlerTests {
         final var existingUser = UserHelpers.anyUser();
         final var command = anyCompleteEmailVerification();
         final var event = (DomainEventNew<CompleteEmailVerification>) eventsFactory.issue(command);
+        final var currentTime = LocalDateTime.now();
 
-        given(sut.tokensService.verify(any(), any(), any()))
-            .willReturn(true);
+        final var tokenInfo = new EmailVerificationTokenInfo(
+            existingUser.getId(),
+            existingUser.getEmail(),
+            currentTime.plusDays(100)
+        );
+
+        given(sut.getTokenInfo.execute(any()))
+            .willReturn(tokenInfo);
 
         given(sut.usersRepository.findById(any()))
             .willReturn(Optional.of(existingUser));
@@ -87,8 +102,8 @@ public class CompleteEmailVerificationHandlerTests {
         sut.handler.handle(event);
 
         // Then
-        then(sut.tokensService).should(times(1))
-            .verify(command.getToken(), existingUser.getId(), existingUser.getEmail());
+        then(sut.getTokenInfo).should(times(1))
+            .execute(command.getToken());
 
         then(sut.usersRepository)
             .should(times(1))
@@ -103,9 +118,10 @@ public class CompleteEmailVerificationHandlerTests {
 
     record SUT(
         CompleteEmailVerificationHandler handler,
-        EmailVerificationTokensService tokensService,
+        GetInfoForEmailVerificationToken getTokenInfo,
         UsersRepository usersRepository,
-        DomainEventsBus bus
+        DomainEventsBus bus,
+        TimeProvider timeProvider
     ) {
     }
 }

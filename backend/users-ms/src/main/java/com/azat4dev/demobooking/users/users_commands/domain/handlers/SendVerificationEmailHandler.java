@@ -10,7 +10,7 @@ import com.azat4dev.demobooking.users.users_commands.domain.core.events.Verifica
 import com.azat4dev.demobooking.users.users_commands.domain.core.values.email.EmailAddress;
 import com.azat4dev.demobooking.users.users_commands.domain.core.values.email.EmailBody;
 import com.azat4dev.demobooking.users.users_commands.domain.interfaces.services.EmailService;
-import com.azat4dev.demobooking.users.users_commands.domain.interfaces.services.EmailVerificationTokensService;
+import com.azat4dev.demobooking.users.users_commands.domain.interfaces.services.ProvideEmailVerificationToken;
 import com.azat4dev.demobooking.users.users_commands.domain.services.EmailData;
 import lombok.RequiredArgsConstructor;
 import org.slf4j.Logger;
@@ -27,7 +27,7 @@ public class SendVerificationEmailHandler implements CommandHandler<DomainEventN
     private final EmailAddress fromAddress;
     private final String fromName;
     private final EmailService emailService;
-    private final EmailVerificationTokensService emailVerificationTokensService;
+    private final ProvideEmailVerificationToken provideEmailVerificationToken;
     private final DomainEventsBus bus;
     private final DomainEventsFactory domainEventsFactory;
 
@@ -36,7 +36,7 @@ public class SendVerificationEmailHandler implements CommandHandler<DomainEventN
 
         final var payload = command.payload();
 
-        final var token = emailVerificationTokensService.generateFor(payload.userId(), payload.email());
+        final var token = provideEmailVerificationToken.execute(payload.userId(), payload.email());
 
         try {
             final var verificationLink = new URL(

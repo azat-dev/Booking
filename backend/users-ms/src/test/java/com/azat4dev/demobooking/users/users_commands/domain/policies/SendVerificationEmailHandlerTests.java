@@ -11,7 +11,7 @@ import com.azat4dev.demobooking.users.users_commands.domain.core.values.email.Em
 import com.azat4dev.demobooking.users.users_commands.domain.handlers.SendVerificationEmailHandler;
 import com.azat4dev.demobooking.users.users_commands.domain.interfaces.services.EmailService;
 import com.azat4dev.demobooking.users.users_commands.domain.interfaces.services.EmailVerificationToken;
-import com.azat4dev.demobooking.users.users_commands.domain.interfaces.services.EmailVerificationTokensService;
+import com.azat4dev.demobooking.users.users_commands.domain.interfaces.services.ProvideEmailVerificationToken;
 import org.junit.jupiter.api.Test;
 
 import java.net.MalformedURLException;
@@ -32,10 +32,10 @@ public class SendVerificationEmailHandlerTests {
         final var fromName = "verification";
 
         final var emailService = mock(EmailService.class);
-        final var tokenService = mock(EmailVerificationTokensService.class);
+        final var tokenService = mock(ProvideEmailVerificationToken.class);
 
         final var tokenValue = "emailVerificationToken";
-        given(tokenService.generateFor(any(), any()))
+        given(tokenService.execute(any(), any()))
             .willReturn(new EmailVerificationToken(tokenValue));
         final var domainEventsBus = mock(DomainEventsBus.class);
 
@@ -79,7 +79,7 @@ public class SendVerificationEmailHandlerTests {
         final var sut = createSUT();
         final var command = anySendCommand();
 
-        given(sut.tokenService.generateFor(any(), any()))
+        given(sut.tokenService.execute(any(), any()))
             .willReturn(new EmailVerificationToken("emailVerificationToken"));
 
         // When
@@ -135,7 +135,7 @@ public class SendVerificationEmailHandlerTests {
         EmailAddress fromAddress,
         String fromName,
         EmailService emailService,
-        EmailVerificationTokensService tokenService,
+        ProvideEmailVerificationToken tokenService,
         DomainEventsBus bus,
         String emailVerificationToken
     ) {
