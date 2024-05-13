@@ -35,6 +35,10 @@ public class WebSecurityConfig {
                     "/api/public/**"
                 )
                 .permitAll()
+                .requestMatchers(
+                    HttpMethod.GET,
+                    "/api/public/**"
+                ).permitAll()
                 .requestMatchers("/api/with-auth/**")
                 .authenticated())
             .csrf(c -> c.ignoringRequestMatchers("/api/public/**", "/api/with-auth/**"))
