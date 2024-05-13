@@ -78,6 +78,7 @@ public final class User {
 
     public void setEmail(EmailAddress newEmail) {
         Assert.notNull(email, EmailIsRequired::new);
+        this.emailVerificationStatus = EmailVerificationStatus.NOT_VERIFIED;
         this.email = newEmail;
     }
 

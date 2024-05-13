@@ -11,7 +11,7 @@ import lombok.RequiredArgsConstructor;
 import java.util.Optional;
 
 @RequiredArgsConstructor
-public class UsersRepositoryImpl implements UsersRepository {
+public final class UsersRepositoryImpl implements UsersRepository {
 
     private final MapUserToData mapUserToData;
     private final MapUserDataToDomain mapUserDataToDomain;
@@ -27,6 +27,11 @@ public class UsersRepositoryImpl implements UsersRepository {
         } catch (UsersDao.UserAlreadyExistsException e) {
             throw new UserWithSameEmailAlreadyExistsException();
         }
+    }
+
+    @Override
+    public void save(User user) {
+        throw new RuntimeException("NOT IMPLEMENTED YET");
     }
 
     @Override

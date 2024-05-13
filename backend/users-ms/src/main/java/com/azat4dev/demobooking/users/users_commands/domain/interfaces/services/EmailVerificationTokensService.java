@@ -7,5 +7,19 @@ public interface EmailVerificationTokensService {
 
     EmailVerificationToken generateFor(UserId userId, EmailAddress emailAddress);
 
-    void verify(EmailVerificationToken token) throws Exception;
+    boolean verify(EmailVerificationToken token, UserId userId, EmailAddress emailAddress) throws TokenIsNotValidException, TokenExpiredException;
+
+    // Exception
+
+    static final class TokenIsNotValidException extends RuntimeException {
+        public TokenIsNotValidException() {
+            super("Token is not valid");
+        }
+    }
+
+    static final class TokenExpiredException extends RuntimeException {
+        public TokenExpiredException() {
+            super("Token is expired");
+        }
+    }
 }

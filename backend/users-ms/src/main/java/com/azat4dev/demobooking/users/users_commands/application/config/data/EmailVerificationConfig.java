@@ -19,8 +19,8 @@ public class EmailVerificationConfig {
             }
 
             @Override
-            public void verify(EmailVerificationToken token) throws Exception {
-
+            public boolean verify(EmailVerificationToken token, UserId userId, EmailAddress emailAddress) throws TokenIsNotValidException, TokenExpiredException {
+                return false;
             }
         };
     }

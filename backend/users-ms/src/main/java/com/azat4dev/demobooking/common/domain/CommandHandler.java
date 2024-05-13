@@ -2,7 +2,7 @@ package com.azat4dev.demobooking.common.domain;
 
 import com.azat4dev.demobooking.common.domain.event.DomainEventNew;
 
-public interface CommandHandler<Event extends DomainEventNew> {
+public interface CommandHandler<Command extends DomainEventNew> {
 
-    void handle(Event event);
+    void handle(Command command);
 }

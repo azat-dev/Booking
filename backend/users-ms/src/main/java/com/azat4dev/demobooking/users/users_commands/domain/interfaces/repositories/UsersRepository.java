@@ -11,6 +11,8 @@ public interface UsersRepository {
 
     void addNew(User newUserData) throws UserWithSameEmailAlreadyExistsException;
 
+    void save(User user);
+
     Optional<User> findById(UserId id);
 
     Optional<User> findByEmail(EmailAddress email);
