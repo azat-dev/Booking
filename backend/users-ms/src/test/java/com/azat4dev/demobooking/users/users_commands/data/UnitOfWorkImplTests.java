@@ -4,6 +4,7 @@ import com.azat4dev.demobooking.users.users_commands.application.config.DaoConfi
 import com.azat4dev.demobooking.users.users_commands.application.config.DataConfig;
 import com.azat4dev.demobooking.users.users_commands.data.jpa.PostgresTest;
 import com.azat4dev.demobooking.users.users_commands.data.repositories.UnitOfWorkImpl;
+import com.azat4dev.demobooking.users.users_commands.domain.UserHelpers;
 import com.azat4dev.demobooking.users.users_commands.domain.interfaces.repositories.OutboxEventsRepository;
 import com.azat4dev.demobooking.users.users_commands.domain.interfaces.repositories.UnitOfWork;
 import com.azat4dev.demobooking.users.users_commands.domain.interfaces.repositories.UsersRepository;
@@ -15,7 +16,6 @@ import org.springframework.context.annotation.Import;
 import org.springframework.test.context.jdbc.Sql;
 import org.springframework.transaction.PlatformTransactionManager;
 
-import static com.azat4dev.demobooking.users.users_commands.data.DataHelpers.anyNewUserData;
 import static org.assertj.core.api.Assertions.assertThat;
 
 
@@ -48,17 +48,17 @@ public class UnitOfWorkImplTests {
         // Given
 
         var sut = createSUT();
-        final var newUserData = anyNewUserData();
+        final var newUser = UserHelpers.anyUser();
 
         final var usersRepository = sut.getUsersRepository();
-        usersRepository.createUser(newUserData);
+        usersRepository.addNew(newUser);
 
         // When
         sut.rollback();
 
         // Then
         final var sut2 = createSUT();
-        final var foundUserData = sut2.getUsersRepository().findById(newUserData.userId());
+        final var foundUserData = sut2.getUsersRepository().findById(newUser.getId());
         assertThat(foundUserData).isEmpty();
     }
 
@@ -68,16 +68,16 @@ public class UnitOfWorkImplTests {
     void test_save_givenWriteOperation_thenPerformWriteToDb() {
         // Given
         var sut = createSUT();
-        final var newUserData = anyNewUserData();
+        final var newUser = UserHelpers.anyUser();
 
         final var usersRepository = sut.getUsersRepository();
-        usersRepository.createUser(newUserData);
+        usersRepository.addNew(newUser);
 
         // When
         sut.save();
 
         // Then
-        assertThat(usersRepository.findById(newUserData.userId())).isNotEmpty();
+        assertThat(usersRepository.findById(newUser.getId())).isNotEmpty();
     }
 
     record SUT(

@@ -4,9 +4,8 @@ import com.azat4dev.demobooking.common.domain.DomainException;
 import com.azat4dev.demobooking.users.common.domain.values.UserId;
 import com.azat4dev.demobooking.users.users_commands.data.repositories.dao.UsersDao;
 import com.azat4dev.demobooking.users.users_commands.domain.core.entities.User;
-import com.azat4dev.demobooking.users.users_commands.domain.interfaces.repositories.NewUserData;
-import com.azat4dev.demobooking.users.users_commands.domain.interfaces.repositories.UsersRepository;
 import com.azat4dev.demobooking.users.users_commands.domain.core.values.email.EmailAddress;
+import com.azat4dev.demobooking.users.users_commands.domain.interfaces.repositories.UsersRepository;
 import lombok.RequiredArgsConstructor;
 
 import java.util.Optional;
@@ -14,14 +13,14 @@ import java.util.Optional;
 @RequiredArgsConstructor
 public class UsersRepositoryImpl implements UsersRepository {
 
-    private final MapNewUserToData mapNewUserToData;
+    private final MapUserToData mapUserToData;
     private final MapUserDataToDomain mapUserDataToDomain;
     private final UsersDao usersDao;
 
     @Override
-    public void createUser(NewUserData newUserData) throws UserWithSameEmailAlreadyExistsException {
+    public void addNew(User user) throws UserWithSameEmailAlreadyExistsException {
 
-        final var userData = this.mapNewUserToData.map(newUserData);
+        final var userData = this.mapUserToData.map(user);
 
         try {
             this.usersDao.addNew(userData);

@@ -14,7 +14,8 @@ public class MapUserDataToDomainImpl implements MapUserDataToDomain {
 
     @Override
     public User map(UserData userData) throws DomainException {
-        return new User(
+
+        return User.dangerouslyMakeFrom(
             UserId.fromUUID(userData.id()),
             userData.createdAt(),
             EmailAddress.dangerMakeWithoutChecks(userData.email()),

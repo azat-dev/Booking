@@ -82,13 +82,13 @@ public class UsersDaoJdbcTests {
         final var user = UserHelpers.anyUser();
 
         final var userData = new UserData(
-            user.id().value(),
+            user.getId().value(),
             LocalDateTime.now(),
             LocalDateTime.now(),
-            user.email().getValue(),
-            user.fullName().getFirstName().getValue(),
-            user.fullName().getLastName().getValue(),
-            user.encodedPassword().value(),
+            user.getEmail().getValue(),
+            user.getFullName().getFirstName().getValue(),
+            user.getFullName().getLastName().getValue(),
+            user.getEncodedPassword().value(),
             EmailVerificationStatus.NOT_VERIFIED
         );
 

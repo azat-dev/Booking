@@ -1,19 +1,18 @@
 package com.azat4dev.demobooking.users.users_commands.data;
 
 import com.azat4dev.demobooking.common.domain.DomainException;
-import com.azat4dev.demobooking.users.users_commands.data.entities.UserData;
-import com.azat4dev.demobooking.users.users_commands.data.repositories.MapNewUserToData;
 import com.azat4dev.demobooking.users.users_commands.data.repositories.MapUserDataToDomain;
+import com.azat4dev.demobooking.users.users_commands.data.repositories.MapUserToData;
+import com.azat4dev.demobooking.users.users_commands.data.repositories.MapUserToDataImpl;
 import com.azat4dev.demobooking.users.users_commands.data.repositories.UsersRepositoryImpl;
 import com.azat4dev.demobooking.users.users_commands.data.repositories.dao.UsersDao;
 import com.azat4dev.demobooking.users.users_commands.domain.UserHelpers;
 import com.azat4dev.demobooking.users.users_commands.domain.interfaces.repositories.UsersRepository;
 import org.junit.jupiter.api.Test;
 
-import java.time.LocalDateTime;
 import java.util.Optional;
 
-import static com.azat4dev.demobooking.users.users_commands.data.DataHelpers.anyNewUserData;
+import static com.azat4dev.demobooking.users.users_commands.domain.UserHelpers.anyUser;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.mockito.ArgumentMatchers.any;
@@ -24,64 +23,54 @@ public class UsersRepositoryImplTests {
 
     SUT createSUT() {
 
-        final var mapNewUserData = mock(MapNewUserToData.class);
+        final var mapUserToData = new MapUserToDataImpl();
         final var mapUserDataToDomain = mock(MapUserDataToDomain.class);
         final var usersDao = mock(UsersDao.class);
 
         return new SUT(
             new UsersRepositoryImpl(
-                mapNewUserData,
+                mapUserToData,
                 mapUserDataToDomain,
                 usersDao
             ),
             usersDao,
-            mapNewUserData,
+            mapUserToData,
             mapUserDataToDomain
         );
     }
 
     @Test
-    public void test_createUser_givenNotExistingUser_thenThrowException() throws Exception {
+    public void test_addNew_givenNotExistingUser_thenThrowException() throws Exception {
 
         // Given
         final var sut = createSUT();
-        final var newUserData = anyNewUserData();
+        final var newUser = anyUser();
 
-        final var persistentUserData = UserData.makeFrom(newUserData, LocalDateTime.now());
-
-        given(sut.mapNewUserToData.map(any()))
-            .willReturn(persistentUserData);
+        final var persistentUserData = sut.mapUserToData.map(newUser);
 
         willDoNothing().given(sut.usersDao).addNew(any());
 
         // When
-        sut.repository.createUser(newUserData);
+        sut.repository.addNew(newUser);
 
         // Then
-        then(sut.mapNewUserToData()).should(times(1))
-            .map(newUserData);
-
         then(sut.usersDao).should(times(1))
             .addNew(persistentUserData);
     }
 
     @Test
-    public void test_createUser_givenExistingUserWithSameEmailAndDifferentId_thenThrowException() throws Exception {
+    public void test_addNew_givenExistingUserWithSameEmailAndDifferentId_thenThrowException() throws Exception {
 
         // Given
         final var sut = createSUT();
-        final var newUserData = anyNewUserData();
-        final var persistentUserData = UserData.makeFrom(newUserData, LocalDateTime.now());
-
-        given(sut.mapNewUserToData.map(any()))
-            .willReturn(persistentUserData);
+        final var newUser = anyUser();
 
         willThrow(new UsersDao.UserAlreadyExistsException()).given(sut.usersDao)
             .addNew(any());
 
         // When
         final var exception = assertThrows(UsersRepository.UserWithSameEmailAlreadyExistsException.class,
-            () -> sut.repository.createUser(newUserData));
+            () -> sut.repository.addNew(newUser));
 
         // Then
         assertThat(exception).isInstanceOf(UsersRepository.UserWithSameEmailAlreadyExistsException.class);
@@ -112,10 +101,10 @@ public class UsersRepositoryImplTests {
 
         // Given
         final var sut = createSUT();
-        final var expectedUser = UserHelpers.anyUser();
-        final var email = expectedUser.email();
+        final var expectedUser = anyUser();
+        final var email = expectedUser.getEmail();
 
-        final var persistentUserData = UserData.makeFrom(expectedUser, LocalDateTime.now());
+        final var persistentUserData = sut.mapUserToData.map(expectedUser);
 
         given(sut.usersDao.findByEmail(any()))
             .willReturn(Optional.of(persistentUserData));
@@ -155,16 +144,17 @@ public class UsersRepositoryImplTests {
 
         // Given
         final var sut = createSUT();
-        final var expectedUser = UserHelpers.anyUser();
+        final var expectedUser = anyUser();
+        final var persistentUserData = sut.mapUserToData.map(expectedUser);
 
         given(sut.usersDao.findById(any()))
-            .willReturn(Optional.of(UserData.makeFrom(expectedUser, LocalDateTime.now())));
+            .willReturn(Optional.of(persistentUserData));
 
         given(sut.mapUserDataToDomain.map(any()))
             .willReturn(expectedUser);
 
         // When
-        final var result = sut.repository.findById(expectedUser.id());
+        final var result = sut.repository.findById(expectedUser.getId());
 
         // Then
         assertThat(result).isNotEmpty();
@@ -174,7 +164,7 @@ public class UsersRepositoryImplTests {
     record SUT(
         UsersRepository repository,
         UsersDao usersDao,
-        MapNewUserToData mapNewUserToData,
+        MapUserToData mapUserToData,
         MapUserDataToDomain mapUserDataToDomain
     ) {
     }

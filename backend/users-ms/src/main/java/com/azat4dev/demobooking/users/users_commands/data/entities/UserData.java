@@ -18,30 +18,4 @@ public record UserData(
     String lastName,
     EmailVerificationStatus emailVerificationStatus
 ) {
-
-    public static UserData makeFrom(NewUserData newUserData, LocalDateTime updatedAt) {
-        return new UserData(
-            newUserData.userId().value(),
-            newUserData.createdAt(),
-            updatedAt,
-            newUserData.email().getValue(),
-            newUserData.encodedPassword().value(),
-            newUserData.fullName().getFirstName().getValue(),
-            newUserData.fullName().getLastName().getValue(),
-            newUserData.emailVerificationStatus()
-        );
-    }
-
-    public static UserData makeFrom(User user, LocalDateTime updatedAt) {
-        return new UserData(
-            user.id().value(),
-            user.createdAt(),
-            updatedAt,
-            user.email().getValue(),
-            user.encodedPassword().value(),
-            user.fullName().getFirstName().getValue(),
-            user.fullName().getLastName().getValue(),
-            user.emailVerificationStatus()
-        );
-    }
 }

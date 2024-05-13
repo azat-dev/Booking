@@ -127,12 +127,12 @@ public class UsersServiceImplTests {
 
         then(sut.usersRepository)
             .should(times(1))
-            .createUser(
+            .addNew(
                 assertArg(userData -> {
-                    assertThat(userData.userId()).isEqualTo(validCommand.userId());
-                    assertThat(userData.email()).isEqualTo(validCommand.email());
-                    assertThat(userData.encodedPassword()).isEqualTo(validCommand.encodedPassword());
-                    assertThat(userData.createdAt()).isEqualTo(currentTime);
+                    assertThat(userData.getId()).isEqualTo(validCommand.userId());
+                    assertThat(userData.getEmail()).isEqualTo(validCommand.email());
+                    assertThat(userData.getEncodedPassword()).isEqualTo(validCommand.encodedPassword());
+                    assertThat(userData.getCreatedAt()).isEqualTo(currentTime);
                 })
             );
 
@@ -156,7 +156,7 @@ public class UsersServiceImplTests {
         final var validCommand = anyCreateUserCommand();
 
         willThrow(new UsersRepository.UserWithSameEmailAlreadyExistsException())
-            .given(sut.usersRepository).createUser(any());
+            .given(sut.usersRepository).addNew(any());
 
         given(sut.timeProvider.currentTime())
             .willReturn(currentTime);

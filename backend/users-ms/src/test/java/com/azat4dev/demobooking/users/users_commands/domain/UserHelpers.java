@@ -48,7 +48,7 @@ public class UserHelpers {
     }
 
     public static User anyUser() {
-        return new User(
+        return User.dangerouslyMakeFrom(
             anyValidUserId(),
             LocalDateTime.now(),
             anyValidEmail(),

@@ -20,12 +20,12 @@ public class DataConfig {
 
     @Bean
     UsersRepository usersRepository(
-        MapNewUserToData mapNewUserToData,
+        MapUserToData mapUserToData,
         MapUserDataToDomain mapUserDataToDomain,
         UsersDao usersDao
     ) {
         return new UsersRepositoryImpl(
-            mapNewUserToData,
+            mapUserToData,
             mapUserDataToDomain,
             usersDao
         );
@@ -37,8 +37,8 @@ public class DataConfig {
     }
 
     @Bean
-    MapNewUserToData mapNewUserToData() {
-        return new MapNewUserToDataImpl();
+    MapUserToData mapNewUserToData() {
+        return new MapUserToDataImpl();
     }
 
     @Bean

@@ -30,8 +30,8 @@ public class UserPrincipal implements UserDetails {
 
     public static UserPrincipal from(User user) {
         return new UserPrincipal(
-            user.id(),
-            user.encodedPassword(),
+            user.getId(),
+            user.getEncodedPassword(),
             Collections.singletonList(new SimpleGrantedAuthority("ROLE_USER"))
         );
     }
