@@ -41,3 +41,12 @@ app:
       fromAddress: noreply@mail.com
 
     base_verification_link_url: http://localhost:8080/api/public/verify-email
+
+  reset_password:
+    token_expiration_in_ms: 600000
+    outgoing_email:
+      fromName: username
+      fromAddress: noreply@resetpassword.com
+      subject: Reset your password
+
+    base_verification_link_url: http://localhost:3000/reset-password
