@@ -2,15 +2,7 @@ package com.azat4dev.demobooking.users.users_commands.data.repositories;
 
 import com.azat4dev.demobooking.common.domain.event.DomainEventNew;
 import com.azat4dev.demobooking.common.domain.event.DomainEventPayload;
-import com.azat4dev.demobooking.common.domain.event.EventId;
-import com.azat4dev.demobooking.users.common.domain.values.UserId;
-import com.azat4dev.demobooking.users.users_commands.domain.core.commands.SendVerificationEmail;
-import com.azat4dev.demobooking.users.users_commands.domain.core.values.FirstName;
-import com.azat4dev.demobooking.users.users_commands.domain.core.values.FullName;
-import com.azat4dev.demobooking.users.users_commands.domain.core.values.LastName;
-import com.azat4dev.demobooking.users.users_commands.domain.core.events.UserCreated;
-import com.azat4dev.demobooking.users.users_commands.domain.core.values.EmailVerificationStatus;
-import com.azat4dev.demobooking.users.users_commands.domain.core.values.email.EmailAddress;
+import com.azat4dev.demobooking.users.users_commands.data.repositories.dto.*;
 import com.fasterxml.jackson.core.JsonParser;
 import com.fasterxml.jackson.core.JsonToken;
 import com.fasterxml.jackson.databind.DeserializationContext;
@@ -32,6 +24,15 @@ public class DomainEventSerializerImpl implements DomainEventSerializer {
 
     private final ObjectMapper objectMapper;
 
+    private final Map<String, ? extends Class<? extends Record>> payloadClassesByEventTypes = Map.of(
+        "UserCreated", UserCreatedDTO.class,
+        "SendVerificationEmail", SendVerificationEmailDTO.class,
+        "VerificationEmailSent", VerificationEmailSentDTO.class,
+        "FailedToSendVerificationEmail", FailedToSendVerificationEmailDTO.class,
+        "UserVerifiedEmail", UserVerifiedEmailDTO.class,
+        "CompleteEmailVerification", CompleteEmailVerificationDTO.class
+    );
+
     public DomainEventSerializerImpl() {
 
         final var objectMapper = new ObjectMapper();
@@ -47,13 +48,10 @@ public class DomainEventSerializerImpl implements DomainEventSerializer {
 
                 final var eventType = (String) parsedValues.get("type");
 
+
                 switch (propertyName) {
                     case "payload" -> {
-                        return switch (eventType) {
-                            case "UserCreated" -> UserCreatedDTO.class;
-                            case "SendVerificationEmail" -> SendVerificationEmailDTO.class;
-                            default -> throw new RuntimeException("Unexpected domain event type: " + eventType);
-                        };
+                        return payloadClassesByEventTypes.get(eventType);
                     }
                     default -> {
                         try {
@@ -68,7 +66,7 @@ public class DomainEventSerializerImpl implements DomainEventSerializer {
             @Override
             Object createInstance(Map values) {
                 final var eventType = (String) values.get("type");
-                final var payload = (Serializable) values.get("payload");
+                final var payload = (DomainEventPayloadDTO) values.get("payload");
 
                 return new DomainEventDTO(
                     (String) values.get("id"),
@@ -152,115 +150,3 @@ public class DomainEventSerializerImpl implements DomainEventSerializer {
     }
 }
 
-
-record FullNameDTO(
-    String firstName,
-    String lastName
-) implements Serializable {
-
-    public FullNameDTO(FullName fullName) {
-        this(fullName.getFirstName().getValue(), fullName.getLastName().getValue());
-    }
-
-    public FullName toDomain() {
-        return new FullName(
-            FirstName.dangerMakeFromStringWithoutCheck(firstName),
-            LastName.checkAndMakeFromString(lastName)
-        );
-    }
-}
-
-record UserCreatedDTO(
-    LocalDateTime createdAt,
-    String userId,
-    FullNameDTO fullName,
-    String email,
-    String emailVerificationStatus
-) implements Serializable {
-
-    public UserCreated toDomain() {
-        return new UserCreated(
-            createdAt,
-            UserId.fromString(userId),
-            fullName.toDomain(),
-            EmailAddress.dangerMakeWithoutChecks(email),
-            EmailVerificationStatus.valueOf(emailVerificationStatus)
-        );
-    }
-}
-
-record SendVerificationEmailDTO(
-    String userId,
-    String email,
-    FullNameDTO fullName
-) implements Serializable {
-
-    public SendVerificationEmail toDomain() {
-        return new SendVerificationEmail(
-            UserId.fromString(userId),
-            EmailAddress.dangerMakeWithoutChecks(email),
-            fullName.toDomain(),
-            0
-        );
-    }
-}
-
-record DomainEventDTO(
-    String id,
-    String type,
-    LocalDateTime issuedAt,
-    Serializable payload
-) implements Serializable {
-
-    private static Serializable serialize(DomainEventPayload payload) {
-
-        switch (payload) {
-            case UserCreated userCreatedPayload -> {
-                return new UserCreatedDTO(
-                    userCreatedPayload.createdAt(),
-                    userCreatedPayload.userId().value().toString(),
-                    new FullNameDTO(userCreatedPayload.fullName()),
-                    userCreatedPayload.email().getValue(),
-                    userCreatedPayload.emailVerificationStatus().name()
-                );
-            }
-
-            case SendVerificationEmail sendVerificationEmail -> {
-                return new SendVerificationEmailDTO(
-                    sendVerificationEmail.userId().value().toString(),
-                    sendVerificationEmail.email().getValue(),
-                    new FullNameDTO(sendVerificationEmail.fullName())
-                );
-            }
-
-            default ->
-                throw new RuntimeException("Unexpected domain event payload type: " + payload.getClass().getName());
-        }
-    }
-
-
-    public static DomainEventDTO makeFrom(DomainEventNew event) {
-        return new DomainEventDTO(
-            event.id().getValue(),
-            event.payload().getClass().getSimpleName(),
-            event.issuedAt(),
-            serialize(event.payload())
-        );
-    }
-
-    private DomainEventPayload payloadToDomain() {
-        return switch (type) {
-            case "UserCreated" -> ((UserCreatedDTO) payload).toDomain();
-            case "SendVerificationEmail" -> ((SendVerificationEmailDTO) payload).toDomain();
-            default -> throw new RuntimeException("Unexpected domain event type: " + type);
-        };
-    }
-
-    public DomainEventNew<?> toDomain() {
-        return new DomainEventNew<>(
-            EventId.dangerouslyCreateFrom(id),
-            issuedAt,
-            payloadToDomain()
-        );
-    }
-}

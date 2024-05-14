@@ -76,7 +76,7 @@ public class EmailVerificationControllerTests {
 
         // Then
         then(completeEmailVerificationHandler).should(times(1))
-            .handle(assertArg(arg -> arg.payload().getToken().equals(validToken)));
+            .handle(assertArg(arg -> arg.payload().token().equals(validToken)));
         response.andExpect(status().isOk());
     }
 

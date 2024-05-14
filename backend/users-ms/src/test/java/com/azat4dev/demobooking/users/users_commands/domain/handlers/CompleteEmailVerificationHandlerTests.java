@@ -103,7 +103,7 @@ public class CompleteEmailVerificationHandlerTests {
 
         // Then
         then(sut.getTokenInfo).should(times(1))
-            .execute(command.getToken());
+            .execute(command.token());
 
         then(sut.usersRepository)
             .should(times(1))

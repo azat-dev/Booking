@@ -27,7 +27,7 @@ public final class CompleteEmailVerificationHandler implements CommandHandler<Do
     public void handle(DomainEventNew<CompleteEmailVerification> command) throws TokenIsExpiredException, TokenIsNotValidException {
 
         final var payload = command.payload();
-        final var token = payload.getToken();
+        final var token = payload.token();
 
         try {
             final var tokenInfo = getTokenInfo.execute(token);
