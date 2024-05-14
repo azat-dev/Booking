@@ -31,7 +31,14 @@ public final class UsersRepositoryImpl implements UsersRepository {
 
     @Override
     public void update(User user) {
-        throw new RuntimeException("NOT IMPLEMENTED YET");
+
+        final var userData = this.mapUserToData.map(user);
+
+        try {
+            this.usersDao.update(userData);
+        } catch (UsersDao.UserNotFound e) {
+            throw new UserNotFoundException(user.getId());
+        }
     }
 
     @Override

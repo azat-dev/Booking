@@ -3,6 +3,7 @@ package com.azat4dev.demobooking.users.users_commands.domain.interfaces.reposito
 import com.azat4dev.demobooking.users.common.domain.values.UserId;
 import com.azat4dev.demobooking.users.users_commands.domain.core.entities.User;
 import com.azat4dev.demobooking.users.users_commands.domain.core.values.email.EmailAddress;
+import lombok.Getter;
 
 import java.util.Optional;
 
@@ -37,9 +38,14 @@ public interface UsersRepository {
         }
     }
 
+    @Getter
     static final class UserNotFoundException extends Exception {
-        public UserNotFoundException() {
+
+        private final UserId userId;
+
+        public UserNotFoundException(UserId userId) {
             super("User not found");
+            this.userId = userId;
         }
 
         @Override
