@@ -4,11 +4,10 @@ import com.azat4dev.demobooking.common.domain.event.DomainEventNew;
 import com.azat4dev.demobooking.common.domain.event.DomainEventPayload;
 import com.azat4dev.demobooking.common.domain.event.EventId;
 import com.azat4dev.demobooking.users.users_commands.domain.core.commands.CompleteEmailVerification;
+import com.azat4dev.demobooking.users.users_commands.domain.core.commands.CompletePasswordReset;
+import com.azat4dev.demobooking.users.users_commands.domain.core.commands.ResetPasswordByEmail;
 import com.azat4dev.demobooking.users.users_commands.domain.core.commands.SendVerificationEmail;
-import com.azat4dev.demobooking.users.users_commands.domain.core.events.FailedToSendVerificationEmail;
-import com.azat4dev.demobooking.users.users_commands.domain.core.events.UserCreated;
-import com.azat4dev.demobooking.users.users_commands.domain.core.events.UserVerifiedEmail;
-import com.azat4dev.demobooking.users.users_commands.domain.core.events.VerificationEmailSent;
+import com.azat4dev.demobooking.users.users_commands.domain.core.events.*;
 
 import java.io.Serializable;
 import java.time.LocalDateTime;
@@ -40,6 +39,19 @@ public record DomainEventDTO(
             }
             case CompleteEmailVerification inst -> {
                 return CompleteEmailVerificationDTO.fromDomain(inst);
+            }
+
+
+            case ResetPasswordByEmail inst -> {
+                return ResetPasswordByEmailDTO.fromDomain(inst);
+            }
+
+            case UserDidResetPassword inst -> {
+                return UserDidResetPasswordDTO.fromDomain(inst);
+            }
+
+            case CompletePasswordReset inst -> {
+                return CompletePasswordResetDTO.fromDomain(inst);
             }
 
             default ->

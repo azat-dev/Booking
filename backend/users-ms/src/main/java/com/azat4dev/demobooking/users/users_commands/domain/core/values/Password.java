@@ -7,7 +7,7 @@ import lombok.EqualsAndHashCode;
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
 
-@Getter
+
 @RequiredArgsConstructor(access = AccessLevel.PRIVATE)
 @EqualsAndHashCode(of = "value")
 public final class Password {
@@ -16,6 +16,7 @@ public final class Password {
     public final static int MAX_LENGTH = 255;
     public final static String PATTERN = "\\S+";
 
+    @Getter
     private final String value;
 
     public static void validate(String password) throws WrongFormatException, LengthException {

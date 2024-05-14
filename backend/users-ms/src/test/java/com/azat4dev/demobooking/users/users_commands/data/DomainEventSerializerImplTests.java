@@ -1,18 +1,15 @@
 package com.azat4dev.demobooking.users.users_commands.data;
 
-import com.azat4dev.demobooking.common.domain.event.DomainEventNew;
-import com.azat4dev.demobooking.common.domain.event.DomainEventPayload;
-import com.azat4dev.demobooking.common.domain.event.EventId;
-import com.azat4dev.demobooking.common.domain.event.RandomEventIdGenerator;
 import com.azat4dev.demobooking.users.users_commands.data.repositories.DomainEventSerializer;
 import com.azat4dev.demobooking.users.users_commands.data.repositories.DomainEventSerializerImpl;
 import com.azat4dev.demobooking.users.users_commands.domain.core.commands.CompleteEmailVerification;
+import com.azat4dev.demobooking.users.users_commands.domain.core.commands.CompletePasswordReset;
+import com.azat4dev.demobooking.users.users_commands.domain.core.commands.ResetPasswordByEmail;
 import com.azat4dev.demobooking.users.users_commands.domain.core.commands.SendVerificationEmail;
-import com.azat4dev.demobooking.users.users_commands.domain.core.events.FailedToSendVerificationEmail;
-import com.azat4dev.demobooking.users.users_commands.domain.core.events.UserCreated;
-import com.azat4dev.demobooking.users.users_commands.domain.core.events.UserVerifiedEmail;
-import com.azat4dev.demobooking.users.users_commands.domain.core.events.VerificationEmailSent;
+import com.azat4dev.demobooking.users.users_commands.domain.core.events.*;
 import com.azat4dev.demobooking.users.users_commands.domain.core.values.EmailVerificationStatus;
+import com.azat4dev.demobooking.users.users_commands.domain.core.values.Password;
+import com.azat4dev.demobooking.users.users_commands.domain.core.values.PasswordResetToken;
 import com.azat4dev.demobooking.users.users_commands.domain.interfaces.services.EmailVerificationToken;
 import org.junit.jupiter.api.Test;
 
@@ -24,15 +21,10 @@ import static com.azat4dev.demobooking.users.users_commands.domain.UserHelpers.*
 import static org.assertj.core.api.Assertions.assertThat;
 
 
-
 public class DomainEventSerializerImplTests {
 
     DomainEventSerializer createSUT() {
         return new DomainEventSerializerImpl();
-    }
-
-    EventId anyEventId() {
-        return new RandomEventIdGenerator().generate();
     }
 
     @Test
@@ -78,6 +70,24 @@ public class DomainEventSerializerImplTests {
             eventsFactory.issue(
                 new CompleteEmailVerification(
                     new EmailVerificationToken("token")
+                )
+            ),
+            eventsFactory.issue(
+                new ResetPasswordByEmail(
+                    "token",
+                    anyValidEmail()
+                )
+            ),
+            eventsFactory.issue(
+                new UserDidResetPassword(
+                    anyValidUserId()
+                )
+            ),
+            eventsFactory.issue(
+                new CompletePasswordReset(
+                    "token",
+                    Password.makeFromString("password"),
+                    PasswordResetToken.dangerouslyMakeFrom("passwordResetToken")
                 )
             )
         );

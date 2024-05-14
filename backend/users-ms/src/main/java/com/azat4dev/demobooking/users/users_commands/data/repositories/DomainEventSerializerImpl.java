@@ -1,7 +1,6 @@
 package com.azat4dev.demobooking.users.users_commands.data.repositories;
 
 import com.azat4dev.demobooking.common.domain.event.DomainEventNew;
-import com.azat4dev.demobooking.common.domain.event.DomainEventPayload;
 import com.azat4dev.demobooking.users.users_commands.data.repositories.dto.*;
 import com.fasterxml.jackson.core.JsonParser;
 import com.fasterxml.jackson.core.JsonToken;
@@ -14,7 +13,6 @@ import com.fasterxml.jackson.databind.module.SimpleModule;
 import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
 
 import java.io.IOException;
-import java.io.Serializable;
 import java.time.LocalDateTime;
 import java.util.HashMap;
 import java.util.Map;
@@ -30,7 +28,10 @@ public class DomainEventSerializerImpl implements DomainEventSerializer {
         "VerificationEmailSent", VerificationEmailSentDTO.class,
         "FailedToSendVerificationEmail", FailedToSendVerificationEmailDTO.class,
         "UserVerifiedEmail", UserVerifiedEmailDTO.class,
-        "CompleteEmailVerification", CompleteEmailVerificationDTO.class
+        "CompleteEmailVerification", CompleteEmailVerificationDTO.class,
+        "ResetPasswordByEmail", ResetPasswordByEmailDTO.class,
+        "UserDidResetPassword", UserDidResetPasswordDTO.class,
+        "CompletePasswordReset", CompletePasswordResetDTO.class
     );
 
     public DomainEventSerializerImpl() {
