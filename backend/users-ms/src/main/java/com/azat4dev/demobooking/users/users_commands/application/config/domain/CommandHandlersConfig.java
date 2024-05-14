@@ -17,7 +17,9 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 
+import java.io.UnsupportedEncodingException;
 import java.net.URL;
+import java.net.URLEncoder;
 import java.util.function.Function;
 
 @AutoConnectCommandHandlersToBus
@@ -29,7 +31,13 @@ public class CommandHandlersConfig {
         @Value("${app.verification_email.base_verification_link_url}")
         URL baseVerificationLinkUrl
     ) {
-        return token -> baseVerificationLinkUrl + "?token=" + token.value();
+        return token -> {
+            try {
+                return baseVerificationLinkUrl + "?token=" + URLEncoder.encode(token.value(), "UTF-8");
+            } catch (UnsupportedEncodingException e) {
+                throw new RuntimeException(e);
+            }
+        };
     }
 
     @Bean
