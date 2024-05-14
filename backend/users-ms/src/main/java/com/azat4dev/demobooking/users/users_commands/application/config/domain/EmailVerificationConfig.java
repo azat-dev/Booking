@@ -1,15 +1,12 @@
 package com.azat4dev.demobooking.users.users_commands.application.config.domain;
 
-import com.azat4dev.demobooking.common.domain.AutoConnectCommandHandlersToBus;
 import com.azat4dev.demobooking.common.domain.annotations.CommandHandlerBean;
 import com.azat4dev.demobooking.common.domain.event.DomainEventsBus;
-import com.azat4dev.demobooking.common.domain.event.DomainEventsFactory;
 import com.azat4dev.demobooking.common.utils.TimeProvider;
 import com.azat4dev.demobooking.users.users_commands.domain.core.values.email.EmailAddress;
 import com.azat4dev.demobooking.users.users_commands.domain.handlers.BuildEmailVerificationLink;
 import com.azat4dev.demobooking.users.users_commands.domain.handlers.CompleteEmailVerificationHandler;
 import com.azat4dev.demobooking.users.users_commands.domain.handlers.SendVerificationEmailHandler;
-import com.azat4dev.demobooking.users.users_commands.domain.handlers.UpdateUserPhotoHandler;
 import com.azat4dev.demobooking.users.users_commands.domain.interfaces.repositories.UsersRepository;
 import com.azat4dev.demobooking.users.users_commands.domain.interfaces.services.EmailService;
 import com.azat4dev.demobooking.users.users_commands.domain.interfaces.services.GetInfoForEmailVerificationToken;
@@ -22,9 +19,9 @@ import java.net.URL;
 import java.net.URLEncoder;
 import java.nio.charset.StandardCharsets;
 
-@AutoConnectCommandHandlersToBus
+
 @Configuration
-public class CommandHandlersConfig {
+public class EmailVerificationConfig {
 
     @Bean
     BuildEmailVerificationLink buildVerificationLink(
@@ -70,12 +67,5 @@ public class CommandHandlersConfig {
             domainEventsBus,
             timeProvider
         );
-    }
-
-    @CommandHandlerBean
-    UpdateUserPhotoHandler updateUserPhotoHandler(
-        DomainEventsFactory domainEventsFactory
-    ) {
-        return null;
     }
 }

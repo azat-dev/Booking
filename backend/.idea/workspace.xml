@@ -5,18 +5,9 @@
   </component>
   <component name="ChangeListManager">
     <list default="true" id="f0a5f116-5301-4fd9-b922-f7e2e0c7dfbd" name="Changes" comment="">
-      <change afterPath="$PROJECT_DIR$/users-ms/src/main/java/com/azat4dev/demobooking/users/users_commands/domain/core/commands/UpdateUserPhoto.java" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/users-ms/src/main/java/com/azat4dev/demobooking/users/users_commands/domain/core/events/UserChangedPhoto.java" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/users-ms/src/main/java/com/azat4dev/demobooking/users/users_commands/domain/core/values/FileExtension.java" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/users-ms/src/main/java/com/azat4dev/demobooking/users/users_commands/domain/core/values/InitialUserPhotoFileName.java" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/users-ms/src/main/java/com/azat4dev/demobooking/users/users_commands/domain/core/values/UserPhotoId.java" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/users-ms/src/main/java/com/azat4dev/demobooking/users/users_commands/domain/handlers/UpdateUserPhotoHandler.java" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/users-ms/src/main/java/com/azat4dev/demobooking/users/users_commands/domain/interfaces/repositories/FileKey.java" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/users-ms/src/main/java/com/azat4dev/demobooking/users/users_commands/domain/interfaces/repositories/FilesRepository.java" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/users-ms/src/main/java/com/azat4dev/demobooking/users/users_commands/presentation/api/rest/authentication/resources/UserResource.java" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/users-ms/src/main/java/com/azat4dev/demobooking/users/users_commands/domain/handlers/BuildResetPasswordEmailImpl.java" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/users-ms/src/main/java/com/azat4dev/demobooking/users/users_commands/domain/handlers/GenerateResetPasswordLink.java" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/docker-compose.yaml" beforeDir="false" afterPath="$PROJECT_DIR$/docker-compose.yaml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/users-ms/src/main/java/com/azat4dev/demobooking/users/users_commands/application/config/domain/CommandHandlersConfig.java" beforeDir="false" afterPath="$PROJECT_DIR$/users-ms/src/main/java/com/azat4dev/demobooking/users/users_commands/application/config/domain/CommandHandlersConfig.java" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />

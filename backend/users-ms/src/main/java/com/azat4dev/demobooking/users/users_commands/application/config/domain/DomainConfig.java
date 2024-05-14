@@ -1,5 +1,6 @@
 package com.azat4dev.demobooking.users.users_commands.application.config.domain;
 
+import com.azat4dev.demobooking.common.domain.AutoConnectCommandHandlersToBus;
 import com.azat4dev.demobooking.common.domain.core.UserIdFactory;
 import com.azat4dev.demobooking.common.domain.core.UserIdFactoryImpl;
 import com.azat4dev.demobooking.common.domain.event.*;
@@ -22,6 +23,7 @@ import org.springframework.kafka.listener.ConcurrentMessageListenerContainer;
 import java.util.function.Function;
 
 
+@AutoConnectCommandHandlersToBus
 @Configuration
 public class DomainConfig {
 
