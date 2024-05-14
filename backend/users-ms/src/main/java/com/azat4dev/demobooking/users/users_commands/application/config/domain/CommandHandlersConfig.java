@@ -8,6 +8,7 @@ import com.azat4dev.demobooking.users.users_commands.domain.core.values.email.Em
 import com.azat4dev.demobooking.users.users_commands.domain.handlers.BuildEmailVerificationLink;
 import com.azat4dev.demobooking.users.users_commands.domain.handlers.CompleteEmailVerificationHandler;
 import com.azat4dev.demobooking.users.users_commands.domain.handlers.SendVerificationEmailHandler;
+import com.azat4dev.demobooking.users.users_commands.domain.handlers.UpdateUserPhotoHandler;
 import com.azat4dev.demobooking.users.users_commands.domain.interfaces.repositories.UsersRepository;
 import com.azat4dev.demobooking.users.users_commands.domain.interfaces.services.EmailService;
 import com.azat4dev.demobooking.users.users_commands.domain.interfaces.services.GetInfoForEmailVerificationToken;
@@ -72,5 +73,12 @@ public class CommandHandlersConfig {
             domainEventsFactory,
             timeProvider
         );
+    }
+
+    @Bean
+    UpdateUserPhotoHandler updateUserPhotoHandler(
+        DomainEventsFactory domainEventsFactory
+    ) {
+        return null;
     }
 }

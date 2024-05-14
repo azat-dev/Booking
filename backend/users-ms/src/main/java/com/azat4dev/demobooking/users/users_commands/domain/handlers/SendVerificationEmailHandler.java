@@ -10,14 +10,11 @@ import com.azat4dev.demobooking.users.users_commands.domain.core.events.Verifica
 import com.azat4dev.demobooking.users.users_commands.domain.core.values.email.EmailAddress;
 import com.azat4dev.demobooking.users.users_commands.domain.core.values.email.EmailBody;
 import com.azat4dev.demobooking.users.users_commands.domain.interfaces.services.EmailService;
-import com.azat4dev.demobooking.users.users_commands.domain.interfaces.services.EmailVerificationToken;
 import com.azat4dev.demobooking.users.users_commands.domain.interfaces.services.ProvideEmailVerificationToken;
 import com.azat4dev.demobooking.users.users_commands.domain.services.EmailData;
 import lombok.RequiredArgsConstructor;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-
-import java.util.function.Function;
 
 @RequiredArgsConstructor
 public class SendVerificationEmailHandler implements CommandHandler<DomainEventNew<SendVerificationEmail>> {
