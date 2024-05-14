@@ -10,7 +10,6 @@ import com.azat4dev.demobooking.users.users_commands.domain.handlers.CompleteEma
 import com.azat4dev.demobooking.users.users_commands.domain.handlers.SendVerificationEmailHandler;
 import com.azat4dev.demobooking.users.users_commands.domain.interfaces.repositories.UsersRepository;
 import com.azat4dev.demobooking.users.users_commands.domain.interfaces.services.EmailService;
-import com.azat4dev.demobooking.users.users_commands.domain.interfaces.services.EmailVerificationToken;
 import com.azat4dev.demobooking.users.users_commands.domain.interfaces.services.GetInfoForEmailVerificationToken;
 import com.azat4dev.demobooking.users.users_commands.domain.interfaces.services.ProvideEmailVerificationToken;
 import org.springframework.beans.factory.annotation.Value;
@@ -20,7 +19,7 @@ import org.springframework.context.annotation.Configuration;
 import java.io.UnsupportedEncodingException;
 import java.net.URL;
 import java.net.URLEncoder;
-import java.util.function.Function;
+import java.nio.charset.StandardCharsets;
 
 @AutoConnectCommandHandlersToBus
 @Configuration
@@ -32,11 +31,7 @@ public class CommandHandlersConfig {
         URL baseVerificationLinkUrl
     ) {
         return token -> {
-            try {
-                return baseVerificationLinkUrl + "?token=" + URLEncoder.encode(token.value(), "UTF-8");
-            } catch (UnsupportedEncodingException e) {
-                throw new RuntimeException(e);
-            }
+            return baseVerificationLinkUrl + "?token=" + URLEncoder.encode(token.value(), StandardCharsets.UTF_8);
         };
     }
 
