@@ -9,7 +9,7 @@ public interface UsersDao {
 
     void addNew(UserData userData) throws UserAlreadyExistsException;
 
-    void update(UserData userData) throws  UserNotFound;
+    void update(UserData userData) throws UserNotFound;
 
     Optional<UserData> findByEmail(String email);
 
@@ -17,12 +17,12 @@ public interface UsersDao {
 
     // Exceptions
 
-    public static class Exception extends RuntimeException {
+    class Exception extends RuntimeException {
     }
 
-    public final static class UserAlreadyExistsException extends Exception {
+    final class UserAlreadyExistsException extends Exception {
     }
 
-    public final static class UserNotFound extends Exception {
+    final class UserNotFound extends Exception {
     }
 }

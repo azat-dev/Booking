@@ -12,6 +12,7 @@ import org.springframework.context.annotation.Import;
 import org.springframework.test.context.jdbc.Sql;
 
 import java.time.LocalDateTime;
+import java.util.UUID;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.jupiter.api.Assertions.assertThrows;
@@ -77,11 +78,9 @@ public class UsersDaoJdbcTests {
         assertThat(exception).isNotNull();
     }
 
-    UserData givenExistingUser() {
-
+    UserData anyUserData() {
         final var user = UserHelpers.anyUser();
-
-        final var userData = new UserData(
+        return new UserData(
             user.getId().value(),
             LocalDateTime.now(),
             LocalDateTime.now(),
@@ -91,8 +90,67 @@ public class UsersDaoJdbcTests {
             user.getEncodedPassword().value(),
             EmailVerificationStatus.NOT_VERIFIED
         );
+    }
 
+    UserData givenExistingUser() {
+
+        final var userData = anyUserData();
         dao.addNew(userData);
         return userData;
+    }
+
+    @Test
+    @Sql({"/db/drop-schema.sql", "/db/schema.sql", "/db/data.sql"})
+    void test_update_givenExistingUserId_thenReturn() {
+
+        // Given
+        final var existingData = givenExistingUser();
+
+        final var expectedUser = new UserData(
+            existingData.id(),
+            existingData.createdAt(),
+            LocalDateTime.now(),
+            "new@email.com",
+            "updatedpassword",
+            "updatedFirstName",
+            "updatedLastName",
+            EmailVerificationStatus.VERIFIED
+        );
+        final var existingUserId = expectedUser.id();
+
+        // When
+        dao.update(expectedUser);
+        final var result = dao.findById(existingUserId);
+
+        // Then
+        assertThat(result).isNotEmpty();
+        assertThat(result.get()).isEqualTo(expectedUser);
+    }
+
+    @Test
+    @Sql({"/db/drop-schema.sql", "/db/schema.sql", "/db/data.sql"})
+    void test_update_givenNotExistingUserId_thenReturn() {
+
+        // Given
+        final var existingData = givenExistingUser();
+
+        final var expectedUser = new UserData(
+            UserHelpers.anyValidUserId().value(),
+            existingData.createdAt(),
+            LocalDateTime.now(),
+            "new@email.com",
+            "updatedpassword",
+            "updatedFirstName",
+            "updatedLastName",
+            EmailVerificationStatus.VERIFIED
+        );
+
+        final var existingUserId = expectedUser.id();
+
+        // When
+        final var exception = assertThrows(UsersDao.UserNotFound.class, () -> dao.update(expectedUser));
+
+        // Then
+        assertThat(exception).isInstanceOf(UsersDao.UserNotFound.class);
     }
 }
