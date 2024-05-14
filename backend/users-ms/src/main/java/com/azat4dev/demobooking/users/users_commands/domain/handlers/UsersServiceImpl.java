@@ -1,6 +1,9 @@
 package com.azat4dev.demobooking.users.users_commands.domain.handlers;
 
-import com.azat4dev.demobooking.common.domain.event.DomainEventsFactory;
+
+import com.azat4dev.demobooking.common.domain.event.DomainEventNew;
+import com.azat4dev.demobooking.common.domain.event.DomainEventPayload;
+import com.azat4dev.demobooking.common.domain.event.EventIdGenerator;
 import com.azat4dev.demobooking.common.utils.TimeProvider;
 import com.azat4dev.demobooking.users.users_commands.domain.core.commands.CompleteEmailVerification;
 import com.azat4dev.demobooking.users.users_commands.domain.core.commands.CreateUser;
@@ -17,7 +20,7 @@ public final class UsersServiceImpl implements UsersService {
     private final TimeProvider timeProvider;
     private final MarkOutboxNeedsSynchronization markOutboxNeedsSynchronization;
     private final UnitOfWorkFactory unitOfWorkFactory;
-    private final DomainEventsFactory domainEventsFactory;
+    private final EventIdGenerator eventIdGenerator;
 
     @Override
     public void handle(CreateUser command) throws UserWithSameEmailAlreadyExistsException {
@@ -43,7 +46,9 @@ public final class UsersServiceImpl implements UsersService {
             usersRepository.addNew(user);
 
             outboxEventsRepository.publish(
-                domainEventsFactory.issue(
+                new DomainEventNew<DomainEventPayload>(
+                    eventIdGenerator.generate(),
+                    currentDate,
                     new UserCreated(
                         currentDate,
                         userId,

@@ -50,13 +50,13 @@ public class DomainConfig {
         TimeProvider timeProvider,
         UnitOfWorkFactory unitOfWorkFactory,
         OutboxEventsPublisher outboxEventsPublisher,
-        DomainEventsFactory domainEventsFactory
+        EventIdGenerator eventIdGenerator
     ) {
         return new UsersServiceImpl(
             timeProvider,
             outboxEventsPublisher::publishEvents,
             unitOfWorkFactory,
-            domainEventsFactory
+            eventIdGenerator
         );
     }
 
@@ -64,12 +64,16 @@ public class DomainConfig {
     public DomainEventsBus domainEventsBus(
         KafkaTemplate<String, String> kafkaTemplate,
         DomainEventSerializer domainEventSerializer,
-        Function<String, ConcurrentMessageListenerContainer<String, String>> containerFactory
+        Function<String, ConcurrentMessageListenerContainer<String, String>> containerFactory,
+        TimeProvider timeProvider,
+        EventIdGenerator eventIdGenerator
     ) {
         return new KafkaDomainEventsBus(
             kafkaTemplate,
             domainEventSerializer,
-            containerFactory
+            containerFactory,
+            timeProvider,
+            eventIdGenerator
         );
     }
 

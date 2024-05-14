@@ -4,7 +4,6 @@ package com.azat4dev.demobooking.users.users_commands.domain.handlers;
 import com.azat4dev.demobooking.common.domain.CommandHandler;
 import com.azat4dev.demobooking.common.domain.DomainException;
 import com.azat4dev.demobooking.common.domain.event.DomainEventsBus;
-import com.azat4dev.demobooking.common.domain.event.DomainEventsFactory;
 import com.azat4dev.demobooking.common.domain.event.EventId;
 import com.azat4dev.demobooking.common.utils.TimeProvider;
 import com.azat4dev.demobooking.users.users_commands.domain.core.commands.CompleteEmailVerification;
@@ -22,7 +21,6 @@ public final class CompleteEmailVerificationHandler implements CommandHandler<Co
     private final GetInfoForEmailVerificationToken getTokenInfo;
     private final UsersRepository usersRepository;
     private final DomainEventsBus bus;
-    private final DomainEventsFactory domainEventsFactory;
     private final TimeProvider timeProvider;
 
     @Override
@@ -51,11 +49,7 @@ public final class CompleteEmailVerificationHandler implements CommandHandler<Co
             user.setEmailVerificationStatus(EmailVerificationStatus.VERIFIED);
             usersRepository.update(user);
 
-            bus.publish(
-                domainEventsFactory.issue(
-                    new UserVerifiedEmail(userId, email)
-                )
-            );
+            bus.publish(new UserVerifiedEmail(userId, email));
 
         } catch (GetInfoForEmailVerificationToken.TokenIsNotValidException e) {
             throw new TokenIsNotValidException();

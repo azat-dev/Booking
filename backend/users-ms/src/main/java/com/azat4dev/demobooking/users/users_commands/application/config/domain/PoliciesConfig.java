@@ -13,13 +13,7 @@ import org.springframework.context.annotation.Import;
 public class PoliciesConfig {
 
     @Bean
-    ProduceSendVerificationEmailCommandAfterSignUpPolicy sendVerificationEmailAfterSignUpPolicy(
-        DomainEventsBus bus,
-        DomainEventsFactory domainEventsFactory
-    ) {
-        return new ProduceSendVerificationEmailCommandAfterSignUpPolicy(
-            bus,
-            domainEventsFactory
-        );
+    ProduceSendVerificationEmailCommandAfterSignUpPolicy sendVerificationEmailAfterSignUpPolicy(DomainEventsBus bus) {
+        return new ProduceSendVerificationEmailCommandAfterSignUpPolicy(bus);
     }
 }

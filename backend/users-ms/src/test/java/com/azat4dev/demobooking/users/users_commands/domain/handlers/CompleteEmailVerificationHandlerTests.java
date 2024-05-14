@@ -39,7 +39,6 @@ public class CompleteEmailVerificationHandlerTests {
                 getTokenInfo,
                 usersRepository,
                 bus,
-                eventsFactory,
                 timeProvider
             ),
             getTokenInfo,
@@ -111,7 +110,7 @@ public class CompleteEmailVerificationHandlerTests {
 
         then(sut.bus)
             .should(times(1))
-            .publish(assertArg(e -> assertThat(e.payload()).isEqualTo(expectedEvent)));
+            .publish(expectedEvent);
     }
 
     record SUT(

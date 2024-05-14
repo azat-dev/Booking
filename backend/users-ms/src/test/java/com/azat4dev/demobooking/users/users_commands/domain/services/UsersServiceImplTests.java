@@ -1,7 +1,6 @@
 package com.azat4dev.demobooking.users.users_commands.domain.services;
 
 import com.azat4dev.demobooking.common.domain.event.DomainEventNew;
-import com.azat4dev.demobooking.common.domain.event.DomainEventsFactoryImpl;
 import com.azat4dev.demobooking.common.domain.event.EventId;
 import com.azat4dev.demobooking.common.domain.event.EventIdGenerator;
 import com.azat4dev.demobooking.common.utils.TimeProvider;
@@ -53,10 +52,7 @@ public class UsersServiceImplTests {
                 timeProvider,
                 markOutboxNeedsSynchronization,
                 unitOfWorkFactory,
-                new DomainEventsFactoryImpl(
-                    eventIdGenerator,
-                    timeProvider
-                )
+                eventIdGenerator
             ),
             unitOfWork,
             outboxEventsRepository,

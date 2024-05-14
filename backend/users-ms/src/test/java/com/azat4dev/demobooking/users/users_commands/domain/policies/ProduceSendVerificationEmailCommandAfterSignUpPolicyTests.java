@@ -1,7 +1,9 @@
 package com.azat4dev.demobooking.users.users_commands.domain.policies;
 
-import com.azat4dev.demobooking.common.domain.event.*;
-import com.azat4dev.demobooking.common.utils.SystemTimeProvider;
+import com.azat4dev.demobooking.common.domain.event.DomainEventNew;
+import com.azat4dev.demobooking.common.domain.event.DomainEventsBus;
+import com.azat4dev.demobooking.common.domain.event.EventId;
+import com.azat4dev.demobooking.common.domain.event.RandomEventIdGenerator;
 import com.azat4dev.demobooking.users.users_commands.domain.UserHelpers;
 import com.azat4dev.demobooking.users.users_commands.domain.core.commands.SendVerificationEmail;
 import com.azat4dev.demobooking.users.users_commands.domain.core.events.UserCreated;
@@ -10,8 +12,6 @@ import org.junit.jupiter.api.Test;
 
 import java.time.LocalDateTime;
 
-import static org.assertj.core.api.Assertions.assertThat;
-import static org.mockito.ArgumentMatchers.assertArg;
 import static org.mockito.BDDMockito.then;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.times;
@@ -23,13 +23,7 @@ public class ProduceSendVerificationEmailCommandAfterSignUpPolicyTests {
         final var bus = mock(DomainEventsBus.class);
 
         return new SUT(
-            new ProduceSendVerificationEmailCommandAfterSignUpPolicy(
-                bus,
-                new DomainEventsFactoryImpl(
-                    new RandomEventIdGenerator(),
-                    new SystemTimeProvider()
-                )
-            ),
+            new ProduceSendVerificationEmailCommandAfterSignUpPolicy(bus),
             bus
         );
     }
@@ -71,9 +65,7 @@ public class ProduceSendVerificationEmailCommandAfterSignUpPolicyTests {
         // Then
         then(sut.bus)
             .should(times(1))
-            .publish(assertArg(m -> {
-                assertThat(m.payload()).isEqualTo(expectedOutput);
-            }));
+            .publish(expectedOutput);
     }
 
     record SUT(

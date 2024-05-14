@@ -45,8 +45,7 @@ public class CommandHandlersConfig {
         String fromName,
         EmailService emailService,
         ProvideEmailVerificationToken provideEmailVerificationToken,
-        DomainEventsBus domainEventsBus,
-        DomainEventsFactory domainEventsFactory
+        DomainEventsBus domainEventsBus
     ) {
         return new SendVerificationEmailHandler(
             buildEmailVerificationLink,
@@ -54,8 +53,7 @@ public class CommandHandlersConfig {
             fromName,
             emailService,
             provideEmailVerificationToken,
-            domainEventsBus,
-            domainEventsFactory
+            domainEventsBus
         );
     }
 
@@ -63,7 +61,6 @@ public class CommandHandlersConfig {
     CompleteEmailVerificationHandler completeEmailVerificationCommandHandler(
         GetInfoForEmailVerificationToken getTokenInfo,
         DomainEventsBus domainEventsBus,
-        DomainEventsFactory domainEventsFactory,
         UsersRepository usersRepository,
         TimeProvider timeProvider
     ) {
@@ -71,7 +68,6 @@ public class CommandHandlersConfig {
             getTokenInfo,
             usersRepository,
             domainEventsBus,
-            domainEventsFactory,
             timeProvider
         );
     }

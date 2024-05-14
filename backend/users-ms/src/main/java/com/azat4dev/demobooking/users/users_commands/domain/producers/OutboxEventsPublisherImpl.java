@@ -23,7 +23,7 @@ public final class OutboxEventsPublisherImpl implements OutboxEventsPublisher {
                 break;
             }
 
-            events.forEach(bus::publish);
+            events.forEach(e -> bus.publish(e.payload(), e.issuedAt(), e.id()));
             List<EventId> ids = events.stream().map(DomainEventNew::id).toList();
             outboxEventsRepository.markAsPublished(ids);
         }

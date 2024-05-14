@@ -41,8 +41,8 @@ public class SendVerificationEmailHandlerTests {
         final var tokenValue = "emailVerificationToken";
         given(tokenService.execute(any(), any()))
             .willReturn(new EmailVerificationToken(tokenValue));
-        final var domainEventsBus = mock(DomainEventsBus.class);
 
+        final var domainEventsBus = mock(DomainEventsBus.class);
 
         final var handler = new SendVerificationEmailHandler(
             buildVerificationLink,
@@ -50,8 +50,7 @@ public class SendVerificationEmailHandlerTests {
             fromName,
             emailService,
             tokenService,
-            domainEventsBus,
-            EventHelpers.eventsFactory
+            domainEventsBus
         );
 
         return new SUT(
@@ -101,7 +100,7 @@ public class SendVerificationEmailHandlerTests {
         );
 
         then(sut.bus).should(times(1))
-            .publish(assertArg(e -> assertThat(e.payload()).isEqualTo(expectedEvent)));
+            .publish(expectedEvent);
     }
 
     @Test
@@ -125,7 +124,7 @@ public class SendVerificationEmailHandlerTests {
         );
 
         then(sut.bus).should(times(1))
-            .publish(assertArg(e -> assertThat(e.payload()).isEqualTo(expectedEvent)));
+            .publish(expectedEvent);
     }
 
     record SUT(
@@ -138,6 +137,5 @@ public class SendVerificationEmailHandlerTests {
         DomainEventsBus bus,
         String verificationLink
     ) {
-
     }
 }

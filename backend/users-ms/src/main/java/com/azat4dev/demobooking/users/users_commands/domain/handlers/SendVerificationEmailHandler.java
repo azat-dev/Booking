@@ -1,7 +1,6 @@
 package com.azat4dev.demobooking.users.users_commands.domain.handlers;
 
 import com.azat4dev.demobooking.common.domain.CommandHandler;
-import com.azat4dev.demobooking.common.domain.event.DomainEventNew;
 import com.azat4dev.demobooking.common.domain.event.DomainEventsBus;
 import com.azat4dev.demobooking.common.domain.event.DomainEventsFactory;
 import com.azat4dev.demobooking.common.domain.event.EventId;
@@ -30,7 +29,6 @@ public class SendVerificationEmailHandler implements CommandHandler<SendVerifica
     private final EmailService emailService;
     private final ProvideEmailVerificationToken provideEmailVerificationToken;
     private final DomainEventsBus bus;
-    private final DomainEventsFactory domainEventsFactory;
 
     @Override
     public void handle(SendVerificationEmail command, EventId eventId, LocalDateTime issuedAt) {
@@ -58,23 +56,19 @@ public class SendVerificationEmailHandler implements CommandHandler<SendVerifica
             logger.error("Can' send verification email", e);
 
             bus.publish(
-                domainEventsFactory.issue(
-                    new FailedToSendVerificationEmail(
-                        command.userId(),
-                        command.email(),
-                        command.attempt() + 1
-                    )
+                new FailedToSendVerificationEmail(
+                    command.userId(),
+                    command.email(),
+                    command.attempt() + 1
                 )
             );
             return;
         }
 
         bus.publish(
-            domainEventsFactory.issue(
-                new VerificationEmailSent(
-                    command.userId(),
-                    command.email()
-                )
+            new VerificationEmailSent(
+                command.userId(),
+                command.email()
             )
         );
     }
