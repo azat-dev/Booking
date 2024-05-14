@@ -3,9 +3,9 @@ package com.azat4dev.demobooking.users.users_commands.domain.handlers;
 
 import com.azat4dev.demobooking.common.domain.CommandHandler;
 import com.azat4dev.demobooking.common.domain.DomainException;
-import com.azat4dev.demobooking.common.domain.event.DomainEventNew;
 import com.azat4dev.demobooking.common.domain.event.DomainEventsBus;
 import com.azat4dev.demobooking.common.domain.event.DomainEventsFactory;
+import com.azat4dev.demobooking.common.domain.event.EventId;
 import com.azat4dev.demobooking.common.utils.TimeProvider;
 import com.azat4dev.demobooking.users.users_commands.domain.core.commands.CompleteEmailVerification;
 import com.azat4dev.demobooking.users.users_commands.domain.core.events.UserVerifiedEmail;
@@ -14,8 +14,10 @@ import com.azat4dev.demobooking.users.users_commands.domain.interfaces.repositor
 import com.azat4dev.demobooking.users.users_commands.domain.interfaces.services.GetInfoForEmailVerificationToken;
 import lombok.RequiredArgsConstructor;
 
+import java.time.LocalDateTime;
+
 @RequiredArgsConstructor
-public final class CompleteEmailVerificationHandler implements CommandHandler<DomainEventNew<CompleteEmailVerification>> {
+public final class CompleteEmailVerificationHandler implements CommandHandler<CompleteEmailVerification> {
 
     private final GetInfoForEmailVerificationToken getTokenInfo;
     private final UsersRepository usersRepository;
@@ -24,10 +26,9 @@ public final class CompleteEmailVerificationHandler implements CommandHandler<Do
     private final TimeProvider timeProvider;
 
     @Override
-    public void handle(DomainEventNew<CompleteEmailVerification> command) throws TokenIsExpiredException, TokenIsNotValidException {
+    public void handle(CompleteEmailVerification command, EventId eventId, LocalDateTime issuedAt) {
 
-        final var payload = command.payload();
-        final var token = payload.token();
+        final var token = command.token();
 
         try {
             final var tokenInfo = getTokenInfo.execute(token);

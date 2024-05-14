@@ -1,9 +1,9 @@
 package com.azat4dev.demobooking.users.users_commands.domain.handlers;
 
-import com.azat4dev.demobooking.common.domain.event.DomainEventNew;
 import com.azat4dev.demobooking.common.domain.event.DomainEventsBus;
 import com.azat4dev.demobooking.common.utils.SystemTimeProvider;
 import com.azat4dev.demobooking.common.utils.TimeProvider;
+import com.azat4dev.demobooking.users.users_commands.domain.EventHelpers;
 import com.azat4dev.demobooking.users.users_commands.domain.UserHelpers;
 import com.azat4dev.demobooking.users.users_commands.domain.core.commands.CompleteEmailVerification;
 import com.azat4dev.demobooking.users.users_commands.domain.core.events.UserVerifiedEmail;
@@ -61,7 +61,6 @@ public class CompleteEmailVerificationHandlerTests {
         // Given
         final var sut = createSUT();
         final var command = anyCompleteEmailVerification();
-        final var event = (DomainEventNew<CompleteEmailVerification>) eventsFactory.issue(command);
 
         willThrow(new GetInfoForEmailVerificationToken.TokenIsNotValidException())
             .given(sut.getTokenInfo)
@@ -69,7 +68,7 @@ public class CompleteEmailVerificationHandlerTests {
 
         // When
         final var exception = assertThrows(CompleteEmailVerificationHandler.TokenIsNotValidException.class, () -> {
-            sut.handler.handle(event);
+            sut.handler.handle(command, EventHelpers.anyEventId(), LocalDateTime.now());
         });
 
         // Then
@@ -83,7 +82,6 @@ public class CompleteEmailVerificationHandlerTests {
         final var sut = createSUT();
         final var existingUser = UserHelpers.anyUser();
         final var command = anyCompleteEmailVerification();
-        final var event = (DomainEventNew<CompleteEmailVerification>) eventsFactory.issue(command);
         final var currentTime = LocalDateTime.now();
 
         final var tokenInfo = new EmailVerificationTokenInfo(
@@ -99,7 +97,7 @@ public class CompleteEmailVerificationHandlerTests {
             .willReturn(Optional.of(existingUser));
 
         // When
-        sut.handler.handle(event);
+        sut.handler.handle(command, EventHelpers.anyEventId(), currentTime);
 
         // Then
         then(sut.getTokenInfo).should(times(1))

@@ -1,6 +1,5 @@
 package com.azat4dev.demobooking.users.users_commands.domain.policies;
 
-import com.azat4dev.demobooking.common.domain.event.DomainEventNew;
 import com.azat4dev.demobooking.common.domain.event.DomainEventsBus;
 import com.azat4dev.demobooking.users.users_commands.domain.EventHelpers;
 import com.azat4dev.demobooking.users.users_commands.domain.UserHelpers;
@@ -16,6 +15,7 @@ import com.azat4dev.demobooking.users.users_commands.domain.interfaces.services.
 import org.junit.jupiter.api.Test;
 
 import java.net.MalformedURLException;
+import java.time.LocalDateTime;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.ArgumentMatchers.any;
@@ -66,14 +66,12 @@ public class SendVerificationEmailHandlerTests {
         );
     }
 
-    DomainEventNew<SendVerificationEmail> anySendCommand() {
-        return (DomainEventNew<SendVerificationEmail>) EventHelpers.eventsFactory.issue(
-            new SendVerificationEmail(
-                UserHelpers.anyValidUserId(),
-                UserHelpers.anyValidEmail(),
-                UserHelpers.anyFullName(),
-                0
-            )
+    SendVerificationEmail anySendCommand() {
+        return new SendVerificationEmail(
+            UserHelpers.anyValidUserId(),
+            UserHelpers.anyValidEmail(),
+            UserHelpers.anyFullName(),
+            0
         );
     }
 
@@ -84,12 +82,12 @@ public class SendVerificationEmailHandlerTests {
         final var command = anySendCommand();
 
         // When
-        sut.handler.handle(command);
+        sut.handler.handle(command, EventHelpers.anyEventId(), LocalDateTime.now());
 
         // Then
         then(sut.emailService).should(times(1))
             .send(
-                eq(command.payload().email()),
+                eq(command.email()),
                 assertArg(m -> {
                     assertThat(m.fromName()).contains(sut.fromName);
                     assertThat(m.from()).isEqualTo(sut.fromAddress);
@@ -98,8 +96,8 @@ public class SendVerificationEmailHandlerTests {
             );
 
         final var expectedEvent = new VerificationEmailSent(
-            command.payload().userId(),
-            command.payload().email()
+            command.userId(),
+            command.email()
         );
 
         then(sut.bus).should(times(1))
@@ -117,13 +115,13 @@ public class SendVerificationEmailHandlerTests {
             .send(any(), any());
 
         // When
-        sut.handler.handle(command);
+        sut.handler.handle(command, EventHelpers.anyEventId(), LocalDateTime.now());
 
         // Then
         final var expectedEvent = new FailedToSendVerificationEmail(
-            command.payload().userId(),
-            command.payload().email(),
-            command.payload().attempt() + 1
+            command.userId(),
+            command.email(),
+            command.attempt() + 1
         );
 
         then(sut.bus).should(times(1))

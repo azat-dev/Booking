@@ -1,8 +1,11 @@
 package com.azat4dev.demobooking.common.domain;
 
-import com.azat4dev.demobooking.common.domain.event.DomainEventNew;
+import com.azat4dev.demobooking.common.domain.event.Command;
+import com.azat4dev.demobooking.common.domain.event.EventId;
 
-public interface CommandHandler<Command extends DomainEventNew> {
+import java.time.LocalDateTime;
 
-    void handle(Command command);
+public interface CommandHandler<CMD extends Command> {
+
+    void handle(CMD command, EventId eventId, LocalDateTime issuedAt);
 }

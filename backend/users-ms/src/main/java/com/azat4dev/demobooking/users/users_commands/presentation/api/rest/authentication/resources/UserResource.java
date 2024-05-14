@@ -1,7 +1,7 @@
 package com.azat4dev.demobooking.users.users_commands.presentation.api.rest.authentication.resources;
 
-import com.azat4dev.demobooking.common.domain.event.DomainEventNew;
-import com.azat4dev.demobooking.common.domain.event.DomainEventsFactory;
+import com.azat4dev.demobooking.common.domain.event.EventIdGenerator;
+import com.azat4dev.demobooking.common.utils.TimeProvider;
 import com.azat4dev.demobooking.users.common.domain.values.UserId;
 import com.azat4dev.demobooking.users.users_commands.domain.core.commands.UpdateUserPhoto;
 import com.azat4dev.demobooking.users.users_commands.domain.core.values.InitialUserPhotoFileName;
@@ -24,10 +24,13 @@ import java.io.IOException;
 public class UserResource {
 
     @Autowired
-    DomainEventsFactory eventsFactory;
+    UpdateUserPhotoHandler updateUserPhotoHandler;
 
     @Autowired
-    UpdateUserPhotoHandler updateUserPhotoHandler;
+    private TimeProvider timeProvider;
+
+    @Autowired
+    private EventIdGenerator eventIdGenerator;
 
     @PostMapping("/update-photo")
     ResponseEntity<String> updatePhoto(
@@ -51,9 +54,11 @@ public class UserResource {
             }
         );
 
-        final var event = (DomainEventNew<UpdateUserPhoto>) eventsFactory.issue(command);
-
-        updateUserPhotoHandler.handle(event);
+        updateUserPhotoHandler.handle(
+            command,
+            eventIdGenerator.generate(),
+            timeProvider.currentTime()
+        );
         return ResponseEntity.ok("Photo updated");
     }
 }

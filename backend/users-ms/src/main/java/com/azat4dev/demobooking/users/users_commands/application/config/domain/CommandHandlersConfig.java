@@ -1,6 +1,7 @@
 package com.azat4dev.demobooking.users.users_commands.application.config.domain;
 
 import com.azat4dev.demobooking.common.domain.AutoConnectCommandHandlersToBus;
+import com.azat4dev.demobooking.common.domain.annotations.CommandHandlerBean;
 import com.azat4dev.demobooking.common.domain.event.DomainEventsBus;
 import com.azat4dev.demobooking.common.domain.event.DomainEventsFactory;
 import com.azat4dev.demobooking.common.utils.TimeProvider;
@@ -35,7 +36,7 @@ public class CommandHandlersConfig {
         };
     }
 
-    @Bean
+    @CommandHandlerBean
     SendVerificationEmailHandler sendVerificationEmailCommandHandler(
         BuildEmailVerificationLink buildEmailVerificationLink,
         @Value("${app.verification_email.outgoing.fromAddress}")
@@ -58,7 +59,7 @@ public class CommandHandlersConfig {
         );
     }
 
-    @Bean
+    @CommandHandlerBean
     CompleteEmailVerificationHandler completeEmailVerificationCommandHandler(
         GetInfoForEmailVerificationToken getTokenInfo,
         DomainEventsBus domainEventsBus,
@@ -75,7 +76,7 @@ public class CommandHandlersConfig {
         );
     }
 
-    @Bean
+    @CommandHandlerBean
     UpdateUserPhotoHandler updateUserPhotoHandler(
         DomainEventsFactory domainEventsFactory
     ) {

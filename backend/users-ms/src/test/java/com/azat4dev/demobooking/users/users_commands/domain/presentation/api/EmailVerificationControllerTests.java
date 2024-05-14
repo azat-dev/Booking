@@ -1,6 +1,12 @@
 package com.azat4dev.demobooking.users.users_commands.domain.presentation.api;
 
+import com.azat4dev.demobooking.common.domain.CommandHandler;
+import com.azat4dev.demobooking.common.domain.event.Command;
 import com.azat4dev.demobooking.common.domain.event.DomainEventsFactory;
+import com.azat4dev.demobooking.common.domain.event.EventIdGenerator;
+import com.azat4dev.demobooking.common.domain.event.RandomEventIdGenerator;
+import com.azat4dev.demobooking.common.utils.SystemTimeProvider;
+import com.azat4dev.demobooking.common.utils.TimeProvider;
 import com.azat4dev.demobooking.users.users_commands.application.config.presentation.WebSecurityConfig;
 import com.azat4dev.demobooking.users.users_commands.domain.EventHelpers;
 import com.azat4dev.demobooking.users.users_commands.domain.handlers.CompleteEmailVerificationHandler;
@@ -9,6 +15,7 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
+import org.springframework.boot.test.context.TestConfiguration;
 import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -19,6 +26,7 @@ import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.ResultActions;
 import org.springframework.test.web.servlet.result.MockMvcResultHandlers;
 
+import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.assertArg;
 import static org.mockito.BDDMockito.then;
@@ -30,7 +38,7 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 
 
 @WebMvcTest(EmailVerificationController.class)
-@Import({WebSecurityConfig.class, TestConfig.class})
+@Import({WebSecurityConfig.class, Config.class})
 public class EmailVerificationControllerTests {
 
     @Autowired
@@ -55,7 +63,8 @@ public class EmailVerificationControllerTests {
         final var invalidToken = "invalidToken";
 
         willThrow(new CompleteEmailVerificationHandler.TokenIsNotValidException())
-            .given(completeEmailVerificationHandler).handle(any());
+            .given(completeEmailVerificationHandler)
+            .handle(any(), any(), any());
 
         // When
         final var response = performVerifyEmailRequest(invalidToken);
@@ -76,7 +85,13 @@ public class EmailVerificationControllerTests {
 
         // Then
         then(completeEmailVerificationHandler).should(times(1))
-            .handle(assertArg(arg -> arg.payload().token().equals(validToken)));
+            .handle(
+                assertArg(a -> {
+                    assertThat(a.token().value()).isEqualTo(validToken);
+                }),
+                any(),
+                any()
+            );
         response.andExpect(status().isOk());
     }
 
@@ -87,10 +102,21 @@ public class EmailVerificationControllerTests {
     }
 }
 
-@Configuration
-class TestConfig {
+@TestConfiguration
+class Config {
     @Bean
     DomainEventsFactory domainEventsFactory() {
         return EventHelpers.eventsFactory;
     }
+
+    @Bean
+    EventIdGenerator eventIdGenerator() {
+        return new RandomEventIdGenerator();
+    }
+
+    @Bean
+    TimeProvider timeProvider() {
+        return new SystemTimeProvider();
+    }
 }
+

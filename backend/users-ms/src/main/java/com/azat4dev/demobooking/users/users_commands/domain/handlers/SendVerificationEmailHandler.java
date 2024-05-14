@@ -4,6 +4,7 @@ import com.azat4dev.demobooking.common.domain.CommandHandler;
 import com.azat4dev.demobooking.common.domain.event.DomainEventNew;
 import com.azat4dev.demobooking.common.domain.event.DomainEventsBus;
 import com.azat4dev.demobooking.common.domain.event.DomainEventsFactory;
+import com.azat4dev.demobooking.common.domain.event.EventId;
 import com.azat4dev.demobooking.users.users_commands.domain.core.commands.SendVerificationEmail;
 import com.azat4dev.demobooking.users.users_commands.domain.core.events.FailedToSendVerificationEmail;
 import com.azat4dev.demobooking.users.users_commands.domain.core.events.VerificationEmailSent;
@@ -16,8 +17,10 @@ import lombok.RequiredArgsConstructor;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import java.time.LocalDateTime;
+
 @RequiredArgsConstructor
-public class SendVerificationEmailHandler implements CommandHandler<DomainEventNew<SendVerificationEmail>> {
+public class SendVerificationEmailHandler implements CommandHandler<SendVerificationEmail> {
 
     private static final Logger logger = LoggerFactory.getLogger(SendVerificationEmailHandler.class);
 
@@ -30,23 +33,21 @@ public class SendVerificationEmailHandler implements CommandHandler<DomainEventN
     private final DomainEventsFactory domainEventsFactory;
 
     @Override
-    public void handle(DomainEventNew<SendVerificationEmail> command) {
+    public void handle(SendVerificationEmail command, EventId eventId, LocalDateTime issuedAt) {
 
-        final var payload = command.payload();
-
-        final var token = provideEmailVerificationToken.execute(payload.userId(), payload.email());
+        final var token = provideEmailVerificationToken.execute(command.userId(), command.email());
 
         try {
             final var verificationLink = buildVerificationLink.execute(token);
 
             emailService.send(
-                payload.email(),
+                command.email(),
                 new EmailData(
                     fromAddress,
                     fromName,
                     "Welcome to our platform",
                     new EmailBody(
-                        "Hello, " + payload.fullName().toString() + "!\n\n" +
+                        "Hello, " + command.fullName().toString() + "!\n\n" +
                         "Please verify your email by clicking the link below:\n\n" +
                         verificationLink
                     )
@@ -59,9 +60,9 @@ public class SendVerificationEmailHandler implements CommandHandler<DomainEventN
             bus.publish(
                 domainEventsFactory.issue(
                     new FailedToSendVerificationEmail(
-                        payload.userId(),
-                        payload.email(),
-                        payload.attempt() + 1
+                        command.userId(),
+                        command.email(),
+                        command.attempt() + 1
                     )
                 )
             );
@@ -71,8 +72,8 @@ public class SendVerificationEmailHandler implements CommandHandler<DomainEventN
         bus.publish(
             domainEventsFactory.issue(
                 new VerificationEmailSent(
-                    payload.userId(),
-                    payload.email()
+                    command.userId(),
+                    command.email()
                 )
             )
         );

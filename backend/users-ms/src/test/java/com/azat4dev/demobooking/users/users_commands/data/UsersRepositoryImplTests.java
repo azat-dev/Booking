@@ -84,7 +84,7 @@ public class UsersRepositoryImplTests {
         final var newUser = anyUser();
 
         willThrow(new UsersDao.UserNotFound()).given(sut.usersDao)
-            .addNew(any());
+            .update(any());
 
         // When
         final var exception = assertThrows(UsersRepository.UserNotFoundException.class,
