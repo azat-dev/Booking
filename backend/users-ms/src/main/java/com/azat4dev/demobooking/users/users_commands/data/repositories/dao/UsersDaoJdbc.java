@@ -94,6 +94,32 @@ public final class UsersDaoJdbc implements UsersDao {
 
     @Override
     public void update(UserData userData) throws UserNotFound {
-        throw new UnsupportedOperationException("Not implemented yet");
+
+        final var sql = """
+            UPDATE users SET
+                updated_at = :updated_at,
+                updated_at_nano = :updated_at_nano,
+                email = :email,
+                password = :password,
+                first_name = :first_name,
+                last_name = :last_name,
+                email_verification_status = :email_verification_status
+            WHERE id = :id
+            """;
+
+        final var numberOfUpdatedRecords = jdbcTemplate.update(sql, Map.of(
+            "id", userData.id(),
+            "updated_at", Timestamp.valueOf(userData.updatedAt().withNano(0)),
+            "updated_at_nano", userData.updatedAt().getNano(),
+            "email", userData.email(),
+            "password", userData.encodedPassword(),
+            "first_name", userData.firstName(),
+            "last_name", userData.lastName(),
+            "email_verification_status", userData.emailVerificationStatus().name()
+        ));
+
+        if (numberOfUpdatedRecords == 0) {
+            throw new UserNotFound();
+        }
     }
 }
