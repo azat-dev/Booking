@@ -1,8 +1,10 @@
 package com.azat4dev.demobooking.users.users_commands.application.config.data;
 
+import com.azat4dev.demobooking.users.users_commands.domain.core.commands.CompleteEmailVerification;
 import com.azat4dev.demobooking.users.users_commands.domain.core.commands.SendVerificationEmail;
 import com.azat4dev.demobooking.users.users_commands.domain.core.events.FailedToSendVerificationEmail;
 import com.azat4dev.demobooking.users.users_commands.domain.core.events.UserCreated;
+import com.azat4dev.demobooking.users.users_commands.domain.core.events.UserVerifiedEmail;
 import com.azat4dev.demobooking.users.users_commands.domain.core.events.VerificationEmailSent;
 import lombok.RequiredArgsConstructor;
 import org.apache.kafka.clients.admin.NewTopic;
@@ -63,7 +65,9 @@ public class KafkaConfig {
             UserCreated.class,
             SendVerificationEmail.class,
             VerificationEmailSent.class,
-            FailedToSendVerificationEmail.class
+            FailedToSendVerificationEmail.class,
+            UserVerifiedEmail.class,
+            CompleteEmailVerification.class
         );
 
         final var topics = events.stream().map(

@@ -8,12 +8,16 @@ import java.io.Serializable;
 
 @Getter
 @EqualsAndHashCode
-@ToString(of = "value")
 @RequiredArgsConstructor(access = AccessLevel.PRIVATE)
 public final class FirstName implements Serializable {
 
     public static final int MAX_LENGTH = 255;
     private final String value;
+
+    @Override
+    public String toString() {
+        return value;
+    }
 
     private static void validate(String value) throws CantBeEmptyException, MaxLengthException {
         Assert.string(value, CantBeEmptyException::new).notNull().notBlank();

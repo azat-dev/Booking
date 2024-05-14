@@ -9,7 +9,6 @@ import lombok.ToString;
 import java.io.Serializable;
 
 @EqualsAndHashCode
-@ToString(of = {"firstName", "lastName"})
 @Getter
 public final class FullName implements Serializable {
 
@@ -22,6 +21,11 @@ public final class FullName implements Serializable {
 
         this.firstName = firstName;
         this.lastName = lastName;
+    }
+
+    @Override
+    public String toString() {
+        return firstName.toString() + " " + lastName.toString();
     }
 
     // Exceptions

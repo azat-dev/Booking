@@ -107,7 +107,7 @@ public class CompleteEmailVerificationHandlerTests {
 
         then(sut.usersRepository)
             .should(times(1))
-            .save(assertArg(u -> assertThat(u.emailVerificationStatus()).isEqualTo(EmailVerificationStatus.VERIFIED)));
+            .update(assertArg(u -> assertThat(u.emailVerificationStatus()).isEqualTo(EmailVerificationStatus.VERIFIED)));
 
         final var expectedEvent = new UserVerifiedEmail(existingUser.getId(), existingUser.getEmail());
 

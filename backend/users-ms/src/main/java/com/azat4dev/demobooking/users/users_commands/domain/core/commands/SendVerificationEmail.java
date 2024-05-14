@@ -11,4 +11,5 @@ public record SendVerificationEmail(
     FullName fullName,
     int attempt
 ) implements DomainEventPayload {
+
 }

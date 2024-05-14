@@ -48,7 +48,7 @@ public final class CompleteEmailVerificationHandler implements CommandHandler<Do
             }
 
             user.setEmailVerificationStatus(EmailVerificationStatus.VERIFIED);
-            usersRepository.save(user);
+            usersRepository.update(user);
 
             bus.publish(
                 domainEventsFactory.issue(

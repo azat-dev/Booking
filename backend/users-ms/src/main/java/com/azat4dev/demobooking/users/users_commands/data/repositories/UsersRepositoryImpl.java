@@ -30,7 +30,7 @@ public final class UsersRepositoryImpl implements UsersRepository {
     }
 
     @Override
-    public void save(User user) {
+    public void update(User user) {
         throw new RuntimeException("NOT IMPLEMENTED YET");
     }
 

@@ -91,4 +91,9 @@ public final class UsersDaoJdbc implements UsersDao {
             return Optional.empty();
         }
     }
+
+    @Override
+    public void update(UserData userData) throws UserNotFound {
+        throw new UnsupportedOperationException("Not implemented yet");
+    }
 }

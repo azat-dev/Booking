@@ -41,7 +41,7 @@ public class SendVerificationEmailHandler implements CommandHandler<DomainEventN
         try {
             final var verificationLink = new URL(
                 baseVerificationLinkUrl,
-                "&token=" + token.toString()
+                "?token=" + token.toString()
             );
 
             emailService.send(

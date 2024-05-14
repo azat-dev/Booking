@@ -13,7 +13,6 @@ import java.io.Serializable;
 
 @Getter
 @EqualsAndHashCode
-@ToString(of = "value")
 @RequiredArgsConstructor(access = AccessLevel.PRIVATE)
 public final class LastName implements Serializable {
 
@@ -24,6 +23,11 @@ public final class LastName implements Serializable {
     private static void validate(String value) throws LastName.CantBeEmptyException, LastName.MaxLengthException {
         Assert.string(value, LastName.CantBeEmptyException::new).notNull().notBlank();
         Assert.string(value, LastName.MaxLengthException::new).maxLength(MAX_LENGTH);
+    }
+
+    @Override
+    public String toString() {
+        return value;
     }
 
     public static LastName checkAndMakeFromString(String value) throws LastName.CantBeEmptyException, LastName.MaxLengthException {

@@ -77,6 +77,42 @@ public class UsersRepositoryImplTests {
     }
 
     @Test
+    public void test_update_givenNotExistingUser_thenThrowException() throws Exception {
+
+        // Given
+        final var sut = createSUT();
+        final var newUser = anyUser();
+
+        willThrow(new UsersDao.UserNotFound()).given(sut.usersDao)
+            .addNew(any());
+
+        // When
+        final var exception = assertThrows(UsersRepository.UserNotFoundException.class,
+            () -> sut.repository.update(newUser));
+
+        // Then
+        assertThat(exception).isInstanceOf(UsersRepository.UserNotFoundException.class);
+    }
+
+    @Test
+    public void test_update_givenExistingUser_thenUpdateUser() throws Exception {
+
+        // Given
+        final var sut = createSUT();
+        final var newUser = anyUser();
+
+        final var persistentUserData = sut.mapUserToData.map(newUser);
+        willDoNothing().given(sut.usersDao).update(any());
+
+        // When
+        sut.repository.update(newUser);
+
+        // Then
+        then(sut.usersDao).should(times(1))
+            .update(persistentUserData);
+    }
+
+    @Test
     void test_findByEmail_givenEmptyDb_thenReturnEmptyOptional() {
 
         // Given
