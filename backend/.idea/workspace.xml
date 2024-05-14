@@ -5,11 +5,18 @@
   </component>
   <component name="ChangeListManager">
     <list default="true" id="f0a5f116-5301-4fd9-b922-f7e2e0c7dfbd" name="Changes" comment="">
-      <change afterPath="$PROJECT_DIR$/users-ms/src/main/java/com/azat4dev/demobooking/users/users_commands/domain/interfaces/services/EmailVerificationToken.java" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/users-ms/src/main/java/com/azat4dev/demobooking/users/users_commands/domain/interfaces/services/EmailVerificationTokensService.java" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/users-ms/src/main/java/com/azat4dev/demobooking/users/users_commands/domain/core/commands/UpdateUserPhoto.java" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/users-ms/src/main/java/com/azat4dev/demobooking/users/users_commands/domain/core/events/UserChangedPhoto.java" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/users-ms/src/main/java/com/azat4dev/demobooking/users/users_commands/domain/core/values/FileExtension.java" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/users-ms/src/main/java/com/azat4dev/demobooking/users/users_commands/domain/core/values/InitialUserPhotoFileName.java" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/users-ms/src/main/java/com/azat4dev/demobooking/users/users_commands/domain/core/values/UserPhotoId.java" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/users-ms/src/main/java/com/azat4dev/demobooking/users/users_commands/domain/handlers/UpdateUserPhotoHandler.java" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/users-ms/src/main/java/com/azat4dev/demobooking/users/users_commands/domain/interfaces/repositories/FileKey.java" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/users-ms/src/main/java/com/azat4dev/demobooking/users/users_commands/domain/interfaces/repositories/FilesRepository.java" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/users-ms/src/main/java/com/azat4dev/demobooking/users/users_commands/presentation/api/rest/authentication/resources/UserResource.java" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/users-ms/src/main/java/com/azat4dev/demobooking/users/users_commands/domain/core/values/FullName.java" beforeDir="false" afterPath="$PROJECT_DIR$/users-ms/src/main/java/com/azat4dev/demobooking/users/users_commands/domain/core/values/FullName.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/users-ms/src/main/java/com/azat4dev/demobooking/users/users_commands/domain/handlers/SendVerificationEmailHandler.java" beforeDir="false" afterPath="$PROJECT_DIR$/users-ms/src/main/java/com/azat4dev/demobooking/users/users_commands/domain/handlers/SendVerificationEmailHandler.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/docker-compose.yaml" beforeDir="false" afterPath="$PROJECT_DIR$/docker-compose.yaml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/users-ms/src/main/java/com/azat4dev/demobooking/users/users_commands/application/config/domain/CommandHandlersConfig.java" beforeDir="false" afterPath="$PROJECT_DIR$/users-ms/src/main/java/com/azat4dev/demobooking/users/users_commands/application/config/domain/CommandHandlersConfig.java" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -19,6 +26,10 @@
   <component name="Git.Settings">
     <option name="RECENT_GIT_ROOT_PATH" value="$PROJECT_DIR$/.." />
   </component>
+  <component name="KubernetesApiPersistence">{}</component>
+  <component name="KubernetesApiProvider">{
+  &quot;isMigrated&quot;: true
+}</component>
   <component name="ProjectColorInfo">{
   &quot;associatedIndex&quot;: 5
 }</component>
@@ -27,24 +38,25 @@
     <option name="hideEmptyMiddlePackages" value="true" />
     <option name="showLibraryContents" value="true" />
   </component>
-  <component name="PropertiesComponent">{
-  &quot;keyToString&quot;: {
-    &quot;Docker.docker-compose.yaml.broker: Compose Deployment.executor&quot;: &quot;Run&quot;,
-    &quot;Docker.docker-compose.yaml.kafka: Compose Deployment.executor&quot;: &quot;Run&quot;,
-    &quot;Docker.docker-compose.yaml.zookeeper: Compose Deployment.executor&quot;: &quot;Run&quot;,
-    &quot;Docker.docker-compose.yaml: Compose Deployment.executor&quot;: &quot;Run&quot;,
-    &quot;RunOnceActivity.ShowReadmeOnStart&quot;: &quot;true&quot;,
-    &quot;git-widget-placeholder&quot;: &quot;main&quot;,
-    &quot;kotlin-language-version-configured&quot;: &quot;true&quot;,
-    &quot;last_opened_file_path&quot;: &quot;/Users/azat/dev/my/projects/demo-booking/backend/users/users-queries-ms&quot;,
-    &quot;node.js.detected.package.eslint&quot;: &quot;true&quot;,
-    &quot;node.js.detected.package.tslint&quot;: &quot;true&quot;,
-    &quot;node.js.selected.package.eslint&quot;: &quot;(autodetect)&quot;,
-    &quot;node.js.selected.package.tslint&quot;: &quot;(autodetect)&quot;,
-    &quot;nodejs_package_manager_path&quot;: &quot;npm&quot;,
-    &quot;vue.rearranger.settings.migration&quot;: &quot;true&quot;
+  <component name="PropertiesComponent"><![CDATA[{
+  "keyToString": {
+    "Docker.docker-compose.yaml.broker: Compose Deployment.executor": "Run",
+    "Docker.docker-compose.yaml.kafka: Compose Deployment.executor": "Run",
+    "Docker.docker-compose.yaml.objectsstorage: Compose Deployment.executor": "Run",
+    "Docker.docker-compose.yaml.zookeeper: Compose Deployment.executor": "Run",
+    "Docker.docker-compose.yaml: Compose Deployment.executor": "Run",
+    "RunOnceActivity.ShowReadmeOnStart": "true",
+    "git-widget-placeholder": "main",
+    "kotlin-language-version-configured": "true",
+    "last_opened_file_path": "/Users/azat/dev/my/projects/demo-booking/backend/users/users-queries-ms",
+    "node.js.detected.package.eslint": "true",
+    "node.js.detected.package.tslint": "true",
+    "node.js.selected.package.eslint": "(autodetect)",
+    "node.js.selected.package.tslint": "(autodetect)",
+    "nodejs_package_manager_path": "npm",
+    "vue.rearranger.settings.migration": "true"
   }
-}</component>
+}]]></component>
   <component name="RecentsManager">
     <key name="CopyFile.RECENT_KEYS">
       <recent name="$PROJECT_DIR$/users/users-queries-ms" />
@@ -54,7 +66,7 @@
       <recent name="$PROJECT_DIR$" />
     </key>
   </component>
-  <component name="RunManager" selected="Docker.docker-compose.yaml: Compose Deployment">
+  <component name="RunManager" selected="Docker.docker-compose.yaml.objectsstorage: Compose Deployment">
     <configuration default="true" type="docker-deploy" factoryName="docker-compose.yml" temporary="true">
       <deployment type="docker-compose.yml">
         <settings />
@@ -95,6 +107,19 @@
       </deployment>
       <method v="2" />
     </configuration>
+    <configuration name="docker-compose.yaml.objectsstorage: Compose Deployment" type="docker-deploy" factoryName="docker-compose.yml" temporary="true" server-name="Docker">
+      <deployment type="docker-compose.yml">
+        <settings>
+          <option name="services">
+            <list>
+              <option value="objectsstorage" />
+            </list>
+          </option>
+          <option name="sourceFilePath" value="docker-compose.yaml" />
+        </settings>
+      </deployment>
+      <method v="2" />
+    </configuration>
     <configuration name="docker-compose.yaml.zookeeper: Compose Deployment" type="docker-deploy" factoryName="docker-compose.yml" temporary="true" server-name="Docker">
       <deployment type="docker-compose.yml">
         <settings>
@@ -110,10 +135,11 @@
     </configuration>
     <recent_temporary>
       <list>
+        <item itemvalue="Docker.docker-compose.yaml.objectsstorage: Compose Deployment" />
         <item itemvalue="Docker.docker-compose.yaml: Compose Deployment" />
-        <item itemvalue="Docker.docker-compose.yaml.broker: Compose Deployment" />
-        <item itemvalue="Docker.docker-compose.yaml.kafka: Compose Deployment" />
         <item itemvalue="Docker.docker-compose.yaml.zookeeper: Compose Deployment" />
+        <item itemvalue="Docker.docker-compose.yaml.kafka: Compose Deployment" />
+        <item itemvalue="Docker.docker-compose.yaml.broker: Compose Deployment" />
       </list>
     </recent_temporary>
   </component>
@@ -136,6 +162,9 @@
       <workItem from="1715448350446" duration="7730000" />
       <workItem from="1715499625037" duration="4867000" />
       <workItem from="1715583463039" duration="499000" />
+      <workItem from="1715672938916" duration="679000" />
+      <workItem from="1715674593957" duration="663000" />
+      <workItem from="1715675361704" duration="3087000" />
     </task>
     <servers />
   </component>
