@@ -10,20 +10,21 @@ import com.azat4dev.demobooking.users.users_commands.domain.core.events.Verifica
 import com.azat4dev.demobooking.users.users_commands.domain.core.values.email.EmailAddress;
 import com.azat4dev.demobooking.users.users_commands.domain.core.values.email.EmailBody;
 import com.azat4dev.demobooking.users.users_commands.domain.interfaces.services.EmailService;
+import com.azat4dev.demobooking.users.users_commands.domain.interfaces.services.EmailVerificationToken;
 import com.azat4dev.demobooking.users.users_commands.domain.interfaces.services.ProvideEmailVerificationToken;
 import com.azat4dev.demobooking.users.users_commands.domain.services.EmailData;
 import lombok.RequiredArgsConstructor;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import java.net.URL;
+import java.util.function.Function;
 
 @RequiredArgsConstructor
 public class SendVerificationEmailHandler implements CommandHandler<DomainEventNew<SendVerificationEmail>> {
 
     private static final Logger logger = LoggerFactory.getLogger(SendVerificationEmailHandler.class);
 
-    private final URL baseVerificationLinkUrl;
+    private final BuildEmailVerificationLink buildVerificationLink;
     private final EmailAddress fromAddress;
     private final String fromName;
     private final EmailService emailService;
@@ -39,10 +40,7 @@ public class SendVerificationEmailHandler implements CommandHandler<DomainEventN
         final var token = provideEmailVerificationToken.execute(payload.userId(), payload.email());
 
         try {
-            final var verificationLink = new URL(
-                baseVerificationLinkUrl,
-                "?token=" + token.toString()
-            );
+            final var verificationLink = buildVerificationLink.execute(token);
 
             emailService.send(
                 payload.email(),
@@ -53,7 +51,7 @@ public class SendVerificationEmailHandler implements CommandHandler<DomainEventN
                     new EmailBody(
                         "Hello, " + payload.fullName().toString() + "!\n\n" +
                         "Please verify your email by clicking the link below:\n\n" +
-                        verificationLink.toString()
+                        verificationLink
                     )
                 )
             );

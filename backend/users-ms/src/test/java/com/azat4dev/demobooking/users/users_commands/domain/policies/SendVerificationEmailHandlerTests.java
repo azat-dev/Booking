@@ -8,6 +8,7 @@ import com.azat4dev.demobooking.users.users_commands.domain.core.commands.SendVe
 import com.azat4dev.demobooking.users.users_commands.domain.core.events.FailedToSendVerificationEmail;
 import com.azat4dev.demobooking.users.users_commands.domain.core.events.VerificationEmailSent;
 import com.azat4dev.demobooking.users.users_commands.domain.core.values.email.EmailAddress;
+import com.azat4dev.demobooking.users.users_commands.domain.handlers.BuildEmailVerificationLink;
 import com.azat4dev.demobooking.users.users_commands.domain.handlers.SendVerificationEmailHandler;
 import com.azat4dev.demobooking.users.users_commands.domain.interfaces.services.EmailService;
 import com.azat4dev.demobooking.users.users_commands.domain.interfaces.services.EmailVerificationToken;
@@ -15,7 +16,6 @@ import com.azat4dev.demobooking.users.users_commands.domain.interfaces.services.
 import org.junit.jupiter.api.Test;
 
 import java.net.MalformedURLException;
-import java.net.URL;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.ArgumentMatchers.any;
@@ -25,9 +25,13 @@ import static org.mockito.Mockito.times;
 
 public class SendVerificationEmailHandlerTests {
 
-    SUT createSUT() throws MalformedURLException {
+    SUT createSUT() {
 
-        final var baseUrl = new URL("http://localhost:8080");
+        final var buildVerificationLink = mock(BuildEmailVerificationLink.class);
+        final var verificationLink = "http://verificationLink";
+        given(buildVerificationLink.execute(any()))
+            .willReturn(verificationLink);
+
         final var fromAddress = UserHelpers.anyValidEmail();
         final var fromName = "verification";
 
@@ -41,7 +45,7 @@ public class SendVerificationEmailHandlerTests {
 
 
         final var handler = new SendVerificationEmailHandler(
-            baseUrl,
+            buildVerificationLink,
             fromAddress,
             fromName,
             emailService,
@@ -52,13 +56,13 @@ public class SendVerificationEmailHandlerTests {
 
         return new SUT(
             handler,
-            baseUrl,
+            buildVerificationLink,
             fromAddress,
             fromName,
             emailService,
             tokenService,
             domainEventsBus,
-            tokenValue
+            verificationLink
         );
     }
 
@@ -79,9 +83,6 @@ public class SendVerificationEmailHandlerTests {
         final var sut = createSUT();
         final var command = anySendCommand();
 
-        given(sut.tokenService.execute(any(), any()))
-            .willReturn(new EmailVerificationToken("emailVerificationToken"));
-
         // When
         sut.handler.handle(command);
 
@@ -92,7 +93,7 @@ public class SendVerificationEmailHandlerTests {
                 assertArg(m -> {
                     assertThat(m.fromName()).contains(sut.fromName);
                     assertThat(m.from()).isEqualTo(sut.fromAddress);
-                    assertThat(m.body().value()).contains(sut.emailVerificationToken);
+                    assertThat(m.body().value()).contains(sut.verificationLink);
                 })
             );
 
@@ -131,13 +132,13 @@ public class SendVerificationEmailHandlerTests {
 
     record SUT(
         SendVerificationEmailHandler handler,
-        URL baseUrl,
+        BuildEmailVerificationLink buildVerificationLink,
         EmailAddress fromAddress,
         String fromName,
         EmailService emailService,
         ProvideEmailVerificationToken tokenService,
         DomainEventsBus bus,
-        String emailVerificationToken
+        String verificationLink
     ) {
 
     }
