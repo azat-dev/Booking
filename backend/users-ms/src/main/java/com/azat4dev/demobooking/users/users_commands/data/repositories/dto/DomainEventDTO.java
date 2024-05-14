@@ -41,6 +41,9 @@ public record DomainEventDTO(
                 return CompleteEmailVerificationDTO.fromDomain(inst);
             }
 
+            case SentEmailForPasswordReset inst -> {
+                return SentEmailForPasswordResetDTO.fromDomain(inst);
+            }
 
             case ResetPasswordByEmail inst -> {
                 return ResetPasswordByEmailDTO.fromDomain(inst);
