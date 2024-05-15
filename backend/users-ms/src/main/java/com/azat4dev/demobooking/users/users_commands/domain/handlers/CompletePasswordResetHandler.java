@@ -5,6 +5,7 @@ import com.azat4dev.demobooking.common.domain.DomainException;
 import com.azat4dev.demobooking.common.domain.event.DomainEventsBus;
 import com.azat4dev.demobooking.common.domain.event.EventId;
 import com.azat4dev.demobooking.users.users_commands.domain.core.commands.CompletePasswordReset;
+import com.azat4dev.demobooking.users.users_commands.domain.core.events.FailedToCompleteResetPassword;
 import com.azat4dev.demobooking.users.users_commands.domain.core.events.UserDidResetPassword;
 import com.azat4dev.demobooking.users.users_commands.domain.interfaces.repositories.UsersRepository;
 import com.azat4dev.demobooking.users.users_commands.domain.interfaces.services.PasswordService;
@@ -32,9 +33,12 @@ public final class CompletePasswordResetHandler implements CommandHandler<Comple
 
             usersRepository.update(user);
             bus.publish(new UserDidResetPassword(userId));
+
         } catch (ValidatePasswordResetTokenAnGetUserId.TokenExpiredException e) {
+            bus.publish(new FailedToCompleteResetPassword(command.idempotentOperationToken()));
             throw new TokenExpiredException();
         } catch (ValidatePasswordResetTokenAnGetUserId.InvalidTokenException e) {
+            bus.publish(new FailedToCompleteResetPassword(command.idempotentOperationToken()));
             throw new InvalidTokenException();
         }
     }
