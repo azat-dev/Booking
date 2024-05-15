@@ -50,7 +50,7 @@ public class ResetPasswordConfig {
         return new GenerateResetPasswordLink() {
             @Override
             public ResetPasswordLink execute(UserId userId) {
-                return new ResetPasswordLink("http://localhost:8080/reset-password/" + userId.value();
+                return new ResetPasswordLink("http://localhost:8080/reset-password/" + userId.value());
             }
         };
     }

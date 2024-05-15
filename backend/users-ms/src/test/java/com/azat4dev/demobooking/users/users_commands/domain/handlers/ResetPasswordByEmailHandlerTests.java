@@ -128,7 +128,6 @@ public class ResetPasswordByEmailHandlerTests {
             )
         );
 
-
         then(sut.bus).should().publish(
             new SentEmailForPasswordReset(
                 user.getId(),
