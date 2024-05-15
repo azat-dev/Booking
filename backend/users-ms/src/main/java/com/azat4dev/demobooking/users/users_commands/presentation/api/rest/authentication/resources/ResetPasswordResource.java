@@ -20,7 +20,7 @@ public interface ResetPasswordResource {
         HttpServletResponse response
     );
 
-    @PostMapping
+    @PostMapping("/set-new-password")
     ResponseEntity<String> completeResetPassword(
         @RequestBody CompleteResetPasswordRequest requestBody,
         HttpServletRequest request,

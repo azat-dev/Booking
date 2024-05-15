@@ -3,6 +3,7 @@ package com.azat4dev.demobooking.users.users_commands.presentation.api.rest.auth
 import com.azat4dev.demobooking.common.domain.event.EventIdGenerator;
 import com.azat4dev.demobooking.common.utils.TimeProvider;
 import com.azat4dev.demobooking.users.users_commands.domain.core.commands.ResetPasswordByEmail;
+import com.azat4dev.demobooking.users.users_commands.domain.handlers.password.reset.CompletePasswordResetHandler;
 import com.azat4dev.demobooking.users.users_commands.domain.handlers.password.reset.ResetPasswordByEmailHandler;
 import com.azat4dev.demobooking.users.users_commands.domain.interfaces.services.PasswordService;
 import com.azat4dev.demobooking.users.users_commands.presentation.api.rest.authentication.entities.CompleteResetPasswordRequest;
@@ -28,6 +29,8 @@ public class ResetPasswordController implements ResetPasswordResource {
 
     @Autowired
     private PasswordService passwordService;
+    @Autowired
+    private CompletePasswordResetHandler completePasswordResetHandler;
 
     @Override
     public ResponseEntity<String> resetPasswordByEmail(
@@ -51,6 +54,10 @@ public class ResetPasswordController implements ResetPasswordResource {
         HttpServletRequest request,
         HttpServletResponse response
     ) {
-        return null;
+
+        final var command = requestBody.toCommand(passwordService);
+        completePasswordResetHandler.handle(command, eventIdGenerator.generate(), timeProvider.currentTime());
+
+        return ResponseEntity.ok("Password reset completed");
     }
 }

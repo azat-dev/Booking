@@ -17,6 +17,7 @@ import com.azat4dev.demobooking.users.users_commands.domain.core.values.password
 import com.azat4dev.demobooking.users.users_commands.domain.handlers.password.reset.CompletePasswordResetHandler;
 import com.azat4dev.demobooking.users.users_commands.domain.handlers.password.reset.ResetPasswordByEmailHandler;
 import com.azat4dev.demobooking.users.users_commands.domain.interfaces.services.PasswordService;
+import com.azat4dev.demobooking.users.users_commands.presentation.api.rest.authentication.entities.CompleteResetPasswordRequest;
 import com.azat4dev.demobooking.users.users_commands.presentation.api.rest.authentication.entities.ResetPasswordByEmailRequest;
 import com.azat4dev.demobooking.users.users_commands.presentation.api.rest.authentication.resources.ResetPasswordController;
 import com.azat4dev.demobooking.users.users_queries.domain.services.UsersQueryService;
@@ -134,6 +135,12 @@ public class ResetPasswordControllerTests {
         final var newPassword = "newPassword";
         final var encodedPassword = new EncodedPassword("encodedPassword");
 
+        final var request = new CompleteResetPasswordRequest(
+            idempotencyKey,
+            newPassword,
+            token
+        );
+
         given(passwordService.encodePassword(any()))
             .willReturn(encodedPassword);
 
@@ -141,7 +148,7 @@ public class ResetPasswordControllerTests {
             .handle(any(), any(), any());
 
         // When
-        final var result = performCompleteResetPassword(token);
+        final var result = performCompleteResetPassword(request);
 
         // Then
         result.andExpect(status().isOk());
@@ -153,7 +160,7 @@ public class ResetPasswordControllerTests {
         );
 
         then(passwordService).should(times(1))
-                .encodePassword(Password.makeFromString(newPassword));
+            .encodePassword(Password.makeFromString(newPassword));
 
         then(completePasswordResetHandler).should(times(1))
             .handle(
@@ -163,11 +170,11 @@ public class ResetPasswordControllerTests {
             );
     }
 
-    private ResultActions performCompleteResetPassword(String token) throws Exception {
+    private ResultActions performCompleteResetPassword(CompleteResetPasswordRequest request) throws Exception {
         final String url = "/api/public/set-new-password";
-        return performGetRequest(
+        return performPostRequest(
             url,
-            Map.of("token", token)
+            request
         );
     }
 
