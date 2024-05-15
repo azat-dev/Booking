@@ -4,6 +4,7 @@ import com.azat4dev.demobooking.common.domain.event.DomainEventsBus;
 import com.azat4dev.demobooking.users.users_commands.domain.EventHelpers;
 import com.azat4dev.demobooking.users.users_commands.domain.UserHelpers;
 import com.azat4dev.demobooking.users.users_commands.domain.core.commands.CompletePasswordReset;
+import com.azat4dev.demobooking.users.users_commands.domain.core.events.FailedToCompleteResetPassword;
 import com.azat4dev.demobooking.users.users_commands.domain.core.events.UserDidResetPassword;
 import com.azat4dev.demobooking.users.users_commands.domain.core.values.Password;
 import com.azat4dev.demobooking.users.users_commands.domain.core.values.PasswordResetToken;
@@ -76,8 +77,10 @@ public class CompletePasswordResetHandlerTests {
         });
 
         // Then
-
         assertThat(exception).isInstanceOf(CompletePasswordResetHandler.InvalidTokenException.class);
+
+        then(sut.bus).should(times(1))
+            .publish(new FailedToCompleteResetPassword(command.idempotentOperationToken()));
     }
 
     @Test
