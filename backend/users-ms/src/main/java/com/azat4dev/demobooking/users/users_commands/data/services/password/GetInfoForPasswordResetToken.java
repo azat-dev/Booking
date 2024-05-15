@@ -1,13 +1,14 @@
 package com.azat4dev.demobooking.users.users_commands.data.services.password;
 
 import com.azat4dev.demobooking.users.common.domain.values.UserId;
+import com.azat4dev.demobooking.users.users_commands.domain.core.values.TokenForPasswordReset;
 
 import java.time.LocalDateTime;
 
 @FunctionalInterface
 public interface GetInfoForPasswordResetToken {
 
-    Data execute(String token) throws InvalidTokenException;
+    Data execute(TokenForPasswordReset token) throws InvalidTokenException;
 
     record Data(
         UserId userId,
@@ -17,6 +18,6 @@ public interface GetInfoForPasswordResetToken {
 
     // Exceptions
 
-    public static final class InvalidTokenException extends RuntimeException {
+    final class InvalidTokenException extends RuntimeException {
     }
 }

@@ -9,7 +9,7 @@ import com.azat4dev.demobooking.users.users_commands.domain.core.commands.SendVe
 import com.azat4dev.demobooking.users.users_commands.domain.core.events.*;
 import com.azat4dev.demobooking.users.users_commands.domain.core.values.EmailVerificationStatus;
 import com.azat4dev.demobooking.users.users_commands.domain.core.values.Password;
-import com.azat4dev.demobooking.users.users_commands.domain.core.values.PasswordResetToken;
+import com.azat4dev.demobooking.users.users_commands.domain.core.values.TokenForPasswordReset;
 import com.azat4dev.demobooking.users.users_commands.domain.interfaces.services.EmailVerificationToken;
 import org.junit.jupiter.api.Test;
 
@@ -87,7 +87,7 @@ public class DomainEventSerializerImplTests {
                 new CompletePasswordReset(
                     "token",
                     Password.makeFromString("password"),
-                    PasswordResetToken.dangerouslyMakeFrom("passwordResetToken")
+                    TokenForPasswordReset.dangerouslyMakeFrom("passwordResetToken")
                 )
             )
         );

@@ -1,12 +1,12 @@
 package com.azat4dev.demobooking.users.users_commands.domain.handlers;
 
 import com.azat4dev.demobooking.users.common.domain.values.UserId;
-import com.azat4dev.demobooking.users.users_commands.domain.core.values.PasswordResetToken;
+import com.azat4dev.demobooking.users.users_commands.domain.core.values.TokenForPasswordReset;
 
 @FunctionalInterface
 public interface ValidateTokenForPasswordResetAndGetUserId {
 
-    UserId execute(PasswordResetToken token) throws InvalidTokenException, TokenExpiredException;
+    UserId execute(TokenForPasswordReset token) throws InvalidTokenException, TokenExpiredException;
 
     // Exceptions
 

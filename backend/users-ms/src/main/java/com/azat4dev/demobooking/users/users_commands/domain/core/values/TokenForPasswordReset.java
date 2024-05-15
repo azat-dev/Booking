@@ -7,23 +7,23 @@ import lombok.Getter;
 
 @Getter
 @EqualsAndHashCode
-public class PasswordResetToken {
+public class TokenForPasswordReset {
     private final String value;
 
-    private PasswordResetToken(String value) {
+    private TokenForPasswordReset(String value) {
         this.value = value;
     }
 
-    public static PasswordResetToken dangerouslyMakeFrom(String value) {
-        return new PasswordResetToken(value);
+    public static TokenForPasswordReset dangerouslyMakeFrom(String value) {
+        return new TokenForPasswordReset(value);
     }
 
-    public static PasswordResetToken checkAndMakeFrom(String value) {
+    public static TokenForPasswordReset checkAndMakeFrom(String value) {
 
         Assert.notNull(value, InvalidTokenException::new);
         Assert.notBlank(value, InvalidTokenException::new);
 
-        return new PasswordResetToken(value);
+        return new TokenForPasswordReset(value);
     }
 
     @Override

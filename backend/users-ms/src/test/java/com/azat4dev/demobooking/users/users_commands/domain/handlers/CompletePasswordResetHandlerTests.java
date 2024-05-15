@@ -7,7 +7,7 @@ import com.azat4dev.demobooking.users.users_commands.domain.core.commands.Comple
 import com.azat4dev.demobooking.users.users_commands.domain.core.events.FailedToCompleteResetPassword;
 import com.azat4dev.demobooking.users.users_commands.domain.core.events.UserDidResetPassword;
 import com.azat4dev.demobooking.users.users_commands.domain.core.values.Password;
-import com.azat4dev.demobooking.users.users_commands.domain.core.values.PasswordResetToken;
+import com.azat4dev.demobooking.users.users_commands.domain.core.values.TokenForPasswordReset;
 import com.azat4dev.demobooking.users.users_commands.domain.interfaces.repositories.UsersRepository;
 import com.azat4dev.demobooking.users.users_commands.domain.interfaces.services.EncodedPassword;
 import com.azat4dev.demobooking.users.users_commands.domain.interfaces.services.PasswordService;
@@ -52,7 +52,7 @@ public class CompletePasswordResetHandlerTests {
         return new CompletePasswordReset(
             "idempotentOperationToken",
             Password.makeFromString("newPassword"),
-            PasswordResetToken.dangerouslyMakeFrom("invalidToken")
+            TokenForPasswordReset.dangerouslyMakeFrom("invalidToken")
         );
     }
 
