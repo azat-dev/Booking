@@ -17,6 +17,7 @@ spring:
     bootstrap-servers: localhost:9092
     consumer:
       group-id: letters-group-id
+
 app:
   security:
     jwt:
@@ -50,3 +51,16 @@ app:
       subject: Reset your password
 
     base_verification_link_url: http://localhost:3000/reset-password
+
+#logging:
+#  level:
+#    org.springframework.web: TRACE
+#    org.springframework.security: TRACE
+#    org.springframework.security.oauth2: TRACE
+#    org.springframework.*: TRACE
+#
+#management:
+#  endpoints:
+#    web:
+#      exposure:
+#        include: '*'

@@ -4,20 +4,19 @@ import com.azat4dev.demobooking.common.domain.event.EventIdGenerator;
 import com.azat4dev.demobooking.common.presentation.ErrorDTO;
 import com.azat4dev.demobooking.common.utils.TimeProvider;
 import com.azat4dev.demobooking.users.users_commands.domain.core.commands.CompleteEmailVerification;
-import com.azat4dev.demobooking.users.users_commands.domain.handlers.email.verification.CompleteEmailVerificationHandler;
 import com.azat4dev.demobooking.users.users_commands.domain.core.values.email.verification.EmailVerificationToken;
+import com.azat4dev.demobooking.users.users_commands.domain.handlers.email.verification.CompleteEmailVerificationHandler;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.validation.annotation.Validated;
-import org.springframework.web.bind.annotation.*;
+import org.springframework.stereotype.Component;
+import org.springframework.web.bind.annotation.ExceptionHandler;
+import org.springframework.web.bind.annotation.RequestParam;
 
-@RestController
-@RequestMapping("/api/public")
-@Validated
-public class EmailVerificationController {
+@Component
+public class EmailVerificationController implements EmailVerificationResource {
 
     @Autowired
     CompleteEmailVerificationHandler completeEmailVerificationHandler;
@@ -29,13 +28,13 @@ public class EmailVerificationController {
     private TimeProvider timeProvider;
 
     @ExceptionHandler({CompleteEmailVerificationHandler.ValidationException.class})
-    ResponseEntity<ErrorDTO> handleTokenIsNotValidException(CompleteEmailVerificationHandler.ValidationException ex) {
+    public ResponseEntity<ErrorDTO> handleTokenIsNotValidException(CompleteEmailVerificationHandler.ValidationException ex) {
         return ResponseEntity.status(HttpStatus.UNAUTHORIZED)
             .body(new ErrorDTO(ex.getCode(), ex.getMessage()));
     }
 
-    @GetMapping("/verify-email")
-    ResponseEntity<String> verifyEmail(
+    @Override
+    public ResponseEntity<String> verifyEmail(
         @RequestParam("token") String rawToken,
         HttpServletRequest request,
         HttpServletResponse response

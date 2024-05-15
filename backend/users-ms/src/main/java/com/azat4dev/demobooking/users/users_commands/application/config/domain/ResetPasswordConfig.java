@@ -2,14 +2,11 @@ package com.azat4dev.demobooking.users.users_commands.application.config.domain;
 
 import com.azat4dev.demobooking.common.domain.annotations.CommandHandlerBean;
 import com.azat4dev.demobooking.common.domain.event.DomainEventsBus;
+import com.azat4dev.demobooking.common.utils.TimeProvider;
 import com.azat4dev.demobooking.users.users_commands.domain.core.values.email.EmailAddress;
-import com.azat4dev.demobooking.users.users_commands.domain.handlers.password.reset.utils.BuildResetPasswordEmail;
+import com.azat4dev.demobooking.users.users_commands.domain.core.values.password.reset.TokenForPasswordReset;
+import com.azat4dev.demobooking.users.users_commands.domain.handlers.password.reset.utils.*;
 import com.azat4dev.demobooking.users.users_commands.domain.handlers.password.reset.*;
-import com.azat4dev.demobooking.users.users_commands.domain.handlers.password.reset.utils.BuildResetPasswordEmailImpl;
-import com.azat4dev.demobooking.users.users_commands.domain.handlers.password.reset.utils.GenerateResetPasswordLink;
-import com.azat4dev.demobooking.users.users_commands.domain.handlers.password.reset.utils.GenerateResetPasswordLinkImpl;
-import com.azat4dev.demobooking.users.users_commands.domain.handlers.password.reset.utils.ValidateTokenForPasswordResetAndGetUserId;
-import com.azat4dev.demobooking.users.users_commands.domain.handlers.password.reset.utils.ProvideResetPasswordToken;
 import com.azat4dev.demobooking.users.users_commands.domain.interfaces.repositories.UsersRepository;
 import com.azat4dev.demobooking.users.users_commands.domain.interfaces.services.EmailService;
 import com.azat4dev.demobooking.users.users_commands.domain.interfaces.services.PasswordService;
@@ -76,5 +73,28 @@ public class ResetPasswordConfig {
             baseUrl,
             provideResetPasswordToken
         );
+    }
+
+    @Bean
+    ValidateTokenForPasswordResetAndGetUserId validateTokenForPasswordResetAndGetUserId(
+        GetInfoForPasswordResetToken getTokenInfo,
+        TimeProvider timeProvider
+    ) {
+        return new ValidateTokenForPasswordResetAndGetUserIdImpl(
+            getTokenInfo,
+            timeProvider
+        );
+    }
+
+    @Bean
+    GetInfoForPasswordResetToken getInfoForPasswordResetToken(
+        ProvideResetPasswordToken provideResetPasswordToken
+    ) {
+        return new GetInfoForPasswordResetToken() {
+            @Override
+            public Data execute(TokenForPasswordReset token) throws InvalidTokenException {
+                return null;
+            }
+        };
     }
 }

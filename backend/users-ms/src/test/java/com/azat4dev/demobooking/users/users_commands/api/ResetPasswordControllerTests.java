@@ -1,4 +1,4 @@
-package com.azat4dev.demobooking.users.users_queries.presentation.api.rest;
+package com.azat4dev.demobooking.users.users_commands.api;
 
 
 import com.azat4dev.demobooking.common.domain.event.EventIdGenerator;
@@ -7,6 +7,7 @@ import com.azat4dev.demobooking.common.utils.SystemTimeProvider;
 import com.azat4dev.demobooking.common.utils.TimeProvider;
 import com.azat4dev.demobooking.users.common.presentation.security.services.jwt.JwtService;
 import com.azat4dev.demobooking.users.users_commands.application.config.presentation.WebSecurityConfig;
+import com.azat4dev.demobooking.users.users_commands.domain.UserHelpers;
 import com.azat4dev.demobooking.users.users_commands.domain.core.commands.ResetPasswordByEmail;
 import com.azat4dev.demobooking.users.users_commands.domain.core.values.email.EmailAddress;
 import com.azat4dev.demobooking.users.users_commands.domain.handlers.password.reset.ResetPasswordByEmailHandler;
@@ -16,10 +17,12 @@ import com.azat4dev.demobooking.users.users_queries.domain.services.UsersQuerySe
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
+import org.springframework.boot.test.context.TestConfiguration;
 import org.springframework.boot.test.mock.mockito.MockBean;
+import org.springframework.context.ApplicationContext;
 import org.springframework.context.annotation.Bean;
-import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.Import;
 import org.springframework.http.MediaType;
 import org.springframework.security.oauth2.jwt.JwtDecoder;
@@ -33,38 +36,36 @@ import static org.springframework.test.web.servlet.request.MockMvcRequestBuilder
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
 @WebMvcTest(ResetPasswordController.class)
-@Import({WebSecurityConfig.class, ResetPasswordControllerTests.Config.class})
+@Import(WebSecurityConfig.class)
 public class ResetPasswordControllerTests {
 
     @Autowired
+    ApplicationContext context;
+    @Autowired
     private MockMvc mockMvc;
-
     @Autowired
     private ObjectMapper objectMapper;
-
     @MockBean
     private UsersQueryService usersService;
-
     @MockBean
     private JwtService tokenProvider;
-
     @MockBean
     private JwtEncoder jwtEncoder;
-
-    @MockBean(name = "accessTokenDecoder")
+    @MockBean
+    @Qualifier("accessTokenDecoder")
     private JwtDecoder accessTokenDecoder;
 
     @MockBean
     private ResetPasswordByEmailHandler resetPasswordByEmailHandler;
 
-    @MockBean
-    private EventIdGenerator eventIdGenerator;
-
     @Test
     public void test_resetPasswordByEmail_givenValidToken_thenPassToHandlerReturnOk() throws Exception {
 
         // Given
-        final var request = new ResetPasswordByEmailRequest("idempotentOperationKey", "email");
+        final var request = new ResetPasswordByEmailRequest(
+            "idempotentOperationKey",
+            UserHelpers.anyValidEmail().getValue()
+        );
 
         willDoNothing().given(resetPasswordByEmailHandler)
             .handle(any(), any(), any());
@@ -110,7 +111,7 @@ public class ResetPasswordControllerTests {
         );
     }
 
-    @Configuration
+    @TestConfiguration
     static class Config {
         @Bean
         EventIdGenerator eventIdGenerator() {

@@ -2,20 +2,19 @@ package com.azat4dev.demobooking.users.users_commands.presentation.api.rest.auth
 
 import com.azat4dev.demobooking.common.domain.event.EventIdGenerator;
 import com.azat4dev.demobooking.common.utils.TimeProvider;
+import com.azat4dev.demobooking.users.users_commands.domain.core.commands.ResetPasswordByEmail;
+import com.azat4dev.demobooking.users.users_commands.domain.core.values.email.EmailAddress;
 import com.azat4dev.demobooking.users.users_commands.domain.handlers.password.reset.ResetPasswordByEmailHandler;
 import com.azat4dev.demobooking.users.users_commands.presentation.api.rest.authentication.entities.ResetPasswordByEmailRequest;
+import jakarta.servlet.http.HttpServletRequest;
+import jakarta.servlet.http.HttpServletResponse;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
-import org.springframework.validation.annotation.Validated;
-import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
 
-@RestController
-@RequestMapping("/api/public")
-@Validated
-public class ResetPasswordController {
+@Controller
+public class ResetPasswordController implements ResetPasswordResource {
 
     @Autowired
     ResetPasswordByEmailHandler handler;
@@ -27,11 +26,19 @@ public class ResetPasswordController {
     private TimeProvider timeProvider;
 
 
-    @PostMapping("/reset-password")
-    ResponseEntity<String> resetPasswordByEmail(
-        @RequestBody ResetPasswordByEmailRequest requestBody
+    @Override
+    public ResponseEntity<String> resetPasswordByEmail(
+        @RequestBody ResetPasswordByEmailRequest requestBody,
+        HttpServletRequest request,
+        HttpServletResponse response
     ) {
 
-        throw new RuntimeException("Not implemented");
+        final var command = new ResetPasswordByEmail(
+            requestBody.idempotentOperationId(),
+            EmailAddress.checkAndMakeFromString(requestBody.email())
+        );
+
+        handler.handle(command, eventIdGenerator.generate(), timeProvider.currentTime());
+        return ResponseEntity.ok("Password reset email sent");
     }
 }

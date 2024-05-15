@@ -2,8 +2,8 @@ package com.azat4dev.demobooking.users.users_commands.application.config.present
 
 import com.azat4dev.demobooking.users.users_commands.data.services.password.PasswordServiceImpl;
 import com.azat4dev.demobooking.users.users_commands.domain.core.values.password.EncodedPassword;
-import com.azat4dev.demobooking.users.users_commands.domain.interfaces.services.PasswordService;
 import com.azat4dev.demobooking.users.users_commands.domain.core.values.password.Password;
+import com.azat4dev.demobooking.users.users_commands.domain.interfaces.services.PasswordService;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -32,20 +32,22 @@ public class WebSecurityConfig {
     SecurityFilterChain filterChain(
         HttpSecurity http,
         @Qualifier("accessTokenDecoder") JwtDecoder jwtDecoder
-        ) throws Exception {
+    ) throws Exception {
         return http
             .cors(cors -> cors.configurationSource(corsConfigurationSource()))
             .authorizeHttpRequests(c -> c.requestMatchers(
-                    HttpMethod.POST,
-                    "/api/public/**"
-                )
-                .permitAll()
-                .requestMatchers(
-                    HttpMethod.GET,
-                    "/api/public/**"
-                ).permitAll()
-                .requestMatchers("/api/with-auth/**")
-                .authenticated())
+                        HttpMethod.POST,
+                        "/api/public/**"
+                    )
+                    .permitAll()
+                    .requestMatchers(
+                        HttpMethod.GET,
+                        "/api/public/**"
+                    ).permitAll()
+
+                    .requestMatchers("/api/with-auth/**")
+                    .authenticated()
+            )
             .csrf(c -> c.ignoringRequestMatchers("/api/public/**", "/api/with-auth/**"))
             .httpBasic(Customizer.withDefaults())
             .oauth2ResourceServer(c -> c.jwt(jwtCustom -> jwtCustom.decoder(jwtDecoder)))
