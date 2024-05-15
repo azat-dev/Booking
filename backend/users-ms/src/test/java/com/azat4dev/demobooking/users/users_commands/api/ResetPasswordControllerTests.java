@@ -33,6 +33,7 @@ import org.springframework.test.web.servlet.ResultActions;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.BDDMockito.*;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
 @WebMvcTest(ResetPasswordController.class)
@@ -59,7 +60,7 @@ public class ResetPasswordControllerTests {
     private ResetPasswordByEmailHandler resetPasswordByEmailHandler;
 
     @Test
-    public void test_resetPasswordByEmail_givenValidToken_thenPassToHandlerReturnOk() throws Exception {
+    public void test_resetPasswordByEmail_givenEmail_thenPassToHandlerReturnOk() throws Exception {
 
         // Given
         final var request = new ResetPasswordByEmailRequest(
@@ -87,6 +88,23 @@ public class ResetPasswordControllerTests {
                 any(),
                 any()
             );
+    }
+
+    @Test
+    public void test_resetPasswordByEmail_givenInvalid_thenReturn401() throws Exception {
+
+        // Given
+        final var request = new ResetPasswordByEmailRequest(
+            "idempotentOperationKey",
+            "notValidEmail"
+        );
+
+        // When
+        final var result = performResetPasswordByEmail(request);
+
+        // Then
+        result.andExpect(status().isBadRequest())
+            .andExpect(jsonPath("$.errors[0].code").value("WrongFormat"));
     }
 
 
