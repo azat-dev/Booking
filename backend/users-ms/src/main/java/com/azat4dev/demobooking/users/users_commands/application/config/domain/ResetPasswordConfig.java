@@ -3,6 +3,7 @@ package com.azat4dev.demobooking.users.users_commands.application.config.domain;
 import com.azat4dev.demobooking.common.domain.annotations.CommandHandlerBean;
 import com.azat4dev.demobooking.common.domain.event.DomainEventsBus;
 import com.azat4dev.demobooking.common.utils.TimeProvider;
+import com.azat4dev.demobooking.users.common.presentation.security.services.jwt.JwtDataDecoder;
 import com.azat4dev.demobooking.users.users_commands.domain.core.values.email.EmailAddress;
 import com.azat4dev.demobooking.users.users_commands.domain.core.values.password.reset.TokenForPasswordReset;
 import com.azat4dev.demobooking.users.users_commands.domain.handlers.password.reset.utils.*;
@@ -85,14 +86,7 @@ public class ResetPasswordConfig {
     }
 
     @Bean
-    GetInfoForPasswordResetToken getInfoForPasswordResetToken(
-        ProvideResetPasswordToken provideResetPasswordToken
-    ) {
-        return new GetInfoForPasswordResetToken() {
-            @Override
-            public Data execute(TokenForPasswordReset token) throws InvalidTokenException {
-                return null;
-            }
-        };
+    GetInfoForPasswordResetToken getInfoForPasswordResetToken(JwtDataDecoder decoder) {
+        return new GetInfoForPasswordResetTokenImpl(decoder);
     }
 }

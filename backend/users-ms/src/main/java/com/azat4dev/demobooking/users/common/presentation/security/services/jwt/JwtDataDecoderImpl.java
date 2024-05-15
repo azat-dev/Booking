@@ -23,7 +23,7 @@ public final class JwtDataDecoderImpl implements JwtDataDecoder {
 
         return new Data(
             decoded.getSubject(),
-            decoded.getIssuer().toString(),
+            claims.getOrDefault("iss", ""),
             LocalDateTime.ofInstant(decoded.getIssuedAt(), ZoneOffset.UTC),
             LocalDateTime.ofInstant(decoded.getExpiresAt(), ZoneOffset.UTC),
             claims
