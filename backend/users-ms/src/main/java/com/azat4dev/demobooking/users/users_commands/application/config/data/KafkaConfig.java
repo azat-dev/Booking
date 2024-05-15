@@ -1,11 +1,9 @@
 package com.azat4dev.demobooking.users.users_commands.application.config.data;
 
 import com.azat4dev.demobooking.users.users_commands.domain.core.commands.CompleteEmailVerification;
+import com.azat4dev.demobooking.users.users_commands.domain.core.commands.CompletePasswordReset;
 import com.azat4dev.demobooking.users.users_commands.domain.core.commands.SendVerificationEmail;
-import com.azat4dev.demobooking.users.users_commands.domain.core.events.FailedToSendVerificationEmail;
-import com.azat4dev.demobooking.users.users_commands.domain.core.events.UserCreated;
-import com.azat4dev.demobooking.users.users_commands.domain.core.events.UserVerifiedEmail;
-import com.azat4dev.demobooking.users.users_commands.domain.core.events.VerificationEmailSent;
+import com.azat4dev.demobooking.users.users_commands.domain.core.events.*;
 import lombok.RequiredArgsConstructor;
 import org.apache.kafka.clients.admin.NewTopic;
 import org.apache.kafka.clients.producer.ProducerConfig;
@@ -64,10 +62,16 @@ public class KafkaConfig {
         final List<Class<?>> events = List.of(
             UserCreated.class,
             SendVerificationEmail.class,
+
             VerificationEmailSent.class,
             FailedToSendVerificationEmail.class,
             UserVerifiedEmail.class,
-            CompleteEmailVerification.class
+            CompleteEmailVerification.class,
+
+            CompletePasswordReset.class,
+            FailedToSendVerificationEmail.class,
+            UserDidResetPassword.class,
+            SentEmailForPasswordReset.class
         );
 
         final var topics = events.stream().map(
