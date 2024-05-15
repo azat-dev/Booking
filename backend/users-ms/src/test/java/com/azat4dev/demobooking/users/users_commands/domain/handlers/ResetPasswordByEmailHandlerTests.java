@@ -25,15 +25,6 @@ import static org.mockito.Mockito.times;
 
 public class ResetPasswordByEmailHandlerTests {
 
-    record SUT(
-        ResetPasswordByEmailHandler handler,
-        UsersRepository usersRepository,
-        BuildResetPasswordEmail buildResetPasswordEmail,
-        EmailService emailService,
-        DomainEventsBus bus
-    ) {
-    }
-
     SUT createSUT() {
 
         final var usersRepository = mock(UsersRepository.class);
@@ -134,5 +125,14 @@ public class ResetPasswordByEmailHandlerTests {
                 user.getEmail()
             )
         );
+    }
+
+    record SUT(
+        ResetPasswordByEmailHandler handler,
+        UsersRepository usersRepository,
+        BuildResetPasswordEmail buildResetPasswordEmail,
+        EmailService emailService,
+        DomainEventsBus bus
+    ) {
     }
 }
