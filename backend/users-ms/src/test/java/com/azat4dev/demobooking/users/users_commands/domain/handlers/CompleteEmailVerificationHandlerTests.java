@@ -7,17 +7,17 @@ import com.azat4dev.demobooking.users.users_commands.domain.EventHelpers;
 import com.azat4dev.demobooking.users.users_commands.domain.UserHelpers;
 import com.azat4dev.demobooking.users.users_commands.domain.core.commands.CompleteEmailVerification;
 import com.azat4dev.demobooking.users.users_commands.domain.core.events.UserVerifiedEmail;
-import com.azat4dev.demobooking.users.users_commands.domain.core.values.EmailVerificationStatus;
+import com.azat4dev.demobooking.users.users_commands.domain.core.values.user.EmailVerificationStatus;
+import com.azat4dev.demobooking.users.users_commands.domain.handlers.email.verification.CompleteEmailVerificationHandler;
 import com.azat4dev.demobooking.users.users_commands.domain.interfaces.repositories.UsersRepository;
-import com.azat4dev.demobooking.users.users_commands.domain.interfaces.services.EmailVerificationToken;
-import com.azat4dev.demobooking.users.users_commands.domain.interfaces.services.EmailVerificationTokenInfo;
-import com.azat4dev.demobooking.users.users_commands.domain.interfaces.services.GetInfoForEmailVerificationToken;
+import com.azat4dev.demobooking.users.users_commands.domain.core.values.email.verification.EmailVerificationToken;
+import com.azat4dev.demobooking.users.users_commands.domain.core.values.email.verification.EmailVerificationTokenInfo;
+import com.azat4dev.demobooking.users.users_commands.domain.services.email.GetInfoForEmailVerificationToken;
 import org.junit.jupiter.api.Test;
 
 import java.time.LocalDateTime;
 import java.util.Optional;
 
-import static com.azat4dev.demobooking.users.users_commands.domain.EventHelpers.eventsFactory;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.mockito.BDDMockito.*;

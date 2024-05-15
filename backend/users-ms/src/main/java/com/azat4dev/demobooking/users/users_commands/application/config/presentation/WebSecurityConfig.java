@@ -1,9 +1,9 @@
 package com.azat4dev.demobooking.users.users_commands.application.config.presentation;
 
 import com.azat4dev.demobooking.users.users_commands.data.services.password.PasswordServiceImpl;
-import com.azat4dev.demobooking.users.users_commands.domain.interfaces.services.EncodedPassword;
+import com.azat4dev.demobooking.users.users_commands.domain.core.values.password.EncodedPassword;
 import com.azat4dev.demobooking.users.users_commands.domain.interfaces.services.PasswordService;
-import com.azat4dev.demobooking.users.users_commands.domain.core.values.Password;
+import com.azat4dev.demobooking.users.users_commands.domain.core.values.password.Password;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;

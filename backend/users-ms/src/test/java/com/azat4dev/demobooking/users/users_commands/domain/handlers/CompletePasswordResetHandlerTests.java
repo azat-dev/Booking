@@ -6,10 +6,12 @@ import com.azat4dev.demobooking.users.users_commands.domain.UserHelpers;
 import com.azat4dev.demobooking.users.users_commands.domain.core.commands.CompletePasswordReset;
 import com.azat4dev.demobooking.users.users_commands.domain.core.events.FailedToCompleteResetPassword;
 import com.azat4dev.demobooking.users.users_commands.domain.core.events.UserDidResetPassword;
-import com.azat4dev.demobooking.users.users_commands.domain.core.values.Password;
-import com.azat4dev.demobooking.users.users_commands.domain.core.values.TokenForPasswordReset;
+import com.azat4dev.demobooking.users.users_commands.domain.core.values.password.Password;
+import com.azat4dev.demobooking.users.users_commands.domain.core.values.password.reset.TokenForPasswordReset;
+import com.azat4dev.demobooking.users.users_commands.domain.handlers.password.reset.CompletePasswordResetHandler;
+import com.azat4dev.demobooking.users.users_commands.domain.handlers.password.reset.ValidateTokenForPasswordResetAndGetUserId;
 import com.azat4dev.demobooking.users.users_commands.domain.interfaces.repositories.UsersRepository;
-import com.azat4dev.demobooking.users.users_commands.domain.interfaces.services.EncodedPassword;
+import com.azat4dev.demobooking.users.users_commands.domain.core.values.password.EncodedPassword;
 import com.azat4dev.demobooking.users.users_commands.domain.interfaces.services.PasswordService;
 import org.junit.jupiter.api.Test;
 

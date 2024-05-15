@@ -5,7 +5,7 @@ import com.azat4dev.demobooking.common.domain.event.DomainEventNew;
 import com.azat4dev.demobooking.common.domain.event.DomainEventsBus;
 import com.azat4dev.demobooking.users.users_commands.domain.core.commands.SendVerificationEmail;
 import com.azat4dev.demobooking.users.users_commands.domain.core.events.UserCreated;
-import com.azat4dev.demobooking.users.users_commands.domain.core.values.EmailVerificationStatus;
+import com.azat4dev.demobooking.users.users_commands.domain.core.values.user.EmailVerificationStatus;
 import lombok.RequiredArgsConstructor;
 
 @RequiredArgsConstructor

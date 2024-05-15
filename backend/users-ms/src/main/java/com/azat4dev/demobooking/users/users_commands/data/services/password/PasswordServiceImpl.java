@@ -1,8 +1,8 @@
 package com.azat4dev.demobooking.users.users_commands.data.services.password;
 
-import com.azat4dev.demobooking.users.users_commands.domain.interfaces.services.EncodedPassword;
+import com.azat4dev.demobooking.users.users_commands.domain.core.values.password.EncodedPassword;
 import com.azat4dev.demobooking.users.users_commands.domain.interfaces.services.PasswordService;
-import com.azat4dev.demobooking.users.users_commands.domain.core.values.Password;
+import com.azat4dev.demobooking.users.users_commands.domain.core.values.password.Password;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.crypto.password.PasswordEncoder;
 

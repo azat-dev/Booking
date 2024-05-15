@@ -1,8 +1,8 @@
 package com.azat4dev.demobooking.users.users_commands.data.repositories.dto;
 
-import com.azat4dev.demobooking.users.users_commands.domain.core.values.FirstName;
-import com.azat4dev.demobooking.users.users_commands.domain.core.values.FullName;
-import com.azat4dev.demobooking.users.users_commands.domain.core.values.LastName;
+import com.azat4dev.demobooking.users.users_commands.domain.core.values.user.FirstName;
+import com.azat4dev.demobooking.users.users_commands.domain.core.values.user.FullName;
+import com.azat4dev.demobooking.users.users_commands.domain.core.values.user.LastName;
 
 import java.io.Serializable;
 

@@ -9,10 +9,10 @@ import com.azat4dev.demobooking.users.users_commands.application.config.presenta
 import com.azat4dev.demobooking.users.users_commands.domain.UserHelpers;
 import com.azat4dev.demobooking.users.users_commands.domain.core.commands.CreateUser;
 import com.azat4dev.demobooking.users.users_commands.domain.interfaces.repositories.UsersRepository;
-import com.azat4dev.demobooking.users.users_commands.domain.interfaces.services.EncodedPassword;
+import com.azat4dev.demobooking.users.users_commands.domain.core.values.password.EncodedPassword;
 import com.azat4dev.demobooking.users.users_commands.domain.interfaces.services.PasswordService;
-import com.azat4dev.demobooking.users.users_commands.domain.handlers.UsersService;
-import com.azat4dev.demobooking.users.users_commands.domain.core.values.Password;
+import com.azat4dev.demobooking.users.users_commands.domain.handlers.users.UsersService;
+import com.azat4dev.demobooking.users.users_commands.domain.core.values.password.Password;
 import com.azat4dev.demobooking.common.domain.core.UserIdFactory;
 import com.azat4dev.demobooking.users.users_commands.presentation.api.rest.authentication.entities.FullNameDTO;
 import com.azat4dev.demobooking.users.users_commands.presentation.api.rest.authentication.entities.LoginByEmailRequest;

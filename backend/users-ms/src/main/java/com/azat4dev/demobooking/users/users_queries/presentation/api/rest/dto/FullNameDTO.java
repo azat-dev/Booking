@@ -1,6 +1,6 @@
 package com.azat4dev.demobooking.users.users_queries.presentation.api.rest.dto;
 
-import com.azat4dev.demobooking.users.users_commands.domain.core.values.FullName;
+import com.azat4dev.demobooking.users.users_commands.domain.core.values.user.FullName;
 
 public record FullNameDTO(
     String firstName,

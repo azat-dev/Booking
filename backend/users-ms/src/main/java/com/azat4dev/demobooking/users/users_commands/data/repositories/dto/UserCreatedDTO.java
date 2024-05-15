@@ -2,7 +2,7 @@ package com.azat4dev.demobooking.users.users_commands.data.repositories.dto;
 
 import com.azat4dev.demobooking.users.common.domain.values.UserId;
 import com.azat4dev.demobooking.users.users_commands.domain.core.events.UserCreated;
-import com.azat4dev.demobooking.users.users_commands.domain.core.values.EmailVerificationStatus;
+import com.azat4dev.demobooking.users.users_commands.domain.core.values.user.EmailVerificationStatus;
 import com.azat4dev.demobooking.users.users_commands.domain.core.values.email.EmailAddress;
 
 import java.time.LocalDateTime;

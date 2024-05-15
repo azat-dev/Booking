@@ -1,7 +1,7 @@
 package com.azat4dev.demobooking.users.users_commands.domain.values;
 
 
-import com.azat4dev.demobooking.users.users_commands.domain.core.values.Password;
+import com.azat4dev.demobooking.users.users_commands.domain.core.values.password.Password;
 import org.junit.jupiter.api.Test;
 
 import static org.assertj.core.api.Assertions.assertThat;

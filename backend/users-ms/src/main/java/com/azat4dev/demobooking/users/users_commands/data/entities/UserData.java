@@ -1,6 +1,6 @@
 package com.azat4dev.demobooking.users.users_commands.data.entities;
 
-import com.azat4dev.demobooking.users.users_commands.domain.core.values.EmailVerificationStatus;
+import com.azat4dev.demobooking.users.users_commands.domain.core.values.user.EmailVerificationStatus;
 
 import java.time.LocalDateTime;
 import java.util.UUID;

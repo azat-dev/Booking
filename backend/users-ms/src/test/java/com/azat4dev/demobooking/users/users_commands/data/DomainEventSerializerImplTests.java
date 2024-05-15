@@ -7,10 +7,10 @@ import com.azat4dev.demobooking.users.users_commands.domain.core.commands.Comple
 import com.azat4dev.demobooking.users.users_commands.domain.core.commands.ResetPasswordByEmail;
 import com.azat4dev.demobooking.users.users_commands.domain.core.commands.SendVerificationEmail;
 import com.azat4dev.demobooking.users.users_commands.domain.core.events.*;
-import com.azat4dev.demobooking.users.users_commands.domain.core.values.EmailVerificationStatus;
-import com.azat4dev.demobooking.users.users_commands.domain.core.values.Password;
-import com.azat4dev.demobooking.users.users_commands.domain.core.values.TokenForPasswordReset;
-import com.azat4dev.demobooking.users.users_commands.domain.interfaces.services.EmailVerificationToken;
+import com.azat4dev.demobooking.users.users_commands.domain.core.values.user.EmailVerificationStatus;
+import com.azat4dev.demobooking.users.users_commands.domain.core.values.password.Password;
+import com.azat4dev.demobooking.users.users_commands.domain.core.values.password.reset.TokenForPasswordReset;
+import com.azat4dev.demobooking.users.users_commands.domain.core.values.email.verification.EmailVerificationToken;
 import org.junit.jupiter.api.Test;
 
 import java.time.LocalDateTime;

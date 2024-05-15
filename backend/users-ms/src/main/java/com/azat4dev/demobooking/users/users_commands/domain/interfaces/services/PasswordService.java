@@ -1,6 +1,7 @@
 package com.azat4dev.demobooking.users.users_commands.domain.interfaces.services;
 
-import com.azat4dev.demobooking.users.users_commands.domain.core.values.Password;
+import com.azat4dev.demobooking.users.users_commands.domain.core.values.password.EncodedPassword;
+import com.azat4dev.demobooking.users.users_commands.domain.core.values.password.Password;
 
 public interface PasswordService {
     EncodedPassword encodePassword(Password password);

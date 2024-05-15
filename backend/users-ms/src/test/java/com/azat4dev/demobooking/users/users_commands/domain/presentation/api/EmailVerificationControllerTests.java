@@ -7,7 +7,7 @@ import com.azat4dev.demobooking.common.utils.SystemTimeProvider;
 import com.azat4dev.demobooking.common.utils.TimeProvider;
 import com.azat4dev.demobooking.users.users_commands.application.config.presentation.WebSecurityConfig;
 import com.azat4dev.demobooking.users.users_commands.domain.EventHelpers;
-import com.azat4dev.demobooking.users.users_commands.domain.handlers.CompleteEmailVerificationHandler;
+import com.azat4dev.demobooking.users.users_commands.domain.handlers.email.verification.CompleteEmailVerificationHandler;
 import com.azat4dev.demobooking.users.users_commands.presentation.api.rest.authentication.resources.EmailVerificationController;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.junit.jupiter.api.Test;

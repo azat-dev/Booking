@@ -3,10 +3,10 @@ package com.azat4dev.demobooking.users.users_commands.domain.core.entities;
 import com.azat4dev.demobooking.common.domain.DomainException;
 import com.azat4dev.demobooking.common.utils.Assert;
 import com.azat4dev.demobooking.users.common.domain.values.UserId;
-import com.azat4dev.demobooking.users.users_commands.domain.core.values.EmailVerificationStatus;
-import com.azat4dev.demobooking.users.users_commands.domain.core.values.FullName;
+import com.azat4dev.demobooking.users.users_commands.domain.core.values.user.EmailVerificationStatus;
+import com.azat4dev.demobooking.users.users_commands.domain.core.values.user.FullName;
 import com.azat4dev.demobooking.users.users_commands.domain.core.values.email.EmailAddress;
-import com.azat4dev.demobooking.users.users_commands.domain.interfaces.services.EncodedPassword;
+import com.azat4dev.demobooking.users.users_commands.domain.core.values.password.EncodedPassword;
 import lombok.EqualsAndHashCode;
 
 import java.time.LocalDateTime;

@@ -7,14 +7,14 @@ import com.azat4dev.demobooking.common.utils.TimeProvider;
 import com.azat4dev.demobooking.users.users_commands.domain.UserHelpers;
 import com.azat4dev.demobooking.users.users_commands.domain.core.commands.CreateUser;
 import com.azat4dev.demobooking.users.users_commands.domain.core.events.UserCreated;
-import com.azat4dev.demobooking.users.users_commands.domain.core.values.EmailVerificationStatus;
-import com.azat4dev.demobooking.users.users_commands.domain.handlers.UsersService;
-import com.azat4dev.demobooking.users.users_commands.domain.handlers.UsersServiceImpl;
+import com.azat4dev.demobooking.users.users_commands.domain.core.values.user.EmailVerificationStatus;
+import com.azat4dev.demobooking.users.users_commands.domain.handlers.users.UsersService;
+import com.azat4dev.demobooking.users.users_commands.domain.handlers.users.UsersServiceImpl;
 import com.azat4dev.demobooking.users.users_commands.domain.interfaces.repositories.OutboxEventsRepository;
 import com.azat4dev.demobooking.users.users_commands.domain.interfaces.repositories.UnitOfWork;
 import com.azat4dev.demobooking.users.users_commands.domain.interfaces.repositories.UnitOfWorkFactory;
 import com.azat4dev.demobooking.users.users_commands.domain.interfaces.repositories.UsersRepository;
-import com.azat4dev.demobooking.users.users_commands.domain.interfaces.services.EncodedPassword;
+import com.azat4dev.demobooking.users.users_commands.domain.core.values.password.EncodedPassword;
 import org.junit.jupiter.api.Test;
 
 import java.time.LocalDateTime;

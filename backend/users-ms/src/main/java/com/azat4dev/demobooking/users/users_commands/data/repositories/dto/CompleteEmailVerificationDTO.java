@@ -1,7 +1,7 @@
 package com.azat4dev.demobooking.users.users_commands.data.repositories.dto;
 
 import com.azat4dev.demobooking.users.users_commands.domain.core.commands.CompleteEmailVerification;
-import com.azat4dev.demobooking.users.users_commands.domain.interfaces.services.EmailVerificationToken;
+import com.azat4dev.demobooking.users.users_commands.domain.core.values.email.verification.EmailVerificationToken;
 
 public record CompleteEmailVerificationDTO(String token) implements DomainEventPayloadDTO {
 

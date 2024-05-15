@@ -7,9 +7,9 @@ import com.azat4dev.demobooking.users.common.presentation.security.services.Cust
 import com.azat4dev.demobooking.users.common.presentation.security.services.jwt.JwtService;
 import com.azat4dev.demobooking.users.common.presentation.security.services.jwt.UserIdNotFoundException;
 import com.azat4dev.demobooking.users.users_commands.domain.core.commands.CreateUser;
-import com.azat4dev.demobooking.users.users_commands.domain.interfaces.services.EncodedPassword;
+import com.azat4dev.demobooking.users.users_commands.domain.core.values.password.EncodedPassword;
 import com.azat4dev.demobooking.users.users_commands.domain.interfaces.services.PasswordService;
-import com.azat4dev.demobooking.users.users_commands.domain.handlers.UsersService;
+import com.azat4dev.demobooking.users.users_commands.domain.handlers.users.UsersService;
 import com.azat4dev.demobooking.common.domain.core.UserIdFactory;
 import com.azat4dev.demobooking.users.users_commands.presentation.api.rest.authentication.entities.*;
 import jakarta.servlet.http.HttpServletRequest;
