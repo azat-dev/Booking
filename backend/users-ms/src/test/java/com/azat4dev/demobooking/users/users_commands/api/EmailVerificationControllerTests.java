@@ -1,4 +1,4 @@
-package com.azat4dev.demobooking.users.users_commands.domain.presentation.api;
+package com.azat4dev.demobooking.users.users_commands.api;
 
 import com.azat4dev.demobooking.common.domain.event.DomainEventsFactory;
 import com.azat4dev.demobooking.common.domain.event.EventIdGenerator;
