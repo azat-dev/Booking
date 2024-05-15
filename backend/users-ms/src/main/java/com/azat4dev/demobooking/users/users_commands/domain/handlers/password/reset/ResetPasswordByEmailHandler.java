@@ -10,7 +10,6 @@ import com.azat4dev.demobooking.users.users_commands.domain.core.events.SentEmai
 import com.azat4dev.demobooking.users.users_commands.domain.handlers.password.reset.utils.BuildResetPasswordEmail;
 import com.azat4dev.demobooking.users.users_commands.domain.interfaces.repositories.UsersRepository;
 import com.azat4dev.demobooking.users.users_commands.domain.interfaces.services.EmailService;
-import com.azat4dev.demobooking.users.users_commands.domain.services.EmailData;
 import lombok.RequiredArgsConstructor;
 
 import java.time.LocalDateTime;
@@ -39,7 +38,7 @@ public final class ResetPasswordByEmailHandler implements CommandHandler<ResetPa
         try {
             emailService.send(
                 command.email(),
-                new EmailData(
+                new EmailService.EmailData(
                     emailData.fromAddress(),
                     emailData.fromName(),
                     emailData.subject(),

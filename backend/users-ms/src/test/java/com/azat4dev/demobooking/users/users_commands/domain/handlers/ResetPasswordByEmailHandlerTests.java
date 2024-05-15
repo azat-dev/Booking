@@ -5,11 +5,10 @@ import com.azat4dev.demobooking.users.users_commands.domain.EventHelpers;
 import com.azat4dev.demobooking.users.users_commands.domain.core.commands.ResetPasswordByEmail;
 import com.azat4dev.demobooking.users.users_commands.domain.core.events.SentEmailForPasswordReset;
 import com.azat4dev.demobooking.users.users_commands.domain.core.values.email.EmailBody;
-import com.azat4dev.demobooking.users.users_commands.domain.handlers.password.reset.utils.BuildResetPasswordEmail;
 import com.azat4dev.demobooking.users.users_commands.domain.handlers.password.reset.ResetPasswordByEmailHandler;
+import com.azat4dev.demobooking.users.users_commands.domain.handlers.password.reset.utils.BuildResetPasswordEmail;
 import com.azat4dev.demobooking.users.users_commands.domain.interfaces.repositories.UsersRepository;
 import com.azat4dev.demobooking.users.users_commands.domain.interfaces.services.EmailService;
-import com.azat4dev.demobooking.users.users_commands.domain.services.EmailData;
 import org.junit.jupiter.api.Test;
 
 import java.time.LocalDateTime;
@@ -113,7 +112,7 @@ public class ResetPasswordByEmailHandlerTests {
 
         then(sut.emailService).should().send(
             user.getEmail(),
-            new EmailData(
+            new EmailService.EmailData(
                 expectedEmailData.fromAddress(),
                 expectedEmailData.fromName(),
                 expectedEmailData.subject(),
