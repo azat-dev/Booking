@@ -19,7 +19,7 @@ import org.springframework.web.multipart.MultipartFile;
 import java.io.IOException;
 
 @RestController
-@RequestMapping("/api/with-auth/user")
+@RequestMapping("/api/with-auth/users/current")
 @Validated
 public class UserResource {
 

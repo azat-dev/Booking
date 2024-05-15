@@ -8,9 +8,5 @@ public interface JwtService {
 
     String generateAccessToken(UserId userId, String[] authorities);
 
-    boolean verifyToken(String authToken);
-
     String generateRefreshToken(UserId userId, String[] authorities);
-
-    UserId getUserIdFromToken(String token) throws UserId.WrongFormatException;
 }

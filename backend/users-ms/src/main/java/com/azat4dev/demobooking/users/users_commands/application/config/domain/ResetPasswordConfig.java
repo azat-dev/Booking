@@ -4,6 +4,7 @@ import com.azat4dev.demobooking.common.domain.annotations.CommandHandlerBean;
 import com.azat4dev.demobooking.common.domain.event.DomainEventsBus;
 import com.azat4dev.demobooking.users.users_commands.domain.core.values.email.EmailAddress;
 import com.azat4dev.demobooking.users.users_commands.domain.handlers.*;
+import com.azat4dev.demobooking.users.users_commands.domain.interfaces.functions.ProvideResetPasswordToken;
 import com.azat4dev.demobooking.users.users_commands.domain.interfaces.repositories.UsersRepository;
 import com.azat4dev.demobooking.users.users_commands.domain.interfaces.services.EmailService;
 import com.azat4dev.demobooking.users.users_commands.domain.interfaces.services.PasswordService;
@@ -64,11 +65,11 @@ public class ResetPasswordConfig {
     public GenerateResetPasswordLink generateResetPasswordLink(
         @Value("${app.reset_password.base_verification_link_url}")
         URL baseUrl,
-        GenerateResetPasswordToken generateResetPasswordToken
+        ProvideResetPasswordToken provideResetPasswordToken
     ) {
         return new GenerateResetPasswordLinkImpl(
             baseUrl,
-            generateResetPasswordToken
+            provideResetPasswordToken
         );
     }
 }

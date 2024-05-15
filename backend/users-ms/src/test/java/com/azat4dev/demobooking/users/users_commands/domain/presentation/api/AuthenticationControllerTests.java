@@ -21,6 +21,7 @@ import com.azat4dev.demobooking.users.users_commands.presentation.api.rest.authe
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.context.annotation.Import;
@@ -75,7 +76,8 @@ public class AuthenticationControllerTests {
     private JwtEncoder jwtEncoder;
 
     @MockBean
-    private JwtDecoder jwtDecoder;
+    @Qualifier("accessTokenDecoder")
+    private JwtDecoder accessTokenDecoder;
 
     @MockBean
     private UserIdFactory userIdFactory;

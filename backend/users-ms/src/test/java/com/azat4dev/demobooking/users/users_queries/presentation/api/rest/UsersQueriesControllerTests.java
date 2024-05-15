@@ -41,8 +41,8 @@ public class UsersQueriesControllerTests {
     @MockBean
     private JwtEncoder jwtEncoder;
 
-    @MockBean
-    private JwtDecoder jwtDecoder;
+    @MockBean(name = "accessTokenDecoder")
+    private JwtDecoder accessTokenDecoder;
 
     @Test
     public void test_getCurrentUserInfo_givenUserDoesNotExist_thenReturn404() throws Exception {

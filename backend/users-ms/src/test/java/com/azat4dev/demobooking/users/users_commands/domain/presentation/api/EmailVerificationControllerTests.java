@@ -50,8 +50,8 @@ public class EmailVerificationControllerTests {
     @MockBean
     private CompleteEmailVerificationHandler completeEmailVerificationHandler;
 
-    @MockBean
-    private JwtDecoder jwtDecoder;
+    @MockBean(name = "accessTokenDecoder")
+    private JwtDecoder accessTokenDecoder;
 
     @Test
     void test_verifyEmail_givenInvalidToken_thenReturnError() throws Exception {

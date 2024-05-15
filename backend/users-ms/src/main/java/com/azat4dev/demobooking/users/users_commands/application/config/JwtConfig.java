@@ -2,12 +2,11 @@ package com.azat4dev.demobooking.users.users_commands.application.config;
 
 
 import com.azat4dev.demobooking.common.utils.TimeProvider;
-import com.azat4dev.demobooking.users.common.presentation.security.services.jwt.EncodeJwt;
-import com.azat4dev.demobooking.users.common.presentation.security.services.jwt.JwtService;
-import com.azat4dev.demobooking.users.common.presentation.security.services.jwt.JwtServiceImpl;
+import com.azat4dev.demobooking.users.common.presentation.security.services.jwt.*;
 import com.nimbusds.jose.jwk.JWKSet;
 import com.nimbusds.jose.jwk.RSAKey;
 import com.nimbusds.jose.jwk.source.ImmutableJWKSet;
+import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -50,30 +49,54 @@ public class JwtConfig {
         TimeProvider timeProvider,
         @Value("${app.security.jwt.accessToken.expirationInMs}") long jwtAccessTokenExpirationInMs,
         @Value("${app.security.jwt.refreshToken.expirationInMs}") long jwtRefreshTokenExpirationInMs,
-        EncodeJwt encodeJwt,
-        JwtDecoder jwtDecoder
+        JwtDataEncoder jwtDataEncoder,
+        JwtDataDecoder jwtDecoder
     ) {
         return new JwtServiceImpl(
             jwtAccessTokenExpirationInMs,
             jwtRefreshTokenExpirationInMs,
-            timeProvider,
-            encodeJwt,
-            jwtDecoder
+            jwtDataEncoder,
+            jwtDecoder,
+            timeProvider
         );
     }
 
     @Bean
-    public JwtEncoder jwtEncoder(
-        RSAPublicKey publicKey,
-        RSAPrivateKey privateKey
-    ) {
+    public JwtEncoder jwtEncoder(RSAPublicKey publicKey, RSAPrivateKey privateKey) {
         final var jwk = new RSAKey.Builder(publicKey).privateKey(privateKey).build();
         final var jwks = new ImmutableJWKSet<>(new JWKSet(jwk));
         return new NimbusJwtEncoder(jwks);
     }
 
     @Bean
+    @Qualifier("commonJwtDecoder")
     JwtDecoder jwtDecoder(RSAPublicKey publicKey) {
         return NimbusJwtDecoder.withPublicKey(publicKey).build();
     }
+
+    @Bean
+    @Qualifier("accessTokenDecoder")
+    JwtDecoder accessTokenDecoder(JwtDecoder decoder) {
+
+        return token -> {
+            final var jwt = decoder.decode(token);
+
+            if (jwt.getClaim("type").equals("access")) {
+                return jwt;
+            }
+
+            throw new JwtException("Invalid token type");
+        };
+    }
+
+    @Bean
+    public JwtDataDecoder jwtDataDecoder(@Qualifier("commonJwtDecoder") JwtDecoder decoder) {
+        return new JwtDataDecoderImpl(decoder);
+    }
+
+    @Bean
+    public JwtDataEncoder jwtDataEncoder(JwtEncoder jwtEncoder) {
+        return new JwtDataEncoderImpl(jwtEncoder);
+    }
+
 }
