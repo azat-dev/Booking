@@ -8,8 +8,9 @@ import com.azat4dev.demobooking.users.users_commands.domain.core.events.FailedTo
 import com.azat4dev.demobooking.users.users_commands.domain.core.events.VerificationEmailSent;
 import com.azat4dev.demobooking.users.users_commands.domain.core.values.email.EmailAddress;
 import com.azat4dev.demobooking.users.users_commands.domain.core.values.email.EmailBody;
+import com.azat4dev.demobooking.users.users_commands.domain.handlers.email.verification.utils.BuildEmailVerificationLink;
 import com.azat4dev.demobooking.users.users_commands.domain.interfaces.services.EmailService;
-import com.azat4dev.demobooking.users.users_commands.domain.services.email.ProvideEmailVerificationToken;
+import com.azat4dev.demobooking.users.users_commands.domain.handlers.email.verification.utils.ProvideEmailVerificationToken;
 import com.azat4dev.demobooking.users.users_commands.domain.services.EmailData;
 import lombok.RequiredArgsConstructor;
 import org.slf4j.Logger;

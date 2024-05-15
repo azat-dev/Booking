@@ -3,9 +3,9 @@ package com.azat4dev.demobooking.users.users_commands.data.services.password;
 import com.azat4dev.demobooking.common.utils.TimeProvider;
 import com.azat4dev.demobooking.users.users_commands.domain.UserHelpers;
 import com.azat4dev.demobooking.users.users_commands.domain.core.values.password.reset.TokenForPasswordReset;
-import com.azat4dev.demobooking.users.users_commands.domain.handlers.password.reset.ValidateTokenForPasswordResetAndGetUserId;
-import com.azat4dev.demobooking.users.users_commands.domain.services.password.reset.GetInfoForPasswordResetToken;
-import com.azat4dev.demobooking.users.users_commands.domain.services.password.reset.ValidateTokenForPasswordResetAndGetUserIdImpl;
+import com.azat4dev.demobooking.users.users_commands.domain.handlers.password.reset.utils.ValidateTokenForPasswordResetAndGetUserId;
+import com.azat4dev.demobooking.users.users_commands.domain.handlers.password.reset.utils.GetInfoForPasswordResetToken;
+import com.azat4dev.demobooking.users.users_commands.domain.handlers.password.reset.utils.ValidateTokenForPasswordResetAndGetUserIdImpl;
 import org.junit.jupiter.api.Test;
 
 import java.time.LocalDateTime;

@@ -1,7 +1,6 @@
-package com.azat4dev.demobooking.users.users_commands.domain.handlers.password.reset;
+package com.azat4dev.demobooking.users.users_commands.domain.handlers.password.reset.utils;
 
 import com.azat4dev.demobooking.users.common.domain.values.UserId;
-import com.azat4dev.demobooking.users.users_commands.domain.services.password.reset.ProvideResetPasswordToken;
 import lombok.RequiredArgsConstructor;
 
 import java.net.URL;
@@ -15,10 +14,10 @@ public final class GenerateResetPasswordLinkImpl implements GenerateResetPasswor
     private final ProvideResetPasswordToken provideResetPasswordToken;
 
     @Override
-    public ResetPasswordLink execute(UserId userId) {
+    public LinkForPasswordReset execute(UserId userId) {
 
         final var token = provideResetPasswordToken.execute(userId);
-        return new ResetPasswordLink(
+        return new LinkForPasswordReset(
             baseUrl.toString() + "/reset-password?token=" + URLEncoder.encode(token.toString(), StandardCharsets.UTF_8)
         );
     }

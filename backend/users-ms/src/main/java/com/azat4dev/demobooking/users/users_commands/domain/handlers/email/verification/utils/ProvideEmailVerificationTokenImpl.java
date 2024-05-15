@@ -1,11 +1,10 @@
-package com.azat4dev.demobooking.users.users_commands.domain.handlers.email.verification;
+package com.azat4dev.demobooking.users.users_commands.domain.handlers.email.verification.utils;
 
 import com.azat4dev.demobooking.common.utils.TimeProvider;
 import com.azat4dev.demobooking.users.common.domain.values.UserId;
 import com.azat4dev.demobooking.users.common.presentation.security.services.jwt.JwtDataEncoder;
 import com.azat4dev.demobooking.users.users_commands.domain.core.values.email.EmailAddress;
 import com.azat4dev.demobooking.users.users_commands.domain.core.values.email.verification.EmailVerificationToken;
-import com.azat4dev.demobooking.users.users_commands.domain.services.email.ProvideEmailVerificationToken;
 import lombok.RequiredArgsConstructor;
 
 import java.time.temporal.ChronoUnit;

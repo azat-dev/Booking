@@ -10,7 +10,7 @@ import com.azat4dev.demobooking.users.users_commands.domain.core.commands.Comple
 import com.azat4dev.demobooking.users.users_commands.domain.core.events.UserVerifiedEmail;
 import com.azat4dev.demobooking.users.users_commands.domain.core.values.user.EmailVerificationStatus;
 import com.azat4dev.demobooking.users.users_commands.domain.interfaces.repositories.UsersRepository;
-import com.azat4dev.demobooking.users.users_commands.domain.services.email.GetInfoForEmailVerificationToken;
+import com.azat4dev.demobooking.users.users_commands.domain.handlers.email.verification.utils.GetInfoForEmailVerificationToken;
 import lombok.RequiredArgsConstructor;
 
 import java.time.LocalDateTime;

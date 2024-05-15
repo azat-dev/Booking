@@ -7,11 +7,11 @@ import com.azat4dev.demobooking.users.users_commands.domain.core.commands.SendVe
 import com.azat4dev.demobooking.users.users_commands.domain.core.events.FailedToSendVerificationEmail;
 import com.azat4dev.demobooking.users.users_commands.domain.core.events.VerificationEmailSent;
 import com.azat4dev.demobooking.users.users_commands.domain.core.values.email.EmailAddress;
-import com.azat4dev.demobooking.users.users_commands.domain.handlers.email.verification.BuildEmailVerificationLink;
+import com.azat4dev.demobooking.users.users_commands.domain.handlers.email.verification.utils.BuildEmailVerificationLink;
 import com.azat4dev.demobooking.users.users_commands.domain.handlers.email.verification.SendVerificationEmailHandler;
 import com.azat4dev.demobooking.users.users_commands.domain.interfaces.services.EmailService;
 import com.azat4dev.demobooking.users.users_commands.domain.core.values.email.verification.EmailVerificationToken;
-import com.azat4dev.demobooking.users.users_commands.domain.services.email.ProvideEmailVerificationToken;
+import com.azat4dev.demobooking.users.users_commands.domain.handlers.email.verification.utils.ProvideEmailVerificationToken;
 import org.junit.jupiter.api.Test;
 
 import java.net.MalformedURLException;

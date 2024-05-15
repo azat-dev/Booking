@@ -2,10 +2,10 @@ package com.azat4dev.demobooking.users.users_commands.application.config.data;
 
 import com.azat4dev.demobooking.common.utils.TimeProvider;
 import com.azat4dev.demobooking.users.common.presentation.security.services.jwt.JwtDataEncoder;
-import com.azat4dev.demobooking.users.users_commands.domain.handlers.email.verification.GetInfoForEmailVerificationTokenImpl;
-import com.azat4dev.demobooking.users.users_commands.domain.handlers.email.verification.ProvideEmailVerificationTokenImpl;
-import com.azat4dev.demobooking.users.users_commands.domain.services.email.GetInfoForEmailVerificationToken;
-import com.azat4dev.demobooking.users.users_commands.domain.services.email.ProvideEmailVerificationToken;
+import com.azat4dev.demobooking.users.users_commands.domain.handlers.email.verification.utils.GetInfoForEmailVerificationTokenImpl;
+import com.azat4dev.demobooking.users.users_commands.domain.handlers.email.verification.utils.ProvideEmailVerificationTokenImpl;
+import com.azat4dev.demobooking.users.users_commands.domain.handlers.email.verification.utils.GetInfoForEmailVerificationToken;
+import com.azat4dev.demobooking.users.users_commands.domain.handlers.email.verification.utils.ProvideEmailVerificationToken;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;

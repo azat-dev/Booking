@@ -7,6 +7,7 @@ import com.azat4dev.demobooking.common.domain.event.EventId;
 import com.azat4dev.demobooking.users.users_commands.domain.core.commands.CompletePasswordReset;
 import com.azat4dev.demobooking.users.users_commands.domain.core.events.FailedToCompleteResetPassword;
 import com.azat4dev.demobooking.users.users_commands.domain.core.events.UserDidResetPassword;
+import com.azat4dev.demobooking.users.users_commands.domain.handlers.password.reset.utils.ValidateTokenForPasswordResetAndGetUserId;
 import com.azat4dev.demobooking.users.users_commands.domain.interfaces.repositories.UsersRepository;
 import com.azat4dev.demobooking.users.users_commands.domain.interfaces.services.PasswordService;
 import lombok.RequiredArgsConstructor;

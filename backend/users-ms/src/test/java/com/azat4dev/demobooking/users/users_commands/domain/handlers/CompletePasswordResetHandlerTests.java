@@ -9,7 +9,7 @@ import com.azat4dev.demobooking.users.users_commands.domain.core.events.UserDidR
 import com.azat4dev.demobooking.users.users_commands.domain.core.values.password.Password;
 import com.azat4dev.demobooking.users.users_commands.domain.core.values.password.reset.TokenForPasswordReset;
 import com.azat4dev.demobooking.users.users_commands.domain.handlers.password.reset.CompletePasswordResetHandler;
-import com.azat4dev.demobooking.users.users_commands.domain.handlers.password.reset.ValidateTokenForPasswordResetAndGetUserId;
+import com.azat4dev.demobooking.users.users_commands.domain.handlers.password.reset.utils.ValidateTokenForPasswordResetAndGetUserId;
 import com.azat4dev.demobooking.users.users_commands.domain.interfaces.repositories.UsersRepository;
 import com.azat4dev.demobooking.users.users_commands.domain.core.values.password.EncodedPassword;
 import com.azat4dev.demobooking.users.users_commands.domain.interfaces.services.PasswordService;

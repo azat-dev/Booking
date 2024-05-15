@@ -12,7 +12,7 @@ import com.azat4dev.demobooking.users.users_commands.domain.handlers.email.verif
 import com.azat4dev.demobooking.users.users_commands.domain.interfaces.repositories.UsersRepository;
 import com.azat4dev.demobooking.users.users_commands.domain.core.values.email.verification.EmailVerificationToken;
 import com.azat4dev.demobooking.users.users_commands.domain.core.values.email.verification.EmailVerificationTokenInfo;
-import com.azat4dev.demobooking.users.users_commands.domain.services.email.GetInfoForEmailVerificationToken;
+import com.azat4dev.demobooking.users.users_commands.domain.handlers.email.verification.utils.GetInfoForEmailVerificationToken;
 import org.junit.jupiter.api.Test;
 
 import java.time.LocalDateTime;
