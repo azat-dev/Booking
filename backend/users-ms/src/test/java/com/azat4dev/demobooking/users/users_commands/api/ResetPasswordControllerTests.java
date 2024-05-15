@@ -78,7 +78,7 @@ public class ResetPasswordControllerTests {
         result.andExpect(status().isOk());
 
         final var expectedCommand = new ResetPasswordByEmail(
-            request.idempotentOperationId(),
+            request.idempotencyKey(),
             EmailAddress.dangerMakeWithoutChecks(request.email())
         );
 
