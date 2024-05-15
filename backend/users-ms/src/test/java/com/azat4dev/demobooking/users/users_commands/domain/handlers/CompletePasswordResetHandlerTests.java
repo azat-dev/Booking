@@ -13,6 +13,7 @@ import com.azat4dev.demobooking.users.users_commands.domain.interfaces.services.
 import org.junit.jupiter.api.Test;
 
 import java.time.LocalDateTime;
+import java.util.Optional;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.jupiter.api.Assertions.assertThrows;
@@ -91,6 +92,12 @@ public class CompletePasswordResetHandlerTests {
 
         given(sut.validatePasswordResetTokenAnGetUserId.execute(any()))
             .willReturn(userId);
+
+        given(sut.usersRepository.findById(any()))
+            .willReturn(Optional.of(user));
+
+        given(sut.passwordService.encodePassword(any()))
+            .willReturn(encodedPassword);
 
         // When
         sut.handler.handle(
