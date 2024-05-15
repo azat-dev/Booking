@@ -6,12 +6,11 @@ import com.azat4dev.demobooking.users.users_commands.domain.UserHelpers;
 import com.azat4dev.demobooking.users.users_commands.domain.core.commands.CompletePasswordReset;
 import com.azat4dev.demobooking.users.users_commands.domain.core.events.FailedToCompleteResetPassword;
 import com.azat4dev.demobooking.users.users_commands.domain.core.events.UserDidResetPassword;
-import com.azat4dev.demobooking.users.users_commands.domain.core.values.password.Password;
+import com.azat4dev.demobooking.users.users_commands.domain.core.values.password.EncodedPassword;
 import com.azat4dev.demobooking.users.users_commands.domain.core.values.password.reset.TokenForPasswordReset;
 import com.azat4dev.demobooking.users.users_commands.domain.handlers.password.reset.CompletePasswordResetHandler;
 import com.azat4dev.demobooking.users.users_commands.domain.handlers.password.reset.utils.ValidateTokenForPasswordResetAndGetUserId;
 import com.azat4dev.demobooking.users.users_commands.domain.interfaces.repositories.UsersRepository;
-import com.azat4dev.demobooking.users.users_commands.domain.core.values.password.EncodedPassword;
 import com.azat4dev.demobooking.users.users_commands.domain.interfaces.services.PasswordService;
 import org.junit.jupiter.api.Test;
 
@@ -40,7 +39,6 @@ public class CompletePasswordResetHandlerTests {
             new CompletePasswordResetHandler(
                 validatePasswordResetTokenAnGetUserId,
                 usersRepository,
-                passwordService,
                 bus
             ),
             usersRepository,
@@ -53,7 +51,7 @@ public class CompletePasswordResetHandlerTests {
     CompletePasswordReset anyCommand() {
         return new CompletePasswordReset(
             "idempotentOperationToken",
-            Password.makeFromString("newPassword"),
+            new EncodedPassword("newPassword"),
             TokenForPasswordReset.dangerouslyMakeFrom("invalidToken")
         );
     }

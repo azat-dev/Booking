@@ -4,6 +4,8 @@ import com.azat4dev.demobooking.common.domain.event.EventIdGenerator;
 import com.azat4dev.demobooking.common.utils.TimeProvider;
 import com.azat4dev.demobooking.users.users_commands.domain.core.commands.ResetPasswordByEmail;
 import com.azat4dev.demobooking.users.users_commands.domain.handlers.password.reset.ResetPasswordByEmailHandler;
+import com.azat4dev.demobooking.users.users_commands.domain.interfaces.services.PasswordService;
+import com.azat4dev.demobooking.users.users_commands.presentation.api.rest.authentication.entities.CompleteResetPasswordRequest;
 import com.azat4dev.demobooking.users.users_commands.presentation.api.rest.authentication.entities.ResetPasswordByEmailRequest;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
@@ -24,6 +26,9 @@ public class ResetPasswordController implements ResetPasswordResource {
     @Autowired
     private TimeProvider timeProvider;
 
+    @Autowired
+    private PasswordService passwordService;
+
     @Override
     public ResponseEntity<String> resetPasswordByEmail(
         @RequestBody ResetPasswordByEmailRequest requestBody,
@@ -38,5 +43,14 @@ public class ResetPasswordController implements ResetPasswordResource {
 
         handler.handle(command, eventIdGenerator.generate(), timeProvider.currentTime());
         return ResponseEntity.ok("Password reset email sent");
+    }
+
+    @Override
+    public ResponseEntity<String> completeResetPassword(
+        CompleteResetPasswordRequest requestBody,
+        HttpServletRequest request,
+        HttpServletResponse response
+    ) {
+        return null;
     }
 }

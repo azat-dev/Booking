@@ -7,10 +7,10 @@ import com.azat4dev.demobooking.users.users_commands.domain.core.commands.Comple
 import com.azat4dev.demobooking.users.users_commands.domain.core.commands.ResetPasswordByEmail;
 import com.azat4dev.demobooking.users.users_commands.domain.core.commands.SendVerificationEmail;
 import com.azat4dev.demobooking.users.users_commands.domain.core.events.*;
-import com.azat4dev.demobooking.users.users_commands.domain.core.values.user.EmailVerificationStatus;
-import com.azat4dev.demobooking.users.users_commands.domain.core.values.password.Password;
-import com.azat4dev.demobooking.users.users_commands.domain.core.values.password.reset.TokenForPasswordReset;
 import com.azat4dev.demobooking.users.users_commands.domain.core.values.email.verification.EmailVerificationToken;
+import com.azat4dev.demobooking.users.users_commands.domain.core.values.password.EncodedPassword;
+import com.azat4dev.demobooking.users.users_commands.domain.core.values.password.reset.TokenForPasswordReset;
+import com.azat4dev.demobooking.users.users_commands.domain.core.values.user.EmailVerificationStatus;
 import org.junit.jupiter.api.Test;
 
 import java.time.LocalDateTime;
@@ -86,7 +86,7 @@ public class DomainEventSerializerImplTests {
             eventsFactory.issue(
                 new CompletePasswordReset(
                     "token",
-                    Password.makeFromString("password"),
+                    new EncodedPassword("password"),
                     TokenForPasswordReset.dangerouslyMakeFrom("passwordResetToken")
                 )
             )

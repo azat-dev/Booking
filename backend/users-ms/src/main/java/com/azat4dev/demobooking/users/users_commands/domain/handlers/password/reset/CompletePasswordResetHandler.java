@@ -19,7 +19,6 @@ public final class CompletePasswordResetHandler implements CommandHandler<Comple
 
     private final ValidateTokenForPasswordResetAndGetUserId validateTokenForPasswordResetAndGetUserId;
     private final UsersRepository usersRepository;
-    private final PasswordService passwordService;
     private final DomainEventsBus bus;
 
     @Override
@@ -29,8 +28,7 @@ public final class CompletePasswordResetHandler implements CommandHandler<Comple
             final var userId = validateTokenForPasswordResetAndGetUserId.execute(command.passwordResetToken());
             final var user = usersRepository.findById(userId).orElseThrow(InvalidTokenException::new);
 
-            final var encodedPassword = passwordService.encodePassword(command.newPassword());
-            user.setEncodedPassword(encodedPassword);
+            user.setEncodedPassword(command.newPassword());
 
             usersRepository.update(user);
             bus.publish(new UserDidResetPassword(userId));

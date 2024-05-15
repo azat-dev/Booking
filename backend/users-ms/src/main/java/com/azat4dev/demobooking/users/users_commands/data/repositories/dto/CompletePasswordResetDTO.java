@@ -1,6 +1,7 @@
 package com.azat4dev.demobooking.users.users_commands.data.repositories.dto;
 
 import com.azat4dev.demobooking.users.users_commands.domain.core.commands.CompletePasswordReset;
+import com.azat4dev.demobooking.users.users_commands.domain.core.values.password.EncodedPassword;
 import com.azat4dev.demobooking.users.users_commands.domain.core.values.password.Password;
 import com.azat4dev.demobooking.users.users_commands.domain.core.values.password.reset.TokenForPasswordReset;
 
@@ -13,7 +14,7 @@ public record CompletePasswordResetDTO(
     public static CompletePasswordResetDTO fromDomain(CompletePasswordReset event) {
         return new CompletePasswordResetDTO(
             event.idempotentOperationToken(),
-            event.newPassword().getValue(),
+            event.newPassword().value(),
             event.passwordResetToken().getValue()
         );
     }
@@ -21,7 +22,7 @@ public record CompletePasswordResetDTO(
     public CompletePasswordReset toDomain() {
         return new CompletePasswordReset(
             idempotentOperationToken,
-            Password.makeFromString(newPassword),
+            new EncodedPassword(newPassword),
             TokenForPasswordReset.dangerouslyMakeFrom(passwordResetToken)
         );
     }

@@ -1,5 +1,6 @@
 package com.azat4dev.demobooking.users.users_commands.presentation.api.rest.authentication.resources;
 
+import com.azat4dev.demobooking.users.users_commands.presentation.api.rest.authentication.entities.CompleteResetPasswordRequest;
 import com.azat4dev.demobooking.users.users_commands.presentation.api.rest.authentication.entities.ResetPasswordByEmailRequest;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
@@ -15,6 +16,13 @@ public interface ResetPasswordResource {
     @PostMapping("/reset-password")
     ResponseEntity<String> resetPasswordByEmail(
         @RequestBody ResetPasswordByEmailRequest requestBody,
+        HttpServletRequest request,
+        HttpServletResponse response
+    );
+
+    @PostMapping
+    ResponseEntity<String> completeResetPassword(
+        @RequestBody CompleteResetPasswordRequest requestBody,
         HttpServletRequest request,
         HttpServletResponse response
     );

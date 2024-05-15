@@ -37,13 +37,11 @@ public class ResetPasswordConfig {
 
     @CommandHandlerBean
     public CompletePasswordResetHandler completePasswordResetHandler(
-        ValidateTokenForPasswordResetAndGetUserId validateTokenForPasswordResetAndGetUserId,
-        PasswordService passwordService
+        ValidateTokenForPasswordResetAndGetUserId validateTokenForPasswordResetAndGetUserId
     ) {
         return new CompletePasswordResetHandler(
             validateTokenForPasswordResetAndGetUserId,
             usersRepository,
-            passwordService,
             bus
         );
     }
