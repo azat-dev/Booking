@@ -19,6 +19,10 @@ public final class ControllerException extends Exception {
         return new ControllerException(status, new ErrorDTO(errorCode, errorMessage));
     }
 
+    public static ControllerException createError(HttpStatus status, DomainException ex) {
+        return new ControllerException(status, new ErrorDTO(ex.getCode(), ex.getMessage()));
+    }
+
     public static ControllerException createValidationError(HttpStatus status, String path, String errorCode, String errorMessage) {
         return new ControllerException(status, ValidationErrorDTO.withError(errorCode, path, errorMessage));
     }

@@ -26,7 +26,7 @@ public final class ResetPasswordByEmailHandler implements CommandHandler<ResetPa
     public void handle(ResetPasswordByEmail command, EventId eventId, LocalDateTime issuedAt) {
 
         final var user = usersRepository.findByEmail(command.email())
-            .orElseThrow(UserNotFoundException::new);
+            .orElseThrow(EmailNotFoundException::new);
 
         final var userId = user.getId();
 
@@ -66,14 +66,14 @@ public final class ResetPasswordByEmailHandler implements CommandHandler<ResetPa
 
     // Exceptions
 
-    public static final class UserNotFoundException extends DomainException {
-        public UserNotFoundException() {
-            super("User not found");
+    public static final class EmailNotFoundException extends DomainException {
+        public EmailNotFoundException() {
+            super("Email not found");
         }
 
         @Override
         public String getCode() {
-            return "UserNotFound";
+            return "EmailNotFound";
         }
     }
 }

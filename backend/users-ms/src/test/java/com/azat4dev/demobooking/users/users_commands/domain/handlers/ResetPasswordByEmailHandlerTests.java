@@ -59,10 +59,10 @@ public class ResetPasswordByEmailHandlerTests {
         );
 
         given(sut.usersRepository.findByEmail(any()))
-            .willThrow(new ResetPasswordByEmailHandler.UserNotFoundException());
+            .willThrow(new ResetPasswordByEmailHandler.EmailNotFoundException());
 
         // When
-        final var exception = assertThrows(ResetPasswordByEmailHandler.UserNotFoundException.class, () -> {
+        final var exception = assertThrows(ResetPasswordByEmailHandler.EmailNotFoundException.class, () -> {
             sut.handler.handle(
                 command,
                 EventHelpers.anyEventId(),
@@ -71,7 +71,7 @@ public class ResetPasswordByEmailHandlerTests {
         });
 
         // Then
-        assertThat(exception).isInstanceOf(ResetPasswordByEmailHandler.UserNotFoundException.class);
+        assertThat(exception).isInstanceOf(ResetPasswordByEmailHandler.EmailNotFoundException.class);
     }
 
     @Test

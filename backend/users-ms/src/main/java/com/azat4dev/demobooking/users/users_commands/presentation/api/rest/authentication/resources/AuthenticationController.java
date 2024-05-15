@@ -1,16 +1,15 @@
 package com.azat4dev.demobooking.users.users_commands.presentation.api.rest.authentication.resources;
 
+import com.azat4dev.demobooking.common.domain.core.UserIdFactory;
 import com.azat4dev.demobooking.common.presentation.ControllerException;
-import com.azat4dev.demobooking.common.presentation.ValidationException;
 import com.azat4dev.demobooking.users.common.domain.values.UserId;
 import com.azat4dev.demobooking.users.common.presentation.security.services.CustomUserDetailsService;
 import com.azat4dev.demobooking.users.common.presentation.security.services.jwt.JwtService;
 import com.azat4dev.demobooking.users.common.presentation.security.services.jwt.UserIdNotFoundException;
 import com.azat4dev.demobooking.users.users_commands.domain.core.commands.CreateUser;
 import com.azat4dev.demobooking.users.users_commands.domain.core.values.password.EncodedPassword;
-import com.azat4dev.demobooking.users.users_commands.domain.interfaces.services.PasswordService;
 import com.azat4dev.demobooking.users.users_commands.domain.handlers.users.UsersService;
-import com.azat4dev.demobooking.common.domain.core.UserIdFactory;
+import com.azat4dev.demobooking.users.users_commands.domain.interfaces.services.PasswordService;
 import com.azat4dev.demobooking.users.users_commands.presentation.api.rest.authentication.entities.*;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
@@ -25,7 +24,6 @@ import org.springframework.security.core.context.SecurityContextHolderStrategy;
 import org.springframework.security.oauth2.server.resource.authentication.BearerTokenAuthenticationToken;
 import org.springframework.security.web.context.SecurityContextRepository;
 import org.springframework.stereotype.Component;
-import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.RequestBody;
 
 import java.net.URI;
@@ -55,16 +53,6 @@ public class AuthenticationController implements AuthenticationResource {
 
     @Autowired
     private CustomUserDetailsService userDetailsService;
-
-    @ExceptionHandler({ValidationException.class})
-    public ResponseEntity<?> handleException(ValidationException ex) {
-        return ex.toResponseEntity();
-    }
-
-    @ExceptionHandler({ControllerException.class})
-    public ResponseEntity<?> handleException(ControllerException ex) {
-        return ex.toResponseEntity();
-    }
 
     @Override
     public ResponseEntity<SignUpResponse> signUp(
