@@ -2,15 +2,17 @@ package com.azat4dev.demobooking.users.users_commands.application.config.domain;
 
 import com.azat4dev.demobooking.common.domain.annotations.CommandHandlerBean;
 import com.azat4dev.demobooking.common.domain.event.DomainEventsBus;
-import com.azat4dev.demobooking.users.common.domain.values.UserId;
 import com.azat4dev.demobooking.users.users_commands.domain.core.values.email.EmailAddress;
 import com.azat4dev.demobooking.users.users_commands.domain.handlers.*;
 import com.azat4dev.demobooking.users.users_commands.domain.interfaces.repositories.UsersRepository;
 import com.azat4dev.demobooking.users.users_commands.domain.interfaces.services.EmailService;
+import com.azat4dev.demobooking.users.users_commands.domain.interfaces.services.PasswordService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+
+import java.net.URL;
 
 @Configuration
 @RequiredArgsConstructor
@@ -26,6 +28,19 @@ public class ResetPasswordConfig {
             usersRepository,
             buildResetPasswordEmail,
             emailService,
+            bus
+        );
+    }
+
+    @CommandHandlerBean
+    public CompletePasswordResetHandler completePasswordResetHandler(
+        ValidatePasswordResetTokenAnGetUserId validatePasswordResetTokenAnGetUserId,
+        PasswordService passwordService
+    ) {
+        return new CompletePasswordResetHandler(
+            validatePasswordResetTokenAnGetUserId,
+            usersRepository,
+            passwordService,
             bus
         );
     }
@@ -46,12 +61,14 @@ public class ResetPasswordConfig {
     }
 
     @Bean
-    public GenerateResetPasswordLink generateResetPasswordLink() {
-        return new GenerateResetPasswordLink() {
-            @Override
-            public ResetPasswordLink execute(UserId userId) {
-                return new ResetPasswordLink("http://localhost:8080/reset-password/" + userId.value());
-            }
-        };
+    public GenerateResetPasswordLink generateResetPasswordLink(
+        @Value("${app.reset_password.base_verification_link_url}")
+        URL baseUrl,
+        GenerateResetPasswordToken generateResetPasswordToken
+    ) {
+        return new GenerateResetPasswordLinkImpl(
+            baseUrl,
+            generateResetPasswordToken
+        );
     }
 }

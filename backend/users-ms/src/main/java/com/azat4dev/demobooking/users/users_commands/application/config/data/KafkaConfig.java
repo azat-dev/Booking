@@ -52,11 +52,6 @@ public class KafkaConfig {
     }
 
     @Bean
-    NewTopic sendingTopic() {
-        return new NewTopic(UserCreated.class.getSimpleName(), 1, (short) 1);
-    }
-
-    @Bean
     KafkaAdmin.NewTopics newTopicList() {
 
         final List<Class<?>> events = List.of(
@@ -68,7 +63,6 @@ public class KafkaConfig {
             UserVerifiedEmail.class,
             CompleteEmailVerification.class,
 
-            CompletePasswordReset.class,
             FailedToSendVerificationEmail.class,
             UserDidResetPassword.class,
             SentEmailForPasswordReset.class
