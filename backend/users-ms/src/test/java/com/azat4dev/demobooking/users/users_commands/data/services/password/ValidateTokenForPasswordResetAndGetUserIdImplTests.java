@@ -1,9 +1,12 @@
 package com.azat4dev.demobooking.users.users_commands.data.services.password;
 
 import com.azat4dev.demobooking.common.utils.TimeProvider;
+import com.azat4dev.demobooking.users.users_commands.domain.UserHelpers;
 import com.azat4dev.demobooking.users.users_commands.domain.core.values.PasswordResetToken;
 import com.azat4dev.demobooking.users.users_commands.domain.handlers.ValidateTokenForPasswordResetAndGetUserId;
 import org.junit.jupiter.api.Test;
+
+import java.time.LocalDateTime;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.jupiter.api.Assertions.assertThrows;
@@ -28,7 +31,7 @@ public class ValidateTokenForPasswordResetAndGetUserIdImplTests {
     }
 
     @Test
-    void test_execute_GivenValidToken_ThenReturnUserId() {
+    void test_execute_givenNotValidToken_thenThrowException() {
         // Given
         final var sut = createSUT();
         final var token = PasswordResetToken.dangerouslyMakeFrom("token");
@@ -45,6 +48,27 @@ public class ValidateTokenForPasswordResetAndGetUserIdImplTests {
         // Then
         assertThat(exception)
             .isInstanceOf(ValidateTokenForPasswordResetAndGetUserId.InvalidTokenException.class);
+    }
+
+    @Test
+    void test_execute_givenValidToken_thenReturnUserId() {
+        // Given
+        final var sut = createSUT();
+        final var token = PasswordResetToken.dangerouslyMakeFrom("token");
+        final var userId = UserHelpers.anyValidUserId();
+        final var expiresAt = LocalDateTime.now();
+
+        given(sut.getTokenInfo.execute(any()))
+            .willReturn(new GetInfoForPasswordResetToken.Data(
+                userId,
+                expiresAt
+            ));
+
+        // When
+        final var resultUserId = sut.validate.execute(token);
+
+        // Then
+        assertThat(resultUserId).isEqualTo(userId);
     }
 
     record SUT(
