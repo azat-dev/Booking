@@ -1,4 +1,4 @@
-package com.azat4dev.demobooking.users.users_commands.data.services;
+package com.azat4dev.demobooking.users.users_commands.data.services.password;
 
 import com.azat4dev.demobooking.users.users_commands.domain.interfaces.services.EncodedPassword;
 import com.azat4dev.demobooking.users.users_commands.domain.interfaces.services.PasswordService;

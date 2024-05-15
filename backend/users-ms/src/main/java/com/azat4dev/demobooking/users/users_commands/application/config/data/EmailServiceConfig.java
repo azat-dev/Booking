@@ -1,6 +1,6 @@
 package com.azat4dev.demobooking.users.users_commands.application.config.data;
 
-import com.azat4dev.demobooking.users.users_commands.data.services.EmailServiceImpl;
+import com.azat4dev.demobooking.users.users_commands.data.services.email.EmailServiceImpl;
 import com.azat4dev.demobooking.users.users_commands.domain.interfaces.services.EmailService;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;

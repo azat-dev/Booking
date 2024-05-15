@@ -16,7 +16,7 @@ import java.time.LocalDateTime;
 @RequiredArgsConstructor
 public final class CompletePasswordResetHandler implements CommandHandler<CompletePasswordReset> {
 
-    private final ValidatePasswordResetTokenAnGetUserId validatePasswordResetTokenAnGetUserId;
+    private final ValidateTokenForPasswordResetAndGetUserId validateTokenForPasswordResetAndGetUserId;
     private final UsersRepository usersRepository;
     private final PasswordService passwordService;
     private final DomainEventsBus bus;
@@ -25,7 +25,7 @@ public final class CompletePasswordResetHandler implements CommandHandler<Comple
     public void handle(CompletePasswordReset command, EventId eventId, LocalDateTime issuedAt) throws InvalidTokenException {
 
         try {
-            final var userId = validatePasswordResetTokenAnGetUserId.execute(command.passwordResetToken());
+            final var userId = validateTokenForPasswordResetAndGetUserId.execute(command.passwordResetToken());
             final var user = usersRepository.findById(userId).orElseThrow(InvalidTokenException::new);
 
             final var encodedPassword = passwordService.encodePassword(command.newPassword());
@@ -34,10 +34,10 @@ public final class CompletePasswordResetHandler implements CommandHandler<Comple
             usersRepository.update(user);
             bus.publish(new UserDidResetPassword(userId));
 
-        } catch (ValidatePasswordResetTokenAnGetUserId.TokenExpiredException e) {
+        } catch (ValidateTokenForPasswordResetAndGetUserId.TokenExpiredException e) {
             bus.publish(new FailedToCompleteResetPassword(command.idempotentOperationToken()));
             throw new TokenExpiredException();
-        } catch (ValidatePasswordResetTokenAnGetUserId.InvalidTokenException e) {
+        } catch (ValidateTokenForPasswordResetAndGetUserId.InvalidTokenException e) {
             bus.publish(new FailedToCompleteResetPassword(command.idempotentOperationToken()));
             throw new InvalidTokenException();
         }

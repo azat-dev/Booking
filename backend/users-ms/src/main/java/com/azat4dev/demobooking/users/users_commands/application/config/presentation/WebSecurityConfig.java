@@ -1,6 +1,6 @@
 package com.azat4dev.demobooking.users.users_commands.application.config.presentation;
 
-import com.azat4dev.demobooking.users.users_commands.data.services.PasswordServiceImpl;
+import com.azat4dev.demobooking.users.users_commands.data.services.password.PasswordServiceImpl;
 import com.azat4dev.demobooking.users.users_commands.domain.interfaces.services.EncodedPassword;
 import com.azat4dev.demobooking.users.users_commands.domain.interfaces.services.PasswordService;
 import com.azat4dev.demobooking.users.users_commands.domain.core.values.Password;
@@ -15,7 +15,6 @@ import org.springframework.security.config.http.SessionCreationPolicy;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.oauth2.jwt.JwtDecoder;
-import org.springframework.security.oauth2.server.resource.authentication.JwtAuthenticationConverter;
 import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.security.web.context.RequestAttributeSecurityContextRepository;
 import org.springframework.security.web.context.SecurityContextRepository;

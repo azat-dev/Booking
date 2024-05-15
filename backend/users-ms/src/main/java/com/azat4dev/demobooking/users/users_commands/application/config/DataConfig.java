@@ -3,7 +3,7 @@ package com.azat4dev.demobooking.users.users_commands.application.config;
 import com.azat4dev.demobooking.common.utils.SystemTimeProvider;
 import com.azat4dev.demobooking.common.utils.TimeProvider;
 import com.azat4dev.demobooking.users.common.presentation.security.services.jwt.JwtDataEncoder;
-import com.azat4dev.demobooking.users.users_commands.data.services.ProvideResetPasswordTokenImpl;
+import com.azat4dev.demobooking.users.users_commands.data.services.password.ProvideResetPasswordTokenImpl;
 import com.azat4dev.demobooking.users.users_commands.data.repositories.*;
 import com.azat4dev.demobooking.users.users_commands.data.repositories.dao.OutboxEventsDao;
 import com.azat4dev.demobooking.users.users_commands.data.repositories.dao.OutboxEventsDaoJdbc;

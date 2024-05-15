@@ -1,4 +1,4 @@
-package com.azat4dev.demobooking.users.users_commands.data.services;
+package com.azat4dev.demobooking.users.users_commands.data.services.email;
 
 import com.azat4dev.demobooking.users.common.domain.values.UserId;
 import com.azat4dev.demobooking.users.users_commands.domain.core.values.email.EmailAddress;

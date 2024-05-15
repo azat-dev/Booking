@@ -1,4 +1,4 @@
-package com.azat4dev.demobooking.users.users_commands.data.services;
+package com.azat4dev.demobooking.users.users_commands.data.services.email;
 
 import com.azat4dev.demobooking.common.utils.TimeProvider;
 import com.azat4dev.demobooking.users.common.domain.values.UserId;

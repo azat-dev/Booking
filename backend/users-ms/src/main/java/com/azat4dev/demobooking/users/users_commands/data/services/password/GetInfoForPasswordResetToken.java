@@ -1,4 +1,4 @@
-package com.azat4dev.demobooking.users.users_commands.domain.interfaces.functions;
+package com.azat4dev.demobooking.users.users_commands.data.services.password;
 
 import com.azat4dev.demobooking.users.common.domain.values.UserId;
 

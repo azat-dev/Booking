@@ -30,7 +30,7 @@ public class CompletePasswordResetHandlerTests {
     SUT createSUT() {
 
         final var usersRepository = mock(UsersRepository.class);
-        final var validatePasswordResetTokenAnGetUserId = mock(ValidatePasswordResetTokenAnGetUserId.class);
+        final var validatePasswordResetTokenAnGetUserId = mock(ValidateTokenForPasswordResetAndGetUserId.class);
         final var bus = mock(DomainEventsBus.class);
         final var passwordService = mock(PasswordService.class);
 
@@ -64,8 +64,8 @@ public class CompletePasswordResetHandlerTests {
 
         final var command = anyCommand();
 
-        given(sut.validatePasswordResetTokenAnGetUserId.execute(any()))
-            .willThrow(new ValidatePasswordResetTokenAnGetUserId.InvalidTokenException());
+        given(sut.validateTokenForPasswordResetAndGetUserId.execute(any()))
+            .willThrow(new ValidateTokenForPasswordResetAndGetUserId.InvalidTokenException());
 
         // When
         final var exception = assertThrows(CompletePasswordResetHandler.InvalidTokenException.class, () -> {
@@ -93,7 +93,7 @@ public class CompletePasswordResetHandlerTests {
         final var userId = user.getId();
         final var encodedPassword = new EncodedPassword("encodedPassword");
 
-        given(sut.validatePasswordResetTokenAnGetUserId.execute(any()))
+        given(sut.validateTokenForPasswordResetAndGetUserId.execute(any()))
             .willReturn(userId);
 
         given(sut.usersRepository.findById(any()))
@@ -124,7 +124,7 @@ public class CompletePasswordResetHandlerTests {
     record SUT(
         CompletePasswordResetHandler handler,
         UsersRepository usersRepository,
-        ValidatePasswordResetTokenAnGetUserId validatePasswordResetTokenAnGetUserId,
+        ValidateTokenForPasswordResetAndGetUserId validateTokenForPasswordResetAndGetUserId,
         PasswordService passwordService,
         DomainEventsBus bus
     ) {
