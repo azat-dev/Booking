@@ -21,7 +21,7 @@ import java.io.IOException;
 @RestController
 @RequestMapping("/api/with-auth/users/current")
 @Validated
-public class UserResource {
+public class CurrentUserResource {
 
     @Autowired
     UpdateUserPhotoHandler updateUserPhotoHandler;
@@ -32,7 +32,7 @@ public class UserResource {
     @Autowired
     private EventIdGenerator eventIdGenerator;
 
-    @PostMapping("/update-photo")
+    @PostMapping("/get-upload-url-user-photo")
     ResponseEntity<String> updatePhoto(
         @RequestParam("photo") MultipartFile photo,
         JwtAuthenticationToken jwtAuthenticationToken

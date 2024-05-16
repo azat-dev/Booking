@@ -7,7 +7,7 @@ import org.springframework.context.annotation.Import;
 
 @SpringBootTest
 @Import(GlobalControllerExceptionHandler.class)
-class DemobookingApplicationTests {
+class UsersMicroserviceApplicationTests {
 
     @Test
     void contextLoads() {

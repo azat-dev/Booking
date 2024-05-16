@@ -9,11 +9,11 @@ import lombok.ToString;
 @ToString(of="value")
 @Getter
 @EqualsAndHashCode(of="value")
-public final class FileExtension {
+public class FileExtension {
 
     private final String value;
 
-    private FileExtension(String value) {
+    protected FileExtension(String value) {
         this.value = value;
     }
 
@@ -42,4 +42,11 @@ public final class FileExtension {
             return "EmptyFileExtension";
         }
     }
+
+    // Media extensions
+    public static final FileExtension JPG = FileExtension.dangerouslyMakeFrom("jpg");
+    public static final FileExtension JPEG = FileExtension.dangerouslyMakeFrom("jpeg");
+    public static final FileExtension PNG = FileExtension.dangerouslyMakeFrom("png");
+    public static final FileExtension WEBP = FileExtension.dangerouslyMakeFrom("webp");
+    public static final FileExtension GIF = FileExtension.dangerouslyMakeFrom("gif");
 }

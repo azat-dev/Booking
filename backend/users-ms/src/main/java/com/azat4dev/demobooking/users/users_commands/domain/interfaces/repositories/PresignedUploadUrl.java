@@ -1,6 +1,6 @@
 package com.azat4dev.demobooking.users.users_commands.domain.interfaces.repositories;
 
-public interface FilesRepository {
+import java.net.URL;
 
-    void put(FileKey key, byte[] file);
+public record PresignedUploadUrl(URL url) {
 }

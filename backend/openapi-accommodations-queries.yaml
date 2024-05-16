@@ -1,12 +1,12 @@
 openapi: "3.0.0"
 info:
   version: "1.0.0"
-  title: "Demo Booking API"
-  description: Describes the API of Daily Tasks
+  title: "Listings API"
+  description: Describes the API of Listings service
 
 paths:
-  /api/public/accommodations/:accommodationId:
-    get:
+  /api/public/listings:
+    post:
       summary: Get accommodation details
       parameters:
         - name: accommodationId
@@ -39,12 +39,13 @@ components:
           type: string
         city:
           type: string
-    AccommodationDetails:
+    ListingDetails:
       type: object
       required:
         - id
         - title
         - type
+        - description
         - photos
         - location
         - hostId
@@ -56,6 +57,8 @@ components:
           type: string
           format: uuid
         title:
+          type: string
+        description:
           type: string
         photos:
           type: array
