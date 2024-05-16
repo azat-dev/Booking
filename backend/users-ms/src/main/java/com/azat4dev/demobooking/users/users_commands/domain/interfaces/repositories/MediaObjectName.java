@@ -14,6 +14,10 @@ public class MediaObjectName {
         this.value = value;
     }
 
+    public String toString() {
+        return value;
+    }
+
     public static MediaObjectName checkAndMakeFrom(String value) {
         Assert.notNull(value, InvalidMediaObjectNameException::new);
         Assert.notBlank(value, InvalidMediaObjectNameException::new);

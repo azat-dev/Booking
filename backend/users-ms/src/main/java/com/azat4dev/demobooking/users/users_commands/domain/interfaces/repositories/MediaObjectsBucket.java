@@ -11,7 +11,7 @@ public interface MediaObjectsBucket {
     URL generateUploadUrl(
         MediaObjectName objectName,
         FileExtension fileExtension,
-        LocalDateTime expiresAt
+        int expiresInSeconds
     );
 
     void put(FileKey key, byte[] file);

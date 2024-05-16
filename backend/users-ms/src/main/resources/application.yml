@@ -52,6 +52,14 @@ app:
 
     base_verification_link_url: http://localhost:3000/reset-password
 
+  objects_storage:
+    bucket:
+      users-photo:
+        endpoint: http://localhost:9000
+        name: users-photo
+        access-key: minio-root-user
+        secret-key: minio-root-password
+
 #logging:
 #  level:
 #    org.springframework.web: TRACE
