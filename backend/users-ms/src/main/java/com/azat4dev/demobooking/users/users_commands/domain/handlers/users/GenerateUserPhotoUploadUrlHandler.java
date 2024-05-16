@@ -6,32 +6,33 @@ import com.azat4dev.demobooking.users.users_commands.domain.core.events.Generate
 import com.azat4dev.demobooking.users.users_commands.domain.interfaces.repositories.MediaObjectsBucket;
 import lombok.RequiredArgsConstructor;
 
-import java.time.LocalDateTime;
-
 @RequiredArgsConstructor
 public final class GenerateUserPhotoUploadUrlHandler {
 
-    private final MediaObjectsBucket mediaObjectsBucket;
+    private final int expireInSeconds;
+    private final GenerateUserPhotoObjectName generateUserPhotoObjectName;
+    private final MediaObjectsBucket usersPhotoBucket;
     private final DomainEventsBus bus;
 
     public GeneratedUserPhotoUploadUrl handle(GenerateUserPhotoUploadUrl command) {
 
         try {
 
+            final var objectName = generateUserPhotoObjectName.execute(command.userId());
 
-//            bus.publish(new GeneratedUserPhotoUploadUrl(command.userId(), url));
+            final var url = usersPhotoBucket.generateUploadUrl(
+                objectName,
+                command.fileExtension(),
+                expireInSeconds
+            );
+
+            final var event = new GeneratedUserPhotoUploadUrl(command.userId(), url);
+            bus.publish(event);
+            return event;
 
         } catch (Exception e) {
             throw new FailedGenerateUserPhotoUploadUrlException();
         }
-
-//        bus.publish(
-//            successEvent
-//        );
-//
-//        return successEvent;
-
-        return null;
     }
 
     // Exceptions

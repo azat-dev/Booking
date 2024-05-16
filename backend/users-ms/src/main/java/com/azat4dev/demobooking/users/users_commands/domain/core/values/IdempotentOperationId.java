@@ -5,4 +5,8 @@ import java.util.UUID;
 public record IdempotentOperationId (
     UUID value
 ) {
+
+    public static IdempotentOperationId makeFromString(String value) {
+        return new IdempotentOperationId(UUID.fromString(value));
+    }
 }

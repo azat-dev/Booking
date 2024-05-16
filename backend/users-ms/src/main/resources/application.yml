@@ -52,9 +52,13 @@ app:
 
     base_verification_link_url: http://localhost:3000/reset-password
 
+
+
   objects_storage:
     bucket:
       users-photo:
+        upload-url:
+          expires-in-seconds: 300
         endpoint: http://localhost:9000
         name: users-photo
         access-key: minio-root-user

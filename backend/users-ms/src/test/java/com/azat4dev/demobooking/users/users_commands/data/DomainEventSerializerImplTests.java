@@ -7,14 +7,19 @@ import com.azat4dev.demobooking.users.users_commands.domain.core.commands.Comple
 import com.azat4dev.demobooking.users.users_commands.domain.core.commands.ResetPasswordByEmail;
 import com.azat4dev.demobooking.users.users_commands.domain.core.commands.SendVerificationEmail;
 import com.azat4dev.demobooking.users.users_commands.domain.core.events.*;
+import com.azat4dev.demobooking.users.users_commands.domain.core.values.IdempotentOperationId;
 import com.azat4dev.demobooking.users.users_commands.domain.core.values.email.verification.EmailVerificationToken;
 import com.azat4dev.demobooking.users.users_commands.domain.core.values.password.EncodedPassword;
 import com.azat4dev.demobooking.users.users_commands.domain.core.values.password.reset.TokenForPasswordReset;
 import com.azat4dev.demobooking.users.users_commands.domain.core.values.user.EmailVerificationStatus;
+import com.azat4dev.demobooking.users.users_commands.domain.core.values.user.PhotoFileExtension;
 import org.junit.jupiter.api.Test;
 
+import java.net.MalformedURLException;
+import java.net.URL;
 import java.time.LocalDateTime;
 import java.util.List;
+import java.util.UUID;
 
 import static com.azat4dev.demobooking.users.users_commands.domain.EventHelpers.eventsFactory;
 import static com.azat4dev.demobooking.users.users_commands.domain.UserHelpers.*;
@@ -28,7 +33,7 @@ public class DomainEventSerializerImplTests {
     }
 
     @Test
-    void test_serialize() {
+    void test_serialize() throws MalformedURLException {
 
         final var events = List.of(
             eventsFactory.issue(
@@ -89,6 +94,21 @@ public class DomainEventSerializerImplTests {
                     new EncodedPassword("password"),
                     TokenForPasswordReset.dangerouslyMakeFrom("passwordResetToken")
                 )
+            ),
+            eventsFactory.issue(
+                new GeneratedUserPhotoUploadUrl(
+                    anyValidUserId(),
+                    new URL("https://example.com")
+                )
+            ),
+            eventsFactory.issue(
+                new FailedGenerateUserPhotoUploadUrl(
+                    anyValidUserId(),
+                    PhotoFileExtension.checkAndMakeFrom("png"),
+                    100,
+                    IdempotentOperationId.makeFromString(UUID.randomUUID().toString()),
+                    LocalDateTime.now()
+                )
             )
         );
 
@@ -101,6 +121,8 @@ public class DomainEventSerializerImplTests {
             final var deserializedValue = sut.deserialize(serialized);
 
             // Then
+
+            assertThat(serialized).isNotNull();
             assertThat(deserializedValue).isEqualTo(event);
         }
     }
