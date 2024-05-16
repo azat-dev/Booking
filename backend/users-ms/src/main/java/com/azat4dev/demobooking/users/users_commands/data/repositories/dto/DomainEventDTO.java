@@ -147,7 +147,12 @@ class DomainEventTypeResolver extends TypeIdResolverBase {
     @Override
     public JavaType typeFromId(DatabindContext context, String id) throws IOException {
 
-        final var fullClassName = this.getClass().getPackageName() + "." + id + "DTO";
+        final var sb = new StringBuilder();
+        sb.append(this.getClass().getPackageName());
+        sb.append(".");
+        sb.append("DTO");
+
+        final var fullClassName =  sb.toString();
 
         JavaType t = context.resolveAndValidateSubType(baseType, fullClassName, validator);
 
