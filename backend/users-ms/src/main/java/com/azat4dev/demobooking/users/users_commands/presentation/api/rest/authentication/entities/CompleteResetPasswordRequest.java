@@ -12,6 +12,14 @@ public record CompleteResetPasswordRequest(
     String resetPasswordToken
 ) {
 
+    private static ValidationException mapException(Password.Exception e) {
+        return ValidationException.withPath("newPassword", e);
+    }
+
+    private static ValidationException mapException(TokenForPasswordReset.Exception e) {
+        return ValidationException.withPath("resetPasswordToken", e);
+    }
+
     public CompletePasswordReset toCommand(PasswordService passwordService) {
 
         if (idempotencyKey.isBlank() || idempotencyKey.length() > 100) {
@@ -22,13 +30,22 @@ public record CompleteResetPasswordRequest(
             );
         }
 
-        final var password = Password.makeFromString(newPassword);
+        final Password password;
+        try {
+            password = Password.checkAndMakeFromString(newPassword);
+        } catch (Password.Exception e) {
+            throw mapException(e);
+        }
         final var encodedPassword = passwordService.encodePassword(password);
 
-        return new CompletePasswordReset(
-            idempotencyKey,
-            encodedPassword,
-            TokenForPasswordReset.checkAndMakeFrom(resetPasswordToken)
-        );
+        try {
+            return new CompletePasswordReset(
+                idempotencyKey,
+                encodedPassword,
+                TokenForPasswordReset.checkAndMakeFrom(resetPasswordToken)
+            );
+        } catch (TokenForPasswordReset.Exception e) {
+            throw mapException(e);
+        }
     }
 }

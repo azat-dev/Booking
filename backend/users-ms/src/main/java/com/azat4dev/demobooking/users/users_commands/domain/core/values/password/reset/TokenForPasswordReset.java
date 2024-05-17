@@ -18,10 +18,10 @@ public class TokenForPasswordReset {
         return new TokenForPasswordReset(value);
     }
 
-    public static TokenForPasswordReset checkAndMakeFrom(String value) {
+    public static TokenForPasswordReset checkAndMakeFrom(String value) throws Exception {
 
-        Assert.notNull(value, InvalidTokenException::new);
-        Assert.notBlank(value, InvalidTokenException::new);
+        Assert.notNull(value, Exception::new);
+        Assert.notBlank(value, Exception::new);
 
         return new TokenForPasswordReset(value);
     }
@@ -31,8 +31,8 @@ public class TokenForPasswordReset {
         return value;
     }
 
-    static final class InvalidTokenException extends DomainException {
-        public InvalidTokenException() {
+    public static final class Exception extends DomainException {
+        public Exception() {
             super("Invalid token");
         }
 

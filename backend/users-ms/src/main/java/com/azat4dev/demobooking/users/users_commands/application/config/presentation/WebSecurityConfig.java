@@ -77,17 +77,25 @@ public class WebSecurityConfig {
         return new PasswordEncoder() {
             @Override
             public String encode(CharSequence rawPassword) {
-                return passwordService.encodePassword(
-                    Password.makeFromString(rawPassword.toString())
-                ).value();
+                try {
+                    return passwordService.encodePassword(
+                        Password.checkAndMakeFromString(rawPassword.toString())
+                    ).value();
+                } catch (Exception e) {
+                    throw new RuntimeException(e);
+                }
             }
 
             @Override
             public boolean matches(CharSequence rawPassword, String encodedPassword) {
-                return passwordService.matches(
-                    Password.makeFromString(rawPassword.toString()),
-                    new EncodedPassword(encodedPassword)
-                );
+                try {
+                    return passwordService.matches(
+                        Password.checkAndMakeFromString(rawPassword.toString()),
+                        new EncodedPassword(encodedPassword)
+                    );
+                } catch (Exception e) {
+                    throw new RuntimeException(e);
+                }
             }
         };
     }

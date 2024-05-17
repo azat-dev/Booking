@@ -20,7 +20,7 @@ public record FailedToSendVerificationEmailDTO(
 
     public FailedToSendVerificationEmail toDomain() {
         return new FailedToSendVerificationEmail(
-            UserId.fromString(userId),
+            UserId.dangerouslyMakeFrom(userId),
             EmailAddress.dangerMakeWithoutChecks(email),
             attempts
         );

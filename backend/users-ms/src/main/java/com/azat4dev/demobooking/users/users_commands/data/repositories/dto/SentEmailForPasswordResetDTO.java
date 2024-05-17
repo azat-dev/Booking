@@ -18,7 +18,7 @@ public record SentEmailForPasswordResetDTO(
 
     public SentEmailForPasswordReset toDomain() {
         return new SentEmailForPasswordReset(
-            UserId.fromString(userId),
+            UserId.dangerouslyMakeFrom(userId),
             EmailAddress.dangerMakeWithoutChecks(email)
         );
     }

@@ -23,7 +23,7 @@ public final class UsersServiceImpl implements UsersService {
     private final EventIdGenerator eventIdGenerator;
 
     @Override
-    public void handle(CreateUser command) throws UserWithSameEmailAlreadyExistsException {
+    public void handle(CreateUser command) throws Exception.UserWithSameEmailAlreadyExists {
 
         final var userId = command.userId();
         final var currentDate = timeProvider.currentTime();
@@ -35,7 +35,7 @@ public final class UsersServiceImpl implements UsersService {
             final var usersRepository = unitOfWork.getUsersRepository();
             final var outboxEventsRepository = unitOfWork.getOutboxEventsRepository();
 
-            final var user = User.makeNew(
+            final var user = User.checkAndMake(
                 userId,
                 currentDate,
                 command.email(),
@@ -61,20 +61,15 @@ public final class UsersServiceImpl implements UsersService {
 
             unitOfWork.save();
 
-        } catch (UsersRepository.UserWithSameEmailAlreadyExistsException e) {
+        } catch (UsersRepository.Exception.UserWithSameEmailAlreadyExists e) {
             unitOfWork.rollback();
-            throw new UserWithSameEmailAlreadyExistsException();
+            throw new Exception.UserWithSameEmailAlreadyExists();
         } catch (Throwable e) {
             unitOfWork.rollback();
-            throw e;
+            throw new RuntimeException(e);
         }
 
         markOutboxNeedsSynchronization.execute();
-    }
-
-    @Override
-    public void handle(CompleteEmailVerification command) throws InvalidEmailVerificationTokenException, EmailVerificationTokenExpiredException {
-        throw new UnsupportedOperationException("Not implemented yet");
     }
 
     @FunctionalInterface

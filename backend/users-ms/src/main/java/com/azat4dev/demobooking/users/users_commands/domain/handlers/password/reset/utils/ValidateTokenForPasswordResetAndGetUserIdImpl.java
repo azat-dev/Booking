@@ -12,20 +12,20 @@ public final class ValidateTokenForPasswordResetAndGetUserIdImpl implements Vali
     private final TimeProvider timeProvider;
 
     @Override
-    public UserId execute(TokenForPasswordReset token) throws InvalidTokenException {
+    public UserId execute(TokenForPasswordReset token) throws Exception {
 
         try {
             final var parsedData = getTokenInfo.execute(token);
             final var now = timeProvider.currentTime();
 
             if (now.isAfter(parsedData.expiresAt())) {
-                throw new ValidateTokenForPasswordResetAndGetUserId.TokenExpiredException();
+                throw new ValidateTokenForPasswordResetAndGetUserId.Exception.TokenExpired();
             }
 
             return parsedData.userId();
 
-        } catch (GetInfoForPasswordResetToken.InvalidTokenException e) {
-            throw new ValidateTokenForPasswordResetAndGetUserId.InvalidTokenException();
+        } catch (GetInfoForPasswordResetToken.Exception.InvalidToken e) {
+            throw new ValidateTokenForPasswordResetAndGetUserId.Exception.InvalidToken();
         }
     }
 }

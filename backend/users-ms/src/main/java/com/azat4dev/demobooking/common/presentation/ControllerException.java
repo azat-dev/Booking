@@ -6,7 +6,7 @@ import org.springframework.http.ResponseEntity;
 
 import java.util.Objects;
 
-public final class ControllerException extends Exception {
+public final class ControllerException extends RuntimeException {
     private final HttpStatus status;
     private final Object body;
 

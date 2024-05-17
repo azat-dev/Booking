@@ -21,15 +21,17 @@ public record GenerateUploadUserPhotoUrlRequest(
                 userId,
                 PhotoFileExtension.checkAndMakeFrom(fileExtension),
                 fileSize,
-                IdempotentOperationId.makeFromString(idempotentOperationId),
+                IdempotentOperationId.checkAndMakeFrom(idempotentOperationId),
                 timeProvider.currentTime()
             );
         } catch (PhotoFileExtension.InvalidPhotoFileExtensionException e) {
-            throw ValidationException.with("InvalidFileExtension", "fileExtension", e.getMessage());
-        } catch (IdempotentOperationId.InvalidIdempotentOperationIdException e) {
-            throw ValidationException.with("InvalidIdempotentOperationId", "idempotentOperationId", e.getMessage());
-        } catch (GenerateUserPhotoUploadUrl.InvalidFileSizeException e) {
-            throw ValidationException.with("InvalidFileSize", "fileSize", e.getMessage());
+            throw ValidationException.withPath("fileExtension", e);
+        } catch (IdempotentOperationId.Exception e) {
+            throw ValidationException.withPath("idempotentOperationId", e);
+        } catch (GenerateUserPhotoUploadUrl.Exception.InvalidFileSize e) {
+            throw ValidationException.withPath("fileSize", e);
+        } catch (GenerateUserPhotoUploadUrl.Exception e) {
+            throw new RuntimeException(e);
         }
     }
 }

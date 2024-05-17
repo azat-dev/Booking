@@ -53,7 +53,7 @@ public final class UsersDaoJdbc implements UsersDao {
                 )
             );
         } catch (DuplicateKeyException e) {
-            throw new UserAlreadyExistsException();
+            throw new Exception.UserAlreadyExists();
         }
     }
 
@@ -93,7 +93,7 @@ public final class UsersDaoJdbc implements UsersDao {
     }
 
     @Override
-    public void update(UserData userData) throws UserNotFound {
+    public void update(UserData userData) throws Exception.UserNotFound {
 
         final var sql = """
             UPDATE users SET
@@ -119,7 +119,7 @@ public final class UsersDaoJdbc implements UsersDao {
         ));
 
         if (numberOfUpdatedRecords == 0) {
-            throw new UserNotFound();
+            throw new Exception.UserNotFound();
         }
     }
 }

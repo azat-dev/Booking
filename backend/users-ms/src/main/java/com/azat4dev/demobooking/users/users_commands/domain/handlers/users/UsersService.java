@@ -6,42 +6,19 @@ import com.azat4dev.demobooking.users.users_commands.domain.core.commands.Create
 
 public interface UsersService {
 
-    void handle(CreateUser command) throws UserWithSameEmailAlreadyExistsException;
-
-    void handle(CompleteEmailVerification command) throws InvalidEmailVerificationTokenException, EmailVerificationTokenExpiredException;
+    void handle(CreateUser command) throws Exception.UserWithSameEmailAlreadyExists;
 
     // Exceptions
 
-    final class UserWithSameEmailAlreadyExistsException extends DomainException {
-        public UserWithSameEmailAlreadyExistsException() {
-            super("User with same email already exists");
+    abstract class Exception extends DomainException {
+        public Exception(String message) {
+            super(message);
         }
 
-        @Override
-        public String getCode() {
-            return "UserWithSameEmailAlreadyExists";
-        }
-    }
-
-    final class InvalidEmailVerificationTokenException extends DomainException {
-        public InvalidEmailVerificationTokenException() {
-            super("Email verification token not found");
-        }
-
-        @Override
-        public String getCode() {
-            return "InvalidEmailVerificationToken";
-        }
-    }
-
-    final class EmailVerificationTokenExpiredException extends DomainException {
-        public EmailVerificationTokenExpiredException() {
-            super("Email verification token expired");
-        }
-
-        @Override
-        public String getCode() {
-            return "EmailVerificationTokenExpired";
+        public static final class UserWithSameEmailAlreadyExists extends DomainException {
+            public UserWithSameEmailAlreadyExists() {
+                super("User with same email already exists");
+            }
         }
     }
 }

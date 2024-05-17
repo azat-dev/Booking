@@ -9,9 +9,9 @@ import java.util.Optional;
 
 public interface UsersRepository {
 
-    void addNew(User newUserData) throws UserWithSameEmailAlreadyExistsException;
+    void addNew(User newUserData) throws Exception.UserWithSameEmailAlreadyExists;
 
-    void update(User user);
+    void update(User user) throws Exception.UserNotFound;
 
     Optional<User> findById(UserId id);
 
@@ -19,38 +19,31 @@ public interface UsersRepository {
 
     // Exceptions
 
-    static abstract class Exception extends RuntimeException {
-        public Exception(String message) {
+    abstract class Exception extends RuntimeException {
+
+        protected Exception(String message) {
             super(message);
         }
 
-        abstract String getCode();
-    }
-
-    static final class UserWithSameEmailAlreadyExistsException extends Exception {
-        public UserWithSameEmailAlreadyExistsException() {
-            super("User with same email already exists");
-        }
-
-        @Override
         public String getCode() {
-            return "UserWithSameEmailAlreadyExists";
-        }
-    }
-
-    @Getter
-    static final class UserNotFoundException extends Exception {
-
-        private final UserId userId;
-
-        public UserNotFoundException(UserId userId) {
-            super("User not found");
-            this.userId = userId;
+            return getClass().getSimpleName();
         }
 
-        @Override
-        public String getCode() {
-            return "UserNotFound";
+        public static final class UserWithSameEmailAlreadyExists extends Exception {
+            public UserWithSameEmailAlreadyExists() {
+                super("User with same email already exists");
+            }
+        }
+
+        @Getter
+        public static final class UserNotFound extends Exception {
+
+            private final UserId userId;
+
+            public UserNotFound(UserId userId) {
+                super("User not found");
+                this.userId = userId;
+            }
         }
     }
 }

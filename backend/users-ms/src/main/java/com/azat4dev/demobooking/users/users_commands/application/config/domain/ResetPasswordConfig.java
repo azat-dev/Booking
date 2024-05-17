@@ -53,7 +53,7 @@ public class ResetPasswordConfig {
         @Value("${app.reset_password.outgoing_email.fromAddress}") String fromAddress,
         @Value("${app.reset_password.outgoing_email.subject}") String subject,
         GenerateResetPasswordLink generateResetPasswordLink
-    ) {
+    ) throws EmailAddress.WrongFormatException {
         return new BuildResetPasswordEmailImpl(
             fromName,
             EmailAddress.checkAndMakeFromString(fromAddress),

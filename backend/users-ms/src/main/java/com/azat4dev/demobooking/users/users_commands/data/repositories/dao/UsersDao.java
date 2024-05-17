@@ -7,9 +7,9 @@ import java.util.UUID;
 
 public interface UsersDao {
 
-    void addNew(UserData userData) throws UserAlreadyExistsException;
+    void addNew(UserData userData) throws Exception.UserAlreadyExists;
 
-    void update(UserData userData) throws UserNotFound;
+    void update(UserData userData) throws Exception.UserNotFound;
 
     Optional<UserData> findByEmail(String email);
 
@@ -17,12 +17,16 @@ public interface UsersDao {
 
     // Exceptions
 
-    class Exception extends RuntimeException {
-    }
+    abstract class Exception extends RuntimeException {
 
-    final class UserAlreadyExistsException extends Exception {
-    }
+        public String getCode() {
+            return getClass().getSimpleName();
+        }
 
-    final class UserNotFound extends Exception {
+        public final static class UserAlreadyExists extends Exception {
+        }
+
+        public final static class UserNotFound extends Exception {
+        }
     }
 }

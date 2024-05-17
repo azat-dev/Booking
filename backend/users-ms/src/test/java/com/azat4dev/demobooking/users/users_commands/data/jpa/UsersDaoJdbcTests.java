@@ -69,7 +69,7 @@ public class UsersDaoJdbcTests {
 
         // When
         final var exception = assertThrows(
-            UsersDao.UserAlreadyExistsException.class,
+            UsersDao.Exception.UserAlreadyExists.class,
             () -> dao.addNew(existingUser)
         );
 
@@ -147,9 +147,9 @@ public class UsersDaoJdbcTests {
         final var existingUserId = expectedUser.id();
 
         // When
-        final var exception = assertThrows(UsersDao.UserNotFound.class, () -> dao.update(expectedUser));
+        final var exception = assertThrows(UsersDao.Exception.UserNotFound.class, () -> dao.update(expectedUser));
 
         // Then
-        assertThat(exception).isInstanceOf(UsersDao.UserNotFound.class);
+        assertThat(exception).isInstanceOf(UsersDao.Exception.UserNotFound.class);
     }
 }

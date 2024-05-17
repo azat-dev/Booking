@@ -24,11 +24,11 @@ public final class GetInfoForEmailVerificationTokenImpl implements GetInfoForEma
             final var subject = decoded.getSubject();
 
             return new EmailVerificationTokenInfo(
-                UserId.fromString(subject),
+                UserId.checkAndMakeFrom(subject),
                 EmailAddress.checkAndMakeFromString(decoded.getClaim("email")),
                 LocalDateTime.ofInstant(decoded.getExpiresAt(), ZoneOffset.UTC)
             );
-        } catch (JwtException e) {
+        } catch (JwtException | UserId.WrongFormatException | EmailAddress.WrongFormatException e) {
             throw new TokenIsNotValidException();
         }
     }

@@ -1,8 +1,8 @@
 package com.azat4dev.demobooking.users.users_commands.presentation.api.rest.authentication.entities;
 
+import com.azat4dev.demobooking.common.presentation.ValidationException;
 import com.azat4dev.demobooking.users.users_commands.domain.core.values.email.EmailAddress;
 import com.azat4dev.demobooking.users.users_commands.domain.core.values.password.Password;
-import com.azat4dev.demobooking.common.presentation.ValidationException;
 
 public record LoginByEmailRequest(String email, String password) {
 
@@ -16,8 +16,8 @@ public record LoginByEmailRequest(String email, String password) {
 
     public Password parsePassword() throws ValidationException {
         try {
-            return Password.makeFromString(password);
-        } catch (Password.ValidationException e) {
+            return Password.checkAndMakeFromString(password);
+        } catch (Password.Exception e) {
             throw ValidationException.withPath("password", e);
         }
     }

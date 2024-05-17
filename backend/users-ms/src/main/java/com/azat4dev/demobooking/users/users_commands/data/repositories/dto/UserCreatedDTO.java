@@ -28,7 +28,7 @@ public record UserCreatedDTO(
     public UserCreated toDomain() {
         return new UserCreated(
             createdAt,
-            UserId.fromString(userId),
+            UserId.dangerouslyMakeFrom(userId),
             fullName.toDomain(),
             EmailAddress.dangerMakeWithoutChecks(email),
             EmailVerificationStatus.valueOf(emailVerificationStatus)

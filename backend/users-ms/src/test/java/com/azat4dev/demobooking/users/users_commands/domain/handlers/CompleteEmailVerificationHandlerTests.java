@@ -66,7 +66,7 @@ public class CompleteEmailVerificationHandlerTests {
             .execute(any());
 
         // When
-        final var exception = assertThrows(CompleteEmailVerificationHandler.TokenIsNotValidException.class, () -> {
+        final var exception = assertThrows(CompleteEmailVerificationHandler.Exception.TokenIsNotValid.class, () -> {
             sut.handler.handle(command, EventHelpers.anyEventId(), LocalDateTime.now());
         });
 
@@ -75,7 +75,7 @@ public class CompleteEmailVerificationHandlerTests {
     }
 
     @Test
-    void test_handle_givenValidToken_thenSetUserVerificationStatusAndPublishEvent() {
+    void test_handle_givenValidToken_thenSetUserVerificationStatusAndPublishEvent() throws CompleteEmailVerificationHandler.Exception {
 
         // Given
         final var sut = createSUT();

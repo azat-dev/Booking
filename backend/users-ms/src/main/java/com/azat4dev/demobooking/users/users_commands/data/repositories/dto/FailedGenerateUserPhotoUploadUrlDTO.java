@@ -18,7 +18,7 @@ public record FailedGenerateUserPhotoUploadUrlDTO(
     public static FailedGenerateUserPhotoUploadUrlDTO fromDomain(FailedGenerateUserPhotoUploadUrl event) {
         return new FailedGenerateUserPhotoUploadUrlDTO(
             event.userId().value().toString(),
-            event.fileExtension().getValue(),
+            event.fileExtension().toString(),
             event.fileSize(),
             event.idempotentOperationId().value().toString(),
             event.requestedAt()
@@ -28,10 +28,10 @@ public record FailedGenerateUserPhotoUploadUrlDTO(
     @Override
     public FailedGenerateUserPhotoUploadUrl toDomain() {
         return new FailedGenerateUserPhotoUploadUrl(
-            UserId.fromString(userId),
+            UserId.dangerouslyMakeFrom(userId),
             PhotoFileExtension.dangerouslyMakeFrom(fileExtension),
             fileSize,
-            IdempotentOperationId.makeFromString(idempotentOperationId),
+            IdempotentOperationId.dangerouslyMakeFrom(idempotentOperationId),
             requestedAt
         );
     }

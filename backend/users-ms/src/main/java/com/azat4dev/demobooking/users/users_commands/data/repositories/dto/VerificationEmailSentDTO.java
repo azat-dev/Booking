@@ -20,7 +20,7 @@ public record VerificationEmailSentDTO(
 
     public VerificationEmailSent toDomain() {
         return new VerificationEmailSent(
-            UserId.fromString(userId),
+            UserId.dangerouslyMakeFrom(userId),
             EmailAddress.dangerMakeWithoutChecks(email)
         );
     }

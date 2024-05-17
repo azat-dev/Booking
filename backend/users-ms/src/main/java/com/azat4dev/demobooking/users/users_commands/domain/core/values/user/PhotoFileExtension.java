@@ -1,28 +1,36 @@
 package com.azat4dev.demobooking.users.users_commands.domain.core.values.user;
 
+import com.azat4dev.demobooking.common.domain.DomainException;
 import com.azat4dev.demobooking.users.users_commands.domain.core.values.files.FileExtension;
 import lombok.EqualsAndHashCode;
+import lombok.ToString;
 
 import java.util.Arrays;
 
-@EqualsAndHashCode(callSuper = true)
-public class PhotoFileExtension extends FileExtension {
+@EqualsAndHashCode(of = "value")
+public final class PhotoFileExtension {
 
     public static final FileExtension[] ALLOWED_EXTENSIONS = new FileExtension[]{
         FileExtension.JPG,
         FileExtension.JPEG,
         FileExtension.PNG
     };
+    private final FileExtension value;
 
-    private PhotoFileExtension(String value) {
-        super(value);
+    private PhotoFileExtension(FileExtension value) {
+        this.value = value;
     }
 
     public static PhotoFileExtension dangerouslyMakeFrom(String value) {
-        return new PhotoFileExtension(value);
+        return new PhotoFileExtension(FileExtension.dangerouslyMakeFrom(value));
     }
 
-    public static PhotoFileExtension checkAndMakeFrom(String value) {
+    @Override
+    public String toString() {
+        return value.toString();
+    }
+
+    public static PhotoFileExtension checkAndMakeFrom(String value) throws InvalidPhotoFileExtensionException {
 
         try {
             final var extension = FileExtension.checkAndMakeFrom(value);
@@ -31,17 +39,24 @@ public class PhotoFileExtension extends FileExtension {
                 .filter(allowed -> allowed.equals(extension))
                 .findAny()
                 .orElseThrow(InvalidPhotoFileExtensionException::new);
-            return new PhotoFileExtension(value);
-        } catch (FileExtension.EmptyFileExtensionException e) {
+
+            return new PhotoFileExtension(extension);
+
+        } catch (FileExtension.Exception e) {
             throw new InvalidPhotoFileExtensionException();
         }
     }
 
     // Exceptions
 
-    public static final class InvalidPhotoFileExtensionException extends RuntimeException {
+    public static final class InvalidPhotoFileExtensionException extends DomainException {
         public InvalidPhotoFileExtensionException() {
             super("Invalid photo file extension. Allowed extensions: " + Arrays.toString(ALLOWED_EXTENSIONS));
+        }
+
+        @Override
+        public String getCode() {
+            return "InvalidPhotoFileExtension";
         }
     }
 }

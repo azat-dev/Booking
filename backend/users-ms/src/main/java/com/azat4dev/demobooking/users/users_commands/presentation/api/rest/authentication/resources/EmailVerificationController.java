@@ -27,8 +27,8 @@ public class EmailVerificationController implements EmailVerificationResource {
     @Autowired
     private TimeProvider timeProvider;
 
-    @ExceptionHandler({CompleteEmailVerificationHandler.ValidationException.class})
-    public ResponseEntity<ErrorDTO> handleTokenIsNotValidException(CompleteEmailVerificationHandler.ValidationException ex) {
+    @ExceptionHandler({CompleteEmailVerificationHandler.Exception.class})
+    public ResponseEntity<ErrorDTO> handleTokenIsNotValidException(CompleteEmailVerificationHandler.Exception ex) {
         return ResponseEntity.status(HttpStatus.UNAUTHORIZED)
             .body(new ErrorDTO(ex.getCode(), ex.getMessage()));
     }

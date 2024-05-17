@@ -11,14 +11,17 @@ public class MapUserRecordToPersonalInfoImpl implements MapUserRecordToPersonalI
 
     @Override
     public PersonalUserInfo map(UserRecord userRecord) {
-        return new PersonalUserInfo(
-            UserId.fromUUID(userRecord.id()),
-            userRecord.email(),
-            new FullName(
-                FirstName.dangerMakeFromStringWithoutCheck(userRecord.firstName()),
-                LastName.dangerMakeFromStringWithoutCheck(userRecord.lastName()
+        try {
+            return new PersonalUserInfo(
+                UserId.fromUUID(userRecord.id()),
+                userRecord.email(),
+                new FullName(
+                    FirstName.dangerMakeFromStringWithoutCheck(userRecord.firstName()),
+                    LastName.dangerMakeFromStringWithoutCheck(userRecord.lastName())
                 )
-            )
-        );
+            );
+        } catch (UserId.WrongFormatException | FullName.Exception e) {
+            throw new RuntimeException(e);
+        }
     }
 }

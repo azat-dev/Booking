@@ -22,7 +22,7 @@ public record SendVerificationEmailDTO(
 
     public SendVerificationEmail toDomain() {
         return new SendVerificationEmail(
-            UserId.fromString(userId),
+            UserId.dangerouslyMakeFrom(userId),
             EmailAddress.dangerMakeWithoutChecks(email),
             fullName.toDomain(),
             attempt

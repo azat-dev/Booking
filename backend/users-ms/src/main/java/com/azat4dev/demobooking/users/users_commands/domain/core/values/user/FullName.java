@@ -14,9 +14,9 @@ public final class FullName implements Serializable {
     private final FirstName firstName;
     private final LastName lastName;
 
-    public FullName(FirstName firstName, LastName lastName) throws LastNameCantBeNullException, FirstNameCantBeNullException {
-        Assert.notNull(firstName, FirstNameCantBeNullException::new);
-        Assert.notNull(lastName, LastNameCantBeNullException::new);
+    public FullName(FirstName firstName, LastName lastName) throws Exception {
+        Assert.notNull(firstName, Exception.FirstNameCantBeNull::new);
+        Assert.notNull(lastName, Exception.LastNameCantBeNull::new);
 
         this.firstName = firstName;
         this.lastName = lastName;
@@ -29,36 +29,21 @@ public final class FullName implements Serializable {
 
     // Exceptions
 
-    public static class ValidationException extends DomainException {
-        public ValidationException(String message) {
+    public static sealed abstract class Exception extends DomainException permits Exception.LastNameCantBeNull, Exception.FirstNameCantBeNull {
+        public Exception(String message) {
             super(message);
         }
 
-        @Override
-        public String getCode() {
-            return "InvalidFullName";
-        }
-    }
-
-    public static final class FirstNameCantBeNullException extends ValidationException {
-        public FirstNameCantBeNullException() {
-            super("The first name cannot be null");
+        public static final class FirstNameCantBeNull extends Exception {
+            public FirstNameCantBeNull() {
+                super("The first name cannot be null");
+            }
         }
 
-        @Override
-        public String getCode() {
-            return "FirstNameIsNull";
-        }
-    }
-
-    public static final class LastNameCantBeNullException extends ValidationException {
-        public LastNameCantBeNullException() {
-            super("The last name cannot be null");
-        }
-
-        @Override
-        public String getCode() {
-            return "LastNameIsNull";
+        public static final class LastNameCantBeNull extends Exception {
+            public LastNameCantBeNull() {
+                super("The last name cannot be null");
+            }
         }
     }
 }

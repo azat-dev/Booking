@@ -4,6 +4,7 @@ import com.azat4dev.demobooking.common.domain.event.DomainEventsBus;
 import com.azat4dev.demobooking.users.users_commands.domain.EventHelpers;
 import com.azat4dev.demobooking.users.users_commands.domain.core.commands.ResetPasswordByEmail;
 import com.azat4dev.demobooking.users.users_commands.domain.core.events.SentEmailForPasswordReset;
+import com.azat4dev.demobooking.users.users_commands.domain.core.values.IdempotentOperationId;
 import com.azat4dev.demobooking.users.users_commands.domain.core.values.email.EmailBody;
 import com.azat4dev.demobooking.users.users_commands.domain.handlers.password.reset.ResetPasswordByEmailHandler;
 import com.azat4dev.demobooking.users.users_commands.domain.handlers.password.reset.utils.BuildResetPasswordEmail;
@@ -13,6 +14,7 @@ import org.junit.jupiter.api.Test;
 
 import java.time.LocalDateTime;
 import java.util.Optional;
+import java.util.UUID;
 
 import static com.azat4dev.demobooking.users.users_commands.domain.UserHelpers.anyUser;
 import static com.azat4dev.demobooking.users.users_commands.domain.UserHelpers.anyValidEmail;
@@ -54,15 +56,15 @@ public class ResetPasswordByEmailHandlerTests {
         final var sut = createSUT();
 
         final var command = new ResetPasswordByEmail(
-            "idempotentOperationToken",
+            new IdempotentOperationId(UUID.randomUUID()),
             anyValidEmail()
         );
 
         given(sut.usersRepository.findByEmail(any()))
-            .willThrow(new ResetPasswordByEmailHandler.EmailNotFoundException());
+            .willReturn(Optional.empty());
 
         // When
-        final var exception = assertThrows(ResetPasswordByEmailHandler.EmailNotFoundException.class, () -> {
+        final var exception = assertThrows(ResetPasswordByEmailHandler.Exception.EmailNotFound.class, () -> {
             sut.handler.handle(
                 command,
                 EventHelpers.anyEventId(),
@@ -71,18 +73,18 @@ public class ResetPasswordByEmailHandlerTests {
         });
 
         // Then
-        assertThat(exception).isInstanceOf(ResetPasswordByEmailHandler.EmailNotFoundException.class);
+        assertThat(exception).isInstanceOf(ResetPasswordByEmailHandler.Exception.EmailNotFound.class);
     }
 
     @Test
-    void test_handle_givenExistingEmail_thenSendEmail() {
+    void test_handle_givenExistingEmail_thenSendEmail() throws ResetPasswordByEmailHandler.Exception {
 
         // Given
         final var sut = createSUT();
         final var user = anyUser();
 
         final var command = new ResetPasswordByEmail(
-            "idempotentOperationToken",
+            new IdempotentOperationId(UUID.randomUUID()),
             user.getEmail()
         );
 

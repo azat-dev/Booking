@@ -6,11 +6,19 @@ import lombok.EqualsAndHashCode;
 import lombok.Getter;
 import lombok.ToString;
 
-@ToString(of="value")
+@ToString(of = "value")
 @Getter
-@EqualsAndHashCode(of="value")
+@EqualsAndHashCode(of = "value")
 public class FileExtension {
 
+    // Media extensions
+    public static final FileExtension JPG = FileExtension.dangerouslyMakeFrom("jpg");
+    public static final FileExtension JPEG = FileExtension.dangerouslyMakeFrom("jpeg");
+    public static final FileExtension PNG = FileExtension.dangerouslyMakeFrom("png");
+    public static final FileExtension WEBP = FileExtension.dangerouslyMakeFrom("webp");
+    public static final FileExtension GIF = FileExtension.dangerouslyMakeFrom("gif");
+
+    // Exceptions
     private final String value;
 
     protected FileExtension(String value) {
@@ -21,7 +29,7 @@ public class FileExtension {
         return new FileExtension(value);
     }
 
-    public static FileExtension checkAndMakeFrom(String value) {
+    public static FileExtension checkAndMakeFrom(String value) throws FileExtension.Exception {
         final var cleanedValue = value.trim().toLowerCase();
 
         Assert.notNull(cleanedValue, EmptyFileExtensionException::new);
@@ -30,13 +38,18 @@ public class FileExtension {
         return new FileExtension(cleanedValue);
     }
 
+    @Override
     public String toString() {
         return value;
     }
 
-    // Exceptions
+    public static abstract sealed class Exception extends DomainException permits EmptyFileExtensionException {
+        public Exception(String message) {
+            super(message);
+        }
+    }
 
-    public static final class EmptyFileExtensionException extends DomainException {
+    public static final class EmptyFileExtensionException extends Exception {
         public EmptyFileExtensionException() {
             super("File extension is required");
         }
@@ -46,11 +59,4 @@ public class FileExtension {
             return "EmptyFileExtension";
         }
     }
-
-    // Media extensions
-    public static final FileExtension JPG = FileExtension.dangerouslyMakeFrom("jpg");
-    public static final FileExtension JPEG = FileExtension.dangerouslyMakeFrom("jpeg");
-    public static final FileExtension PNG = FileExtension.dangerouslyMakeFrom("png");
-    public static final FileExtension WEBP = FileExtension.dangerouslyMakeFrom("webp");
-    public static final FileExtension GIF = FileExtension.dangerouslyMakeFrom("gif");
 }

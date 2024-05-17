@@ -11,12 +11,16 @@ public final class GetInfoForPasswordResetTokenImpl implements GetInfoForPasswor
     private final JwtDataDecoder decoder;
 
     @Override
-    public Data execute(TokenForPasswordReset token) throws InvalidTokenException {
+    public Data execute(TokenForPasswordReset token) throws Exception.InvalidToken {
         final var decodedData = decoder.decode(token.getValue());
 
-        return new Data(
-            UserId.fromString(decodedData.subject()),
-            decodedData.expiresAt()
-        );
+        try {
+            return new Data(
+                UserId.checkAndMakeFrom(decodedData.subject()),
+                decodedData.expiresAt()
+            );
+        } catch (UserId.WrongFormatException e) {
+            throw new Exception.InvalidToken();
+        }
     }
 }

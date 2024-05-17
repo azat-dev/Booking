@@ -51,13 +51,13 @@ public class CompletePasswordResetHandlerTests {
     CompletePasswordReset anyCommand() {
         return new CompletePasswordReset(
             "idempotentOperationToken",
-            new EncodedPassword("newPassword"),
+            new EncodedPassword("encodedPassword"),
             TokenForPasswordReset.dangerouslyMakeFrom("invalidToken")
         );
     }
 
     @Test
-    void test_handle_givenNotValidToken_thenPublishFailedPasswordResetEventAndThrowException() {
+    void test_handle_givenNotValidToken_thenPublishFailedPasswordResetEventAndThrowException() throws ValidateTokenForPasswordResetAndGetUserId.Exception {
 
         // Given
         var sut = createSUT();
@@ -65,10 +65,10 @@ public class CompletePasswordResetHandlerTests {
         final var command = anyCommand();
 
         given(sut.validateTokenForPasswordResetAndGetUserId.execute(any()))
-            .willThrow(new ValidateTokenForPasswordResetAndGetUserId.InvalidTokenException());
+            .willThrow(new ValidateTokenForPasswordResetAndGetUserId.Exception.InvalidToken());
 
         // When
-        final var exception = assertThrows(CompletePasswordResetHandler.InvalidTokenException.class, () -> {
+        final var exception = assertThrows(CompletePasswordResetHandler.Exception.InvalidToken.class, () -> {
             sut.handler.handle(
                 command,
                 EventHelpers.anyEventId(),
@@ -77,21 +77,20 @@ public class CompletePasswordResetHandlerTests {
         });
 
         // Then
-        assertThat(exception).isInstanceOf(CompletePasswordResetHandler.InvalidTokenException.class);
+        assertThat(exception).isInstanceOf(CompletePasswordResetHandler.Exception.InvalidToken.class);
 
         then(sut.bus).should(times(1))
             .publish(new FailedToCompleteResetPassword(command.idempotentOperationToken()));
     }
 
     @Test
-    void test_handle_givenValidToken_thenUpdateUserAndPublishPasswordDidResetEvent() {
+    void test_handle_givenValidToken_thenUpdateUserAndPublishPasswordDidResetEvent() throws ValidateTokenForPasswordResetAndGetUserId.Exception, CompletePasswordResetHandler.Exception {
 
         // Given
         final var sut = createSUT();
         final var command = anyCommand();
         final var user = UserHelpers.anyUser();
         final var userId = user.getId();
-        final var encodedPassword = new EncodedPassword("encodedPassword");
 
         given(sut.validateTokenForPasswordResetAndGetUserId.execute(any()))
             .willReturn(userId);
@@ -100,7 +99,7 @@ public class CompletePasswordResetHandlerTests {
             .willReturn(Optional.of(user));
 
         given(sut.passwordService.encodePassword(any()))
-            .willReturn(encodedPassword);
+            .willReturn(command.newPassword());
 
         // When
         sut.handler.handle(
@@ -114,7 +113,7 @@ public class CompletePasswordResetHandlerTests {
         then(sut.usersRepository).should(times(1))
             .update(assertArg(u -> {
                 assertThat(u.getId()).isEqualTo(userId);
-                assertThat(u.getEncodedPassword()).isEqualTo(encodedPassword);
+                assertThat(u.getEncodedPassword()).isEqualTo(command.newPassword());
             }));
 
         then(sut.bus).should(times(1))

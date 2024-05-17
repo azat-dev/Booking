@@ -16,7 +16,7 @@ public record FullNameDTO(
         );
     }
 
-    public FullName toDomain() throws FullName.ValidationException, FirstName.ValidationException, LastName.ValidationException {
+    public FullName toDomain() throws FullName.Exception, FirstName.ValidationException, LastName.ValidationException {
         return new FullName(
             FirstName.checkAndMakeFromString(firstName),
             LastName.checkAndMakeFromString(lastName)

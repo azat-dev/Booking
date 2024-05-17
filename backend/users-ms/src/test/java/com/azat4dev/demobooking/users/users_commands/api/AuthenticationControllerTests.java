@@ -1,5 +1,6 @@
 package com.azat4dev.demobooking.users.users_commands.api;
 
+import com.azat4dev.demobooking.common.presentation.GlobalControllerExceptionHandler;
 import com.azat4dev.demobooking.common.presentation.ValidationErrorDTO;
 import com.azat4dev.demobooking.users.common.presentation.security.entities.UserPrincipal;
 import com.azat4dev.demobooking.users.common.presentation.security.services.CustomUserDetailsService;
@@ -24,7 +25,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
-import org.springframework.context.ApplicationContext;
 import org.springframework.context.annotation.Import;
 import org.springframework.http.MediaType;
 import org.springframework.security.authentication.AuthenticationManager;
@@ -49,7 +49,7 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 
 
 @WebMvcTest(AuthenticationController.class)
-@Import(WebSecurityConfig.class)
+@Import({WebSecurityConfig.class, GlobalControllerExceptionHandler.class})
 public class AuthenticationControllerTests {
 
     @Autowired
@@ -191,7 +191,7 @@ public class AuthenticationControllerTests {
         final var validEmail = anyValidEmail();
         final var fullName = anyValidFullName();
 
-        willThrow(new UsersService.UserWithSameEmailAlreadyExistsException())
+        willThrow(new UsersService.Exception.UserWithSameEmailAlreadyExists())
             .given(usersService)
             .handle(any(CreateUser.class));
 
@@ -229,7 +229,7 @@ public class AuthenticationControllerTests {
         final var userId = anyValidUserId();
         final var fullName = anyValidFullName();
         final var validEmail = anyValidEmail();
-        final var password = Password.makeFromString("password");
+        final var password = Password.checkAndMakeFromString("password");
 
         final var expectedAccessToken = "accessToken";
         final var expectedRefreshToken = "refreshToken";

@@ -17,21 +17,25 @@ public record GenerateUserPhotoUploadUrlDTO(
 
     public static GenerateUserPhotoUploadUrlDTO fromDomain(GenerateUserPhotoUploadUrl event) {
         return new GenerateUserPhotoUploadUrlDTO(
-            event.userId().value().toString(),
-            event.fileExtension().getValue(),
-            event.fileSize(),
-            event.operationId().value().toString(),
-            event.requestedAt()
+            event.getUserId().value().toString(),
+            event.getFileExtension().toString(),
+            event.getFileSize(),
+            event.getOperationId().value().toString(),
+            event.getRequestedAt()
         );
     }
 
     public GenerateUserPhotoUploadUrl toDomain() {
-        return new GenerateUserPhotoUploadUrl(
-            UserId.fromString(userId),
-            PhotoFileExtension.dangerouslyMakeFrom(fileExtension),
-            fileSize,
-            IdempotentOperationId.makeFromString(operationId),
-            requestedAt
-        );
+        try {
+            return new GenerateUserPhotoUploadUrl(
+                UserId.dangerouslyMakeFrom(userId),
+                PhotoFileExtension.dangerouslyMakeFrom(fileExtension),
+                fileSize,
+                IdempotentOperationId.dangerouslyMakeFrom(operationId),
+                requestedAt
+            );
+        } catch (GenerateUserPhotoUploadUrl.Exception e) {
+            throw new RuntimeException(e);
+        }
     }
 }

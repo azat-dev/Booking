@@ -18,14 +18,14 @@ public final class UsersRepositoryImpl implements UsersRepository {
     private final UsersDao usersDao;
 
     @Override
-    public void addNew(User user) throws UserWithSameEmailAlreadyExistsException {
+    public void addNew(User user) throws Exception.UserWithSameEmailAlreadyExists {
 
         final var userData = this.mapUserToData.map(user);
 
         try {
             this.usersDao.addNew(userData);
-        } catch (UsersDao.UserAlreadyExistsException e) {
-            throw new UserWithSameEmailAlreadyExistsException();
+        } catch (UsersDao.Exception.UserAlreadyExists e) {
+            throw new Exception.UserWithSameEmailAlreadyExists();
         }
     }
 
@@ -36,23 +36,22 @@ public final class UsersRepositoryImpl implements UsersRepository {
 
         try {
             this.usersDao.update(userData);
-        } catch (UsersDao.UserNotFound e) {
-            throw new UserNotFoundException(user.getId());
+        } catch (UsersDao.Exception.UserNotFound e) {
+            throw new Exception.UserNotFound(user.getId());
         }
     }
 
     @Override
     public Optional<User> findById(UserId id) {
 
-        try {
-            final var foundUser = this.usersDao.findById(id.value());
-            return foundUser.map(this.mapUserDataToDomain::map);
-
-        } catch (DomainException e) {
-            throw new RuntimeException(e);
-        } catch (Exception e) {
-            return Optional.empty();
-        }
+        final var foundUserResult = this.usersDao.findById(id.value());
+        return foundUserResult.map(userData -> {
+            try {
+                return this.mapUserDataToDomain.map(userData);
+            } catch (DomainException e) {
+                throw new RuntimeException(e);
+            }
+        });
     }
 
     @Override
@@ -62,8 +61,6 @@ public final class UsersRepositoryImpl implements UsersRepository {
             try {
                 return this.mapUserDataToDomain.map(userData);
             } catch (DomainException e) {
-                throw new RuntimeException(e);
-            } catch (Exception e) {
                 throw new RuntimeException(e);
             }
         });

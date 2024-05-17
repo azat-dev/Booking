@@ -5,11 +5,11 @@ import com.azat4dev.demobooking.common.domain.DomainException;
 import com.azat4dev.demobooking.common.domain.event.DomainEventsBus;
 import com.azat4dev.demobooking.common.domain.event.EventId;
 import com.azat4dev.demobooking.users.users_commands.domain.core.commands.CompletePasswordReset;
+import com.azat4dev.demobooking.users.users_commands.domain.core.entities.User;
 import com.azat4dev.demobooking.users.users_commands.domain.core.events.FailedToCompleteResetPassword;
 import com.azat4dev.demobooking.users.users_commands.domain.core.events.UserDidResetPassword;
 import com.azat4dev.demobooking.users.users_commands.domain.handlers.password.reset.utils.ValidateTokenForPasswordResetAndGetUserId;
 import com.azat4dev.demobooking.users.users_commands.domain.interfaces.repositories.UsersRepository;
-import com.azat4dev.demobooking.users.users_commands.domain.interfaces.services.PasswordService;
 import lombok.RequiredArgsConstructor;
 
 import java.time.LocalDateTime;
@@ -22,47 +22,61 @@ public final class CompletePasswordResetHandler implements CommandHandler<Comple
     private final DomainEventsBus bus;
 
     @Override
-    public void handle(CompletePasswordReset command, EventId eventId, LocalDateTime issuedAt) throws InvalidTokenException {
+    public void handle(CompletePasswordReset command, EventId eventId, LocalDateTime issuedAt) throws Exception {
+
+        final Runnable publishFailedEvent = () -> {
+            bus.publish(new FailedToCompleteResetPassword(command.idempotentOperationToken()));
+        };
 
         try {
             final var userId = validateTokenForPasswordResetAndGetUserId.execute(command.passwordResetToken());
-            final var user = usersRepository.findById(userId).orElseThrow(InvalidTokenException::new);
+            final var user = usersRepository.findById(userId).orElseThrow(Exception.InvalidToken::new);
 
             user.setEncodedPassword(command.newPassword());
 
             usersRepository.update(user);
             bus.publish(new UserDidResetPassword(userId));
 
-        } catch (ValidateTokenForPasswordResetAndGetUserId.TokenExpiredException e) {
-            bus.publish(new FailedToCompleteResetPassword(command.idempotentOperationToken()));
-            throw new TokenExpiredException();
-        } catch (ValidateTokenForPasswordResetAndGetUserId.InvalidTokenException e) {
-            bus.publish(new FailedToCompleteResetPassword(command.idempotentOperationToken()));
-            throw new InvalidTokenException();
+        } catch (ValidateTokenForPasswordResetAndGetUserId.Exception e) {
+
+            publishFailedEvent.run();
+            throw Exception.makeFrom(e);
+
+        } catch (User.Exception.PasswordIsRequired e) {
+            // Can't happen
+            publishFailedEvent.run();
+            throw new RuntimeException(e);
         }
     }
 
     // Exceptions
 
-    public static final class InvalidTokenException extends DomainException {
-        public InvalidTokenException() {
-            super("Invalid token");
+    public static sealed abstract class Exception extends DomainException permits Exception.InvalidToken, Exception.TokenExpired {
+        Exception(String message) {
+            super(message);
         }
 
-        @Override
-        public String getCode() {
-            return "InvalidToken";
+        public static <Input extends ValidateTokenForPasswordResetAndGetUserId.Exception> Exception makeFrom(Input e) {
+            switch (e) {
+                case Input.TokenExpired inst -> {
+                    return new TokenExpired();
+                }
+                case Input.InvalidToken inst -> {
+                    return new InvalidToken();
+                }
+            }
         }
-    }
 
-    public static final class TokenExpiredException extends DomainException {
-        public TokenExpiredException() {
-            super("Token is expired");
+        public static final class InvalidToken extends Exception {
+            public InvalidToken() {
+                super("Invalid token");
+            }
         }
 
-        @Override
-        public String getCode() {
-            return "TokenExpired";
+        public static final class TokenExpired extends Exception {
+            public TokenExpired() {
+                super("Token is expired");
+            }
         }
     }
 }

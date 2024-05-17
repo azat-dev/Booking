@@ -7,5 +7,5 @@ import java.time.LocalDateTime;
 
 public interface CommandHandler<CMD extends Command> {
 
-    void handle(CMD command, EventId eventId, LocalDateTime issuedAt);
+    void handle(CMD command, EventId eventId, LocalDateTime issuedAt) throws DomainException;
 }

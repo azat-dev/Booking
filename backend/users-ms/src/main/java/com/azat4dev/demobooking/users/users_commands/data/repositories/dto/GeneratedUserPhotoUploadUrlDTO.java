@@ -21,7 +21,7 @@ public record GeneratedUserPhotoUploadUrlDTO(
     public GeneratedUserPhotoUploadUrl toDomain() {
         try {
             return new GeneratedUserPhotoUploadUrl(
-                UserId.fromString(userId),
+                UserId.dangerouslyMakeFrom(userId),
                 new URL(url)
             );
         } catch (MalformedURLException e) {

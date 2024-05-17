@@ -59,7 +59,7 @@ public class EmailVerificationControllerTests {
         // Given
         final var invalidToken = "invalidToken";
 
-        willThrow(new CompleteEmailVerificationHandler.TokenIsNotValidException())
+        willThrow(new CompleteEmailVerificationHandler.Exception.TokenIsNotValid())
             .given(completeEmailVerificationHandler)
             .handle(any(), any(), any());
 

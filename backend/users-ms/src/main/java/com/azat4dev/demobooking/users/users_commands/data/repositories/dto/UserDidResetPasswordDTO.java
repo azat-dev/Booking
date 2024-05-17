@@ -10,6 +10,6 @@ public record UserDidResetPasswordDTO(String userId) implements DomainEventPaylo
     }
 
     public UserDidResetPassword toDomain() {
-        return new UserDidResetPassword(UserId.fromString(userId));
+        return new UserDidResetPassword(UserId.dangerouslyMakeFrom(userId));
     }
 }

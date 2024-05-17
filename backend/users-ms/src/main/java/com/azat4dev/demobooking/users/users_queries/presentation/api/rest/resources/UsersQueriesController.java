@@ -23,10 +23,15 @@ public class UsersQueriesController implements UsersQueiresResource {
         return ex.getMessage();
     }
 
-    @Override
-    public ResponseEntity<PersonalUserInfoDTO> getCurrentUserInfo(JwtAuthenticationToken authentication) {
+    @ExceptionHandler({UserId.WrongFormatException.class})
+    public ResponseEntity<String> handleWrongUserId() {
+        return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("Invalid token");
+    }
 
-        final var userId = UserId.fromString(authentication.getName());
+    @Override
+    public ResponseEntity<PersonalUserInfoDTO> getCurrentUserInfo(JwtAuthenticationToken authentication) throws UserId.WrongFormatException {
+
+        final var userId = UserId.checkAndMakeFrom(authentication.getName());
         final var userInfoResult = usersQueryService.getPersonalInfoById(userId);
 
         return userInfoResult.map(PersonalUserInfoDTO::from)

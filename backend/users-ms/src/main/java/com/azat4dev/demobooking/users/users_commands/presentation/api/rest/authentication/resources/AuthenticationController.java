@@ -2,6 +2,7 @@ package com.azat4dev.demobooking.users.users_commands.presentation.api.rest.auth
 
 import com.azat4dev.demobooking.common.domain.core.UserIdFactory;
 import com.azat4dev.demobooking.common.presentation.ControllerException;
+import com.azat4dev.demobooking.common.presentation.ErrorDTO;
 import com.azat4dev.demobooking.users.common.domain.values.UserId;
 import com.azat4dev.demobooking.users.common.presentation.security.services.CustomUserDetailsService;
 import com.azat4dev.demobooking.users.common.presentation.security.services.jwt.JwtService;
@@ -24,7 +25,9 @@ import org.springframework.security.core.context.SecurityContextHolderStrategy;
 import org.springframework.security.oauth2.server.resource.authentication.BearerTokenAuthenticationToken;
 import org.springframework.security.web.context.SecurityContextRepository;
 import org.springframework.stereotype.Component;
+import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.ResponseStatus;
 
 import java.net.URI;
 
@@ -54,6 +57,12 @@ public class AuthenticationController implements AuthenticationResource {
     @Autowired
     private CustomUserDetailsService userDetailsService;
 
+    @ExceptionHandler(UsersService.Exception.UserWithSameEmailAlreadyExists.class)
+    @ResponseStatus(HttpStatus.CONFLICT)
+    public ErrorDTO handleUserWithSameEmailAlreadyExists(UsersService.Exception.UserWithSameEmailAlreadyExists e) {
+        return new ErrorDTO(e.getCode(), e.getMessage());
+    }
+
     @Override
     public ResponseEntity<SignUpResponse> signUp(
         SignUpRequest signUpRequest,
@@ -68,22 +77,14 @@ public class AuthenticationController implements AuthenticationResource {
         final var encodedPassword = passwordService.encodePassword(password);
         final var userId = userIdFactory.generateNewUserId();
 
-        try {
-            usersService.handle(
-                new CreateUser(
-                    userId,
-                    fullName,
-                    email,
-                    encodedPassword
-                )
-            );
-        } catch (UsersService.UserWithSameEmailAlreadyExistsException e) {
-            throw ControllerException.createError(
-                HttpStatus.CONFLICT,
-                "UserWithSameEmailAlreadyExists",
-                e.getMessage()
-            );
-        }
+        usersService.handle(
+            new CreateUser(
+                userId,
+                fullName,
+                email,
+                encodedPassword
+            )
+        );
 
         final var authorities = new String[]{"ROLE_USER"};
         final var authenticationResult = this.authenticateUser(userId, authorities, request, response);

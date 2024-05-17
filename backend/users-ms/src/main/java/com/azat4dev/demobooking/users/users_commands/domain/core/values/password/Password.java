@@ -19,50 +19,41 @@ public final class Password {
     @Getter
     private final String value;
 
-    public static void validate(String password) throws WrongFormatException, LengthException {
+    public static void validate(String password) throws Exception {
 
-        Assert.string(password, LengthException::new)
+        Assert.string(password, Exception.Length::new)
             .notNull()
             .notBlank()
             .maxLength(MAX_LENGTH)
             .minLength(MIN_LENGTH);
 
-        Assert.string(password, WrongFormatException::new)
+        Assert.string(password, Exception.WrongFormat::new)
             .hasPattern(PATTERN);
     }
 
-    public static Password makeFromString(String password) throws WrongFormatException, LengthException {
+    public static Password checkAndMakeFromString(String password) throws Exception {
         validate(password);
         return new Password(password);
     }
 
     // Exceptions
 
-    public static abstract class ValidationException extends DomainException {
-        public ValidationException(String message) {
+    public static abstract class Exception extends DomainException {
+        public Exception(String message) {
             super(message);
         }
-    }
 
-    public static final class LengthException extends ValidationException {
-        public LengthException() {
-            super("Length must be between " + MIN_LENGTH + " and " + MAX_LENGTH);
+        public static final class Length extends Exception {
+            public Length() {
+                super("Length must be between " + MIN_LENGTH + " and " + MAX_LENGTH);
+            }
         }
 
-        @Override
-        public String getCode() {
-            return "WrongLength";
-        }
-    }
-
-    public static final class WrongFormatException extends ValidationException {
-        public WrongFormatException() {
-            super("Wrong password format");
+        public static final class WrongFormat extends Exception {
+            public WrongFormat() {
+                super("Wrong password format");
+            }
         }
 
-        @Override
-        public String getCode() {
-            return "WrongFormat";
-        }
     }
 }

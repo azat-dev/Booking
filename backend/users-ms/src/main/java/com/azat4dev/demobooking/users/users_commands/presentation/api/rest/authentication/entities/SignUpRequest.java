@@ -20,7 +20,7 @@ public record SignUpRequest(
         Assert.notNull(fullName, () -> ValidationException.with("NotNull", "fullName", "Full name can't be null"));
         try {
             return fullName.toDomain();
-        } catch (FullName.ValidationException e) {
+        } catch (FullName.Exception e) {
             throw ValidationException.withPath("fullName", e);
         } catch (FirstName.ValidationException e) {
             throw ValidationException.withPath("fullName.firstName", e);
@@ -40,9 +40,11 @@ public record SignUpRequest(
     public Password parsePassword() throws ValidationException {
 
         try {
-            return Password.makeFromString(password);
-        } catch (DomainException e) {
+            return Password.checkAndMakeFromString(password);
+        } catch (Password.Exception e) {
             throw ValidationException.withPath("password", e);
+        } catch (Exception e) {
+            throw new RuntimeException(e);
         }
     }
 }

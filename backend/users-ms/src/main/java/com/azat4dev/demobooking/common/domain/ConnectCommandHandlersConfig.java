@@ -90,7 +90,12 @@ public class ConnectCommandHandlersConfig {
                 final var cancellation = domainEventsBus.listen(
                     eventType,
                     (event) -> {
-                        listener.handle((Command) event.payload(), event.id(), event.issuedAt());
+                        try {
+                            listener.handle((Command) event.payload(), event.id(), event.issuedAt());
+                        } catch (DomainException e) {
+                            // FIXME:
+                            throw new RuntimeException(e);
+                        }
                     });
                 cancellations.add(cancellation);
             }

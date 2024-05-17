@@ -16,9 +16,13 @@ public record FullNameDTO(
     }
 
     public FullName toDomain() {
-        return new FullName(
-            FirstName.dangerMakeFromStringWithoutCheck(firstName),
-            LastName.checkAndMakeFromString(lastName)
-        );
+        try {
+            return new FullName(
+                FirstName.dangerMakeFromStringWithoutCheck(firstName),
+                LastName.dangerMakeFromStringWithoutCheck(lastName)
+            );
+        } catch (FullName.Exception e) {
+            throw new RuntimeException(e);
+        }
     }
 }

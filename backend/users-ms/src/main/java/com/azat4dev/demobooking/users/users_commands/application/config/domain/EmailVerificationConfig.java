@@ -43,7 +43,7 @@ public class EmailVerificationConfig {
         EmailService emailService,
         ProvideEmailVerificationToken provideEmailVerificationToken,
         DomainEventsBus domainEventsBus
-    ) {
+    ) throws EmailAddress.WrongFormatException {
         return new SendVerificationEmailHandler(
             buildEmailVerificationLink,
             EmailAddress.checkAndMakeFromString(fromAddress),

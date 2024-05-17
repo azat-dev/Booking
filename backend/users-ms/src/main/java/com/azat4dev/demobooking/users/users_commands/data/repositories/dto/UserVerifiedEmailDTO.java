@@ -18,7 +18,7 @@ public record UserVerifiedEmailDTO(
 
     public UserVerifiedEmail toDomain() {
         return new UserVerifiedEmail(
-            UserId.fromString(userId),
+            UserId.dangerouslyMakeFrom(userId),
             EmailAddress.dangerMakeWithoutChecks(email)
         );
     }

@@ -9,8 +9,7 @@ import com.azat4dev.demobooking.users.common.presentation.security.services.jwt.
 import com.azat4dev.demobooking.users.users_commands.application.config.presentation.WebSecurityConfig;
 import com.azat4dev.demobooking.users.users_commands.domain.UserHelpers;
 import com.azat4dev.demobooking.users.users_commands.domain.core.commands.CompletePasswordReset;
-import com.azat4dev.demobooking.users.users_commands.domain.core.commands.ResetPasswordByEmail;
-import com.azat4dev.demobooking.users.users_commands.domain.core.values.email.EmailAddress;
+import com.azat4dev.demobooking.users.users_commands.domain.core.values.IdempotentOperationId;
 import com.azat4dev.demobooking.users.users_commands.domain.core.values.password.EncodedPassword;
 import com.azat4dev.demobooking.users.users_commands.domain.core.values.password.Password;
 import com.azat4dev.demobooking.users.users_commands.domain.core.values.password.reset.TokenForPasswordReset;
@@ -37,6 +36,7 @@ import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.ResultActions;
 
 import java.util.Map;
+import java.util.UUID;
 
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.BDDMockito.*;
@@ -77,12 +77,16 @@ public class ResetPasswordControllerTests {
     @MockBean
     private CompletePasswordResetHandler completePasswordResetHandler;
 
+    String anyIdempotentOperationId() {
+        return UUID.randomUUID().toString();
+    }
+
     @Test
     public void test_resetPasswordByEmail_givenEmail_thenPassToHandlerReturnOk() throws Exception {
 
         // Given
         final var request = new ResetPasswordByEmailRequest(
-            "idempotentOperationKey",
+            anyIdempotentOperationId(),
             UserHelpers.anyValidEmail().getValue()
         );
 
@@ -95,10 +99,7 @@ public class ResetPasswordControllerTests {
         // Then
         result.andExpect(status().isOk());
 
-        final var expectedCommand = new ResetPasswordByEmail(
-            request.idempotencyKey(),
-            EmailAddress.dangerMakeWithoutChecks(request.email())
-        );
+        final var expectedCommand = request.toCommand();
 
         then(resetPasswordByEmailHandler).should(times(1))
             .handle(
@@ -113,7 +114,7 @@ public class ResetPasswordControllerTests {
 
         // Given
         final var request = new ResetPasswordByEmailRequest(
-            "idempotentOperationKey",
+            anyIdempotentOperationId(),
             "notValidEmail"
         );
 
@@ -129,7 +130,7 @@ public class ResetPasswordControllerTests {
     public void test_completeResetPassword_givenValidToken_thenPassToHandlerReturnOk() throws Exception {
 
         // Given
-        final var idempotencyKey = "idempotentOperationKey";
+        final var idempotencyKey = anyIdempotentOperationId();
         final var token = "tokenValue";
 
         final var newPassword = "newPassword";
@@ -160,7 +161,7 @@ public class ResetPasswordControllerTests {
         );
 
         then(passwordService).should(times(1))
-            .encodePassword(Password.makeFromString(newPassword));
+            .encodePassword(Password.checkAndMakeFromString(newPassword));
 
         then(completePasswordResetHandler).should(times(1))
             .handle(

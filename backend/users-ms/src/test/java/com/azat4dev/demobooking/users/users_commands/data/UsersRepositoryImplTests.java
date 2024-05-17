@@ -65,15 +65,15 @@ public class UsersRepositoryImplTests {
         final var sut = createSUT();
         final var newUser = anyUser();
 
-        willThrow(new UsersDao.UserAlreadyExistsException()).given(sut.usersDao)
+        willThrow(new UsersDao.Exception.UserAlreadyExists()).given(sut.usersDao)
             .addNew(any());
 
         // When
-        final var exception = assertThrows(UsersRepository.UserWithSameEmailAlreadyExistsException.class,
+        final var exception = assertThrows(UsersRepository.Exception.UserWithSameEmailAlreadyExists.class,
             () -> sut.repository.addNew(newUser));
 
         // Then
-        assertThat(exception).isInstanceOf(UsersRepository.UserWithSameEmailAlreadyExistsException.class);
+        assertThat(exception).isInstanceOf(UsersRepository.Exception.UserWithSameEmailAlreadyExists.class);
     }
 
     @Test
@@ -83,15 +83,15 @@ public class UsersRepositoryImplTests {
         final var sut = createSUT();
         final var newUser = anyUser();
 
-        willThrow(new UsersDao.UserNotFound()).given(sut.usersDao)
+        willThrow(new UsersDao.Exception.UserNotFound()).given(sut.usersDao)
             .update(any());
 
         // When
-        final var exception = assertThrows(UsersRepository.UserNotFoundException.class,
+        final var exception = assertThrows(UsersRepository.Exception.UserNotFound.class,
             () -> sut.repository.update(newUser));
 
         // Then
-        assertThat(exception).isInstanceOf(UsersRepository.UserNotFoundException.class);
+        assertThat(exception).isInstanceOf(UsersRepository.Exception.UserNotFound.class);
     }
 
     @Test

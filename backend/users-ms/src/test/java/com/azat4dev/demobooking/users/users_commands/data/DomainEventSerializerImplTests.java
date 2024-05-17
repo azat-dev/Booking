@@ -33,7 +33,7 @@ public class DomainEventSerializerImplTests {
     }
 
     @Test
-    void test_serialize() throws MalformedURLException {
+    void test_serialize() throws MalformedURLException, PhotoFileExtension.InvalidPhotoFileExtensionException, IdempotentOperationId.Exception {
 
         final var events = List.of(
             eventsFactory.issue(
@@ -79,7 +79,7 @@ public class DomainEventSerializerImplTests {
             ),
             eventsFactory.issue(
                 new ResetPasswordByEmail(
-                    "token",
+                    new IdempotentOperationId(UUID.randomUUID()),
                     anyValidEmail()
                 )
             ),
@@ -106,7 +106,7 @@ public class DomainEventSerializerImplTests {
                     anyValidUserId(),
                     PhotoFileExtension.checkAndMakeFrom("png"),
                     100,
-                    IdempotentOperationId.makeFromString(UUID.randomUUID().toString()),
+                    IdempotentOperationId.checkAndMakeFrom(UUID.randomUUID().toString()),
                     LocalDateTime.now()
                 )
             )

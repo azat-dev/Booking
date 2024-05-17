@@ -7,6 +7,7 @@ import com.azat4dev.demobooking.common.utils.TimeProvider;
 import com.azat4dev.demobooking.users.users_commands.domain.UserHelpers;
 import com.azat4dev.demobooking.users.users_commands.domain.core.commands.CreateUser;
 import com.azat4dev.demobooking.users.users_commands.domain.core.events.UserCreated;
+import com.azat4dev.demobooking.users.users_commands.domain.core.values.password.EncodedPassword;
 import com.azat4dev.demobooking.users.users_commands.domain.core.values.user.EmailVerificationStatus;
 import com.azat4dev.demobooking.users.users_commands.domain.handlers.users.UsersService;
 import com.azat4dev.demobooking.users.users_commands.domain.handlers.users.UsersServiceImpl;
@@ -14,7 +15,6 @@ import com.azat4dev.demobooking.users.users_commands.domain.interfaces.repositor
 import com.azat4dev.demobooking.users.users_commands.domain.interfaces.repositories.UnitOfWork;
 import com.azat4dev.demobooking.users.users_commands.domain.interfaces.repositories.UnitOfWorkFactory;
 import com.azat4dev.demobooking.users.users_commands.domain.interfaces.repositories.UsersRepository;
-import com.azat4dev.demobooking.users.users_commands.domain.core.values.password.EncodedPassword;
 import org.junit.jupiter.api.Test;
 
 import java.time.LocalDateTime;
@@ -86,7 +86,7 @@ public class UsersServiceImplTests {
     }
 
     @Test
-    void test_handle_givenValidCommand_thenCreateUserAndProduceEvent() throws UsersRepository.UserWithSameEmailAlreadyExistsException {
+    void test_handle_givenValidCommand_thenCreateUserAndProduceEvent() {
 
         // Given
         final var currentTime = anyDateTime();
@@ -151,14 +151,14 @@ public class UsersServiceImplTests {
         final var sut = createSUT();
         final var validCommand = anyCreateUserCommand();
 
-        willThrow(new UsersRepository.UserWithSameEmailAlreadyExistsException())
+        willThrow(new UsersRepository.Exception.UserWithSameEmailAlreadyExists())
             .given(sut.usersRepository).addNew(any());
 
         given(sut.timeProvider.currentTime())
             .willReturn(currentTime);
 
         // When
-        assertThrows(UsersService.UserWithSameEmailAlreadyExistsException.class, () -> {
+        assertThrows(UsersService.Exception.UserWithSameEmailAlreadyExists.class, () -> {
             sut.usersService.handle(validCommand);
         });
 

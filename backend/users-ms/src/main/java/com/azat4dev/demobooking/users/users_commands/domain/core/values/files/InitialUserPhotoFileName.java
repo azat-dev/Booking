@@ -21,33 +21,31 @@ public final class InitialUserPhotoFileName {
 
     // Exceptions
 
-    public static InitialUserPhotoFileName checkAndMakeFrom(String value) {
+    public static InitialUserPhotoFileName checkAndMakeFrom(String value) throws Exception {
 
-        Assert.notNull(value, NullValueException::new);
+        Assert.notNull(value, Exception.NullValue::new);
 
         final var extension = parseExtension(value);
-        Assert.notNull(extension, () -> new InvalidExtensionException(extension.getValue()));
+        Assert.notNull(extension, Exception.NullValue::new);
 
         final var name = parseName(value);
-        Assert.notBlank(name, InvalidNameExtension::new);
+        Assert.notBlank(name, Exception.InvalidName::new);
 
-        ALLOWED_EXTENSIONS.forEach(allowedExtension -> {
-            if (!extension.getValue().equals(allowedExtension)) {
-                throw new InvalidExtensionException(extension.getValue());
-            }
-        });
+        if (ALLOWED_EXTENSIONS.contains(extension.getValue())) {
+            throw new Exception.InvalidExtension(extension.getValue());
+        }
 
         return new InitialUserPhotoFileName(name, extension);
     }
 
-    private static FileExtension parseExtension(String fileName) {
+    private static FileExtension parseExtension(String fileName) throws Exception {
 
         final var value = fileName.substring(fileName.lastIndexOf('.') + 1);
 
         try {
             return FileExtension.checkAndMakeFrom(value);
-        } catch (FileExtension.EmptyFileExtensionException e) {
-            throw new InvalidExtensionException(value);
+        } catch (FileExtension.Exception e) {
+            throw new Exception.InvalidExtension(value);
         }
     }
 
@@ -57,42 +55,29 @@ public final class InitialUserPhotoFileName {
 
     // Exceptions
 
-    public static abstract class ValidationException extends DomainException {
-        public ValidationException(String message) {
+    public static abstract sealed class Exception extends DomainException
+        permits Exception.InvalidExtension, Exception.NullValue, Exception.InvalidName {
+
+        Exception(String message) {
             super(message);
         }
-    }
 
-    public static final class InvalidExtensionException extends ValidationException {
-        public InvalidExtensionException(String value) {
-            super(String.format("Invalid initial user photo file name: %s. Allowed extensions: ", value, ALLOWED_EXTENSIONS));
+        public static final class InvalidExtension extends Exception {
+            public InvalidExtension(String value) {
+                super(String.format("Invalid initial user photo file name: %s. Allowed extensions: ", value, ALLOWED_EXTENSIONS));
+            }
         }
 
-        @Override
-        public String getCode() {
-            return "InvalidExtension";
-        }
-    }
-
-    public static final class NullValueException extends ValidationException {
-        public NullValueException() {
-            super("Initial user photo file name cannot be null");
+        public static final class NullValue extends Exception {
+            public NullValue() {
+                super("Initial user photo file name cannot be null");
+            }
         }
 
-        @Override
-        public String getCode() {
-            return "NullValue";
-        }
-    }
-
-    public static final class InvalidNameExtension extends ValidationException {
-        public InvalidNameExtension() {
-            super("Initial user photo file name cannot be empty");
-        }
-
-        @Override
-        public String getCode() {
-            return "InvalidFileName";
+        public static final class InvalidName extends Exception {
+            public InvalidName() {
+                super("Initial user photo file name cannot be empty");
+            }
         }
     }
 }

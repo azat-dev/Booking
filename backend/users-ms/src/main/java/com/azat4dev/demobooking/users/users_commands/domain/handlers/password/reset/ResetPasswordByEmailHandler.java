@@ -23,10 +23,10 @@ public final class ResetPasswordByEmailHandler implements CommandHandler<ResetPa
     private final DomainEventsBus bus;
 
     @Override
-    public void handle(ResetPasswordByEmail command, EventId eventId, LocalDateTime issuedAt) {
+    public void handle(ResetPasswordByEmail command, EventId eventId, LocalDateTime issuedAt) throws Exception {
 
         final var user = usersRepository.findByEmail(command.email())
-            .orElseThrow(EmailNotFoundException::new);
+            .orElseThrow(Exception.EmailNotFound::new);
 
         final var userId = user.getId();
 
@@ -45,7 +45,7 @@ public final class ResetPasswordByEmailHandler implements CommandHandler<ResetPa
                     emailData.body()
                 )
             );
-        } catch (Exception e) {
+        } catch (Throwable e) {
             bus.publish(
                 new FailedToSendVerificationEmail(
                     userId,
@@ -53,7 +53,7 @@ public final class ResetPasswordByEmailHandler implements CommandHandler<ResetPa
                     1
                 )
             );
-            return;
+            throw new Exception.FailedToSendResetPasswordEmail();
         }
 
         bus.publish(
@@ -66,14 +66,22 @@ public final class ResetPasswordByEmailHandler implements CommandHandler<ResetPa
 
     // Exceptions
 
-    public static final class EmailNotFoundException extends DomainException {
-        public EmailNotFoundException() {
-            super("Email not found");
+    public static abstract class Exception extends DomainException {
+
+        public Exception(String message) {
+            super(message);
         }
 
-        @Override
-        public String getCode() {
-            return "EmailNotFound";
+        public static final class EmailNotFound extends Exception {
+            public EmailNotFound() {
+                super("Email not found");
+            }
+        }
+
+        public static final class FailedToSendResetPasswordEmail extends Exception {
+            public FailedToSendResetPasswordEmail() {
+                super("Failed to send reset password email");
+            }
         }
     }
 }
