@@ -1,12 +1,8 @@
 package com.azat4dev.demobooking.users.users_commands.data.repositories;
 
 import com.azat4dev.demobooking.users.users_commands.domain.core.values.files.UploadFileFormData;
-import com.azat4dev.demobooking.users.users_commands.domain.interfaces.repositories.FileKey;
-import com.azat4dev.demobooking.users.users_commands.domain.interfaces.repositories.MediaObjectName;
-import com.azat4dev.demobooking.users.users_commands.domain.interfaces.repositories.MediaObjectsBucket;
-import io.minio.GetPresignedObjectUrlArgs;
-import io.minio.MinioClient;
-import io.minio.PostPolicy;
+import com.azat4dev.demobooking.users.users_commands.domain.interfaces.repositories.*;
+import io.minio.*;
 import io.minio.http.Method;
 import lombok.RequiredArgsConstructor;
 
@@ -20,7 +16,7 @@ public class MinioMediaObjectsBucket implements MediaObjectsBucket {
 
     private final URL baseUrl;
     private final MinioClient minioClient;
-    private final String bucketName;
+    private final BucketName bucketName;
 
     public URL getObjectUrl(MediaObjectName objectName) throws MalformedURLException {
         var baseUrlString = baseUrl.toString();
@@ -38,7 +34,7 @@ public class MinioMediaObjectsBucket implements MediaObjectsBucket {
         try {
             final var url = minioClient.getPresignedObjectUrl(
                 GetPresignedObjectUrlArgs.builder()
-                    .bucket(bucketName)
+                    .bucket(bucketName.toString())
                     .object(objectName.toString())
                     .method(Method.PUT)
                     .expiry(expiresInSeconds)
@@ -55,7 +51,7 @@ public class MinioMediaObjectsBucket implements MediaObjectsBucket {
     public UploadFileFormData generateUploadFormData(MediaObjectName objectName, int expiresInSeconds, Policy policy) {
 
         final var formPolicy = new PostPolicy(
-            bucketName,
+            bucketName.toString(),
             ZonedDateTime.now().plusSeconds(expiresInSeconds)
         );
 
@@ -82,6 +78,7 @@ public class MinioMediaObjectsBucket implements MediaObjectsBucket {
         try {
             return new UploadFileFormData(
                 url,
+                bucketName,
                 objectName,
                 minioClient.getPresignedPostFormData(
                     formPolicy
@@ -96,5 +93,47 @@ public class MinioMediaObjectsBucket implements MediaObjectsBucket {
     @Override
     public void put(FileKey key, byte[] file) {
 
+    }
+
+    @Override
+    public MediaObject getObject(MediaObjectName objectName) {
+
+        final StatObjectResponse response;
+        try {
+            response = minioClient.statObject(
+                StatObjectArgs.builder()
+                    .bucket(bucketName.toString())
+                    .object(objectName.toString())
+                    .build()
+            );
+        } catch (Exception e) {
+            throw new RuntimeException(e);
+        }
+
+        final URL objectUrl;
+        try {
+            objectUrl = getObjectUrl(objectName);
+        } catch (MalformedURLException e) {
+            throw new RuntimeException(e);
+        }
+
+        return new MediaObjectImpl(
+            bucketName,
+            objectName,
+            objectUrl,
+            response.size(),
+            response.lastModified(),
+            response.contentType()
+        );
+    }
+
+    public record MediaObjectImpl(
+        BucketName bucketName,
+        MediaObjectName objectName,
+        URL url,
+        long size,
+        ZonedDateTime lastModified,
+        String contentType
+    ) implements MediaObject {
     }
 }

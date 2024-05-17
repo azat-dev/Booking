@@ -4,6 +4,7 @@ import java.util.Map;
 
 public record GenerateUploadUserPhotoUrlResponse(
     String url,
+    String bucketName,
     String objectName,
     Map<String,String> formData
 ) {

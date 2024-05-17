@@ -3,6 +3,7 @@ package com.azat4dev.demobooking.users.users_commands.data.repositories.dto;
 import com.azat4dev.demobooking.users.common.domain.values.UserId;
 import com.azat4dev.demobooking.users.users_commands.domain.core.events.GeneratedUserPhotoUploadUrl;
 import com.azat4dev.demobooking.users.users_commands.domain.core.values.files.UploadFileFormData;
+import com.azat4dev.demobooking.users.users_commands.domain.interfaces.repositories.BucketName;
 import com.azat4dev.demobooking.users.users_commands.domain.interfaces.repositories.MediaObjectName;
 
 import java.net.MalformedURLException;
@@ -12,6 +13,7 @@ import java.util.Map;
 public record GeneratedUserPhotoUploadUrlDTO(
     String userId,
     String url,
+    String bucketName,
     String objectName,
     Map<String, String> formData
 ) implements DomainEventPayloadDTO {
@@ -20,6 +22,7 @@ public record GeneratedUserPhotoUploadUrlDTO(
         return new GeneratedUserPhotoUploadUrlDTO(
             event.userId().toString(),
             event.formData().url().toString(),
+            event.formData().bucketName().toString(),
             event.formData().objectName().toString(),
             event.formData().value()
         );
@@ -32,6 +35,7 @@ public record GeneratedUserPhotoUploadUrlDTO(
                 UserId.dangerouslyMakeFrom(userId),
                 new UploadFileFormData(
                     URI.create(url).toURL(),
+                    BucketName.makeWithoutChecks(bucketName),
                     MediaObjectName.dangerouslyMake(objectName),
                     formData
                 )

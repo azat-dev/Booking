@@ -6,6 +6,7 @@ import com.azat4dev.demobooking.users.users_commands.domain.UserHelpers;
 import com.azat4dev.demobooking.users.users_commands.domain.core.commands.CompletePasswordReset;
 import com.azat4dev.demobooking.users.users_commands.domain.core.events.FailedToCompleteResetPassword;
 import com.azat4dev.demobooking.users.users_commands.domain.core.events.UserDidResetPassword;
+import com.azat4dev.demobooking.users.users_commands.domain.core.values.IdempotentOperationId;
 import com.azat4dev.demobooking.users.users_commands.domain.core.values.password.EncodedPassword;
 import com.azat4dev.demobooking.users.users_commands.domain.core.values.password.reset.TokenForPasswordReset;
 import com.azat4dev.demobooking.users.users_commands.domain.handlers.password.reset.CompletePasswordResetHandler;
@@ -16,6 +17,7 @@ import org.junit.jupiter.api.Test;
 
 import java.time.LocalDateTime;
 import java.util.Optional;
+import java.util.UUID;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.jupiter.api.Assertions.assertThrows;
@@ -48,16 +50,20 @@ public class CompletePasswordResetHandlerTests {
         );
     }
 
-    CompletePasswordReset anyCommand() {
+    IdempotentOperationId anyIdempotentOperationId() throws IdempotentOperationId.Exception {
+        return IdempotentOperationId.checkAndMakeFrom(UUID.randomUUID().toString());
+    }
+
+    CompletePasswordReset anyCommand() throws IdempotentOperationId.Exception {
         return new CompletePasswordReset(
-            "idempotentOperationToken",
+            anyIdempotentOperationId(),
             new EncodedPassword("encodedPassword"),
             TokenForPasswordReset.dangerouslyMakeFrom("invalidToken")
         );
     }
 
     @Test
-    void test_handle_givenNotValidToken_thenPublishFailedPasswordResetEventAndThrowException() throws ValidateTokenForPasswordResetAndGetUserId.Exception {
+    void test_handle_givenNotValidToken_thenPublishFailedPasswordResetEventAndThrowException() throws ValidateTokenForPasswordResetAndGetUserId.Exception, IdempotentOperationId.Exception {
 
         // Given
         var sut = createSUT();
@@ -80,11 +86,11 @@ public class CompletePasswordResetHandlerTests {
         assertThat(exception).isInstanceOf(CompletePasswordResetHandler.Exception.InvalidToken.class);
 
         then(sut.bus).should(times(1))
-            .publish(new FailedToCompleteResetPassword(command.idempotentOperationToken()));
+            .publish(new FailedToCompleteResetPassword(command.idempotentOperationId()));
     }
 
     @Test
-    void test_handle_givenValidToken_thenUpdateUserAndPublishPasswordDidResetEvent() throws ValidateTokenForPasswordResetAndGetUserId.Exception, CompletePasswordResetHandler.Exception {
+    void test_handle_givenValidToken_thenUpdateUserAndPublishPasswordDidResetEvent() throws ValidateTokenForPasswordResetAndGetUserId.Exception, CompletePasswordResetHandler.Exception, IdempotentOperationId.Exception {
 
         // Given
         final var sut = createSUT();

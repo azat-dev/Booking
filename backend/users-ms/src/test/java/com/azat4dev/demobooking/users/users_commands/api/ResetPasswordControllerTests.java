@@ -77,8 +77,8 @@ public class ResetPasswordControllerTests {
     @MockBean
     private CompletePasswordResetHandler completePasswordResetHandler;
 
-    String anyIdempotentOperationId() {
-        return UUID.randomUUID().toString();
+    IdempotentOperationId anyIdempotentOperationId() throws IdempotentOperationId.Exception {
+        return IdempotentOperationId.checkAndMakeFrom(UUID.randomUUID().toString());
     }
 
     @Test
@@ -86,7 +86,7 @@ public class ResetPasswordControllerTests {
 
         // Given
         final var request = new ResetPasswordByEmailRequest(
-            anyIdempotentOperationId(),
+            anyIdempotentOperationId().toString(),
             UserHelpers.anyValidEmail().getValue()
         );
 
@@ -114,7 +114,7 @@ public class ResetPasswordControllerTests {
 
         // Given
         final var request = new ResetPasswordByEmailRequest(
-            anyIdempotentOperationId(),
+            anyIdempotentOperationId().toString(),
             "notValidEmail"
         );
 
@@ -137,7 +137,7 @@ public class ResetPasswordControllerTests {
         final var encodedPassword = new EncodedPassword("encodedPassword");
 
         final var request = new CompleteResetPasswordRequest(
-            idempotencyKey,
+            idempotencyKey.toString(),
             newPassword,
             token
         );

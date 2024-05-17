@@ -2,10 +2,14 @@ package com.azat4dev.demobooking.users.users_commands.domain.interfaces.reposito
 
 import com.azat4dev.demobooking.users.users_commands.domain.core.values.files.UploadFileFormData;
 
+import java.net.MalformedURLException;
 import java.net.URL;
 import java.util.Optional;
 
 public interface MediaObjectsBucket {
+
+
+    MediaObject getObject(MediaObjectName objectName);
 
     URL generateUploadUrl(
         MediaObjectName objectName,

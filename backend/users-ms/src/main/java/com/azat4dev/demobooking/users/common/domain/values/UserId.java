@@ -2,7 +2,6 @@ package com.azat4dev.demobooking.users.common.domain.values;
 
 import com.azat4dev.demobooking.common.domain.DomainException;
 import com.azat4dev.demobooking.common.utils.Assert;
-import com.azat4dev.demobooking.users.users_commands.domain.core.values.files.InitialUserPhotoFileName;
 
 import java.util.UUID;
 

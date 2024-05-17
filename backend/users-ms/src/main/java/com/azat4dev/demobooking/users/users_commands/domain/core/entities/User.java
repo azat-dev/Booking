@@ -76,6 +76,10 @@ public final class User {
         this.emailVerificationStatus = newEmailVerificationStatus;
     }
 
+    public void setPhoto(UserPhotoPath photoPath) {
+        throw new UnsupportedOperationException("Not implemented yet");
+    }
+
     // Exceptions
 
     public static abstract class Exception extends DomainException {

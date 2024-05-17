@@ -2,12 +2,13 @@ package com.azat4dev.demobooking.users.users_commands.presentation.api.rest.auth
 
 import com.azat4dev.demobooking.common.presentation.ValidationException;
 import com.azat4dev.demobooking.users.users_commands.domain.core.commands.CompletePasswordReset;
+import com.azat4dev.demobooking.users.users_commands.domain.core.values.IdempotentOperationId;
 import com.azat4dev.demobooking.users.users_commands.domain.core.values.password.Password;
 import com.azat4dev.demobooking.users.users_commands.domain.core.values.password.reset.TokenForPasswordReset;
 import com.azat4dev.demobooking.users.users_commands.domain.interfaces.services.PasswordService;
 
 public record CompleteResetPasswordRequest(
-    String idempotencyKey,
+    String idempotentOperationId,
     String newPassword,
     String resetPasswordToken
 ) {
@@ -20,15 +21,11 @@ public record CompleteResetPasswordRequest(
         return ValidationException.withPath("resetPasswordToken", e);
     }
 
-    public CompletePasswordReset toCommand(PasswordService passwordService) {
+    private static ValidationException mapException(IdempotentOperationId.Exception e) {
+        return ValidationException.withPath("idempotentOperationId", e);
+    }
 
-        if (idempotencyKey.isBlank() || idempotencyKey.length() > 100) {
-            throw ValidationException.with(
-                "InvalidIdempotencyKey",
-                "idempotencyKey",
-                "idempotencyKey must be between 1 and 100 characters"
-            );
-        }
+    public CompletePasswordReset toCommand(PasswordService passwordService) {
 
         final Password password;
         try {
@@ -40,11 +37,13 @@ public record CompleteResetPasswordRequest(
 
         try {
             return new CompletePasswordReset(
-                idempotencyKey,
+                IdempotentOperationId.checkAndMakeFrom(idempotentOperationId),
                 encodedPassword,
                 TokenForPasswordReset.checkAndMakeFrom(resetPasswordToken)
             );
         } catch (TokenForPasswordReset.Exception e) {
+            throw mapException(e);
+        } catch (IdempotentOperationId.Exception e) {
             throw mapException(e);
         }
     }

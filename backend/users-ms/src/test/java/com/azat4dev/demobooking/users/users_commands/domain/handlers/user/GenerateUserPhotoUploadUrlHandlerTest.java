@@ -8,6 +8,7 @@ import com.azat4dev.demobooking.users.users_commands.domain.core.values.files.Up
 import com.azat4dev.demobooking.users.users_commands.domain.core.values.user.PhotoFileExtension;
 import com.azat4dev.demobooking.users.users_commands.domain.handlers.users.GenerateUserPhotoObjectName;
 import com.azat4dev.demobooking.users.users_commands.domain.handlers.users.GenerateUserPhotoUploadUrlHandler;
+import com.azat4dev.demobooking.users.users_commands.domain.interfaces.repositories.BucketName;
 import com.azat4dev.demobooking.users.users_commands.domain.interfaces.repositories.MediaObjectName;
 import com.azat4dev.demobooking.users.users_commands.domain.interfaces.repositories.MediaObjectsBucket;
 import org.junit.jupiter.api.Test;
@@ -66,6 +67,7 @@ public class GenerateUserPhotoUploadUrlHandlerTest {
 
         final var formData = new UploadFileFormData(
             URI.create("http://test.com").toURL(),
+            BucketName.makeWithoutChecks("testBucket"),
             objectName,
             Map.of("key", "value", "key2", "value2")
         );

@@ -2,27 +2,27 @@ package com.azat4dev.demobooking.users.users_commands.data;
 
 import com.azat4dev.demobooking.users.users_commands.data.repositories.DomainEventSerializer;
 import com.azat4dev.demobooking.users.users_commands.data.repositories.DomainEventSerializerImpl;
-import com.azat4dev.demobooking.users.users_commands.domain.core.commands.CompleteEmailVerification;
-import com.azat4dev.demobooking.users.users_commands.domain.core.commands.CompletePasswordReset;
-import com.azat4dev.demobooking.users.users_commands.domain.core.commands.ResetPasswordByEmail;
-import com.azat4dev.demobooking.users.users_commands.domain.core.commands.SendVerificationEmail;
+import com.azat4dev.demobooking.users.users_commands.domain.core.commands.*;
+import com.azat4dev.demobooking.users.users_commands.domain.core.entities.UserPhotoPath;
 import com.azat4dev.demobooking.users.users_commands.domain.core.events.*;
 import com.azat4dev.demobooking.users.users_commands.domain.core.values.IdempotentOperationId;
 import com.azat4dev.demobooking.users.users_commands.domain.core.values.email.verification.EmailVerificationToken;
 import com.azat4dev.demobooking.users.users_commands.domain.core.values.files.UploadFileFormData;
+import com.azat4dev.demobooking.users.users_commands.domain.core.values.files.UploadedFileData;
 import com.azat4dev.demobooking.users.users_commands.domain.core.values.password.EncodedPassword;
 import com.azat4dev.demobooking.users.users_commands.domain.core.values.password.reset.TokenForPasswordReset;
 import com.azat4dev.demobooking.users.users_commands.domain.core.values.user.EmailVerificationStatus;
 import com.azat4dev.demobooking.users.users_commands.domain.core.values.user.PhotoFileExtension;
+import com.azat4dev.demobooking.users.users_commands.domain.interfaces.repositories.BucketName;
 import com.azat4dev.demobooking.users.users_commands.domain.interfaces.repositories.MediaObjectName;
 import org.junit.jupiter.api.Test;
 
 import java.net.MalformedURLException;
 import java.net.URI;
-import java.net.URL;
 import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Map;
+import java.util.Optional;
 import java.util.UUID;
 
 import static com.azat4dev.demobooking.users.users_commands.domain.EventHelpers.eventsFactory;
@@ -36,8 +36,12 @@ public class DomainEventSerializerImplTests {
         return new DomainEventSerializerImpl();
     }
 
+    IdempotentOperationId anyIdempotentOperationId() throws IdempotentOperationId.Exception {
+        return IdempotentOperationId.checkAndMakeFrom(UUID.randomUUID().toString());
+    }
+
     @Test
-    void test_serialize() throws MalformedURLException, PhotoFileExtension.InvalidPhotoFileExtensionException, IdempotentOperationId.Exception {
+    void test_serialize() throws MalformedURLException, PhotoFileExtension.InvalidPhotoFileExtensionException, IdempotentOperationId.Exception, BucketName.Exception {
 
         final var events = List.of(
             eventsFactory.issue(
@@ -83,7 +87,7 @@ public class DomainEventSerializerImplTests {
             ),
             eventsFactory.issue(
                 new ResetPasswordByEmail(
-                    new IdempotentOperationId(UUID.randomUUID()),
+                    anyIdempotentOperationId(),
                     anyValidEmail()
                 )
             ),
@@ -94,7 +98,7 @@ public class DomainEventSerializerImplTests {
             ),
             eventsFactory.issue(
                 new CompletePasswordReset(
-                    "token",
+                    anyIdempotentOperationId(),
                     new EncodedPassword("password"),
                     TokenForPasswordReset.dangerouslyMakeFrom("passwordResetToken")
                 )
@@ -104,6 +108,7 @@ public class DomainEventSerializerImplTests {
                     anyValidUserId(),
                     new UploadFileFormData(
                         URI.create("http://localhost").toURL(),
+                        BucketName.makeWithoutChecks("bucketName"),
                         MediaObjectName.dangerouslyMake("objectName"),
                         Map.of("key", "value", "key2", "value2")
                     )
@@ -114,8 +119,34 @@ public class DomainEventSerializerImplTests {
                     anyValidUserId(),
                     PhotoFileExtension.checkAndMakeFrom("png"),
                     100,
-                    IdempotentOperationId.checkAndMakeFrom(UUID.randomUUID().toString()),
+                    anyIdempotentOperationId(),
                     LocalDateTime.now()
+                )
+            ),
+            eventsFactory.issue(
+                new UpdateUserPhoto(
+                    anyValidUserId(),
+                    new UploadedFileData(
+                        BucketName.checkAndMake("bucketName"),
+                        MediaObjectName.checkAndMakeFrom("objectName")
+                    )
+                )
+            ),
+
+            eventsFactory.issue(
+                new UpdatedUserPhoto(
+                    anyIdempotentOperationId(),
+                    anyValidUserId(),
+                    new UserPhotoPath(
+                        BucketName.checkAndMake("bucketName"),
+                        MediaObjectName.checkAndMakeFrom("objectName")
+                    ),
+                    Optional.of(
+                        new UserPhotoPath(
+                            BucketName.checkAndMake("bucketName1"),
+                            MediaObjectName.checkAndMakeFrom("objectName1")
+                        )
+                    )
                 )
             )
         );

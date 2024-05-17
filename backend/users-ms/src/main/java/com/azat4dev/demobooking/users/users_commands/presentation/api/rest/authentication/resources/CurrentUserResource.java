@@ -1,8 +1,7 @@
 package com.azat4dev.demobooking.users.users_commands.presentation.api.rest.authentication.resources;
 
 import com.azat4dev.demobooking.users.common.domain.values.UserId;
-import com.azat4dev.demobooking.users.users_commands.domain.core.commands.UploadNewUserPhoto;
-import com.azat4dev.demobooking.users.users_commands.domain.core.values.files.InitialUserPhotoFileName;
+import com.azat4dev.demobooking.users.users_commands.domain.core.commands.UpdateUserPhoto;
 import com.azat4dev.demobooking.users.users_commands.domain.handlers.users.GenerateUserPhotoUploadUrlHandler;
 import com.azat4dev.demobooking.users.users_commands.domain.handlers.users.UpdateUserPhotoHandler;
 import com.azat4dev.demobooking.users.users_commands.presentation.api.rest.authentication.entities.GenerateUploadUserPhotoUrlRequest;
@@ -28,5 +27,5 @@ public interface CurrentUserResource {
     ResponseEntity<String> uploadNewUserPhoto(
         @RequestParam("photo") MultipartFile photo,
         JwtAuthenticationToken jwtAuthenticationToken
-    ) throws UserId.WrongFormatException, InitialUserPhotoFileName.Exception, UploadNewUserPhoto.MaxSizeException, UpdateUserPhotoHandler.Exception;
+    ) throws UserId.WrongFormatException, UpdateUserPhotoHandler.Exception;
 }

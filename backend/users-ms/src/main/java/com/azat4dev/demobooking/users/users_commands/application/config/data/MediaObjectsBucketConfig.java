@@ -1,6 +1,7 @@
 package com.azat4dev.demobooking.users.users_commands.application.config.data;
 
 import com.azat4dev.demobooking.users.users_commands.data.repositories.MinioMediaObjectsBucket;
+import com.azat4dev.demobooking.users.users_commands.domain.interfaces.repositories.BucketName;
 import io.minio.MinioClient;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.beans.factory.annotation.Value;
@@ -15,13 +16,22 @@ public class MediaObjectsBucketConfig {
     @Value("${app.objects_storage.bucket.users-photo.endpoint}")
     URL userPhotosBucketEndpoint;
 
+    @Bean("usersPhotoBucketName")
+    BucketName usersPhotoBucketName(
+        @Value("${app.objects_storage.bucket.users-photo.name}")
+        String bucketName
+    ) {
+        return BucketName.makeWithoutChecks(bucketName);
+    }
+
 
     @Bean
     @Qualifier("usersPhotoBucket")
     MinioMediaObjectsBucket minioMediaObjectsBucket(
         @Qualifier("usersPhotoClient")
         MinioClient minioClient,
-        @Value("${app.objects_storage.bucket.users-photo.name}") String bucketName
+        @Qualifier("usersPhotoBucketName")
+        BucketName bucketName
     ) {
         return new MinioMediaObjectsBucket(
             userPhotosBucketEndpoint,

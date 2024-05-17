@@ -5,8 +5,7 @@ import com.azat4dev.demobooking.common.domain.event.EventIdGenerator;
 import com.azat4dev.demobooking.common.presentation.ControllerException;
 import com.azat4dev.demobooking.common.utils.TimeProvider;
 import com.azat4dev.demobooking.users.common.domain.values.UserId;
-import com.azat4dev.demobooking.users.users_commands.domain.core.commands.UploadNewUserPhoto;
-import com.azat4dev.demobooking.users.users_commands.domain.core.values.files.InitialUserPhotoFileName;
+import com.azat4dev.demobooking.users.users_commands.domain.core.commands.UpdateUserPhoto;
 import com.azat4dev.demobooking.users.users_commands.domain.handlers.users.GenerateUserPhotoUploadUrlHandler;
 import com.azat4dev.demobooking.users.users_commands.domain.handlers.users.UpdateUserPhotoHandler;
 import com.azat4dev.demobooking.users.users_commands.presentation.api.rest.authentication.entities.GenerateUploadUserPhotoUrlRequest;
@@ -47,11 +46,6 @@ public class CurrentUserController implements CurrentUserResource {
         throw ControllerException.createError(HttpStatus.INTERNAL_SERVER_ERROR, e);
     }
 
-    @ExceptionHandler({InitialUserPhotoFileName.Exception.class, UploadNewUserPhoto.MaxSizeException.class})
-    public ResponseEntity<String> handleException(DomainException e) {
-        throw ControllerException.createError(HttpStatus.BAD_REQUEST, e);
-    }
-
     public ResponseEntity<GenerateUploadUserPhotoUrlResponse> generateUploadUserPhototUrl(
         @RequestBody GenerateUploadUserPhotoUrlRequest requestBody,
         JwtAuthenticationToken jwtAuthenticationToken
@@ -64,6 +58,7 @@ public class CurrentUserController implements CurrentUserResource {
 
         return ResponseEntity.ok(new GenerateUploadUserPhotoUrlResponse(
             result.formData().url().toString(),
+            result.formData().bucketName().toString(),
             result.formData().objectName().toString(),
             result.formData().value())
         );
@@ -71,30 +66,8 @@ public class CurrentUserController implements CurrentUserResource {
 
     @Override
     public ResponseEntity<String> uploadNewUserPhoto(MultipartFile photo, JwtAuthenticationToken jwtAuthenticationToken)
-        throws UserId.WrongFormatException, InitialUserPhotoFileName.Exception,
-        UploadNewUserPhoto.MaxSizeException, UpdateUserPhotoHandler.Exception {
+        throws UserId.WrongFormatException {
 
-        final UserId userId = UserId.checkAndMakeFrom(jwtAuthenticationToken.getName());
-        final InitialUserPhotoFileName fileName = InitialUserPhotoFileName.checkAndMakeFrom(photo.getOriginalFilename());
-
-        final UploadNewUserPhoto command = UploadNewUserPhoto.checkAndMakeFrom(
-            userId,
-            photo.getSize(),
-            fileName,
-            () -> {
-                try {
-                    return photo.getInputStream().readAllBytes();
-                } catch (IOException e) {
-                    throw new RuntimeException(e);
-                }
-            }
-        );
-
-        updateUserPhotoHandler.handle(
-            command,
-            eventIdGenerator.generate(),
-            timeProvider.currentTime()
-        );
-        return ResponseEntity.ok("Photo updated");
+        return null;
     }
 }

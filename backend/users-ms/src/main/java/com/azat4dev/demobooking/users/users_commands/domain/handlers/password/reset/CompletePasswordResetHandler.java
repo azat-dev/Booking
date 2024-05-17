@@ -25,7 +25,7 @@ public final class CompletePasswordResetHandler implements CommandHandler<Comple
     public void handle(CompletePasswordReset command, EventId eventId, LocalDateTime issuedAt) throws Exception {
 
         final Runnable publishFailedEvent = () -> {
-            bus.publish(new FailedToCompleteResetPassword(command.idempotentOperationToken()));
+            bus.publish(new FailedToCompleteResetPassword(command.idempotentOperationId()));
         };
 
         try {
