@@ -7,6 +7,17 @@ public record IdempotentOperationId (
 ) {
 
     public static IdempotentOperationId makeFromString(String value) {
+        try {
         return new IdempotentOperationId(UUID.fromString(value));
+        } catch (IllegalArgumentException e) {
+            throw new InvalidIdempotentOperationIdException();
+        }
+    }
+
+    // Exceptions
+    public static final class InvalidIdempotentOperationIdException extends RuntimeException {
+        public InvalidIdempotentOperationIdException() {
+            super("Invalid idempotent operation id. Should be UUID");
+        }
     }
 }

@@ -41,7 +41,7 @@ public class PhotoFileExtension extends FileExtension {
 
     public static final class InvalidPhotoFileExtensionException extends RuntimeException {
         public InvalidPhotoFileExtensionException() {
-            super("Invalid photo file extension");
+            super("Invalid photo file extension. Allowed extensions: " + Arrays.toString(ALLOWED_EXTENSIONS));
         }
     }
 }

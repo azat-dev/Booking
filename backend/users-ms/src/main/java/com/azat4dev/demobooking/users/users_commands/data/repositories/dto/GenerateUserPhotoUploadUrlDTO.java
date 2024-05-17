@@ -2,12 +2,9 @@ package com.azat4dev.demobooking.users.users_commands.data.repositories.dto;
 
 import com.azat4dev.demobooking.users.common.domain.values.UserId;
 import com.azat4dev.demobooking.users.users_commands.domain.core.commands.GenerateUserPhotoUploadUrl;
-import com.azat4dev.demobooking.users.users_commands.domain.core.events.GeneratedUserPhotoUploadUrl;
 import com.azat4dev.demobooking.users.users_commands.domain.core.values.IdempotentOperationId;
 import com.azat4dev.demobooking.users.users_commands.domain.core.values.user.PhotoFileExtension;
 
-import java.net.MalformedURLException;
-import java.net.URL;
 import java.time.LocalDateTime;
 
 public record GenerateUserPhotoUploadUrlDTO(
