@@ -14,9 +14,11 @@ import com.azat4dev.demobooking.users.users_commands.domain.core.values.password
 import com.azat4dev.demobooking.users.users_commands.domain.core.values.password.reset.TokenForPasswordReset;
 import com.azat4dev.demobooking.users.users_commands.domain.core.values.user.EmailVerificationStatus;
 import com.azat4dev.demobooking.users.users_commands.domain.core.values.user.PhotoFileExtension;
+import com.azat4dev.demobooking.users.users_commands.domain.interfaces.repositories.MediaObjectName;
 import org.junit.jupiter.api.Test;
 
 import java.net.MalformedURLException;
+import java.net.URI;
 import java.net.URL;
 import java.time.LocalDateTime;
 import java.util.List;
@@ -101,6 +103,8 @@ public class DomainEventSerializerImplTests {
                 new GeneratedUserPhotoUploadUrl(
                     anyValidUserId(),
                     new UploadFileFormData(
+                        URI.create("http://localhost").toURL(),
+                        MediaObjectName.dangerouslyMake("objectName"),
                         Map.of("key", "value", "key2", "value2")
                     )
                 )
