@@ -1,6 +1,5 @@
 package com.azat4dev.demobooking.users.users_commands.data.repositories;
 
-import com.azat4dev.demobooking.users.users_commands.domain.core.values.files.FileExtension;
 import com.azat4dev.demobooking.users.users_commands.domain.interfaces.repositories.FileKey;
 import com.azat4dev.demobooking.users.users_commands.domain.interfaces.repositories.MediaObjectName;
 import com.azat4dev.demobooking.users.users_commands.domain.interfaces.repositories.MediaObjectsBucket;
@@ -18,14 +17,14 @@ public class MinioMediaObjectsBucket implements MediaObjectsBucket {
     private final String bucketName;
 
     @Override
-    public URL generateUploadUrl(MediaObjectName objectName, FileExtension fileExtension, int expiresInSeconds) {
+    public URL generateUploadUrl(MediaObjectName objectName, int expiresInSeconds) {
 
         try {
             final var url = minioClient.getPresignedObjectUrl(
                 GetPresignedObjectUrlArgs.builder()
                     .bucket(bucketName)
                     .object(objectName.toString())
-                    .method(Method.POST)
+                    .method(Method.PUT)
                     .expiry(expiresInSeconds)
                     .build()
             );

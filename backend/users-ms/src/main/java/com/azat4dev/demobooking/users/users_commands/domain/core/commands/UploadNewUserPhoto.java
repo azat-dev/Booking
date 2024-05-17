@@ -12,7 +12,7 @@ import java.util.function.Supplier;
 
 
 @RequiredArgsConstructor(access = AccessLevel.PRIVATE)
-public class UpdateUserPhoto implements Command {
+public class UploadNewUserPhoto implements Command {
 
     public static final long MAX_SIZE = 1024 * 1024;
 
@@ -20,18 +20,18 @@ public class UpdateUserPhoto implements Command {
     private final InitialUserPhotoFileName fileName;
     private final byte[] photo;
 
-    public static UpdateUserPhoto checkAndMakeFrom(
+    public static UploadNewUserPhoto checkAndMakeFrom(
         UserId userId,
         long size,
         InitialUserPhotoFileName fileName,
         Supplier<byte[]> photoSupplier
     ) throws MaxSizeException {
         Assert.isTrue(size <= MAX_SIZE, MaxSizeException::new);
-        return new UpdateUserPhoto(userId, fileName, photoSupplier.get());
+        return new UploadNewUserPhoto(userId, fileName, photoSupplier.get());
     }
 
-    public static UpdateUserPhoto dangerouslyMake(UserId userId, InitialUserPhotoFileName fileName, byte[] photo) {
-        return new UpdateUserPhoto(userId, fileName, photo);
+    public static UploadNewUserPhoto dangerouslyMake(UserId userId, InitialUserPhotoFileName fileName, byte[] photo) {
+        return new UploadNewUserPhoto(userId, fileName, photo);
     }
 
     public static final class MaxSizeException extends DomainException {

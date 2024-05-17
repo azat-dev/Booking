@@ -18,11 +18,10 @@ public final class GenerateUserPhotoUploadUrlHandler {
 
         try {
 
-            final var objectName = generateUserPhotoObjectName.execute(command.userId());
+            final var objectName = generateUserPhotoObjectName.execute(command.userId(), command.fileExtension());
 
             final var url = usersPhotoBucket.generateUploadUrl(
                 objectName,
-                command.fileExtension(),
                 expireInSeconds
             );
 

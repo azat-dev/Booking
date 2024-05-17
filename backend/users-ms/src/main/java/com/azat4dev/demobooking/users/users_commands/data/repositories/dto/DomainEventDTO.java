@@ -3,7 +3,6 @@ package com.azat4dev.demobooking.users.users_commands.data.repositories.dto;
 import com.azat4dev.demobooking.common.domain.event.DomainEventNew;
 import com.azat4dev.demobooking.common.domain.event.DomainEventPayload;
 import com.azat4dev.demobooking.common.domain.event.EventId;
-import com.azat4dev.demobooking.users.users_commands.domain.core.events.UserVerifiedEmail;
 import com.fasterxml.jackson.annotation.JsonSubTypes;
 import com.fasterxml.jackson.annotation.JsonTypeInfo;
 import com.fasterxml.jackson.databind.DatabindContext;
@@ -31,7 +30,7 @@ public record DomainEventDTO(
     @JsonTypeIdResolver(DomainEventTypeResolver.class)
     @JsonSubTypes({
         @JsonSubTypes.Type(value = UserCreatedDTO.class),
-        @JsonSubTypes.Type(value = UserVerifiedEmail.class),
+        @JsonSubTypes.Type(value = UserVerifiedEmailDTO.class),
         @JsonSubTypes.Type(value = SendVerificationEmailDTO.class),
         @JsonSubTypes.Type(value = VerificationEmailSentDTO.class),
         @JsonSubTypes.Type(value = FailedToSendVerificationEmailDTO.class),

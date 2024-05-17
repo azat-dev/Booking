@@ -30,6 +30,10 @@ public class FileExtension {
         return new FileExtension(cleanedValue);
     }
 
+    public String toString() {
+        return value;
+    }
+
     // Exceptions
 
     public static final class EmptyFileExtensionException extends DomainException {
