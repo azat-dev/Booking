@@ -1,5 +1,6 @@
 package com.azat4dev.demobooking.users.users_commands.application.config;
 
+import com.azat4dev.demobooking.common.domain.event.DomainEventsFactory;
 import com.azat4dev.demobooking.common.utils.SystemTimeProvider;
 import com.azat4dev.demobooking.common.utils.TimeProvider;
 import com.azat4dev.demobooking.users.common.presentation.security.services.jwt.JwtDataEncoder;
@@ -63,11 +64,13 @@ public class DataConfig {
     @Bean
     OutboxEventsRepository outboxEventsRepository(
         DomainEventSerializer domainEventSerializer,
-        OutboxEventsDao outboxEventsDao
+        OutboxEventsDao outboxEventsDao,
+        DomainEventsFactory domainEventsFactory
     ) {
         return new OutboxEventsRepositoryImpl(
             domainEventSerializer,
-            outboxEventsDao
+            outboxEventsDao,
+            domainEventsFactory
         );
     }
 

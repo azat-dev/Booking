@@ -1,6 +1,8 @@
 package com.azat4dev.demobooking.users.users_commands.data.repositories;
 
 import com.azat4dev.demobooking.common.domain.event.DomainEventNew;
+import com.azat4dev.demobooking.common.domain.event.DomainEventPayload;
+import com.azat4dev.demobooking.common.domain.event.DomainEventsFactory;
 import com.azat4dev.demobooking.common.domain.event.EventId;
 import com.azat4dev.demobooking.users.users_commands.data.entities.OutboxEventData;
 import com.azat4dev.demobooking.users.users_commands.data.repositories.dao.OutboxEventsDao;
@@ -14,11 +16,15 @@ public class OutboxEventsRepositoryImpl implements OutboxEventsRepository {
 
     private final DomainEventSerializer domainEventSerializer;
     private final OutboxEventsDao outboxEventsDao;
+    private final DomainEventsFactory domainEventsFactory;
 
     @Override
-    public void publish(DomainEventNew<?> event) {
+    public void publish(DomainEventPayload event) {
 
-        final var eventRecord = OutboxEventData.makeFromDomain(event, this.domainEventSerializer);
+        final var eventRecord = OutboxEventData.makeFromDomain(
+            domainEventsFactory.issue(event),
+            this.domainEventSerializer
+        );
         this.outboxEventsDao.put(eventRecord);
     }
 

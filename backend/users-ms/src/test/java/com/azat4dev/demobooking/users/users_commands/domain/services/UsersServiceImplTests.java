@@ -1,8 +1,5 @@
 package com.azat4dev.demobooking.users.users_commands.domain.services;
 
-import com.azat4dev.demobooking.common.domain.event.DomainEventNew;
-import com.azat4dev.demobooking.common.domain.event.EventId;
-import com.azat4dev.demobooking.common.domain.event.EventIdGenerator;
 import com.azat4dev.demobooking.common.utils.TimeProvider;
 import com.azat4dev.demobooking.users.users_commands.domain.UserHelpers;
 import com.azat4dev.demobooking.users.users_commands.domain.core.commands.CreateUser;
@@ -38,7 +35,6 @@ public class UsersServiceImplTests {
         given(unitOfWorkFactory.make()).willReturn(unitOfWork);
 
         final var outboxEventsRepository = mock(OutboxEventsRepository.class);
-        final var eventIdGenerator = mock(EventIdGenerator.class);
 
         final var markOutboxNeedsSynchronization = mock(UsersServiceImpl.MarkOutboxNeedsSynchronization.class);
 
@@ -51,14 +47,12 @@ public class UsersServiceImplTests {
             new UsersServiceImpl(
                 timeProvider,
                 markOutboxNeedsSynchronization,
-                unitOfWorkFactory,
-                eventIdGenerator
+                unitOfWorkFactory
             ),
             unitOfWork,
             outboxEventsRepository,
             usersRepository,
             timeProvider,
-            eventIdGenerator,
             markOutboxNeedsSynchronization
         );
     }
@@ -92,15 +86,11 @@ public class UsersServiceImplTests {
         final var currentTime = anyDateTime();
         final var sut = createSUT();
         final var validCommand = anyCreateUserCommand();
-        final var expectedEventId = EventId.dangerouslyCreateFrom("expectedEventId");
 
         willDoNothing().given(sut.outboxEventsRepository).publish(any());
 
         given(sut.timeProvider.currentTime())
             .willReturn(currentTime);
-
-        given(sut.eventIdGenerator.generate())
-            .willReturn(expectedEventId);
 
         // When
         try {
@@ -110,9 +100,7 @@ public class UsersServiceImplTests {
         }
 
         // Then
-        final Consumer<DomainEventNew<UserCreated>> assertUserCreatedEvent = (event) -> {
-
-            final var payload = event.payload();
+        final Consumer<UserCreated> assertUserCreatedEvent = (payload) -> {
 
             assertThat(payload.userId()).isEqualTo(validCommand.userId());
             assertThat(payload.email()).isEqualTo(validCommand.email());
@@ -173,7 +161,6 @@ public class UsersServiceImplTests {
         OutboxEventsRepository outboxEventsRepository,
         UsersRepository usersRepository,
         TimeProvider timeProvider,
-        EventIdGenerator eventIdGenerator,
         UsersServiceImpl.MarkOutboxNeedsSynchronization markOutboxNeedsSynchronization
     ) {
     }

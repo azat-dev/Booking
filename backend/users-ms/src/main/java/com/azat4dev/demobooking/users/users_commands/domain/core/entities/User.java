@@ -10,6 +10,7 @@ import com.azat4dev.demobooking.users.users_commands.domain.core.values.user.Ful
 import lombok.*;
 
 import java.time.LocalDateTime;
+import java.util.Optional;
 
 
 @EqualsAndHashCode(of = "id")
@@ -78,6 +79,10 @@ public final class User {
 
     public void setPhoto(UserPhotoPath photoPath) {
         throw new UnsupportedOperationException("Not implemented yet");
+    }
+
+    public Optional<UserPhotoPath> getPhoto() {
+        return null;
     }
 
     // Exceptions

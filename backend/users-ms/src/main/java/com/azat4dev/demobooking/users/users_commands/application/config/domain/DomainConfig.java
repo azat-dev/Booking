@@ -51,14 +51,12 @@ public class DomainConfig {
     public UsersService usersService(
         TimeProvider timeProvider,
         UnitOfWorkFactory unitOfWorkFactory,
-        OutboxEventsPublisher outboxEventsPublisher,
-        EventIdGenerator eventIdGenerator
+        OutboxEventsPublisher outboxEventsPublisher
     ) {
         return new UsersServiceImpl(
             timeProvider,
             outboxEventsPublisher::publishEvents,
-            unitOfWorkFactory,
-            eventIdGenerator
+            unitOfWorkFactory
         );
     }
 
