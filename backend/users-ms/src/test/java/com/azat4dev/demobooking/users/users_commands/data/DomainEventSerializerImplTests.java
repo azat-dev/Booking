@@ -9,6 +9,7 @@ import com.azat4dev.demobooking.users.users_commands.domain.core.commands.SendVe
 import com.azat4dev.demobooking.users.users_commands.domain.core.events.*;
 import com.azat4dev.demobooking.users.users_commands.domain.core.values.IdempotentOperationId;
 import com.azat4dev.demobooking.users.users_commands.domain.core.values.email.verification.EmailVerificationToken;
+import com.azat4dev.demobooking.users.users_commands.domain.core.values.files.UploadFileFormData;
 import com.azat4dev.demobooking.users.users_commands.domain.core.values.password.EncodedPassword;
 import com.azat4dev.demobooking.users.users_commands.domain.core.values.password.reset.TokenForPasswordReset;
 import com.azat4dev.demobooking.users.users_commands.domain.core.values.user.EmailVerificationStatus;
@@ -19,6 +20,7 @@ import java.net.MalformedURLException;
 import java.net.URL;
 import java.time.LocalDateTime;
 import java.util.List;
+import java.util.Map;
 import java.util.UUID;
 
 import static com.azat4dev.demobooking.users.users_commands.domain.EventHelpers.eventsFactory;
@@ -98,7 +100,9 @@ public class DomainEventSerializerImplTests {
             eventsFactory.issue(
                 new GeneratedUserPhotoUploadUrl(
                     anyValidUserId(),
-                    new URL("https://example.com")
+                    new UploadFileFormData(
+                        Map.of("key", "value", "key2", "value2")
+                    )
                 )
             ),
             eventsFactory.issue(

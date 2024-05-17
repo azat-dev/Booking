@@ -3,6 +3,7 @@ package com.azat4dev.demobooking.users.users_commands.presentation.api.rest.auth
 import com.azat4dev.demobooking.users.common.domain.values.UserId;
 import com.azat4dev.demobooking.users.users_commands.domain.core.commands.UploadNewUserPhoto;
 import com.azat4dev.demobooking.users.users_commands.domain.core.values.files.InitialUserPhotoFileName;
+import com.azat4dev.demobooking.users.users_commands.domain.handlers.users.GenerateUserPhotoUploadUrlHandler;
 import com.azat4dev.demobooking.users.users_commands.domain.handlers.users.UpdateUserPhotoHandler;
 import com.azat4dev.demobooking.users.users_commands.presentation.api.rest.authentication.entities.GenerateUploadUserPhotoUrlRequest;
 import com.azat4dev.demobooking.users.users_commands.presentation.api.rest.authentication.entities.GenerateUploadUserPhotoUrlResponse;
@@ -21,7 +22,7 @@ public interface CurrentUserResource {
     ResponseEntity<GenerateUploadUserPhotoUrlResponse> generateUploadUserPhototUrl(
         @RequestBody GenerateUploadUserPhotoUrlRequest requestBody,
         JwtAuthenticationToken jwtAuthenticationToken
-    ) throws UserId.WrongFormatException;
+    ) throws UserId.WrongFormatException, GenerateUserPhotoUploadUrlHandler.Exception;
 
     @PostMapping("/update-photo")
     ResponseEntity<String> uploadNewUserPhoto(

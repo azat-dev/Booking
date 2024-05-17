@@ -42,6 +42,11 @@ public class CurrentUserController implements CurrentUserResource {
         throw ControllerException.createError(HttpStatus.UNAUTHORIZED, "invalidToken", "Invalid token");
     }
 
+    @ExceptionHandler(GenerateUserPhotoUploadUrlHandler.Exception.class)
+    public ResponseEntity<String> handleGenerateUserPhotoUploadUrlException(GenerateUserPhotoUploadUrlHandler.Exception e) {
+        throw ControllerException.createError(HttpStatus.INTERNAL_SERVER_ERROR, e);
+    }
+
     @ExceptionHandler({InitialUserPhotoFileName.Exception.class, UploadNewUserPhoto.MaxSizeException.class})
     public ResponseEntity<String> handleException(DomainException e) {
         throw ControllerException.createError(HttpStatus.BAD_REQUEST, e);
@@ -50,20 +55,24 @@ public class CurrentUserController implements CurrentUserResource {
     public ResponseEntity<GenerateUploadUserPhotoUrlResponse> generateUploadUserPhototUrl(
         @RequestBody GenerateUploadUserPhotoUrlRequest requestBody,
         JwtAuthenticationToken jwtAuthenticationToken
-    ) throws UserId.WrongFormatException {
+    ) throws UserId.WrongFormatException, GenerateUserPhotoUploadUrlHandler.Exception {
 
-        final UserId userId= UserId.checkAndMakeFrom(jwtAuthenticationToken.getName());
+        final UserId userId = UserId.checkAndMakeFrom(jwtAuthenticationToken.getName());
 
         final var command = requestBody.toCommand(userId, timeProvider);
         final var result = generateUserPhotoUploadUrlHandler.handle(command);
 
-        return ResponseEntity.ok(new GenerateUploadUserPhotoUrlResponse(result.url().toString()));
+        return ResponseEntity.ok(new GenerateUploadUserPhotoUrlResponse(
+            result.formData().url().toString(),
+            result.formData().objectName().toString(),
+            result.formData().value())
+        );
     }
 
     @Override
     public ResponseEntity<String> uploadNewUserPhoto(MultipartFile photo, JwtAuthenticationToken jwtAuthenticationToken)
         throws UserId.WrongFormatException, InitialUserPhotoFileName.Exception,
-            UploadNewUserPhoto.MaxSizeException, UpdateUserPhotoHandler.Exception {
+        UploadNewUserPhoto.MaxSizeException, UpdateUserPhotoHandler.Exception {
 
         final UserId userId = UserId.checkAndMakeFrom(jwtAuthenticationToken.getName());
         final InitialUserPhotoFileName fileName = InitialUserPhotoFileName.checkAndMakeFrom(photo.getOriginalFilename());
