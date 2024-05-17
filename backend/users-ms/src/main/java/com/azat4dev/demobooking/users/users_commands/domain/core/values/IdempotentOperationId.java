@@ -8,6 +8,11 @@ public record IdempotentOperationId(
     UUID value
 ) {
 
+    @Override
+    public String toString() {
+        return value.toString();
+    }
+
     public static IdempotentOperationId checkAndMakeFrom(String value) throws Exception {
         try {
             return new IdempotentOperationId(UUID.fromString(value));

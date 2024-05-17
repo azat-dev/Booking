@@ -22,11 +22,13 @@ public final class BucketName {
     }
 
     public static BucketName checkAndMake(String value) throws Exception {
-        Assert.notNull(value, Exception.WrongFormat::new);
-        Assert.notBlank(value, Exception.WrongFormat::new);
-        Assert.hasPattern(value, BUCKET_NAME_REGEX, Exception.WrongFormat::new);
 
-        return new BucketName(value);
+        final var cleanedValue = value.toLowerCase();
+        Assert.notNull(cleanedValue, Exception.WrongFormat::new);
+        Assert.notBlank(cleanedValue, Exception.WrongFormat::new);
+        Assert.hasPattern(cleanedValue, BUCKET_NAME_REGEX, Exception.WrongFormat::new);
+
+        return new BucketName(cleanedValue);
     }
 
     @Override

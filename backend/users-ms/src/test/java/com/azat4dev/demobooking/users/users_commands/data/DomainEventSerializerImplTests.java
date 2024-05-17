@@ -125,9 +125,10 @@ public class DomainEventSerializerImplTests {
             ),
             eventsFactory.issue(
                 new UpdateUserPhoto(
+                    anyIdempotentOperationId(),
                     anyValidUserId(),
                     new UploadedFileData(
-                        BucketName.checkAndMake("bucketName"),
+                        BucketName.checkAndMake("bucketname"),
                         MediaObjectName.checkAndMakeFrom("objectName")
                     )
                 )
@@ -138,14 +139,24 @@ public class DomainEventSerializerImplTests {
                     anyIdempotentOperationId(),
                     anyValidUserId(),
                     new UserPhotoPath(
-                        BucketName.checkAndMake("bucketName"),
+                        BucketName.checkAndMake("bucketname"),
                         MediaObjectName.checkAndMakeFrom("objectName")
                     ),
                     Optional.of(
                         new UserPhotoPath(
-                            BucketName.checkAndMake("bucketName1"),
+                            BucketName.checkAndMake("bucketname1"),
                             MediaObjectName.checkAndMakeFrom("objectName1")
                         )
+                    )
+                )
+            ),
+            eventsFactory.issue(
+                new FailedUpdateUserPhoto(
+                    anyIdempotentOperationId(),
+                    anyValidUserId(),
+                    new UploadedFileData(
+                        BucketName.checkAndMake("bucketName"),
+                        MediaObjectName.checkAndMakeFrom("objectName")
                     )
                 )
             )

@@ -47,7 +47,7 @@ public class DomainEventSerializerImpl implements DomainEventSerializer {
             final var dto = this.objectMapper.readValue(event, DomainEventDTO.class);
             return dto.toDomain();
         } catch (Exception e) {
-            throw new RuntimeException(e);
+            throw new RuntimeException(event.toString(), e);
         }
     }
 }

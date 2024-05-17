@@ -3,6 +3,8 @@ package com.azat4dev.demobooking.users.users_commands.data.repositories.dto;
 import com.azat4dev.demobooking.common.domain.event.DomainEventNew;
 import com.azat4dev.demobooking.common.domain.event.DomainEventPayload;
 import com.azat4dev.demobooking.common.domain.event.EventId;
+import com.azat4dev.demobooking.users.users_commands.domain.core.commands.UpdateUserPhoto;
+import com.azat4dev.demobooking.users.users_commands.domain.core.events.UpdatedUserPhoto;
 import com.fasterxml.jackson.annotation.JsonSubTypes;
 import com.fasterxml.jackson.annotation.JsonTypeInfo;
 import com.fasterxml.jackson.databind.DatabindContext;
@@ -42,6 +44,9 @@ public record DomainEventDTO(
         @JsonSubTypes.Type(value = GenerateUserPhotoUploadUrlDTO.class),
         @JsonSubTypes.Type(value = GeneratedUserPhotoUploadUrlDTO.class),
         @JsonSubTypes.Type(value = FailedGenerateUserPhotoUploadUrlDTO.class),
+        @JsonSubTypes.Type(value = UpdatedUserPhotoDTO.class),
+        @JsonSubTypes.Type(value = UpdateUserPhotoDTO.class),
+        @JsonSubTypes.Type(value = FailedUpdateUserPhotoDTO.class),
     })
     DomainEventPayloadDTO payload
 ) implements Serializable {
@@ -58,6 +63,10 @@ public record DomainEventDTO(
                 .orElseThrow(() -> new RuntimeException("Can't serialize. Unexpected domain event payload type: " + payloadClass));
 
             final var fromDomainMethod = dtoClass.getDeclaredMethod("fromDomain", payload.getClass());
+            assert fromDomainMethod != null;
+            assert payload != null;
+            System.out.println(fromDomainMethod);
+            System.out.println(payload.getClass());
             return (DomainEventPayloadDTO) fromDomainMethod.invoke(null, payload);
         } catch (NoSuchFieldException e) {
             throw new RuntimeException(e);
