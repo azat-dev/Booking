@@ -15,7 +15,6 @@ import org.junit.jupiter.api.Test;
 import java.net.URI;
 import java.time.LocalDateTime;
 import java.util.Map;
-import java.util.Optional;
 import java.util.UUID;
 
 import static org.assertj.core.api.Assertions.assertThat;
@@ -88,11 +87,11 @@ public class GenerateUserPhotoUploadUrlHandlerTest {
 
         then(sut.usersPhotoBucket)
             .should(times(1))
-                .generateUploadFormData(
-                    eq(objectName),
-                    eq(sut.expiresIn),
-                    any()
-                );
+            .generateUploadFormData(
+                eq(objectName),
+                eq(sut.expiresIn),
+                any()
+            );
 
         then(sut.bus).should(times(1))
             .publish(result);

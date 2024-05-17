@@ -23,7 +23,18 @@ public final class GenerateUserPhotoUploadUrlHandler {
 
     public GeneratedUserPhotoUploadUrl handle(GenerateUserPhotoUploadUrl command) throws Exception {
 
+        final Runnable publishFailedEvent = () -> {
+            bus.publish(new FailedGenerateUserPhotoUploadUrl(
+                command.getUserId(),
+                command.getFileExtension(),
+                command.getFileSize(),
+                command.getOperationId(),
+                command.getRequestedAt()
+            ));
+        };
+
         if (command.getFileSize() < MIN_FILE_SIZE || command.getFileSize() > MAX_FILE_SIZE) {
+            publishFailedEvent.run();
             throw new Exception.WrongFileSize();
         }
 
@@ -52,13 +63,7 @@ public final class GenerateUserPhotoUploadUrlHandler {
 
         } catch (Throwable e) {
 
-            bus.publish(new FailedGenerateUserPhotoUploadUrl(
-                command.getUserId(),
-                command.getFileExtension(),
-                command.getFileSize(),
-                command.getOperationId(),
-                command.getRequestedAt()
-            ));
+            publishFailedEvent.run();
             throw new Exception.FailedGenerateUserPhotoUploadUrl();
         }
     }
