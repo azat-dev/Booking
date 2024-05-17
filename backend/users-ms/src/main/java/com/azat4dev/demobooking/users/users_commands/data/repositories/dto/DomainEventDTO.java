@@ -3,8 +3,7 @@ package com.azat4dev.demobooking.users.users_commands.data.repositories.dto;
 import com.azat4dev.demobooking.common.domain.event.DomainEventNew;
 import com.azat4dev.demobooking.common.domain.event.DomainEventPayload;
 import com.azat4dev.demobooking.common.domain.event.EventId;
-import com.azat4dev.demobooking.users.users_commands.domain.core.commands.*;
-import com.azat4dev.demobooking.users.users_commands.domain.core.events.*;
+import com.azat4dev.demobooking.users.users_commands.domain.core.events.UserVerifiedEmail;
 import com.fasterxml.jackson.annotation.JsonSubTypes;
 import com.fasterxml.jackson.annotation.JsonTypeInfo;
 import com.fasterxml.jackson.databind.DatabindContext;
@@ -17,7 +16,9 @@ import com.fasterxml.jackson.databind.jsontype.impl.TypeIdResolverBase;
 
 import java.io.IOException;
 import java.io.Serializable;
+import java.lang.reflect.InvocationTargetException;
 import java.time.LocalDateTime;
+import java.util.Arrays;
 
 public record DomainEventDTO(
     String id,
@@ -30,6 +31,7 @@ public record DomainEventDTO(
     @JsonTypeIdResolver(DomainEventTypeResolver.class)
     @JsonSubTypes({
         @JsonSubTypes.Type(value = UserCreatedDTO.class),
+        @JsonSubTypes.Type(value = UserVerifiedEmail.class),
         @JsonSubTypes.Type(value = SendVerificationEmailDTO.class),
         @JsonSubTypes.Type(value = VerificationEmailSentDTO.class),
         @JsonSubTypes.Type(value = FailedToSendVerificationEmailDTO.class),
@@ -47,56 +49,25 @@ public record DomainEventDTO(
 
     private static DomainEventPayloadDTO serialize(DomainEventPayload payload) {
 
-        switch (payload) {
-            case UserCreated inst -> {
-                return UserCreatedDTO.fromDomain(inst);
-            }
-            case SendVerificationEmail inst -> {
-                return SendVerificationEmailDTO.fromDomain(inst);
-            }
-            case VerificationEmailSent inst -> {
-                return VerificationEmailSentDTO.fromDomain(inst);
-            }
-            case FailedToSendVerificationEmail inst -> {
-                return FailedToSendVerificationEmailDTO.fromDomain(inst);
-            }
-            case UserVerifiedEmail inst -> {
-                return UserVerifiedEmailDTO.fromDomain(inst);
-            }
-            case CompleteEmailVerification inst -> {
-                return CompleteEmailVerificationDTO.fromDomain(inst);
-            }
+        final var payloadClass = payload.getClass().getSimpleName();
+        try {
+            final var subtypes = DomainEventDTO.class.getDeclaredField("payload").getAnnotation(JsonSubTypes.class).value();
+            final var dtoClass = Arrays.stream(subtypes)
+                .map(subtype -> subtype.value())
+                .filter(subtype -> subtype.getSimpleName().equals(payloadClass + "DTO"))
+                .findFirst()
+                .orElseThrow(() -> new RuntimeException("Can't serialize. Unexpected domain event payload type: " + payloadClass));
 
-            case SentEmailForPasswordReset inst -> {
-                return SentEmailForPasswordResetDTO.fromDomain(inst);
-            }
-
-            case ResetPasswordByEmail inst -> {
-                return ResetPasswordByEmailDTO.fromDomain(inst);
-            }
-
-            case UserDidResetPassword inst -> {
-                return UserDidResetPasswordDTO.fromDomain(inst);
-            }
-
-            case CompletePasswordReset inst -> {
-                return CompletePasswordResetDTO.fromDomain(inst);
-            }
-
-            case GeneratedUserPhotoUploadUrl inst -> {
-                return GeneratedUserPhotoUploadUrlDTO.fromDomain(inst);
-            }
-
-            case GenerateUserPhotoUploadUrl inst -> {
-                return GenerateUserPhotoUploadUrlDTO.fromDomain(inst);
-            }
-
-            case FailedGenerateUserPhotoUploadUrl inst -> {
-                return FailedGenerateUserPhotoUploadUrlDTO.fromDomain(inst);
-            }
-
-            default ->
-                throw new RuntimeException("Can't serialize. Unexpected domain event payload type: " + payload.getClass().getSimpleName());
+            final var fromDomainMethod = dtoClass.getDeclaredMethod("fromDomain", payload.getClass());
+            return (DomainEventPayloadDTO) fromDomainMethod.invoke(null, payload);
+        } catch (NoSuchFieldException e) {
+            throw new RuntimeException(e);
+        } catch (InvocationTargetException e) {
+            throw new RuntimeException(e);
+        } catch (IllegalAccessException e) {
+            throw new RuntimeException(e);
+        } catch (NoSuchMethodException e) {
+            throw new RuntimeException(e);
         }
     }
 
@@ -147,12 +118,10 @@ class DomainEventTypeResolver extends TypeIdResolverBase {
     @Override
     public JavaType typeFromId(DatabindContext context, String id) throws IOException {
 
-        final var sb = new StringBuilder();
-        sb.append(this.getClass().getPackageName());
-        sb.append(".");
-        sb.append("DTO");
-
-        final var fullClassName =  sb.toString();
+        final var fullClassName = this.getClass().getPackageName() +
+                                  "." +
+                                  id +
+                                  "DTO";
 
         JavaType t = context.resolveAndValidateSubType(baseType, fullClassName, validator);
 
