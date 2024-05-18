@@ -15,7 +15,8 @@ public final class MapUserToDataImpl implements MapUserToData {
             user.getEncodedPassword().value(),
             user.getFullName().getFirstName().getValue(),
             user.getFullName().getLastName().getValue(),
-            user.emailVerificationStatus()
+            user.emailVerificationStatus(),
+            user.getPhoto().map(UserData.PhotoPath::fromDomain)
         );
     }
 }

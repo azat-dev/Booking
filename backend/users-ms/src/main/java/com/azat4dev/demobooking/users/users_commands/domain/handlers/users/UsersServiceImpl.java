@@ -1,7 +1,6 @@
 package com.azat4dev.demobooking.users.users_commands.domain.handlers.users;
 
 
-import com.azat4dev.demobooking.common.domain.event.EventIdGenerator;
 import com.azat4dev.demobooking.common.utils.TimeProvider;
 import com.azat4dev.demobooking.users.users_commands.domain.core.commands.CreateUser;
 import com.azat4dev.demobooking.users.users_commands.domain.core.entities.User;
@@ -10,6 +9,8 @@ import com.azat4dev.demobooking.users.users_commands.domain.core.values.user.Ema
 import com.azat4dev.demobooking.users.users_commands.domain.interfaces.repositories.UnitOfWorkFactory;
 import com.azat4dev.demobooking.users.users_commands.domain.interfaces.repositories.UsersRepository;
 import lombok.RequiredArgsConstructor;
+
+import java.util.Optional;
 
 @RequiredArgsConstructor
 public final class UsersServiceImpl implements UsersService {
@@ -36,7 +37,8 @@ public final class UsersServiceImpl implements UsersService {
                 currentDate,
                 command.email(),
                 command.fullName(),
-                command.encodedPassword()
+                command.encodedPassword(),
+                Optional.empty()
             );
 
             usersRepository.addNew(user);

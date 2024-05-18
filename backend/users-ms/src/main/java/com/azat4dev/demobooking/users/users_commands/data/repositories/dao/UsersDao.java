@@ -28,5 +28,8 @@ public interface UsersDao {
 
         public final static class UserNotFound extends Exception {
         }
+
+        public final static class WrongJsonFormat extends Exception {
+        }
     }
 }

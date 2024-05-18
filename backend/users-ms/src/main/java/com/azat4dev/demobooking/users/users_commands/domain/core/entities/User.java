@@ -24,6 +24,7 @@ public final class User {
     private FullName fullName;
     private EncodedPassword encodedPassword;
     private EmailVerificationStatus emailVerificationStatus;
+    private Optional<UserPhotoPath> photo;
 
     public static User dangerouslyMakeFrom(
         UserId id,
@@ -31,9 +32,10 @@ public final class User {
         EmailAddress email,
         FullName fullName,
         EncodedPassword encodedPassword,
-        EmailVerificationStatus emailVerificationStatus
+        EmailVerificationStatus emailVerificationStatus,
+        Optional<UserPhotoPath> photo
     ) {
-        return new User(id, createdAt, email, fullName, encodedPassword, emailVerificationStatus);
+        return new User(id, createdAt, email, fullName, encodedPassword, emailVerificationStatus, photo);
     }
 
     public static User checkAndMake(
@@ -41,7 +43,8 @@ public final class User {
         LocalDateTime createdAt,
         EmailAddress email,
         FullName fullName,
-        EncodedPassword encodedPassword
+        EncodedPassword encodedPassword,
+        Optional<UserPhotoPath> photo
     ) throws Exception {
 
         Assert.notNull(id, Exception.UserIdIsRequired::new);
@@ -49,7 +52,7 @@ public final class User {
         Assert.notNull(fullName, Exception.FullNameIsRequired::new);
         Assert.notNull(encodedPassword, Exception.PasswordIsRequired::new);
 
-        return new User(id, createdAt, email, fullName, encodedPassword, EmailVerificationStatus.NOT_VERIFIED);
+        return new User(id, createdAt, email, fullName, encodedPassword, EmailVerificationStatus.NOT_VERIFIED, photo);
     }
 
     public void setEmail(EmailAddress newEmail) throws Exception.EmailIsRequired {
@@ -78,11 +81,7 @@ public final class User {
     }
 
     public void setPhoto(UserPhotoPath photoPath) {
-        throw new UnsupportedOperationException("Not implemented yet");
-    }
-
-    public Optional<UserPhotoPath> getPhoto() {
-        return null;
+        this.photo = Optional.of(photoPath);
     }
 
     // Exceptions

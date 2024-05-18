@@ -6,12 +6,17 @@ import com.azat4dev.demobooking.users.users_commands.data.entities.UserData;
 import com.azat4dev.demobooking.users.users_commands.data.repositories.dao.UsersDao;
 import com.azat4dev.demobooking.users.users_commands.domain.UserHelpers;
 import com.azat4dev.demobooking.users.users_commands.domain.core.values.user.EmailVerificationStatus;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.test.context.TestConfiguration;
+import org.springframework.boot.test.mock.mockito.MockBean;
+import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Import;
 import org.springframework.test.context.jdbc.Sql;
 
 import java.time.LocalDateTime;
+import java.util.Optional;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.jupiter.api.Assertions.assertThrows;
@@ -87,7 +92,8 @@ public class UsersDaoJdbcTests {
             user.getFullName().getFirstName().getValue(),
             user.getFullName().getLastName().getValue(),
             user.getEncodedPassword().value(),
-            EmailVerificationStatus.NOT_VERIFIED
+            EmailVerificationStatus.NOT_VERIFIED,
+            user.getPhoto().map(UserData.PhotoPath::fromDomain)
         );
     }
 
@@ -113,7 +119,13 @@ public class UsersDaoJdbcTests {
             "updatedpassword",
             "updatedFirstName",
             "updatedLastName",
-            EmailVerificationStatus.VERIFIED
+            EmailVerificationStatus.VERIFIED,
+            Optional.of(
+                new UserData.PhotoPath(
+                    "newbucket",
+                    "objectnew"
+                )
+            )
         );
         final var existingUserId = expectedUser.id();
 
@@ -141,7 +153,13 @@ public class UsersDaoJdbcTests {
             "updatedpassword",
             "updatedFirstName",
             "updatedLastName",
-            EmailVerificationStatus.VERIFIED
+            EmailVerificationStatus.VERIFIED,
+            Optional.of(
+                new UserData.PhotoPath(
+                    "newbucket",
+                    "objectnew"
+                )
+            )
         );
 
         final var existingUserId = expectedUser.id();
@@ -151,5 +169,14 @@ public class UsersDaoJdbcTests {
 
         // Then
         assertThat(exception).isInstanceOf(UsersDao.Exception.UserNotFound.class);
+    }
+
+    @TestConfiguration
+    static class TestConfig {
+
+        @Bean
+        public ObjectMapper objectMapper() {
+            return new ObjectMapper();
+        }
     }
 }

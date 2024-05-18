@@ -24,7 +24,8 @@ public class MapUserDataToDomainImpl implements MapUserDataToDomain {
                 LastName.dangerMakeFromStringWithoutCheck(userData.lastName())
             ),
             new EncodedPassword(userData.encodedPassword()),
-            userData.emailVerificationStatus()
+            userData.emailVerificationStatus(),
+            userData.photo().map(UserData.PhotoPath::toDomain)
         );
     }
 }
