@@ -20,6 +20,7 @@ import java.util.Optional;
 public final class User {
     private final UserId id;
     private final LocalDateTime createdAt;
+    private LocalDateTime updatedAt;
     private EmailAddress email;
     private FullName fullName;
     private EncodedPassword encodedPassword;
@@ -29,18 +30,20 @@ public final class User {
     public static User dangerouslyMakeFrom(
         UserId id,
         LocalDateTime createdAt,
+        LocalDateTime updatedAt,
         EmailAddress email,
         FullName fullName,
         EncodedPassword encodedPassword,
         EmailVerificationStatus emailVerificationStatus,
         Optional<UserPhotoPath> photo
     ) {
-        return new User(id, createdAt, email, fullName, encodedPassword, emailVerificationStatus, photo);
+        return new User(id, createdAt, updatedAt, email, fullName, encodedPassword, emailVerificationStatus, photo);
     }
 
     public static User checkAndMake(
         UserId id,
         LocalDateTime createdAt,
+        LocalDateTime updatedAt,
         EmailAddress email,
         FullName fullName,
         EncodedPassword encodedPassword,
@@ -52,22 +55,42 @@ public final class User {
         Assert.notNull(fullName, Exception.FullNameIsRequired::new);
         Assert.notNull(encodedPassword, Exception.PasswordIsRequired::new);
 
-        return new User(id, createdAt, email, fullName, encodedPassword, EmailVerificationStatus.NOT_VERIFIED, photo);
+        return new User(id, createdAt, updatedAt, email, fullName, encodedPassword, EmailVerificationStatus.NOT_VERIFIED, photo);
+    }
+
+    private void updateUpdatedAt() {
+        this.updatedAt = LocalDateTime.now();
     }
 
     public void setEmail(EmailAddress newEmail) throws Exception.EmailIsRequired {
         Assert.notNull(email, Exception.EmailIsRequired::new);
+
+        if (newEmail != this.email) {
+            updateUpdatedAt();
+        }
+
         this.emailVerificationStatus = EmailVerificationStatus.NOT_VERIFIED;
         this.email = newEmail;
     }
 
     public void setFullName(FullName newFullName) throws Exception.FullNameIsRequired {
         Assert.notNull(fullName, Exception.FullNameIsRequired::new);
+
+
+        if (newFullName != this.fullName) {
+            updateUpdatedAt();
+        }
+
         this.fullName = newFullName;
     }
 
     public void setEncodedPassword(EncodedPassword newEncodedPassword) throws Exception.PasswordIsRequired {
         Assert.notNull(encodedPassword, Exception.PasswordIsRequired::new);
+
+        if (newEncodedPassword != this.encodedPassword) {
+            updateUpdatedAt();
+        }
+
         this.encodedPassword = newEncodedPassword;
     }
 
@@ -77,10 +100,17 @@ public final class User {
 
     public void setEmailVerificationStatus(EmailVerificationStatus newEmailVerificationStatus) throws Exception.EmailVerificationStatusIsRequired {
         Assert.notNull(emailVerificationStatus, Exception.EmailVerificationStatusIsRequired::new);
+
+        if (newEmailVerificationStatus != this.emailVerificationStatus) {
+            updateUpdatedAt();
+        }
         this.emailVerificationStatus = newEmailVerificationStatus;
     }
 
     public void setPhoto(UserPhotoPath photoPath) {
+        if (photo.isEmpty() || photoPath.equals(photo.get())) {
+            updateUpdatedAt();
+        }
         this.photo = Optional.of(photoPath);
     }
 

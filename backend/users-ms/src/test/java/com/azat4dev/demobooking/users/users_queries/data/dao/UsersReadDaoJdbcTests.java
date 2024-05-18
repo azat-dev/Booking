@@ -2,11 +2,13 @@ package com.azat4dev.demobooking.users.users_queries.data.dao;
 
 import com.azat4dev.demobooking.users.users_commands.data.jpa.PostgresTest;
 import com.azat4dev.demobooking.users.users_queries.data.dao.records.UserRecord;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.jdbc.core.namedparam.NamedParameterJdbcTemplate;
 import org.springframework.test.context.jdbc.Sql;
 
+import java.util.Optional;
 import java.util.UUID;
 
 import static org.assertj.core.api.Assertions.assertThat;
@@ -18,7 +20,12 @@ public class UsersReadDaoJdbcTests {
     NamedParameterJdbcTemplate jdbcTemplate;
 
     SUT createSUT() {
-        return new SUT(new UsersReadDaoJdbc(jdbcTemplate));
+        return new SUT(
+            new UsersReadDaoJdbc(
+                jdbcTemplate,
+                new ObjectMapper()
+            )
+        );
     }
 
     UserRecord user1() {
@@ -26,7 +33,13 @@ public class UsersReadDaoJdbcTests {
             UUID.fromString("00000000-0000-0000-0000-000000000001"),
             "john@example.com",
             "John",
-            "Doe"
+            "Doe",
+            Optional.of(
+                new UserRecord.PhotoPath(
+                    "bucket1",
+                    "myobjectkey1"
+                )
+            )
         );
     }
 

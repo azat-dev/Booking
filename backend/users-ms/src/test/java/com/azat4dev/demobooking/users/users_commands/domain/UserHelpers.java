@@ -55,6 +55,7 @@ public class UserHelpers {
         return User.dangerouslyMakeFrom(
             anyValidUserId(),
             LocalDateTime.now(),
+            LocalDateTime.now(),
             anyValidEmail(),
             anyFullName(),
             anyEncodedPassword(),

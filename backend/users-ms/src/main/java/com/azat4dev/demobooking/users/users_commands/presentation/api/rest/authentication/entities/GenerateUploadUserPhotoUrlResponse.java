@@ -3,9 +3,7 @@ package com.azat4dev.demobooking.users.users_commands.presentation.api.rest.auth
 import java.util.Map;
 
 public record GenerateUploadUserPhotoUrlResponse(
-    String url,
-    String bucketName,
-    String objectName,
+    UploadedFileDataDTO objectPath,
     Map<String,String> formData
 ) {
 }

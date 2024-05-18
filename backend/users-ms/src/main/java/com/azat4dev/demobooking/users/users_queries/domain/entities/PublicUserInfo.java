@@ -6,6 +6,7 @@ import com.azat4dev.demobooking.users.users_commands.domain.core.values.user.Ful
 public record PublicUserInfo(
     UserId id,
     String email,
-    FullName fullName
+    FullName fullName,
+    UserPhoto photo
 ) {
 }

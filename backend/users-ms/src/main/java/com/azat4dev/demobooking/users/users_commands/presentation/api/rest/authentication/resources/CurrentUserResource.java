@@ -6,6 +6,7 @@ import com.azat4dev.demobooking.users.users_commands.domain.handlers.users.Gener
 import com.azat4dev.demobooking.users.users_commands.domain.handlers.users.UpdateUserPhotoHandler;
 import com.azat4dev.demobooking.users.users_commands.presentation.api.rest.authentication.entities.GenerateUploadUserPhotoUrlRequest;
 import com.azat4dev.demobooking.users.users_commands.presentation.api.rest.authentication.entities.GenerateUploadUserPhotoUrlResponse;
+import com.azat4dev.demobooking.users.users_commands.presentation.api.rest.authentication.entities.UpdateUserPhotoRequestBody;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.oauth2.server.resource.authentication.JwtAuthenticationToken;
 import org.springframework.validation.annotation.Validated;
@@ -24,8 +25,8 @@ public interface CurrentUserResource {
     ) throws UserId.WrongFormatException, GenerateUserPhotoUploadUrlHandler.Exception;
 
     @PostMapping("/update-photo")
-    ResponseEntity<String> uploadNewUserPhoto(
-        @RequestParam("photo") MultipartFile photo,
-        JwtAuthenticationToken jwtAuthenticationToken
+    ResponseEntity<String> updateUserPhoto(
+        JwtAuthenticationToken jwtAuthenticationToken,
+        UpdateUserPhotoRequestBody requestBody
     ) throws UserId.WrongFormatException, UpdateUserPhotoHandler.Exception;
 }

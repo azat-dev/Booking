@@ -6,8 +6,12 @@ import com.azat4dev.demobooking.users.users_commands.domain.core.values.user.Ful
 import com.azat4dev.demobooking.users.users_commands.domain.core.values.user.LastName;
 import com.azat4dev.demobooking.users.users_queries.data.dao.records.UserRecord;
 import com.azat4dev.demobooking.users.users_queries.domain.entities.PersonalUserInfo;
+import lombok.RequiredArgsConstructor;
 
+@RequiredArgsConstructor
 public class MapUserRecordToPersonalInfoImpl implements MapUserRecordToPersonalInfo {
+
+    private final MapToUserPhoto mapToUserPhoto;
 
     @Override
     public PersonalUserInfo map(UserRecord userRecord) {
@@ -18,7 +22,8 @@ public class MapUserRecordToPersonalInfoImpl implements MapUserRecordToPersonalI
                 new FullName(
                     FirstName.dangerMakeFromStringWithoutCheck(userRecord.firstName()),
                     LastName.dangerMakeFromStringWithoutCheck(userRecord.lastName())
-                )
+                ),
+                userRecord.photo().map(mapToUserPhoto::map)
             );
         } catch (UserId.WrongFormatException | FullName.Exception e) {
             throw new RuntimeException(e);

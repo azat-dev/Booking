@@ -2,9 +2,12 @@ package com.azat4dev.demobooking.users.users_queries.domain.services;
 
 import com.azat4dev.demobooking.users.users_commands.domain.UserHelpers;
 import com.azat4dev.demobooking.users.users_queries.domain.entities.PersonalUserInfo;
+import com.azat4dev.demobooking.users.users_queries.domain.entities.UserPhoto;
 import com.azat4dev.demobooking.users.users_queries.domain.interfaces.repositories.UsersReadRepository;
 import org.junit.jupiter.api.Test;
 
+import java.net.MalformedURLException;
+import java.net.URI;
 import java.util.Optional;
 
 import static org.assertj.core.api.Assertions.assertThat;
@@ -27,11 +30,22 @@ public class UsersQueryServiceTests {
         return "anyemail@gmail.com";
     }
 
+    UserPhoto anyUserPhoto() {
+        try {
+            return new UserPhoto(
+                URI.create("https://example.com/photo.jpg").toURL()
+            );
+        } catch (MalformedURLException e) {
+            throw new RuntimeException(e);
+        }
+    }
+
     PersonalUserInfo anyPersonalUserInfo() {
         return new PersonalUserInfo(
             UserHelpers.anyValidUserId(),
             anyEmail(),
-            UserHelpers.anyFullName()
+            UserHelpers.anyFullName(),
+            Optional.of(anyUserPhoto())
         );
     }
 

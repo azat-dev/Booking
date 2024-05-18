@@ -18,6 +18,7 @@ public class MapUserDataToDomainImpl implements MapUserDataToDomain {
         return User.dangerouslyMakeFrom(
             UserId.fromUUID(userData.id()),
             userData.createdAt(),
+            userData.updatedAt(),
             EmailAddress.dangerMakeWithoutChecks(userData.email()),
             new FullName(
                 FirstName.dangerMakeFromStringWithoutCheck(userData.firstName()),

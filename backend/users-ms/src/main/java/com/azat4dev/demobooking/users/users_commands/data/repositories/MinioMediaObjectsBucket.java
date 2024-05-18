@@ -2,30 +2,24 @@ package com.azat4dev.demobooking.users.users_commands.data.repositories;
 
 import com.azat4dev.demobooking.users.users_commands.domain.core.values.files.UploadFileFormData;
 import com.azat4dev.demobooking.users.users_commands.domain.interfaces.repositories.*;
+import com.azat4dev.demobooking.users.users_queries.domain.values.BaseUrl;
 import io.minio.*;
 import io.minio.http.Method;
 import lombok.RequiredArgsConstructor;
 
 import java.net.MalformedURLException;
-import java.net.URI;
 import java.net.URL;
 import java.time.ZonedDateTime;
 
 @RequiredArgsConstructor
 public class MinioMediaObjectsBucket implements MediaObjectsBucket {
 
-    private final URL baseUrl;
+    private final BaseUrl baseUrl;
     private final MinioClient minioClient;
     private final BucketName bucketName;
 
     public URL getObjectUrl(MediaObjectName objectName) throws MalformedURLException {
-        var baseUrlString = baseUrl.toString();
-
-        if (!baseUrlString.endsWith("/")) {
-            baseUrlString = baseUrlString + "/";
-        }
-
-        return URI.create(baseUrlString + bucketName + "/" + objectName.toString()).toURL();
+        return baseUrl.urlWithPath(bucketName.toString() + "/" + objectName.toString());
     }
 
     @Override

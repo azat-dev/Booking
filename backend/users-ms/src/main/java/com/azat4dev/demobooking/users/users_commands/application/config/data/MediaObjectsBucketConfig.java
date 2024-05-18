@@ -2,6 +2,7 @@ package com.azat4dev.demobooking.users.users_commands.application.config.data;
 
 import com.azat4dev.demobooking.users.users_commands.data.repositories.MinioMediaObjectsBucket;
 import com.azat4dev.demobooking.users.users_commands.domain.interfaces.repositories.BucketName;
+import com.azat4dev.demobooking.users.users_queries.domain.values.BaseUrl;
 import io.minio.MinioClient;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.beans.factory.annotation.Value;
@@ -13,8 +14,13 @@ import java.net.URL;
 @Configuration
 public class MediaObjectsBucketConfig {
 
-    @Value("${app.objects_storage.bucket.users-photo.endpoint}")
-    URL userPhotosBucketEndpoint;
+    @Bean("usersPhotoBaseUrl")
+    BaseUrl usersPhotoBaseUrl(
+        @Value("${app.objects_storage.bucket.users-photo.endpoint}")
+        URL url
+    ) throws BaseUrl.Exception.WrongFormatException {
+        return BaseUrl.checkAndMakeFrom(url);
+    }
 
     @Bean("usersPhotoBucketName")
     BucketName usersPhotoBucketName(
@@ -24,17 +30,18 @@ public class MediaObjectsBucketConfig {
         return BucketName.makeWithoutChecks(bucketName);
     }
 
-
     @Bean
     @Qualifier("usersPhotoBucket")
     MinioMediaObjectsBucket minioMediaObjectsBucket(
+        @Qualifier("usersPhotoBaseUrl")
+        BaseUrl usersPhotoBaseUrl,
         @Qualifier("usersPhotoClient")
         MinioClient minioClient,
         @Qualifier("usersPhotoBucketName")
         BucketName bucketName
     ) {
         return new MinioMediaObjectsBucket(
-            userPhotosBucketEndpoint,
+            usersPhotoBaseUrl,
             minioClient,
             bucketName
         );
@@ -43,11 +50,12 @@ public class MediaObjectsBucketConfig {
     @Bean
     @Qualifier("usersPhotoClient")
     MinioClient minioClient(
+        @Qualifier("usersPhotoBaseUrl") BaseUrl baseUrl,
         @Value("${app.objects_storage.bucket.users-photo.access-key}") String accessKey,
         @Value("${app.objects_storage.bucket.users-photo.secret-key}") String secretKey
     ) {
         return MinioClient.builder()
-            .endpoint(userPhotosBucketEndpoint.toString())
+            .endpoint(baseUrl.toString())
             .credentials(accessKey, secretKey)
             .build();
     }

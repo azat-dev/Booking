@@ -35,6 +35,7 @@ public final class UsersServiceImpl implements UsersService {
             final var user = User.checkAndMake(
                 userId,
                 currentDate,
+                currentDate,
                 command.email(),
                 command.fullName(),
                 command.encodedPassword(),
