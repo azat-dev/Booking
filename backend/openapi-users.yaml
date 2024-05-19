@@ -1,8 +1,8 @@
 openapi: "3.0.0"
 info:
   version: "1.0.0"
-  title: "Demo Booking API"
-  description: Describes the API of Daily Tasks
+  title: "Users  API"
+  description: Describes the API of Users Endpoint
 
 paths:
   /api/public/auth/token:
@@ -76,6 +76,35 @@ paths:
           description: Valid Token
         "401":
           description: Not valid Token
+  /api/with-auth/users/current/update-photo:
+    post:
+      summary: "POST api/with-auth/users/current/update-photo"
+      operationId: "updateUserPhoto"
+      responses:
+        "200":
+          description: "OK"
+          content:
+            '*/*':
+              schema:
+                type: "string"
+  /api/with-auth/users/current/get-upload-url-user-photo:
+    post:
+      summary: "POST api/with-auth/users/current/get-upload-url-user-photo"
+      operationId: "generateUploadUserPhototUrl"
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/GenerateUploadUserPhotoUrlRequest"
+        required: true
+      responses:
+        "200":
+          description: "OK"
+          content:
+            '*/*':
+              schema:
+                $ref: "#/components/schemas/GenerateUploadUserPhotoUrlResponse"
+
   /api/with-auth/users/current:
     get:
       summary: Gets current user info
@@ -87,7 +116,7 @@ paths:
               schema:
                 "$ref": "#/components/schemas/PersonalUserInfo"
         "401":
-          description: Not valid Token
+          description: "Not valid Token"
 components:
   schemas:
     SignUpByEmailRequest:
@@ -201,6 +230,8 @@ components:
         email:
           type: string
           format: email
+        photo:
+          $ref: "#/components/schemas/PhotoPathDTO"
     ValidationError:
       type: object
       required:
@@ -238,6 +269,39 @@ components:
           default: UserWithSameEmailAlreadyExists
         message:
           type: string
+    GenerateUploadUserPhotoUrlRequest:
+      type: "object"
+      properties:
+        idempotentOperationId:
+          type: "string"
+        fileName:
+          type: "string"
+        fileExtension:
+          type: "string"
+        fileSize:
+          type: "integer"
+          format: "int32"
+    UploadedFileDataDTO:
+      type: "object"
+      properties:
+        url:
+          type: "string"
+        bucketName:
+          type: "string"
+        objectName:
+          type: "string"
+    GenerateUploadUserPhotoUrlResponse:
+      type: "object"
+      properties:
+        objectPath:
+          $ref: "#/components/schemas/UploadedFileDataDTO"
+        formData:
+          type: "string"
+    PhotoPathDTO:
+      type: "object"
+      properties:
+        url:
+          type: "string"
     Error:
       type: object
       required:

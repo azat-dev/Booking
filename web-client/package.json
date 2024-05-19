@@ -19,6 +19,7 @@
     "react": "^18.2.0",
     "react-dom": "^18.2.0",
     "react-router-dom": "^6.23.0",
+    "file-select-dialog": "^1.5.4",
     "react-scripts": "5.0.1",
     "typescript": "^4.9.5",
     "usehooks-ts": "^3.1.0",
@@ -29,7 +30,7 @@
     "build": "react-scripts build",
     "test": "react-scripts test",
     "eject": "react-scripts eject",
-    "generate-api-client": "openapi-generator-cli generate -g typescript-fetch -i ../backend/server/openapi.yaml -o ./src/data/API"
+    "generate-api-client": "openapi-generator-cli generate -g typescript-fetch -i ../backend/openapi-users.yaml -o ./src/data/API"
   },
   "eslintConfig": {
     "extends": [

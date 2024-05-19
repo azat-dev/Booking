@@ -61,7 +61,7 @@ const LoginDialog = ({vm}: PropsLoginDialog) => {
                         </Stack>
                         <Typography
                             endDecorator={
-                                <Link onClick={vm.signUp}>Sign up</Link>
+                                <a onClick={vm.signUp}>Sign up</a>
                             }
                             fontSize="sm"
                             sx={{alignSelf: "center"}}

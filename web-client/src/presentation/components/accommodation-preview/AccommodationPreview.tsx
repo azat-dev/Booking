@@ -17,7 +17,7 @@ import { Link } from "react-router-dom";
 
 const AccommodationPreview = ({ vm }: PropsAccommodationPreview) => {
     return (
-        <Link to={vm.link} className={style.accommodationPreview}>
+        <a href={vm.link} className={style.accommodationPreview}>
             <Card
                 variant="plain"
                 sx={{
@@ -123,7 +123,7 @@ const AccommodationPreview = ({ vm }: PropsAccommodationPreview) => {
                     </Stack>
                 </Box>
             </Card>
-        </Link>
+        </a>
     );
 };
 

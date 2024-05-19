@@ -1,8 +1,8 @@
 /* tslint:disable */
 /* eslint-disable */
 /**
- * Demo Booking API
- * Describes the API of Daily Tasks
+ * Users  API
+ * Describes the API of Users Endpoint
  *
  * The version of the OpenAPI document: 1.0.0
  * 
@@ -18,6 +18,8 @@ import type {
   ApiPublicAuthSignUpPost400Response,
   ApiPublicAuthTokenVerifyPostRequest,
   AuthenticateByEmailRequest,
+  GenerateUploadUserPhotoUrlRequest,
+  GenerateUploadUserPhotoUrlResponse,
   GetTokenResponse,
   PersonalUserInfo,
   SignUpByEmailRequest,
@@ -31,6 +33,10 @@ import {
     ApiPublicAuthTokenVerifyPostRequestToJSON,
     AuthenticateByEmailRequestFromJSON,
     AuthenticateByEmailRequestToJSON,
+    GenerateUploadUserPhotoUrlRequestFromJSON,
+    GenerateUploadUserPhotoUrlRequestToJSON,
+    GenerateUploadUserPhotoUrlResponseFromJSON,
+    GenerateUploadUserPhotoUrlResponseToJSON,
     GetTokenResponseFromJSON,
     GetTokenResponseToJSON,
     PersonalUserInfoFromJSON,
@@ -53,6 +59,10 @@ export interface ApiPublicAuthTokenPostRequest {
 
 export interface ApiPublicAuthTokenVerifyPostOperationRequest {
     apiPublicAuthTokenVerifyPostRequest: ApiPublicAuthTokenVerifyPostRequest;
+}
+
+export interface GenerateUploadUserPhototUrlRequest {
+    generateUploadUserPhotoUrlRequest: GenerateUploadUserPhotoUrlRequest;
 }
 
 /**
@@ -198,6 +208,88 @@ export class DefaultApi extends runtime.BaseAPI {
      */
     async apiWithAuthUsersCurrentGet(initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<PersonalUserInfo> {
         const response = await this.apiWithAuthUsersCurrentGetRaw(initOverrides);
+        return await response.value();
+    }
+
+    /**
+     * POST api/with-auth/users/current/get-upload-url-user-photo
+     */
+    async generateUploadUserPhototUrlRaw(requestParameters: GenerateUploadUserPhototUrlRequest, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<runtime.ApiResponse<GenerateUploadUserPhotoUrlResponse>> {
+        if (requestParameters['generateUploadUserPhotoUrlRequest'] == null) {
+            throw new runtime.RequiredError(
+                'generateUploadUserPhotoUrlRequest',
+                'Required parameter "generateUploadUserPhotoUrlRequest" was null or undefined when calling generateUploadUserPhototUrl().'
+            );
+        }
+
+        const queryParameters: any = {};
+
+        const headerParameters: runtime.HTTPHeaders = {};
+
+        headerParameters['Content-Type'] = 'application/json';
+
+        if (this.configuration && this.configuration.accessToken) {
+            const token = this.configuration.accessToken;
+            const tokenString = await token("BearerAuth", []);
+
+            if (tokenString) {
+                headerParameters["Authorization"] = `Bearer ${tokenString}`;
+            }
+        }
+        const response = await this.request({
+            path: `/api/with-auth/users/current/get-upload-url-user-photo`,
+            method: 'POST',
+            headers: headerParameters,
+            query: queryParameters,
+            body: GenerateUploadUserPhotoUrlRequestToJSON(requestParameters['generateUploadUserPhotoUrlRequest']),
+        }, initOverrides);
+
+        return new runtime.JSONApiResponse(response, (jsonValue) => GenerateUploadUserPhotoUrlResponseFromJSON(jsonValue));
+    }
+
+    /**
+     * POST api/with-auth/users/current/get-upload-url-user-photo
+     */
+    async generateUploadUserPhototUrl(requestParameters: GenerateUploadUserPhototUrlRequest, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<GenerateUploadUserPhotoUrlResponse> {
+        const response = await this.generateUploadUserPhototUrlRaw(requestParameters, initOverrides);
+        return await response.value();
+    }
+
+    /**
+     * POST api/with-auth/users/current/update-photo
+     */
+    async updateUserPhotoRaw(initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<runtime.ApiResponse<string>> {
+        const queryParameters: any = {};
+
+        const headerParameters: runtime.HTTPHeaders = {};
+
+        if (this.configuration && this.configuration.accessToken) {
+            const token = this.configuration.accessToken;
+            const tokenString = await token("BearerAuth", []);
+
+            if (tokenString) {
+                headerParameters["Authorization"] = `Bearer ${tokenString}`;
+            }
+        }
+        const response = await this.request({
+            path: `/api/with-auth/users/current/update-photo`,
+            method: 'POST',
+            headers: headerParameters,
+            query: queryParameters,
+        }, initOverrides);
+
+        if (this.isJsonMime(response.headers.get('content-type'))) {
+            return new runtime.JSONApiResponse<string>(response);
+        } else {
+            return new runtime.TextApiResponse(response) as any;
+        }
+    }
+
+    /**
+     * POST api/with-auth/users/current/update-photo
+     */
+    async updateUserPhoto(initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<string> {
+        const response = await this.updateUserPhotoRaw(initOverrides);
         return await response.value();
     }
 

@@ -7,6 +7,7 @@ import SessionAuthenticatedImpl from "./SessionAuthenticatedImpl";
 import SignUpByEmailData from "./SignUpByEmailData";
 import PersonalUserInfoService from "./PersonalUserInfoService";
 import PersonalUserInfo from "./entities/PersonalUserInfo";
+import {ResponseError} from "../../../../data/API";
 
 class SessionAnonymousImpl implements SessionAnonymous {
     public readonly type = SessionStatus.ANONYMOUS;
@@ -55,7 +56,12 @@ class SessionAnonymousImpl implements SessionAnonymous {
         }
     };
 
-    public tryToLoadLastSession = async (): Promise<void> => {
+    public tryToLoadLastSession = async (attempt: number = 0): Promise<void> => {
+        if (attempt === 3) {
+            await this.logout();
+            return;
+        }
+
         this.setNext({
             type: SessionStatus.PROCESSING,
         });
@@ -73,11 +79,33 @@ class SessionAnonymousImpl implements SessionAnonymous {
             await this.setAuthenticated(user, token);
 
             // FXIME: Handle network errors
-        } catch (error) {
+        } catch (error: any) {
+            if (error?.response?.status === 401) {
+                const isRefreshed = await this.refreshToken();
+                if (!isRefreshed) {
+                    await this.logout();
+                    return;
+                }
+
+                return this.tryToLoadLastSession(attempt + 1);
+            }
             this.setNext(this);
             throw error;
         }
     };
+
+    private refreshToken = async (): Promise<boolean> => {
+        this.setNext({
+            type: SessionStatus.PROCESSING,
+        });
+
+        try {
+            // FIXME: Use refresh token from local storage
+            return false;
+        } catch (error) {
+            return false;
+        }
+    }
 
     private logout = async (): Promise<void> => {
         await this.authService.logout();

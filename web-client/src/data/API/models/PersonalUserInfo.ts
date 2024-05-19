@@ -1,8 +1,8 @@
 /* tslint:disable */
 /* eslint-disable */
 /**
- * Demo Booking API
- * Describes the API of Daily Tasks
+ * Users  API
+ * Describes the API of Users Endpoint
  *
  * The version of the OpenAPI document: 1.0.0
  * 
@@ -19,6 +19,12 @@ import {
     FullNameFromJSONTyped,
     FullNameToJSON,
 } from './FullName';
+import type { PhotoPathDTO } from './PhotoPathDTO';
+import {
+    PhotoPathDTOFromJSON,
+    PhotoPathDTOFromJSONTyped,
+    PhotoPathDTOToJSON,
+} from './PhotoPathDTO';
 
 /**
  * 
@@ -44,6 +50,12 @@ export interface PersonalUserInfo {
      * @memberof PersonalUserInfo
      */
     email: string;
+    /**
+     * 
+     * @type {PhotoPathDTO}
+     * @memberof PersonalUserInfo
+     */
+    photo?: PhotoPathDTO;
 }
 
 /**
@@ -69,6 +81,7 @@ export function PersonalUserInfoFromJSONTyped(json: any, ignoreDiscriminator: bo
         'id': json['id'],
         'fullName': FullNameFromJSON(json['fullName']),
         'email': json['email'],
+        'photo': json['photo'] == null ? undefined : PhotoPathDTOFromJSON(json['photo']),
     };
 }
 
@@ -81,6 +94,7 @@ export function PersonalUserInfoToJSON(value?: PersonalUserInfo | null): any {
         'id': value['id'],
         'fullName': FullNameToJSON(value['fullName']),
         'email': value['email'],
+        'photo': PhotoPathDTOToJSON(value['photo']),
     };
 }
 

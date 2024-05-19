@@ -40,7 +40,7 @@ const NavigationBar = ({vm}: PropsNavigationBar) => {
                 },
             })}
         >
-            <Link to="/" style={{color: "inherit", textDecoration: "none"}}>
+            <a href="/" style={{color: "inherit", textDecoration: "none"}}>
                 <Box
                     sx={{
                         display: "flex",
@@ -57,7 +57,7 @@ const NavigationBar = ({vm}: PropsNavigationBar) => {
                         Demo Booking
                     </Typography>
                 </Box>
-            </Link>
+            </a>
 
             <ProfileButton vm={vm.profileButton}/>
         </Box>

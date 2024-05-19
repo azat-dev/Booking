@@ -2,7 +2,7 @@ import React from "react";
 import ReactDOM from "react-dom/client";
 import "./index.css";
 import reportWebVitals from "./reportWebVitals";
-import AppViewModelImpl from "./presentation/app/AppViewModelImpl";
+import AppViewModelImpl from "./presentation/app/app-model/AppViewModelImpl";
 import App from "./presentation/app/App";
 import LocalAuthDataRepositoryImpl from "./LocalAuthDataRepositoryImpl";
 import AuthServiceImpl from "./data/auth/services/AuthServiceImpl";

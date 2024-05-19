@@ -1,8 +1,8 @@
 /* tslint:disable */
 /* eslint-disable */
 /**
- * Demo Booking API
- * Describes the API of Daily Tasks
+ * Users  API
+ * Describes the API of Users Endpoint
  *
  * The version of the OpenAPI document: 1.0.0
  * 

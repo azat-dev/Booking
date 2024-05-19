@@ -1,74 +1,72 @@
-import React, { useEffect, useState } from "react";
+import React from "react";
 
 import PropsApp from "./props";
 import style from "./style.module.scss";
-import useUpdatesFrom from "../utils/binding/useUpdatesFrom";
 import LoginDialog from "../dialogs/login-dialog/LoginDialog";
-import PageMain from "../pages/page-main/PageMain";
-import { ActiveDialogType } from "./AppViewModel";
+import {ActiveDialogType} from "./app-model/AppViewModel";
 import SignUpDialog from "../dialogs/sign-up-dialog/SignUpDialog";
+import PageMain from "../pages/page-main/PageMain";
 import PageAccommodationDetails from "../pages/page-accommodation-details/PageAccommodationDetails";
-import {
-    createBrowserRouter,
-    RouterProvider,
-    useParams,
-} from "react-router-dom";
+import PageUserProfile from "../pages/page-user-profile/PageUserProfile";
+import Router from "./router/Router";
+import RouterVM from "./router/RouterVM";
+import RouteItem from "./router/RouteItem";
+import ActivePage from "./active-page/ActivePage";
+import ActivePageVM from "./active-page/ActivePageVM";
+import ActiveDialogVM from "./active-dialog/ActiveDialogVM";
+import ActiveDialog from "./active-dialog/ActiveDialog";
 
-const dialogTypes: any = {
-    [ActiveDialogType.Login]: LoginDialog,
-    [ActiveDialogType.SignUp]: SignUpDialog,
-};
 
-const Dialogs = ({ vm }: PropsApp) => {
-    const [activeDialog] = useUpdatesFrom(vm.activeDialog);
+const App = ({vm}: PropsApp) => {
 
-    if (!activeDialog) {
-        return null;
-    }
-
-    const Dialog = dialogTypes[activeDialog?.type];
-    return <Dialog vm={activeDialog!.vm} />;
-};
-
-const makeComponent = (makeVm: any, Component: any, LoadingStub: any) => {
-    return () => {
-        const [vm, setVm] = useState();
-        const locationParams = useParams();
-
-        useEffect(() => {
-            makeVm(locationParams).then(setVm);
-        }, [makeVm, locationParams, Component, LoadingStub]);
-
-        if (!vm) {
-            return <LoadingStub />;
-        }
-
-        return <Component vm={vm} />;
-    };
-};
-
-const App = ({ vm }: PropsApp) => {
-    const router = createBrowserRouter([
+    const routes: RouteItem[] = [
         {
             path: "/",
-            Component: makeComponent(vm.makeMainPage, PageMain, () => (
-                <h1>Loading</h1>
-            )),
+            trigger: vm.runMainPage
+        },
+        {
+            path: "/profile",
+            trigger: vm.runProfilePage
         },
         {
             path: "/accommodation/:id",
-            Component: makeComponent(
-                vm.makeAccommodationDetailsPage,
-                PageAccommodationDetails,
-                () => <h1>Loading</h1>
-            ),
+            trigger: (params: any) => vm.runAccommodationDetailsPage(params.id)
+        }
+    ];
+
+    const router = new RouterVM(routes);
+
+    vm.navigationDelegate = {
+        navigateToProfilePage: (replace: boolean) => {
+            router.navigate("/profile", replace);
         },
-    ]);
+        navigateToMainPage: (replace: boolean) => {
+            router.navigate("/", replace);
+        }
+    };
+
+    const activePage = new ActivePageVM(vm.currentPage);
+    const activeDialog = new ActiveDialogVM(vm.activeDialog);
 
     return (
         <div className={style.app}>
-            <RouterProvider router={router}></RouterProvider>
-            <Dialogs vm={vm} />
+            <Router vm={router}/>
+            <ActivePage
+                vm={activePage}
+                views={{
+                    main: PageMain,
+                    "accommodation-details": PageAccommodationDetails,
+                    "user-profile": PageUserProfile,
+                    loading: () => <div>Loading...</div>
+                } as any}
+            />
+            <ActiveDialog
+                vm={activeDialog}
+                views={{
+                    [ActiveDialogType.Login]: LoginDialog,
+                    [ActiveDialogType.SignUp]: SignUpDialog
+                }}
+            />
         </div>
     );
 };

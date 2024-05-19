@@ -1,4 +1,4 @@
-import AppViewModel from "./AppViewModel";
+import AppViewModel from "./app-model/AppViewModel";
 
 interface PropsApp {
     vm: AppViewModel;
