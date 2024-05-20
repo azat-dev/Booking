@@ -4,7 +4,7 @@ class Disposables {
 
     private disposables: Disposable[] = [];
 
-    public addItems = (disposables: Disposable[]) => {
+    public addItems = (...disposables: Disposable[]) => {
         this.disposables.push(...disposables);
     }
 

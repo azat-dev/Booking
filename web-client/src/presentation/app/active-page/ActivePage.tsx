@@ -16,7 +16,7 @@ const ActivePage =({vm, views}: PropsActivePage) =>{
     }
 
     return (
-        <View vm={page.vm}/>
+        <View vm={page}/>
     );
 }
 

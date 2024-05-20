@@ -15,6 +15,7 @@ import PagesModule from "./PagesModule";
 import AnonymousAppVM from "./presentation/app/app-model/AnonymousAppVM";
 import DialogsStore from "./presentation/stores/DialogsStore";
 import OpenUserProfilePage from "./presentation/commands/OpenUserProfilePage";
+import AppVmImpl from "./presentation/app/app-model/AppVmImpl";
 
 const root = ReactDOM.createRoot(
     document.getElementById("root") as HTMLElement
@@ -48,7 +49,8 @@ const accommodationsRegistry = new AccommodationsRegistryImpl();
 
 const reservationService = new ReservationServiceImpl();
 
-const appVm = new AnonymousAppVM(
+const appVm = new AppVmImpl(
+    domainModule.appSession,
     dialogsStore,
     pagesModule,
     domainModule.bus,

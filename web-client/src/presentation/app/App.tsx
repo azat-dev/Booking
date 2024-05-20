@@ -18,6 +18,8 @@ import ActiveDialogVM from "./active-dialog/ActiveDialogVM";
 import ActiveDialog from "./active-dialog/ActiveDialog";
 import LoginDialogVM from "../dialogs/login-dialog/LoginDialogVM";
 import SignUpDialogVM from "../dialogs/sign-up-dialog/SignUpDialogVM";
+import PageUserProfileVM from "../pages/page-user-profile/PageUserProfileVM";
+import PageMainVM from "../pages/page-main/PageMainVM";
 
 
 const App = ({vm}: PropsApp) => {
@@ -57,9 +59,9 @@ const App = ({vm}: PropsApp) => {
             <ActivePage
                 vm={activePage}
                 views={{
-                    main: PageMain,
+                    [PageMainVM.TYPE]: PageMain,
                     "accommodation-details": PageAccommodationDetails,
-                    "user-profile": PageUserProfile,
+                    [PageUserProfileVM.TYPE]: PageUserProfile,
                     loading: () => <div>Loading...</div>
                 } as any}
             />

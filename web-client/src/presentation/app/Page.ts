@@ -1,18 +1,7 @@
-import PageMainVMImpl from "../pages/page-main/PageMainVMImpl";
-import PageAccommodationDetailsVM from "../pages/page-accommodation-details/PageAccommodationDetailsVM";
-import PageUserProfileVM from "../pages/page-user-profile/PageUserProfileVM";
+abstract class Page {
+    public static readonly TYPE: string = "PAGE";
 
-type Page = {
-    type: "main",
-    vm: PageMainVMImpl
-} | {
-    type: "accommodation-details",
-    vm: PageAccommodationDetailsVM
-} | {
-    type: "profile",
-    vm: PageUserProfileVM
-} | {
-    type: "loading",
-};
+    public abstract get type(): string;
+}
 
 export default Page;

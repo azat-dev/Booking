@@ -1,9 +1,10 @@
-import Subject from "../../../utils/binding/Subject";
+import Subject, {ReadonlySubject} from "../../../utils/binding/Subject";
 import value from "../../../utils/binding/value";
 import { fileDialog } from "file-select-dialog";
 import fullName from "../../../../domain/auth/values/FullName";
 import FullName from "../../../../domain/auth/values/FullName";
 import {PhotoPath} from "../../../../domain/auth/values/PhotoPath";
+import Disposables from "../../../utils/binding/Disposables";
 
 class UserPhotoVM {
 
@@ -11,15 +12,28 @@ class UserPhotoVM {
     public readonly photo: Subject<string | undefined>;
     public isUploading: Subject<boolean>;
 
+    private disposables = new Disposables();
+
     public constructor(
-        fullName: FullName,
-        photo: PhotoPath | null,
+        fullName: ReadonlySubject<FullName>,
+        photo: ReadonlySubject<PhotoPath | null>,
         private uploadPhoto: (file: File) => Promise<void>
     ) {
 
         this.isUploading = value(false);
-        this.photo = value(photo?.url ?? undefined);
-        this.initials = value(fullName.getInitials());
+        this.photo = value(photo.value?.url ?? undefined);
+        this.initials = value(fullName.value.getInitials());
+
+        this.disposables.addItems(
+
+            fullName.listen((newFullName) => {
+                this.initials.set(newFullName.getInitials());
+            }),
+
+            photo.listen((newPhoto) => {
+                this.photo.set(newPhoto?.url ?? undefined);
+            })
+        )
     }
 
     public updatePhoto = (newPhoto: PhotoPath | null) => {
@@ -47,6 +61,10 @@ class UserPhotoVM {
             console.error(error);
         }
         this.isUploading.set(false);
+    }
+
+    public dispose = () => {
+        this.disposables.dispose();
     }
 }
 

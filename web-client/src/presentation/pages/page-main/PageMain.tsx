@@ -1,4 +1,4 @@
-import React, { useRef, useEffect, useMemo } from "react";
+import React, {useEffect} from "react";
 
 import Box from "@mui/joy/Box";
 import Button from "@mui/joy/Button";
@@ -7,14 +7,14 @@ import PropsPageMain from "./props";
 import style from "./style.module.scss";
 import NavigationBar from "../../components/navigation-bar/NavigationBar";
 import useUpdatesFrom from "../../utils/binding/useUpdatesFrom";
-import { ItemsVMState } from "./items-vm/ItemsVM";
-import { Grid, Stack, Typography } from "@mui/joy";
-import { desktop, mobile, tablet } from "../../utils/selectors";
+import {ItemsVMState} from "./items-vm/ItemsVM";
+import {Grid, Stack, Typography} from "@mui/joy";
+import {desktop, mobile, tablet} from "../../utils/selectors";
 import SearchInput from "../../components/search-input/SearchInput";
 import AccommodationPreviewLoading from "../../components/accommodation-preview-loading/AccommodationPreviewLoading";
 import AccommodationPreview from "../../components/accommodation-preview/AccommodationPreview";
 
-const PageMain = ({ vm }: PropsPageMain) => {
+const PageMain = ({vm}: PropsPageMain) => {
     useEffect(() => {
         vm.load();
     }, [vm]);
@@ -26,22 +26,22 @@ const PageMain = ({ vm }: PropsPageMain) => {
 
     return (
         <div className={style.pageMain}>
-            <NavigationBar vm={vm.navigationBar} />
+            <NavigationBar vm={vm.navigationBar}/>
             <Stack
                 sx={{
-                    px: { xs: 2, md: 4 },
+                    px: {xs: 2, md: 4},
                     py: 2,
                     borderBottom: "1px solid",
                     borderColor: "divider",
                 }}
             >
-                <Stack sx={{ mb: 2, alignItems: "center" }}>
+                <Stack sx={{mb: 2, alignItems: "center"}}>
                     <Typography level="h2">Start your jorney here!</Typography>
                     <Typography level="body-md" color="neutral">
                         Find the best place to stay
                     </Typography>
                 </Stack>
-                <Stack sx={{ alignItems: "center" }}>
+                <Stack sx={{alignItems: "center"}}>
                     <Box
                         sx={(theme) => ({
                             [mobile(theme)]: {
@@ -57,7 +57,7 @@ const PageMain = ({ vm }: PropsPageMain) => {
                             },
                         })}
                     >
-                        <SearchInput vm={vm.searchInput} />
+                        <SearchInput vm={vm.searchInput}/>
                     </Box>
                 </Stack>
             </Stack>
@@ -117,9 +117,9 @@ const PageMain = ({ vm }: PropsPageMain) => {
                                 xl={1}
                             >
                                 {item.type === "loading" ? (
-                                    <AccommodationPreviewLoading />
+                                    <AccommodationPreviewLoading/>
                                 ) : (
-                                    <AccommodationPreview vm={item.vm} />
+                                    <AccommodationPreview vm={item.vm}/>
                                 )}
                             </Grid>
                         ))}
