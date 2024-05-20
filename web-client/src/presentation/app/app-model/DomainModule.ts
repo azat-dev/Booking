@@ -2,7 +2,8 @@ import AppSessionImpl from "../../../domain/auth/entities/AppSessionImpl";
 import AppSession from "../../../domain/auth/entities/AppSession";
 import AppStarted from "../../../domain/auth/events/AppStarted";
 import PersonalInfoDidChange from "../../../domain/auth/events/PersonalInfoDidChange";
-import WhenPersonalInfoChangedUpdateAppSession from "../../../domain/auth/policies/WhenPersonalInfoChangedUpdateAppSession";
+import WhenPersonalInfoChangedUpdateAppSession
+    from "../../../domain/auth/policies/WhenPersonalInfoChangedUpdateAppSession";
 import UserLoggedOut from "../../../domain/auth/events/UserLoggedOut";
 import WhenLogoutThenUpdateAppSession from "../../../domain/auth/policies/WhenLogoutThenUpdateAppSession";
 import UserLoggedIn from "../../../domain/auth/events/UserLoggedIn";
@@ -17,12 +18,12 @@ import BusImpl from "../../../domain/utils/BusImpl";
 import WhenAppStartedThenTryLoginByToken from "../../../domain/auth/policies/WhenAppStartedThenTryLoginByToken";
 import LocalAuthDataRepository from "../../../domain/auth/interfaces/repositories/LocalAuthDataRepository";
 import FailedLoginByToken from "../../../domain/auth/events/FailedLoginByToken";
-import WhenFailedLoginByTokenThenUpdateAppSession from "../../../domain/auth/policies/WhenFailedLoginByTokenThenUpdateAppSession";
+import WhenFailedLoginByTokenThenUpdateAppSession
+    from "../../../domain/auth/policies/WhenFailedLoginByTokenThenUpdateAppSession";
 import LogoutHandler from "../../../domain/auth/handlers/LogoutHandler";
 import Logout from "../../../domain/auth/commands/Logout";
 import SignUpByEmail from "../../../domain/auth/commands/SignUpByEmail";
 import SignUpByEmailHandler from "../../../domain/auth/handlers/SignUpByEmailHandler";
-import FailedSignUpByEmail from "../../../domain/auth/events/FailedSignUpByEmail";
 import WhenUserSignedUpThenUpdateAppSession from "../../../domain/auth/policies/WhenUserSignedUpThenUpdateAppSession";
 import UserSignedUpByEmail from "../../../domain/auth/events/UserSignedUpByEmail";
 

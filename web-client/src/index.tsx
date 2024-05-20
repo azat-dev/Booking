@@ -14,6 +14,7 @@ import DialogsModule from "./presentation/app/app-model/DialogsModule";
 import PagesModule from "./PagesModule";
 import AnonymousAppVM from "./presentation/app/app-model/AnonymousAppVM";
 import DialogsStore from "./presentation/stores/DialogsStore";
+import OpenUserProfilePage from "./presentation/commands/OpenUserProfilePage";
 
 const root = ReactDOM.createRoot(
     document.getElementById("root") as HTMLElement
@@ -47,15 +48,27 @@ const accommodationsRegistry = new AccommodationsRegistryImpl();
 
 const reservationService = new ReservationServiceImpl();
 
-const vm = new AnonymousAppVM(
+const appVm = new AnonymousAppVM(
     dialogsStore,
     pagesModule,
     domainModule.bus,
 );
 
+domainModule.bus.subscribe(async (event) => {
+    if (!event.isCommand) {
+        return;
+    }
+
+    switch (event.type) {
+        case OpenUserProfilePage.TYPE:
+            appVm.runProfilePage();
+            break;
+    }
+});
+
 root.render(
     <React.StrictMode>
-        <App vm={vm}/>
+        <App vm={appVm}/>
     </React.StrictMode>
 );
 

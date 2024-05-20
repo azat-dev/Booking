@@ -27,6 +27,8 @@ class AnonymousAppVM implements AppVM {
 
     runProfilePage = async (): Promise<void> => {
 
+        debugger
+
         this.navigationDelegate?.navigateToMainPage(true);
         await this.openLoginDialog();
     }

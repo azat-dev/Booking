@@ -15,6 +15,7 @@ import OpenLoginDialog from "../../commands/OpenLoginDialog";
 import OpenSignUpDialog from "../../commands/OpenSignUpDialog";
 import Subject from "../../utils/binding/Subject";
 import ProfileButtonLoadingVM from "../../components/navigation-bar/profile-button-loading/ProfileButtonLoadingVM";
+import OpenUserProfilePage from "../../commands/OpenUserProfilePage";
 
 class ComponentsModule {
 
@@ -93,7 +94,7 @@ class ComponentsModule {
             email,
             photo,
             () => {
-                this.bus.publish("open-profile-page");
+                this.bus.publish(new OpenUserProfilePage());
             },
             () => {
                 this.bus.publish(new Logout());

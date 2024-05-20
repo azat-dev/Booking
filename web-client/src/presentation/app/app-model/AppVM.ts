@@ -6,7 +6,6 @@ import NavigationDelegate from "./NavigationDelegate";
 import Page from "../Page";
 
 
-
 export interface InputAppVM {
     runProfilePage(): Promise<void>;
 
