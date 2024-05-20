@@ -1,4 +1,8 @@
-import {AuthenticateByEmailData} from "../../../domain/auth/CurrentSession/Session/AuthService";
+import {
+    AuthenticateByEmailData,
+    ConnectionError,
+    WrongCredentialsError
+} from "../../../domain/auth/interfaces/services/AuthService";
 import Email from "../../../domain/auth/values/Email";
 import value from "../../utils/binding/value";
 import FormInputViewModel from "../sign-up-dialog/form-input/FormInputViewModel";

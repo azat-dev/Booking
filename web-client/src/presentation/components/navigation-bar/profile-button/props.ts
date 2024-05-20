@@ -1,4 +1,4 @@
-import ProfileButtonViewModel from "./ProfileButtonViewModel";
+import ProfileButtonViewModel from "./ProfileButtonVM";
 
 interface PropsProfileButton {
     vm: ProfileButtonViewModel;

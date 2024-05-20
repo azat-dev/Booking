@@ -1,4 +1,4 @@
-import FullName from "../CurrentSession/Session/FullName";
+import FullName from "./FullName";
 import Avatar from "./Avatar";
 import Email from "./Email";
 import UserId from "./UserId";

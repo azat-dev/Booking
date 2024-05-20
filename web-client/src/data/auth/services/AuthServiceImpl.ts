@@ -3,17 +3,18 @@ import AuthService, {
     AuthenticationByEmailResult,
     SignUpByEmailResult,
     WrongCredentialsError,
-} from "../../../domain/auth/CurrentSession/Session/AuthService";
-import FirstName from "../../../domain/auth/CurrentSession/Session/FirstName";
-import FullName from "../../../domain/auth/CurrentSession/Session/FullName";
-import LastName from "../../../domain/auth/CurrentSession/Session/LastName";
-import SignUpByEmailData from "../../../domain/auth/CurrentSession/Session/SignUpByEmailData";
+} from "../../../domain/auth/interfaces/services/AuthService";
+import FirstName from "../../../domain/auth/values/FirstName";
+import FullName from "../../../domain/auth/values/FullName";
+import LastName from "../../../domain/auth/values/LastName";
+import SignUpByEmailData from "../../../domain/auth/interfaces/services/SignUpByEmailData";
 import AccessToken from "../../../domain/auth/interfaces/repositories/AccessToken";
-import LocalAuthDataRepository from "../../../domain/auth/interfaces/repositories/LocalAuthDataRepository";
+import type LocalAuthDataRepository from "../../../domain/auth/interfaces/repositories/LocalAuthDataRepository";
 import Email from "../../../domain/auth/values/Email";
 import UserId from "../../../domain/auth/values/UserId";
 import {DefaultApi, ResponseError, UserWithSameEmailAlreadyExistsError, ValidationError,} from "../../API";
-import PersonalUserInfo from "../../../domain/auth/CurrentSession/Session/entities/PersonalUserInfo";
+import PersonalUserInfo from "../../../domain/auth/values/PersonalUserInfo";
+
 
 class AuthServiceImpl implements AuthService {
     public constructor(
@@ -56,7 +57,7 @@ class AuthServiceImpl implements AuthService {
         }
     };
 
-    public authenticateByToken = async (token: string): Promise<PersonalUserInfo> => {
+    public authenticateByToken = async (token: AccessToken): Promise<PersonalUserInfo> => {
         const userInfo = await this.api.apiWithAuthUsersCurrentGet();
         return new PersonalUserInfo(
             UserId.fromString(userInfo.id),

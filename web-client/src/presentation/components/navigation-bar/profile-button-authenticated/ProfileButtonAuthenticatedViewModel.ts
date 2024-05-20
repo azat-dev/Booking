@@ -1,26 +1,20 @@
-import FullName from "../../../../domain/auth/CurrentSession/Session/FullName";
+import FullName from "../../../../domain/auth/values/FullName";
 import AvatarButtonViewModel from "./avatar-button/AvatarButtonViewModel";
-import Subject from "../../../utils/binding/Subject";
-import value from "../../../utils/binding/value";
+import {ReadonlySubject} from "../../../utils/binding/Subject";
 import Email from "../../../../domain/auth/values/Email";
 import {PhotoPath} from "../../../../domain/auth/values/PhotoPath";
 
 class ProfileButtonAuthenticatedViewModel {
     public avatar: AvatarButtonViewModel;
 
-    public fullName: Subject<string>;
-    public email: Subject<string>;
-
     public constructor(
-        fullName: FullName,
-        email: Email,
-        photo: PhotoPath | null,
+        readonly fullName: ReadonlySubject<FullName>,
+        readonly email: ReadonlySubject<Email>,
+        readonly photo: ReadonlySubject<PhotoPath | null>,
         private readonly onOpenProfile: () => void,
         private readonly onLogout: () => void
     ) {
         this.avatar = new AvatarButtonViewModel(fullName, photo);
-        this.fullName = value(fullName.toString());
-        this.email = value(email.toString());
     }
 
     public openProfile = () => {
@@ -35,13 +29,9 @@ class ProfileButtonAuthenticatedViewModel {
         this.onLogout();
     };
 
-    public updateFullName = (fullName: FullName) => {
-        this.avatar.updateFullName(fullName);
-    };
-
-    public updatePhoto = (photo: PhotoPath) => {
-        this.avatar.updatePhoto(photo);
-    };
+    public dispose = () => {
+        this.avatar.dispose();
+    }
 }
 
 export default ProfileButtonAuthenticatedViewModel;

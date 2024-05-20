@@ -1,5 +1,5 @@
-import { Cancellable } from "./Cancellable";
-import { SubjectCallback } from "./SubjectCallback";
+import {Cancellable} from "./Cancellable";
+import {SubjectCallback} from "./SubjectCallback";
 import Subject from "./Subject";
 
 export default class SubjectImpl<Value> extends Subject<Value> {
@@ -32,5 +32,9 @@ export default class SubjectImpl<Value> extends Subject<Value> {
 
     public stopListening(callback: SubjectCallback<Value>): void {
         this.subscribers.delete(callback);
+    }
+
+    public dispose = (): void => {
+        this.subscribers.clear();
     }
 }

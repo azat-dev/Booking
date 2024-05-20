@@ -1,69 +1,54 @@
+import 'reflect-metadata';
+
 import React from "react";
 import ReactDOM from "react-dom/client";
 import "./index.css";
 import reportWebVitals from "./reportWebVitals";
-import AppViewModelImpl from "./presentation/app/app-model/AppViewModelImpl";
 import App from "./presentation/app/App";
-import LocalAuthDataRepositoryImpl from "./LocalAuthDataRepositoryImpl";
-import AuthServiceImpl from "./data/auth/services/AuthServiceImpl";
-import CurrentSessionStoreImpl from "./domain/auth/CurrentSession/CurrentSessionStoreImpl";
 import AccommodationsRegistryImpl from "./domain/accommodations/AccommodationsRegistryImpl";
 import ReservationServiceImpl from "./domain/booking/ReservationServiceImpl";
-import { Configuration, DefaultApi } from "./data/API";
-import PersonalUserInfoService from "./domain/auth/CurrentSession/Session/PersonalUserInfoService";
-import UserInfo from "./domain/auth/values/User";
-import FullName from "./domain/auth/CurrentSession/Session/FullName";
-import FirstName from "./domain/auth/CurrentSession/Session/FirstName";
-import Email from "./domain/auth/values/Email";
-import LastName from "./domain/auth/CurrentSession/Session/LastName";
-import UserInfoServiceImpl from "./data/auth/services/UserInfoServiceImpl";
+import DataModule from "./DataModule";
+import DomainModule from "./presentation/app/app-model/DomainModule";
+import ComponentsModule from "./presentation/app/app-model/ComponentsModule";
+import DialogsModule from "./presentation/app/app-model/DialogsModule";
+import PagesModule from "./PagesModule";
+import AnonymousAppVM from "./presentation/app/app-model/AnonymousAppVM";
 
 const root = ReactDOM.createRoot(
     document.getElementById("root") as HTMLElement
 );
 
-const localAuthDataRespository = new LocalAuthDataRepositoryImpl();
+const dataModule = new DataModule("http://localhost:8080");
 
-const apiConfig: Configuration = new Configuration({
-    basePath: "http://localhost:8080",
-    accessToken: async () => {
-        const authData = await localAuthDataRespository.get();
-        return authData?.accessToken.val ?? "";
-
-    }
-});
-
-const api = new DefaultApi(apiConfig);
-const authService = new AuthServiceImpl(api, localAuthDataRespository);
-
-const userInfoService: PersonalUserInfoService = new UserInfoServiceImpl(api);
-
-const currentSessionStore = new CurrentSessionStoreImpl(
-    authService,
-    userInfoService,
-    localAuthDataRespository
+const domainModule = new DomainModule(
+    dataModule.localAuthDataRepository(),
+    dataModule.authService(),
+    dataModule.userInfoService()
 );
 
-currentSessionStore.tryToLoadLastSession();
+const componentsModule = new ComponentsModule(
+    domainModule.appSession,
+    domainModule.bus
+);
 
-console.log("Current session", currentSessionStore.current.value);
-currentSessionStore.current.listen((session) => {
-    console.log("Current session changed", session);
-});
+const dialogsModule = new DialogsModule(
+    domainModule.bus
+);
+
+const pagesModule = new PagesModule(componentsModule);
 
 const accommodationsRegistry = new AccommodationsRegistryImpl();
 
 const reservationService = new ReservationServiceImpl();
 
-const vm = new AppViewModelImpl(
-    currentSessionStore,
-    accommodationsRegistry,
-    reservationService
+const vm = new AnonymousAppVM(
+    pagesModule,
+    domainModule.bus,
 );
 
 root.render(
     <React.StrictMode>
-        <App vm={vm} />
+        <App vm={vm}/>
     </React.StrictMode>
 );
 

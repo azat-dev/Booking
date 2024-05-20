@@ -1,11 +1,11 @@
 import Email from "../../../domain/auth/values/Email";
 import Password from "../../../domain/auth/values/Password";
 import value from "../../utils/binding/value";
-import FullName from "../../../domain/auth/CurrentSession/Session/FullName";
-import FirstName from "../../../domain/auth/CurrentSession/Session/FirstName";
-import LastName from "../../../domain/auth/CurrentSession/Session/LastName";
+import FullName from "../../../domain/auth/values/FullName";
+import FirstName from "../../../domain/auth/values/FirstName";
+import LastName from "../../../domain/auth/values/LastName";
 import FormInputViewModel from "./form-input/FormInputViewModel";
-import SignUpByEmailData from "../../../domain/auth/CurrentSession/Session/SignUpByEmailData";
+import SignUpByEmailData from "../../../domain/auth/interfaces/services/SignUpByEmailData";
 
 class SignUpDialogViewModel {
     public isProcessing = value(false);

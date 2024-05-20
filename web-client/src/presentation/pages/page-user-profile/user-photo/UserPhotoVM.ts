@@ -1,8 +1,8 @@
 import Subject from "../../../utils/binding/Subject";
 import value from "../../../utils/binding/value";
 import { fileDialog } from "file-select-dialog";
-import fullName from "../../../../domain/auth/CurrentSession/Session/FullName";
-import FullName from "../../../../domain/auth/CurrentSession/Session/FullName";
+import fullName from "../../../../domain/auth/values/FullName";
+import FullName from "../../../../domain/auth/values/FullName";
 import {PhotoPath} from "../../../../domain/auth/values/PhotoPath";
 
 class UserPhotoVM {

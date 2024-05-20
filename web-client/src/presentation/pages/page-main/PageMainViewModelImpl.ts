@@ -1,6 +1,4 @@
-import CurrentSessionStore from "../../../domain/auth/CurrentSession/CurrentSessionStore";
 import NavigationBarViewModel from "../../components/navigation-bar/NavigationBarViewModel";
-import ProfileButtonAnonymousViewModel from "../../components/navigation-bar/profile-button-anonymous/ProfileButtonAnonymousViewModel";
 import SearchInputViewModel from "../../components/search-input/SearchInputViewModel";
 import ItemsViewModel from "./ItemsViewModel/ItemsViewModel";
 import ItemsViewModelImpl from "./ItemsViewModel/ItemsViewModelImpl";

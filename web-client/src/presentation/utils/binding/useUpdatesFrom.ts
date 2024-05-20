@@ -1,7 +1,7 @@
-import { useEffect, useMemo, useReducer, useRef, useState } from "react";
-import Subject from "./Subject";
+import {useEffect, useState} from "react";
+import {ReadonlySubject} from "./Subject";
 
-const useUpdatesFrom = (...dependencies: Subject<any | null>[]) => {
+const useUpdatesFrom = (...dependencies: ReadonlySubject<any | null>[]) => {
     const [newValues, setNewValues] = useState(() =>
         dependencies.map((item) => item.value)
     );

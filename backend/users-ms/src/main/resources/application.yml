@@ -64,15 +64,16 @@ app:
         access-key: minio-root-user
         secret-key: minio-root-password
 
-#logging:
-#  level:
-#    org.springframework.web: TRACE
-#    org.springframework.security: TRACE
-#    org.springframework.security.oauth2: TRACE
-#    org.springframework.*: TRACE
-#
-#management:
-#  endpoints:
-#    web:
-#      exposure:
-#        include: '*'
+logging:
+  level:
+    org.springframework.web: TRACE
+    org.springframework.web.*: TRACE
+    org.springframework.security: TRACE
+    org.springframework.security.*: TRACE
+    org.springframework.security.oauth2: TRACE
+
+management:
+  endpoints:
+    web:
+      exposure:
+        include: '*'

@@ -1,4 +1,4 @@
-import ProfileButtonViewModel from "./profile-button/ProfileButtonViewModel";
+import ProfileButtonViewModel from "./profile-button/ProfileButtonVM";
 
 
 class NavigationBarViewModel {

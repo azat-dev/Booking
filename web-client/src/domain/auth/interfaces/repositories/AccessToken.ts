@@ -1,5 +1,5 @@
 import Assert from "../../../utils/Assert";
-import ValidationException from "../../CurrentSession/Session/ValidationException";
+import ValidationException from "../services/ValidationException";
 
 export default class AccessToken {
     public constructor(public readonly val: string) {

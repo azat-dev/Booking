@@ -1,4 +1,6 @@
 import React from "react";
+import "reflect-metadata";
+
 
 import PropsApp from "./props";
 import style from "./style.module.scss";
@@ -46,7 +48,7 @@ const App = ({vm}: PropsApp) => {
     };
 
     const activePage = new ActivePageVM(vm.currentPage);
-    const activeDialog = new ActiveDialogVM(vm.activeDialog);
+    // const activeDialog = new ActiveDialogVM(vm.activeDialog);
 
     return (
         <div className={style.app}>
@@ -60,13 +62,13 @@ const App = ({vm}: PropsApp) => {
                     loading: () => <div>Loading...</div>
                 } as any}
             />
-            <ActiveDialog
-                vm={activeDialog}
-                views={{
-                    [ActiveDialogType.Login]: LoginDialog,
-                    [ActiveDialogType.SignUp]: SignUpDialog
-                }}
-            />
+            {/*<ActiveDialog*/}
+            {/*    vm={activeDialog}*/}
+            {/*    views={{*/}
+            {/*        [ActiveDialogType.Login]: LoginDialog,*/}
+            {/*        [ActiveDialogType.SignUp]: SignUpDialog*/}
+            {/*    }}*/}
+            {/*/>*/}
         </div>
     );
 };

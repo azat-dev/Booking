@@ -21,16 +21,19 @@ export type ActiveDialogViewModel =
 };
 
 
-export default interface AppViewModel {
+export interface InputAppViewModel {
+    runProfilePage(): Promise<void>;
+
+    runMainPage(): Promise<void>;
+
+    runAccommodationDetailsPage(id: AccommodationId): Promise<void>;
+}
+
+export default interface AppViewModel extends InputAppViewModel {
     readonly currentPage: Subject<Page | null>;
 
     readonly activeDialog: Subject<ActiveDialogViewModel | null>;
 
     navigationDelegate: NavigationDelegate | null;
 
-    runProfilePage(): Promise<void>;
-
-    runMainPage(): Promise<void>;
-
-    runAccommodationDetailsPage(id: AccommodationId): Promise<void>;
 }

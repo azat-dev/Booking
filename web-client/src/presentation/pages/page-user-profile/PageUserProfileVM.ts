@@ -1,4 +1,4 @@
-import PersonalUserInfo from "../../../domain/auth/CurrentSession/Session/entities/PersonalUserInfo";
+import PersonalUserInfo from "../../../domain/auth/values/PersonalUserInfo";
 import UserPhotoVM from "./user-photo/UserPhotoVM";
 
 class PageUserProfileVM {

@@ -1,5 +1,5 @@
 import Assert from "../../utils/Assert";
-import ValidationException from "../CurrentSession/Session/ValidationException";
+import ValidationException from "../interfaces/services/ValidationException";
 
 export default class Password {
     public static MIN_LENGTH = 6;
