@@ -30,7 +30,6 @@ class ComponentsModule {
         const sessionSubject = this.appSession.state;
         const toButton = (session: SessionState): ProfileButtonVM => {
 
-            debugger
             switch (session.type) {
                 case AppSessionAuthenticated.TYPE:
                     return this.authenticatedProfileButton(session as AppSessionAuthenticated);

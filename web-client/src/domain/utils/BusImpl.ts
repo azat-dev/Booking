@@ -11,7 +11,7 @@ class BusImpl implements Bus {
 
 
     publish = (event: AppEvent | Command): void => {
-        console.log("AppEvent: ", event.type, event);
+        console.log("%cEVENT: ",  "color: #FF33FF; font-weight: bold;", event.type, event);
         this.eventsStream.set(event);
     }
 

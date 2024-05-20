@@ -86,7 +86,6 @@ class DialogsModule {
     }
 
     private closeDialog = () => {
-        debugger
         this.bus.publish(new CloseDialog());
     }
 }

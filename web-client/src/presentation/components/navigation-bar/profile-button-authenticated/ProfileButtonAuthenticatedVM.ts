@@ -8,7 +8,7 @@ import Disposables from "../../../utils/binding/Disposables";
 
 class ProfileButtonAuthenticatedVM {
 
-    public static readonly TYPE = "ProfileButtonAuthenticatedVM";
+    public static readonly TYPE = "PROFILE_BUTTON_AUTHENTICATED";
 
     public get type() {
         return (this.constructor as any).TYPE;

@@ -4,7 +4,6 @@ import useUpdatesFrom from "../../utils/binding/useUpdatesFrom";
 
 const ActiveDialog = ({vm, views}: PropsActiveDialog) => {
     const [dialog] = useUpdatesFrom(vm.dialog);
-    console.log(dialog);
 
     if (!dialog) {
         return null;

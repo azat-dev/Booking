@@ -7,7 +7,7 @@ import Policy from "../../utils/Policy";
 
 class WhenAppStartedThenTryLoginByToken extends Policy {
 
-    public static readonly TYPE = "WhenAppStartedThenTryLoginByToken";
+    public static readonly TYPE = "WHEN_APP_STARTED_THEN_TRY_LOGIN_BY_TOKEN";
 
     public constructor(
         private readonly localAuthData: LocalAuthDataRepository,

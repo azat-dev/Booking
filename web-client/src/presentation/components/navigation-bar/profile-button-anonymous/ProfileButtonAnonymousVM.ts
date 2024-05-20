@@ -1,6 +1,6 @@
 class ProfileButtonAnonymousVM {
 
-    public static readonly TYPE = "ProfileButtonAnonymousVM";
+    public static readonly TYPE = "PROFILE_BUTTON_ANONYMOUS";
 
     public constructor(
         private readonly onLogin: () => void,

@@ -5,7 +5,7 @@ import Handler from "../../utils/Handler";
 
 class LogoutHandler extends Handler {
 
-    public static readonly TYPE = "LogoutHandler";
+    public static readonly TYPE = "LOGOUT_HANDLER";
 
     public constructor(
         private readonly authService: AuthService,

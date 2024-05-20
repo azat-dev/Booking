@@ -8,6 +8,10 @@ import Command from "../../domain/utils/Command";
 import OpenSignUpDialog from "../commands/OpenSignUpDialog";
 import OpenedLoginDialog from "../events/OpenedLoginDialog";
 import OpenedSignUpDialog from "../events/OpenedSignUpDialog";
+import LoginDialogVM from "../dialogs/login-dialog/LoginDialogVM";
+import LoginDialogDidClose from "../../domain/auth/events/LoginDialogDidClose";
+import SignUpDialogVM from "../dialogs/sign-up-dialog/SignUpDialogVM";
+import SignUpDialogDidClose from "../../domain/auth/events/SignUpDialogDidClose";
 
 class DialogsStore {
 
@@ -21,7 +25,21 @@ class DialogsStore {
     }
 
     public closeDialogs = () => {
+        const exisitingDialogType = this.activeDialog.value?.type;
+        if (!exisitingDialogType) {
+            return;
+        }
+
         this.activeDialog.set(null);
+
+        switch (exisitingDialogType) {
+            case LoginDialogVM.TYPE:
+                this.bus.publish(new LoginDialogDidClose());
+                return;
+            case SignUpDialogVM.TYPE:
+                this.bus.publish(new SignUpDialogDidClose());
+                return;
+        }
     }
 
     public handle = (event: Command) => {

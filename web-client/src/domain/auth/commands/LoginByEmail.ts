@@ -3,7 +3,7 @@ import Command from "../../utils/Command";
 
 class LoginByEmail extends Command {
 
-    public static readonly TYPE = 'LoginByEmail';
+    public static readonly TYPE = 'LOGIN_BY_EMAIL';
 
     public constructor(
         public readonly email: Email,

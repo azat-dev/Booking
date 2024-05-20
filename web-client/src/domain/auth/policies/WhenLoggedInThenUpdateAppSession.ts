@@ -4,7 +4,7 @@ import Policy from "../../utils/Policy";
 
 class WhenLoggedInThenUpdateAppSession extends Policy {
 
-    public static readonly TYPE = "WhenLoggedInThenUpdateAppSession";
+    public static readonly TYPE = "WHEN_LOGGED_IN_THEN_UPDATE_APP_SESSION";
 
     public constructor(private appSession: AppSession) {
         super();

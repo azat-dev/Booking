@@ -3,7 +3,7 @@ import AppEvent from "../../utils/AppEvent";
 
 class UserLoggedIn extends AppEvent {
 
-    public static readonly TYPE = "UserLoggedIn";
+    public static readonly TYPE = "USER_LOGGED_IN";
 
     public constructor(
         public readonly userInfo: PersonalUserInfo

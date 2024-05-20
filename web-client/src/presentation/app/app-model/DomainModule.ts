@@ -37,7 +37,9 @@ class DomainModule {
         private readonly authService: AuthService,
         private readonly userInfoService: PersonalUserInfoService
     ) {
-        this.appSession = new AppSessionImpl();
+        this.appSession = new AppSessionImpl(
+            this.bus
+        );
 
         this.registerPolicies();
         this.registerCommandHandlers();
@@ -76,7 +78,7 @@ class DomainModule {
             }
 
             policies.forEach(policy => {
-                console.log("Execute Domain Policy", policy.type, policy, event);
+                console.log("%cDOMAIN/POLICY: ",  "color: #FF33FF; font-weight: bold;", policy.type);
                 policy.execute(event)
             });
         });
@@ -98,7 +100,7 @@ class DomainModule {
                 return;
             }
 
-            console.log("Execute Domain Handler", handler.type, handler, command);
+            console.log(`%cDOMAIN/HANDLER: %c${handler.type}`, 'color: #FF33FF; font-weight: bold;', command);
             handler.execute(command);
         });
     }
