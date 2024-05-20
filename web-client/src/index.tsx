@@ -13,6 +13,7 @@ import ComponentsModule from "./presentation/app/app-model/ComponentsModule";
 import DialogsModule from "./presentation/app/app-model/DialogsModule";
 import PagesModule from "./PagesModule";
 import AnonymousAppVM from "./presentation/app/app-model/AnonymousAppVM";
+import DialogsStore from "./presentation/stores/DialogsStore";
 
 const root = ReactDOM.createRoot(
     document.getElementById("root") as HTMLElement
@@ -35,6 +36,11 @@ const dialogsModule = new DialogsModule(
     domainModule.bus
 );
 
+const dialogsStore = new DialogsStore(dialogsModule, domainModule.bus);
+domainModule.bus.subscribe(async (event) => {
+    dialogsStore.handle(event);
+});
+
 const pagesModule = new PagesModule(componentsModule);
 
 const accommodationsRegistry = new AccommodationsRegistryImpl();
@@ -42,6 +48,7 @@ const accommodationsRegistry = new AccommodationsRegistryImpl();
 const reservationService = new ReservationServiceImpl();
 
 const vm = new AnonymousAppVM(
+    dialogsStore,
     pagesModule,
     domainModule.bus,
 );

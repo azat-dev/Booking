@@ -5,10 +5,12 @@ import value from "../utils/binding/value";
 import OpenLoginDialog from "../commands/OpenLoginDialog";
 import CloseDialog from "../commands/CloseDialog";
 import Command from "../../domain/utils/Command";
+import OpenSignUpDialog from "../commands/OpenSignUpDialog";
+import OpenedLoginDialog from "../events/OpenedLoginDialog";
 
 class DialogsStore {
 
-    public readonly activeDialog: Subject<{ type: string, vm: any } | null>;
+    public readonly activeDialog: Subject<any | null>;
 
     public constructor(
         private readonly dialogs: DialogsModule,
@@ -18,21 +20,23 @@ class DialogsStore {
     }
 
     public closeDialogs = () => {
-        this.activeDialog.value = null;
+        this.activeDialog.set(null);
     }
 
     public handle = (event: Command) => {
 
         switch (event.type) {
-            case OpenLoginDialog:
-                // this.activeDialog.set(this.dialogs.loginDialog());
+            case OpenLoginDialog.TYPE:
+                const vm = this.dialogs.loginDialog();
+                this.activeDialog.set(vm);
+                this.bus.publish(new OpenedLoginDialog());
                 return;
 
-            case "OpenSignUpDialog":
+            case OpenSignUpDialog.TYPE:
                 // this.openSignUpDialog();
                 return;
 
-            case CloseDialog:
+            case CloseDialog.TYPE:
                 this.closeDialogs();
                 return;
         }

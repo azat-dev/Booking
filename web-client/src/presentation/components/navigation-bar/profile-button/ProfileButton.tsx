@@ -12,7 +12,7 @@ import ProfileButtonLoadingVM from "../profile-button-loading/ProfileButtonLoadi
 const ProfileButton = ({vm}: PropsProfileButton) => {
     const [button] = useUpdatesFrom(vm);
 
-    debugger
+    
     switch (button.type) {
         case ProfileButtonAnonymousVM.TYPE:
             return (

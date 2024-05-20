@@ -1,12 +1,8 @@
 import Subject from "../../utils/binding/Subject";
-
-export interface DialogItem {
-    type: string;
-    vm?: any;
-}
+import {DialogVM} from "../app-model/AppVM";
 
 class ActiveDialogVM {
-    public constructor(public readonly dialog: Subject<DialogItem | null>) {
+    public constructor(public readonly dialog: Subject<DialogVM | null>) {
     }
 }
 

@@ -1,4 +1,4 @@
-import AppVM, { ActiveDialogVM } from "./AppVM";
+import AppVM, {DialogVM} from "./AppVM";
 import NavigationDelegate from "./NavigationDelegate";
 import AccommodationId from "../../../domain/accommodations/AccommodationId";
 import OpenLoginDialog from "../../commands/OpenLoginDialog";
@@ -7,21 +7,22 @@ import PagesModule from "../../../PagesModule";
 import Subject from "../../utils/binding/Subject";
 import Page from "../Page";
 import value from "../../utils/binding/value";
+import DialogsStore from "../../stores/DialogsStore";
 
 class AnonymousAppVM implements AppVM {
 
     public currentPage: Subject<Page | null>;
-    public readonly activeDialog: Subject<ActiveDialogVM | null>;
+    public readonly activeDialog: Subject<DialogVM | null>;
     public navigationDelegate: NavigationDelegate | null = null;
 
-
     public constructor(
+        dialogsStore: DialogsStore,
         private readonly pages: PagesModule,
         private readonly bus: Bus
     ) {
 
-        this.activeDialog = value(null);
-        this.currentPage = value({ type: "loading" });
+        this.activeDialog = dialogsStore.activeDialog as any;
+        this.currentPage = value({type: "loading"});
     }
 
     runProfilePage = async (): Promise<void> => {

@@ -6,7 +6,6 @@ import LoginByEmail from "../../../domain/auth/commands/LoginByEmail";
 import UserLoggedIn from "../../../domain/auth/events/UserLoggedIn";
 import LoginByEmailFailed from "../../../domain/auth/events/LoginByEmailFailed";
 import LoginDialogDidClose from "../../../domain/auth/events/LoginDialogDidClose";
-import DialogsStore from "../../stores/DialogsStore";
 
 class DialogsModule {
 
@@ -14,14 +13,6 @@ class DialogsModule {
         private readonly bus: Bus
     ) {
         this.registerHandlers();
-    }
-
-    private registerHandlers = () => {
-
-        const dialogsStore = new DialogsStore(this, this.bus);
-        this.bus.subscribe(async (event) => {
-            dialogsStore.handle(event);
-        });
     }
 
     public loginDialog = () => {
@@ -49,6 +40,9 @@ class DialogsModule {
                 this.bus.publish(new OpenSignUpDialog())
             }
         );
+    }
+
+    private registerHandlers = () => {
     }
 
     private closeDialog = () => {

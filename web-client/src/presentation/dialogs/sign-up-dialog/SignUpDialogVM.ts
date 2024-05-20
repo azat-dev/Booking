@@ -8,6 +8,12 @@ import FormInputVM from "./form-input/FormInputVM";
 import SignUpByEmailData from "../../../domain/auth/interfaces/services/SignUpByEmailData";
 
 class SignUpDialogVM {
+
+    public static readonly TYPE = "SignUpDialogVM";
+    public get type() {
+        return SignUpDialogVM.TYPE;
+    }
+
     public isProcessing = value(false);
     public errorText = value<string | undefined>(undefined);
 

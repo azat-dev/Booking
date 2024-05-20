@@ -5,7 +5,6 @@ import "reflect-metadata";
 import PropsApp from "./props";
 import style from "./style.module.scss";
 import LoginDialog from "../dialogs/login-dialog/LoginDialog";
-import {ActiveDialogType} from "./app-model/AppVM";
 import SignUpDialog from "../dialogs/sign-up-dialog/SignUpDialog";
 import PageMain from "../pages/page-main/PageMain";
 import PageAccommodationDetails from "../pages/page-accommodation-details/PageAccommodationDetails";
@@ -17,6 +16,8 @@ import ActivePage from "./active-page/ActivePage";
 import ActivePageVM from "./active-page/ActivePageVM";
 import ActiveDialogVM from "./active-dialog/ActiveDialogVM";
 import ActiveDialog from "./active-dialog/ActiveDialog";
+import LoginDialogVM from "../dialogs/login-dialog/LoginDialogVM";
+import SignUpDialogVM from "../dialogs/sign-up-dialog/SignUpDialogVM";
 
 
 const App = ({vm}: PropsApp) => {
@@ -48,7 +49,7 @@ const App = ({vm}: PropsApp) => {
     };
 
     const activePage = new ActivePageVM(vm.currentPage);
-    // const activeDialog = new ActiveDialogVM(vm.activeDialog);
+    const activeDialog = new ActiveDialogVM(vm.activeDialog);
 
     return (
         <div className={style.app}>
@@ -62,13 +63,13 @@ const App = ({vm}: PropsApp) => {
                     loading: () => <div>Loading...</div>
                 } as any}
             />
-            {/*<ActiveDialog*/}
-            {/*    vm={activeDialog}*/}
-            {/*    views={{*/}
-            {/*        [ActiveDialogType.Login]: LoginDialog,*/}
-            {/*        [ActiveDialogType.SignUp]: SignUpDialog*/}
-            {/*    }}*/}
-            {/*/>*/}
+            <ActiveDialog
+                vm={activeDialog}
+                views={{
+                    [LoginDialogVM.TYPE]: LoginDialog,
+                    [SignUpDialogVM.TYPE]: SignUpDialog
+                }}
+            />
         </div>
     );
 };

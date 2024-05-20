@@ -4,6 +4,11 @@ import value from "../../utils/binding/value";
 import FormInputVM from "../sign-up-dialog/form-input/FormInputVM";
 
 class LoginDialogVM {
+    public static readonly TYPE = "LoginDialogVM";
+    public get type() {
+        return LoginDialogVM.TYPE;
+    }
+
     public readonly isProcessing = value(false);
     public readonly showWrongCredentialsError = value(false);
 
