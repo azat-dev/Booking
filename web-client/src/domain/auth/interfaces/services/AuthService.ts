@@ -29,7 +29,6 @@ export interface AuthenticateByEmailData {
     password: string;
 }
 
-
 export class WrongCredentialsError extends Error {
     constructor() {
         super("Wrong credentials");

@@ -5,9 +5,9 @@ import FailedLoginByToken from "../events/FailedLoginByToken";
 import Policy from "../../utils/Policy";
 
 
-class LoginByTokenOnAppStarted extends Policy {
+class WhenAppStartedThenTryLoginByToken extends Policy {
 
-    public static readonly TYPE = "LoginByTokenOnAppStarted";
+    public static readonly TYPE = "WhenAppStartedThenTryLoginByToken";
 
     public constructor(
         private readonly localAuthData: LocalAuthDataRepository,
@@ -30,4 +30,4 @@ class LoginByTokenOnAppStarted extends Policy {
     }
 }
 
-export default LoginByTokenOnAppStarted;
+export default WhenAppStartedThenTryLoginByToken;

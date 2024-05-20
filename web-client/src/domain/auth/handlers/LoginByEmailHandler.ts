@@ -34,7 +34,6 @@ class LoginByEmailHandler extends Handler {
 
         } catch (error) {
             this.bus.publish(new LoginByEmailFailed(error));
-            throw error;
         }
     }
 }

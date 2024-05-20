@@ -14,6 +14,7 @@ const ProfileButtonAuthenticated = ({vm}: PropsProfileButtonAuthenticated) => {
     const [email, fullName] = useUpdatesFrom(vm.email, vm.fullName);
     const screenType = useScreenType();
 
+
     return (
         <Dropdown>
             <MenuButton

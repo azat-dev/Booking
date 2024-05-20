@@ -4,6 +4,10 @@ class Disposables {
 
     private disposables: Disposable[] = [];
 
+    public addItems = (disposables: Disposable[]) => {
+        this.disposables.push(...disposables);
+    }
+
     public add = (disposable: Disposable) => {
         this.disposables.push(disposable);
     }

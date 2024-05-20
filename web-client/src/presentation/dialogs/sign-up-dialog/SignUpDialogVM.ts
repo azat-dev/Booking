@@ -134,6 +134,7 @@ class SignUpDialogVM {
             await this.signUp?.(data);
             this.errorText.set(undefined);
             this.isProcessing.set(false);
+            this.close();
             return;
         } catch (e) {
             console.log("Error", e);

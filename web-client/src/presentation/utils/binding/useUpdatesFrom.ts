@@ -19,7 +19,7 @@ const useUpdatesFrom = (...dependencies: ReadonlySubject<any | null>[]) => {
 
         setNewValues(dependencies.map((item) => item.value));
         return () => {
-            subscriptions.forEach((s) => s.cancel());
+            subscriptions.forEach((s) => s.dispose());
         };
     }, dependencies);
 

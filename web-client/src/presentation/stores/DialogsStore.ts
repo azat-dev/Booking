@@ -7,6 +7,7 @@ import CloseDialog from "../commands/CloseDialog";
 import Command from "../../domain/utils/Command";
 import OpenSignUpDialog from "../commands/OpenSignUpDialog";
 import OpenedLoginDialog from "../events/OpenedLoginDialog";
+import OpenedSignUpDialog from "../events/OpenedSignUpDialog";
 
 class DialogsStore {
 
@@ -26,15 +27,19 @@ class DialogsStore {
     public handle = (event: Command) => {
 
         switch (event.type) {
-            case OpenLoginDialog.TYPE:
+            case OpenLoginDialog.TYPE: {
                 const vm = this.dialogs.loginDialog();
                 this.activeDialog.set(vm);
                 this.bus.publish(new OpenedLoginDialog());
                 return;
+            }
 
-            case OpenSignUpDialog.TYPE:
-                // this.openSignUpDialog();
+            case OpenSignUpDialog.TYPE: {
+                const vm = this.dialogs.signUpDialog();
+                this.activeDialog.set(vm);
+                this.bus.publish(new OpenedSignUpDialog());
                 return;
+            }
 
             case CloseDialog.TYPE:
                 this.closeDialogs();

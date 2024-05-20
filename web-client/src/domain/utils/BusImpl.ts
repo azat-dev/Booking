@@ -1,10 +1,12 @@
 import value from "../../presentation/utils/binding/value";
-import Bus, {Cancelable} from "./Bus";
+import Bus from "./Bus";
 import Subject from "../../presentation/utils/binding/Subject";
 import AppEvent from "./AppEvent";
 import Command from "./Command";
+import Disposable from "../../presentation/utils/binding/Disposable";
 
 class BusImpl implements Bus {
+
     private eventsStream: Subject<any> = value(null);
 
 
@@ -13,28 +15,32 @@ class BusImpl implements Bus {
         this.eventsStream.set(event);
     }
 
-    subscribe = (handler: (event: any) => Promise<void>): Cancelable => {
+    subscribe = (handler: (event: any) => Promise<void>): Disposable => {
         return this.eventsStream.listen((event) => {
             handler(event);
         });
     }
 
-    waitFor = async <T>(condition: (event: any) => Promise<T>): Promise<T> => {
+    waitFor = async <T>(condition: (event: any) => boolean): Promise<T> => {
         return new Promise<T>(resolve => {
             const ref = {} as any;
             ref.c = this.subscribe(async event => {
-                const result = await condition(event);
-                ref.c.cancel();
-                resolve(result);
+                const found = await condition(event);
+                if (!found) {
+                    return;
+                }
+
+                ref.c.dispose();
+                resolve(event);
             });
         });
     }
 
-    publishAndWaitForResponse = async <T>(event: any, condition: (event: any) => Promise<T>): Promise<T> => {
+    publishAndWaitFor = async (event: any, condition: (event: any) => boolean): Promise<any> => {
 
-        const result = await this.waitFor(condition);
+        const promise = this.waitFor(condition);
         this.publish(event);
-        return result;
+        return await promise
     }
 }
 

@@ -12,7 +12,8 @@ import ProfileButtonLoadingVM from "../profile-button-loading/ProfileButtonLoadi
 const ProfileButton = ({vm}: PropsProfileButton) => {
     const [button] = useUpdatesFrom(vm);
 
-    
+    console.log("BUTTON", button);
+
     switch (button.type) {
         case ProfileButtonAnonymousVM.TYPE:
             return (
@@ -23,13 +24,13 @@ const ProfileButton = ({vm}: PropsProfileButton) => {
             return (
                 <ProfileButtonAuthenticated vm={button}/>
             );
-
-        case ProfileButtonLoadingVM.TYPE:
-            return (
-                <div className={style.container}>
-                    <div>Processing...</div>
-                </div>
-            );
+        //
+        // case ProfileButtonLoadingVM.TYPE:
+        //     return (
+        //         <div className={style.container}>
+        //             <div>Processing...</div>
+        //         </div>
+        //     );
 
         default:
             return null;

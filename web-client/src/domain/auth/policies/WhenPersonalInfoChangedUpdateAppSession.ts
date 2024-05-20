@@ -4,9 +4,9 @@ import AppSessionAuthenticated from "../entities/AppSessionAuthenticated";
 import Policy from "../../utils/Policy";
 
 
-class UpdateAppSessionOnPersonalInfoChange extends Policy {
+class WhenPersonalInfoChangedUpdateAppSession extends Policy {
 
-    public static readonly TYPE = "UpdateAppSessionOnPersonalInfoChange";
+    public static readonly TYPE = "WhenPersonalInfoChangedUpdateAppSession";
 
     public constructor(private appSession: AppSession) {
         super();
@@ -24,4 +24,4 @@ class UpdateAppSessionOnPersonalInfoChange extends Policy {
     }
 }
 
-export default UpdateAppSessionOnPersonalInfoChange;
+export default WhenPersonalInfoChangedUpdateAppSession;

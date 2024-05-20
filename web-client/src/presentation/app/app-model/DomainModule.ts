@@ -2,11 +2,11 @@ import AppSessionImpl from "../../../domain/auth/entities/AppSessionImpl";
 import AppSession from "../../../domain/auth/entities/AppSession";
 import AppStarted from "../../../domain/auth/events/AppStarted";
 import PersonalInfoDidChange from "../../../domain/auth/events/PersonalInfoDidChange";
-import UpdateAppSessionOnPersonalInfoChange from "../../../domain/auth/policies/UpdateAppSessionOnPersonalInfoChange";
+import WhenPersonalInfoChangedUpdateAppSession from "../../../domain/auth/policies/WhenPersonalInfoChangedUpdateAppSession";
 import UserLoggedOut from "../../../domain/auth/events/UserLoggedOut";
-import UpdateAppSessionOnLogout from "../../../domain/auth/policies/UpdateAppSessionOnLogout";
+import WhenLogoutThenUpdateAppSession from "../../../domain/auth/policies/WhenLogoutThenUpdateAppSession";
 import UserLoggedIn from "../../../domain/auth/events/UserLoggedIn";
-import UpdateAppSessionOnLogIn from "../../../domain/auth/policies/UpdateAppSessionOnLogIn";
+import WhenLoggedInThenUpdateAppSession from "../../../domain/auth/policies/WhenLoggedInThenUpdateAppSession";
 import LoginByEmailHandler from "../../../domain/auth/handlers/LoginByEmailHandler";
 import LoginByEmail from "../../../domain/auth/commands/LoginByEmail";
 import type AuthService from "../../../domain/auth/interfaces/services/AuthService";
@@ -14,10 +14,17 @@ import type PersonalUserInfoService from "../../../domain/auth/interfaces/servic
 import LoginByToken from "../../../domain/auth/commands/LoginByToken";
 import LoginByTokenHandler from "../../../domain/auth/handlers/LoginByTokenHandler";
 import BusImpl from "../../../domain/utils/BusImpl";
-import LoginByTokenOnAppStarted from "../../../domain/auth/policies/LoginByTokenOnAppStarted";
+import WhenAppStartedThenTryLoginByToken from "../../../domain/auth/policies/WhenAppStartedThenTryLoginByToken";
 import LocalAuthDataRepository from "../../../domain/auth/interfaces/repositories/LocalAuthDataRepository";
 import FailedLoginByToken from "../../../domain/auth/events/FailedLoginByToken";
-import UpdateAppSessionOnFailedLoginByToken from "../../../domain/auth/policies/UpdateAppSessionOnFailedLoginByToken";
+import WhenFailedLoginByTokenThenUpdateAppSession from "../../../domain/auth/policies/WhenFailedLoginByTokenThenUpdateAppSession";
+import LogoutHandler from "../../../domain/auth/handlers/LogoutHandler";
+import Logout from "../../../domain/auth/commands/Logout";
+import SignUpByEmail from "../../../domain/auth/commands/SignUpByEmail";
+import SignUpByEmailHandler from "../../../domain/auth/handlers/SignUpByEmailHandler";
+import FailedSignUpByEmail from "../../../domain/auth/events/FailedSignUpByEmail";
+import WhenUserSignedUpThenUpdateAppSession from "../../../domain/auth/policies/WhenUserSignedUpThenUpdateAppSession";
+import UserSignedUpByEmail from "../../../domain/auth/events/UserSignedUpByEmail";
 
 class DomainModule {
 
@@ -39,20 +46,23 @@ class DomainModule {
     private registerPolicies = (): void => {
 
         const policiesByEvents = {
-            [AppStarted.name]: [
-                new LoginByTokenOnAppStarted(this.localAuthData, this.bus),
+            [AppStarted.TYPE]: [
+                new WhenAppStartedThenTryLoginByToken(this.localAuthData, this.bus),
             ],
-            [PersonalInfoDidChange.name]: [
-                new UpdateAppSessionOnPersonalInfoChange(this.appSession)
+            [PersonalInfoDidChange.TYPE]: [
+                new WhenPersonalInfoChangedUpdateAppSession(this.appSession)
             ],
-            [UserLoggedOut.name]: [
-                new UpdateAppSessionOnLogout(this.appSession)
+            [UserLoggedOut.TYPE]: [
+                new WhenLogoutThenUpdateAppSession(this.appSession)
             ],
-            [UserLoggedIn.name]: [
-                new UpdateAppSessionOnLogIn(this.appSession)
+            [UserLoggedIn.TYPE]: [
+                new WhenLoggedInThenUpdateAppSession(this.appSession)
             ],
-            [FailedLoginByToken.name]: [
-                new UpdateAppSessionOnFailedLoginByToken(this.appSession)
+            [FailedLoginByToken.TYPE]: [
+                new WhenFailedLoginByTokenThenUpdateAppSession(this.appSession)
+            ],
+            [UserSignedUpByEmail.TYPE]: [
+                new WhenUserSignedUpThenUpdateAppSession(this.appSession)
             ]
         };
 
@@ -74,8 +84,10 @@ class DomainModule {
     private registerCommandHandlers = (): void => {
 
         const handlersByCommands = {
-            [LoginByEmail.name]: new LoginByEmailHandler(this.authService, this.userInfoService, this.bus),
-            [LoginByToken.name]: new LoginByTokenHandler(this.authService, this.bus)
+            [LoginByEmail.TYPE]: new LoginByEmailHandler(this.authService, this.userInfoService, this.bus),
+            [LoginByToken.TYPE]: new LoginByTokenHandler(this.authService, this.bus),
+            [Logout.TYPE]: new LogoutHandler(this.authService, this.bus),
+            [SignUpByEmail.TYPE]: new SignUpByEmailHandler(this.authService, this.userInfoService, this.bus)
         };
 
         this.bus.subscribe(async command => {

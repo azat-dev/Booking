@@ -1,6 +1,6 @@
-import {Cancellable} from "./Cancellable";
 import {SubjectCallback} from "./SubjectCallback";
 import Subject from "./Subject";
+import Disposable from "./Disposable";
 
 export default class SubjectImpl<Value> extends Subject<Value> {
     private subscribers: Set<SubjectCallback<Value>> = new Set();
@@ -14,20 +14,13 @@ export default class SubjectImpl<Value> extends Subject<Value> {
         this.notifySubscribers();
     };
 
-    public listen = (callback: SubjectCallback<Value>): Cancellable => {
+    public listen = (callback: SubjectCallback<Value>): Disposable => {
         this.subscribers.add(callback);
         return {
-            cancel: () => {
+            dispose: () => {
                 this.subscribers.delete(callback);
             },
         };
-    };
-
-    private notifySubscribers = (): void => {
-        const value = this.value;
-        this.subscribers.forEach((subscriber) => {
-            subscriber(value);
-        });
     };
 
     public stopListening(callback: SubjectCallback<Value>): void {
@@ -37,4 +30,11 @@ export default class SubjectImpl<Value> extends Subject<Value> {
     public dispose = (): void => {
         this.subscribers.clear();
     }
+
+    private notifySubscribers = (): void => {
+        const value = this.value;
+        this.subscribers.forEach((subscriber) => {
+            subscriber(value);
+        });
+    };
 }

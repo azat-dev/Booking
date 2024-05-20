@@ -10,11 +10,11 @@ class AppSessionImpl implements AppSession {
 
     public readonly state: Subject<AppSessionAuthenticated | AppSessionAnonymous | AppSessionLoading> = value(new AppSessionLoading());
 
-    public authenticate = (userInfo: PersonalUserInfo): void => {
-        this.state.set(new AppSessionAuthenticated(userInfo, this.logout));
+    public setAuthenticated = (userInfo: PersonalUserInfo): void => {
+        this.state.set(new AppSessionAuthenticated(userInfo, this.setAnonymous));
     }
 
-    public logout = (): void => {
+    public setAnonymous = (): void => {
         this.state.set(new AppSessionAnonymous());
     }
 }

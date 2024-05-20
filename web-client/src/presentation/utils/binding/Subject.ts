@@ -1,10 +1,10 @@
 import {SubjectCallback} from "./SubjectCallback";
-import {Cancellable} from "./Cancellable";
+import Disposable from "./Disposable";
 
 export interface ReadonlySubject<Value> {
     value: Value;
 
-    listen(callback: SubjectCallback<Value>): Cancellable;
+    listen(callback: SubjectCallback<Value>): Disposable;
 
     stopListening(callback: SubjectCallback<Value>): void;
 }
@@ -19,7 +19,7 @@ export default abstract class Subject<Value> implements ReadonlySubject<Value> {
 
     abstract set(newValue: Value): void;
 
-    abstract listen(callback: SubjectCallback<Value>): Cancellable;
+    abstract listen(callback: SubjectCallback<Value>): Disposable;
 
     abstract stopListening(callback: SubjectCallback<Value>): void;
 

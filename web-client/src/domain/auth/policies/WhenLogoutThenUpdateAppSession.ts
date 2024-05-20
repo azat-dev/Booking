@@ -3,9 +3,9 @@ import AppSessionAuthenticated from "../entities/AppSessionAuthenticated";
 import type AppSession from "../entities/AppSession";
 import Policy from "../../utils/Policy";
 
-class UpdateAppSessionOnLogout extends Policy {
+class WhenLogoutThenUpdateAppSession extends Policy {
 
-    public static readonly TYPE = "UpdateAppSessionOnLogout";
+    public static readonly TYPE = "WhenLogoutThenUpdateAppSession";
 
     public constructor(private appSession: AppSession) {
         super();
@@ -23,4 +23,4 @@ class UpdateAppSessionOnLogout extends Policy {
     }
 }
 
-export default UpdateAppSessionOnLogout;
+export default WhenLogoutThenUpdateAppSession;

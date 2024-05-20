@@ -10,9 +10,9 @@ interface AppSession {
 
     readonly state: Subject<SessionState>;
 
-    authenticate: (userInfo: PersonalUserInfo) => void;
+    setAuthenticated: (userInfo: PersonalUserInfo) => void;
 
-    logout: () => void;
+    setAnonymous: () => void;
 }
 
 export default AppSession;
