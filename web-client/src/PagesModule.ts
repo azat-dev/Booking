@@ -1,10 +1,7 @@
-import Bus from "./domain/utils/Bus";
-import DialogsStore from "./presentation/stores/DialogsStore";
-import DialogsModule from "./presentation/app/app-model/DialogsModule";
-import PageMainViewModelImpl from "./presentation/pages/page-main/PageMainViewModelImpl";
+import PageMainVMImpl from "./presentation/pages/page-main/PageMainVMImpl";
 import ComponentsModule from "./presentation/app/app-model/ComponentsModule";
-import PageAccommodationDetailsViewModel
-    from "./presentation/pages/page-accommodation-details/PageAccommodationDetailsViewModel";
+import PageAccommodationDetailsVM
+    from "./presentation/pages/page-accommodation-details/PageAccommodationDetailsVM";
 import Accommodation from "./domain/accommodations/Accommodation";
 
 class PagesModule {
@@ -15,7 +12,7 @@ class PagesModule {
     }
 
     public mainPage = () => {
-        return new PageMainViewModelImpl(
+        return new PageMainVMImpl(
             this.components.navigationBar(),
             () => {
                 console.log("Toggle favorite");
@@ -25,7 +22,7 @@ class PagesModule {
     }
 
     public accomodateDetailsPage = (accomodation: Accommodation) => {
-        return new PageAccommodationDetailsViewModel(
+        return new PageAccommodationDetailsVM(
             accomodation,
             this.components.navigationBar(),
             () => {

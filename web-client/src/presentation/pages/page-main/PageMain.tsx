@@ -7,7 +7,7 @@ import PropsPageMain from "./props";
 import style from "./style.module.scss";
 import NavigationBar from "../../components/navigation-bar/NavigationBar";
 import useUpdatesFrom from "../../utils/binding/useUpdatesFrom";
-import { ItemsViewModelState } from "./ItemsViewModel/ItemsViewModel";
+import { ItemsVMState } from "./items-vm/ItemsVM";
 import { Grid, Stack, Typography } from "@mui/joy";
 import { desktop, mobile, tablet } from "../../utils/selectors";
 import SearchInput from "../../components/search-input/SearchInput";
@@ -19,10 +19,10 @@ const PageMain = ({ vm }: PropsPageMain) => {
         vm.load();
     }, [vm]);
 
-    const itemsViewModel = vm.itemsViewModel;
-    const state = itemsViewModel.state;
+    const itemsVM = vm.itemsVM;
+    const state = itemsVM.state;
     const updatedValues = useUpdatesFrom(state);
-    const itemsState: ItemsViewModelState = updatedValues[0];
+    const itemsState: ItemsVMState = updatedValues[0];
 
     return (
         <div className={style.pageMain}>

@@ -1,7 +1,7 @@
-import ProfileButtonAnonymousViewModel from "./ProfileButtonAnonymousViewModel";
+import ProfileButtonAnonymousVM from "./ProfileButtonAnonymousVM";
 
 interface PropsProfileButtonAnonymous {
-    vm: ProfileButtonAnonymousViewModel;
+    vm: ProfileButtonAnonymousVM;
 }
 
 export default PropsProfileButtonAnonymous;

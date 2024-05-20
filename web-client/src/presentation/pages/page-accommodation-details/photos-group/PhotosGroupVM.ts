@@ -1,10 +1,10 @@
 import { Photo } from "../../../../domain/accommodations/Accommodation";
 
-export interface ShowAllImagesButtonViewModel {
+export interface ShowAllImagesButtonVM {
     click: () => void;
 }
 
-export interface PhotoViewModel {
+export interface PhotoVM {
     url: string;
     numberOfColumns: number;
     aspectRatio: string;
@@ -12,13 +12,13 @@ export interface PhotoViewModel {
 
 export interface OtherPhotosData {
     numberOfColumns: number;
-    items: PhotoViewModel[];
+    items: PhotoVM[];
 }
 
-class PhotosGroupViewModel {
-    public readonly mainPhoto: PhotoViewModel;
+class PhotosGroupVM {
+    public readonly mainPhoto: PhotoVM;
     public readonly otherPhotos: OtherPhotosData | undefined;
-    public showAllImagesButton: ShowAllImagesButtonViewModel | undefined;
+    public showAllImagesButton: ShowAllImagesButtonVM | undefined;
 
     public constructor(public readonly photos: Photo[]) {
         this.mainPhoto = {
@@ -92,4 +92,4 @@ class PhotosGroupViewModel {
     }
 }
 
-export default PhotosGroupViewModel;
+export default PhotosGroupVM;

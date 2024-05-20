@@ -1,7 +1,7 @@
-import PageAccommodationDetailsViewModel from "./PageAccommodationDetailsViewModel";
+import PageAccommodationDetailsVM from "./PageAccommodationDetailsVM";
 
 interface PropsPageAccommodationDetails {
-    vm: PageAccommodationDetailsViewModel;
+    vm: PageAccommodationDetailsVM;
 }
 
 export default PropsPageAccommodationDetails;

@@ -1,19 +1,19 @@
-import DayCellViewModel, { SelectionState } from "./day-cell/DayCellViewModel";
+import DayCellVM, { SelectionState } from "./day-cell/DayCellVM";
 import dayjs from "dayjs";
-import WeekDayCellViewModel from "./week-day-cell/WeekDayCellViewModel";
+import WeekDayCellVM from "./week-day-cell/WeekDayCellVM";
 
 export enum CellType {
     Day,
     Empty,
 }
 
-export type CellViewModel =
+export type CellVM =
     | {
           type: CellType.Empty;
       }
     | {
           type: CellType.Day;
-          vm: DayCellViewModel;
+          vm: DayCellVM;
       };
 
 export class MonthPosition {
@@ -92,10 +92,10 @@ export abstract class AvailableDates {
     abstract isAvailable(date: Date): boolean;
 }
 
-class MonthViewModel {
-    public readonly days: DayCellViewModel[];
+class MonthVM {
+    public readonly days: DayCellVM[];
     public readonly emptyCells: number[];
-    public readonly weekDays: WeekDayCellViewModel[];
+    public readonly weekDays: WeekDayCellVM[];
 
     public selectedRange: CalendarRange | undefined;
 
@@ -109,7 +109,7 @@ class MonthViewModel {
         this.emptyCells = this.generateEmptyCells(
             this.getNumberOfEmptyCells(monthPosition.month, monthPosition.year)
         );
-        this.days = MonthViewModel.generateDaysForMonth(
+        this.days = MonthVM.generateDaysForMonth(
             monthPosition,
             initialSelectedRange,
             availableDates,
@@ -162,8 +162,8 @@ class MonthViewModel {
         selectionRange: CalendarRange | undefined,
         availableDates: AvailableDates,
         onClickDay: (day: Date) => void
-    ): DayCellViewModel[] => {
-        const days: DayCellViewModel[] = [];
+    ): DayCellVM[] => {
+        const days: DayCellVM[] = [];
         const firstDay = `${position.year}-${position.month}-01`;
         const daysInMonth = dayjs(firstDay).daysInMonth();
 
@@ -181,7 +181,7 @@ class MonthViewModel {
             const selectionState = this.getSelectionState(selectionRange, day);
 
             days.push(
-                new DayCellViewModel(
+                new DayCellVM(
                     i.toString(),
                     i.toString(),
                     day,
@@ -195,15 +195,15 @@ class MonthViewModel {
         return days;
     };
 
-    private generateWeekDays = (): WeekDayCellViewModel[] => {
+    private generateWeekDays = (): WeekDayCellVM[] => {
         return ["Sun", "Mon", "Tue", "Wed", "Thu", "Fri", "Sat"].map(
-            (value) => new WeekDayCellViewModel(value, value)
+            (value) => new WeekDayCellVM(value, value)
         );
     };
 
     public updateSelection = (newRange: CalendarRange | undefined) => {
         this.days.forEach((day) => {
-            const selectionState = MonthViewModel.getSelectionState(
+            const selectionState = MonthVM.getSelectionState(
                 newRange,
                 day.date
             );
@@ -219,4 +219,4 @@ class MonthViewModel {
     };
 }
 
-export default MonthViewModel;
+export default MonthVM;

@@ -1,7 +1,7 @@
-import WeekDayCellViewModel from "./WeekDayCellViewModel";
+import WeekDayCellVM from "./WeekDayCellVM";
 
 interface PropsWeekDayCell {
-    vm: WeekDayCellViewModel;
+    vm: WeekDayCellVM;
 }
 
 export default PropsWeekDayCell;

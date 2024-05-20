@@ -1,7 +1,7 @@
-import FormInputViewModel from "./FormInputViewModel";
+import FormInputVM from "./FormInputVM";
 
 interface PropsFormInput {
-    vm: FormInputViewModel;
+    vm: FormInputVM;
     label: string;
     type: React.HTMLInputTypeAttribute;
     placeholder: string;

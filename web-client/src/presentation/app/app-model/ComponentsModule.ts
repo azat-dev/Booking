@@ -1,21 +1,20 @@
-import ProfileButtonVM, {
-    ProfileButtonPresentation,
-    ProfileButtonPresentationType
-} from "../../components/navigation-bar/profile-button/ProfileButtonVM";
+import ProfileButtonVM from "../../components/navigation-bar/profile-button/ProfileButtonVM";
 import Bus from "../../../domain/utils/Bus";
-import ProfileButtonAnonymousViewModel
-    from "../../components/navigation-bar/profile-button-anonymous/ProfileButtonAnonymousViewModel";
-import ProfileButtonAuthenticatedViewModel
-    from "../../components/navigation-bar/profile-button-authenticated/ProfileButtonAuthenticatedViewModel";
+import ProfileButtonAnonymousVM
+    from "../../components/navigation-bar/profile-button-anonymous/ProfileButtonAnonymousVM";
+import ProfileButtonAuthenticatedVM
+    from "../../components/navigation-bar/profile-button-authenticated/ProfileButtonAuthenticatedVM";
 import AppSession, {SessionState} from "../../../domain/auth/entities/AppSession";
 import AppSessionAuthenticated from "../../../domain/auth/entities/AppSessionAuthenticated";
 import value from "../../utils/binding/value";
 import AppSessionAnonymous from "../../../domain/auth/entities/AppSessionAnonymous";
 import AppSessionLoading from "../../../domain/auth/entities/AppSessionLoading";
-import NavigationBarViewModel from "../../components/navigation-bar/NavigationBarViewModel";
+import NavigationBarVM from "../../components/navigation-bar/NavigationBarVM";
 import Logout from "../../../domain/auth/commands/Logout";
 import OpenLoginDialog from "../../commands/OpenLoginDialog";
 import OpenSignUpDialog from "../../commands/OpenSignUpDialog";
+import Subject from "../../utils/binding/Subject";
+import ProfileButtonLoadingVM from "../../components/navigation-bar/profile-button-loading/ProfileButtonLoadingVM";
 
 class ComponentsModule {
 
@@ -25,27 +24,21 @@ class ComponentsModule {
     ) {
     }
 
-    public profileButton = (): ProfileButtonVM => {
+    public profileButton = (): Subject<ProfileButtonVM> => {
 
         const sessionSubject = this.appSession.state;
-        const toButton = (session: SessionState): ProfileButtonPresentation => {
+        const toButton = (session: SessionState): ProfileButtonVM => {
 
             switch (session.type) {
                 case AppSessionAuthenticated.TYPE:
-                    return {
-                        type: ProfileButtonPresentationType.AUTHENTICATED,
-                        vm: this.authenticatedProfileButton(session as AppSessionAuthenticated)
-                    };
+                    return this.authenticatedProfileButton(session as AppSessionAuthenticated);
 
                 case AppSessionAnonymous.TYPE:
-                    return {
-                        type: ProfileButtonPresentationType.ANONYMOUS,
-                        vm: this.anonymousProfileButton()
-                    };
+                    return this.anonymousProfileButton();
+
                 case AppSessionLoading:
-                    return {
-                        type: ProfileButtonPresentationType.PROCESSING
-                    };
+                    return this.loadingProfileButton();
+
                 default:
                     throw new Error(`Unknown session state: ${session}`);
             }
@@ -56,18 +49,22 @@ class ComponentsModule {
             button.set(toButton(session));
         });
 
-        return new ProfileButtonVM(button);
+        return button;
     };
 
     public navigationBar = () => {
-        return new NavigationBarViewModel(
+        return new NavigationBarVM(
             this.profileButton()
         )
     }
 
-    private anonymousProfileButton = (): ProfileButtonAnonymousViewModel => {
+    private loadingProfileButton = () : ProfileButtonLoadingVM  => {
+        return new ProfileButtonLoadingVM();
+    }
 
-        return new ProfileButtonAnonymousViewModel(
+    private anonymousProfileButton = (): ProfileButtonAnonymousVM => {
+
+        return new ProfileButtonAnonymousVM(
             () => {
                 this.bus.publish(new OpenLoginDialog());
             },
@@ -77,7 +74,7 @@ class ComponentsModule {
         );
     }
 
-    private authenticatedProfileButton = (session: AppSessionAuthenticated): ProfileButtonAuthenticatedViewModel => {
+    private authenticatedProfileButton = (session: AppSessionAuthenticated): ProfileButtonAuthenticatedVM => {
 
         const userInfo = session.userInfo;
         const fullName = value(userInfo.value.fullName);
@@ -90,7 +87,7 @@ class ComponentsModule {
             email
         ];
 
-        const button = new ProfileButtonAuthenticatedViewModel(
+        const button = new ProfileButtonAuthenticatedVM(
             fullName,
             email,
             photo,

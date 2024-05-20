@@ -4,7 +4,7 @@ import PropsDayCell from "./props";
 import style from "./style.module.scss";
 import { AspectRatio, Typography } from "@mui/joy";
 import useUpdatesFrom from "../../../../utils/binding/useUpdatesFrom";
-import { SelectionState } from "./DayCellViewModel";
+import { SelectionState } from "./DayCellVM";
 
 const DayCell = ({ vm }: PropsDayCell) => {
     const [isAvailable, selectionState] = useUpdatesFrom(

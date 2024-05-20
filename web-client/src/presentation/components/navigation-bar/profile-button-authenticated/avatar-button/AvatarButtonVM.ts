@@ -4,7 +4,7 @@ import value from "../../../../utils/binding/value";
 import {PhotoPath} from "../../../../../domain/auth/values/PhotoPath";
 import {Cancellable} from "../../../../utils/binding/Cancellable";
 
-class AvatarButtonViewModel {
+class AvatarButtonVM {
     public fullName: Subject<string>;
     public shortName: Subject<string>;
     public photoUrl: Subject<string | null>;
@@ -34,4 +34,4 @@ class AvatarButtonViewModel {
     }
 }
 
-export default AvatarButtonViewModel;
+export default AvatarButtonVM;

@@ -1,9 +1,9 @@
 import dayjs from "dayjs";
-import DateRangePickerViewModel from "../../../components/date-picker/date-range-picker/DateRangePickerViewModel";
+import DateRangePickerVM from "../../../components/date-picker/date-range-picker/DateRangePickerVM";
 import {
     AvailableDates,
     CalendarRange,
-} from "../../../components/date-picker/month-view/MonthViewModel";
+} from "../../../components/date-picker/month-view/MonthVM";
 import Subject from "../../../utils/binding/Subject";
 import value from "../../../utils/binding/value";
 import Cost from "../../../../domain/booking/values/Cost";
@@ -11,7 +11,7 @@ import DatesRange from "../../../../domain/booking/values/DatesRange";
 import GuestsQuantity from "../../../../domain/booking/values/GuestsQuantity";
 import AdultQuantity from "../../../../domain/booking/values/AdultQuantity";
 import Date from "../../../../domain/booking/values/Date";
-import GuestsQuantityInputViewModel from "../../../components/guests-quantity-input/GuestsQuantityInputViewModel";
+import GuestsQuantityInputVM from "../../../components/guests-quantity-input/GuestsQuantityInputVM";
 
 export enum CostDetailsStatus {
     LOADING = "loading",
@@ -39,7 +39,7 @@ class TestAvailableDates extends AvailableDates {
     };
 }
 
-export class LoadingButtonViewModel {
+export class LoadingButtonVM {
     public readonly isLoading: Subject<boolean>;
     public readonly text: Subject<string>;
 
@@ -63,14 +63,14 @@ export class LoadingButtonViewModel {
     public updateText = (text: string) => [this.text.set(text)];
 }
 
-class RequestReservationCardViewModel {
+class RequestReservationCardVM {
     public readonly costDetails: Subject<CostDetails>;
-    public readonly dateRangePicker: DateRangePickerViewModel;
+    public readonly dateRangePicker: DateRangePickerVM;
     private currentDateRange: CalendarRange | undefined;
 
-    public readonly guestsQuantityInput: GuestsQuantityInputViewModel;
+    public readonly guestsQuantityInput: GuestsQuantityInputVM;
 
-    public reservationButton: LoadingButtonViewModel;
+    public reservationButton: LoadingButtonVM;
 
     public constructor(
         private readonly getCostDetails: (
@@ -78,13 +78,13 @@ class RequestReservationCardViewModel {
             guests: GuestsQuantity
         ) => Promise<Cost>
     ) {
-        this.guestsQuantityInput = new GuestsQuantityInputViewModel(
+        this.guestsQuantityInput = new GuestsQuantityInputVM(
             new GuestsQuantity(new AdultQuantity(1)),
             () => {
                 throw new Error("Not implemented");
             }
         );
-        this.dateRangePicker = new DateRangePickerViewModel(
+        this.dateRangePicker = new DateRangePickerVM(
             this.currentDateRange,
             new TestAvailableDates(),
             this.didChangeDates
@@ -97,7 +97,7 @@ class RequestReservationCardViewModel {
             serviceFee: "$20",
         });
 
-        this.reservationButton = new LoadingButtonViewModel(
+        this.reservationButton = new LoadingButtonVM(
             false,
             this.currentDateRange?.end ? "Reserve" : "Check Available Days",
             this.didClickReservationButton
@@ -162,4 +162,4 @@ class RequestReservationCardViewModel {
     };
 }
 
-export default RequestReservationCardViewModel;
+export default RequestReservationCardVM;

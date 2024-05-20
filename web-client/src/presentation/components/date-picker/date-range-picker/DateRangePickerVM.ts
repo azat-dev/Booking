@@ -1,15 +1,15 @@
-import RangePickerCalendarViewModel from "../range-picker-calendar/RangePickerCalendarViewModel";
+import RangePickerCalendarVM from "../range-picker-calendar/RangePickerCalendarVM";
 import {
     AvailableDates,
     CalendarRange,
     MonthPosition,
-} from "../month-view/MonthViewModel";
+} from "../month-view/MonthVM";
 import Subject from "../../../utils/binding/Subject";
 import dayjs from "dayjs";
 import value from "../../../utils/binding/value";
 
-class DateRangePickerViewModel {
-    public readonly calendar: RangePickerCalendarViewModel;
+class DateRangePickerVM {
+    public readonly calendar: RangePickerCalendarVM;
     public readonly isOpened: Subject<boolean>;
     public readonly isDisabled: Subject<boolean>;
     public readonly checkIn: Subject<string | undefined>;
@@ -21,7 +21,7 @@ class DateRangePickerViewModel {
         onChange: (range: CalendarRange) => void,
         initialIsDisabled: boolean = false
     ) {
-        this.calendar = new RangePickerCalendarViewModel(
+        this.calendar = new RangePickerCalendarVM(
             initialRange
                 ? new MonthPosition(
                       initialRange.start.getMonth(),
@@ -72,4 +72,4 @@ class DateRangePickerViewModel {
     };
 }
 
-export default DateRangePickerViewModel;
+export default DateRangePickerVM;

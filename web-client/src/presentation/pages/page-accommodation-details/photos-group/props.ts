@@ -1,7 +1,7 @@
-import PhotosGroupViewModel from "./PhotosGroupViewModel";
+import PhotosGroupVM from "./PhotosGroupVM";
 
 interface PropsPhotosGroup {
-    vm: PhotosGroupViewModel;
+    vm: PhotosGroupVM;
 }
 
 export default PropsPhotosGroup;

@@ -15,7 +15,7 @@ import {
     Typography,
 } from "@mui/joy";
 import useUpdatesFrom from "../../../utils/binding/useUpdatesFrom";
-import { CostDetailsStatus } from "./RequestReservationCardViewModel";
+import { CostDetailsStatus } from "./RequestReservationCardVM";
 import DateRangePicker from "../../../components/date-picker/date-range-picker/DateRangePicker";
 import GuestsQuantityInput from "../../../components/guests-quantity-input/GuestsQuantityInput";
 

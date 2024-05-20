@@ -1,7 +1,7 @@
-import PageMainViewModel from "./PageMainViewModel";
+import PageMainVM from "./PageMainVM";
 
 interface PropsPageMain {
-    vm: PageMainViewModel;
+    vm: PageMainVM;
 }
 
 export default PropsPageMain;

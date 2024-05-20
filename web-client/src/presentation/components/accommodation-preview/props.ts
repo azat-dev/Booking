@@ -1,7 +1,7 @@
-import AccommodationPreviewViewModel from "./AccommodationPreviewViewModel";
+import AccommodationPreviewVM from "./AccommodationPreviewVM";
 
 interface PropsAccommodationPreview {
-    vm: AccommodationPreviewViewModel;
+    vm: AccommodationPreviewVM;
 }
 
 export default PropsAccommodationPreview;

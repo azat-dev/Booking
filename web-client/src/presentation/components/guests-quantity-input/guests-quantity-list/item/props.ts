@@ -1,7 +1,7 @@
-import ItemViewModel from "./ItemViewModel";
+import ItemVM from "./ItemVM";
 
 interface PropsItem {
-    vm: ItemViewModel;
+    vm: ItemVM;
     title: string;
 }
 

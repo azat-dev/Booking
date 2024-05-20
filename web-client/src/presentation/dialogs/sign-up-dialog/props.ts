@@ -1,7 +1,7 @@
-import SignUpDialogViewModel from "./SignUpDialogViewModel";
+import SignUpDialogVM from "./SignUpDialogVM";
 
 interface PropsSignUpDialog {
-    vm: SignUpDialogViewModel;
+    vm: SignUpDialogVM;
 }
 
 export default PropsSignUpDialog;

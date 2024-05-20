@@ -1,7 +1,7 @@
-import AvatarButtonViewModel from "./AvatarButtonViewModel";
+import AvatarButtonVM from "./AvatarButtonVM";
 
 interface PropsAvatarButton {
-    vm: AvatarButtonViewModel;
+    vm: AvatarButtonVM;
 }
 
 export default PropsAvatarButton;

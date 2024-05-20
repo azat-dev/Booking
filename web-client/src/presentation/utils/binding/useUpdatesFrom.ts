@@ -28,11 +28,11 @@ const useUpdatesFrom = (...dependencies: ReadonlySubject<any | null>[]) => {
 
 export default useUpdatesFrom;
 
-export interface DestroyableViewModel {
+export interface DestroyableVM {
     destroy: () => void;
 }
 
-export const useDestroyableViewModel = (vm: any) => {
+export const useDestroyableVM = (vm: any) => {
     useEffect(() => {
         return () => {
             if (vm.destroy) {

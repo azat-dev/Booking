@@ -1,7 +1,7 @@
-import RequestReservationCardViewModel from "./RequestReservationCardViewModel";
+import RequestReservationCardVM from "./RequestReservationCardVM";
 
 interface PropsRequestReservationCard {
-    vm: RequestReservationCardViewModel;
+    vm: RequestReservationCardVM;
 }
 
 export default PropsRequestReservationCard;

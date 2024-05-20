@@ -1,4 +1,4 @@
-import AppViewModel, { ActiveDialogViewModel } from "./AppViewModel";
+import AppVM, { ActiveDialogVM } from "./AppVM";
 import NavigationDelegate from "./NavigationDelegate";
 import AccommodationId from "../../../domain/accommodations/AccommodationId";
 import OpenLoginDialog from "../../commands/OpenLoginDialog";
@@ -8,10 +8,10 @@ import Subject from "../../utils/binding/Subject";
 import Page from "../Page";
 import value from "../../utils/binding/value";
 
-class AnonymousAppVM implements AppViewModel {
+class AnonymousAppVM implements AppVM {
 
     public currentPage: Subject<Page | null>;
-    public readonly activeDialog: Subject<ActiveDialogViewModel | null>;
+    public readonly activeDialog: Subject<ActiveDialogVM | null>;
     public navigationDelegate: NavigationDelegate | null = null;
 
 

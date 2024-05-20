@@ -1,7 +1,7 @@
-import GuestsQuantityListViewModel from "./GuestsQuantityListViewModel";
+import GuestsQuantityListVM from "./GuestsQuantityListVM";
 
 interface PropsGuestsQuantityList {
-    vm: GuestsQuantityListViewModel;
+    vm: GuestsQuantityListVM;
 }
 
 export default PropsGuestsQuantityList;

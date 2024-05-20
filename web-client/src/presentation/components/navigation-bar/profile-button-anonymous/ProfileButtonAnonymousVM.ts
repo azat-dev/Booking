@@ -1,8 +1,15 @@
-class ProfileButtonAnonymousViewModel {
+class ProfileButtonAnonymousVM {
+
+    public static readonly TYPE = "ProfileButtonAnonymousVM";
+
     public constructor(
         private readonly onLogin: () => void,
         private readonly onSignUp: () => void
     ) {
+    }
+
+    public get type() {
+        return (this.constructor as any).TYPE;
     }
 
     public login = () => {
@@ -14,4 +21,4 @@ class ProfileButtonAnonymousViewModel {
     };
 }
 
-export default ProfileButtonAnonymousViewModel;
+export default ProfileButtonAnonymousVM;

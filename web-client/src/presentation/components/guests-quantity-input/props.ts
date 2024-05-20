@@ -1,7 +1,7 @@
-import GuestsQuantityInputViewModel from "./GuestsQuantityInputViewModel";
+import GuestsQuantityInputVM from "./GuestsQuantityInputVM";
 
 interface PropsGuestsQuantityInput {
-    vm: GuestsQuantityInputViewModel;
+    vm: GuestsQuantityInputVM;
 }
 
 export default PropsGuestsQuantityInput;

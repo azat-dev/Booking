@@ -2,26 +2,29 @@ import React from "react";
 
 import PropsProfileButton from "./props";
 import style from "./style.module.scss";
-import {ProfileButtonPresentationType} from "./ProfileButtonVM";
 import ProfileButtonAnonymous from "../profile-button-anonymous/ProfileButtonAnonymous";
 import ProfileButtonAuthenticated from "../profile-button-authenticated/ProfileButtonAuthenticated";
 import useUpdatesFrom from "../../../utils/binding/useUpdatesFrom";
+import ProfileButtonAnonymousVM from "../profile-button-anonymous/ProfileButtonAnonymousVM";
+import ProfileButtonAuthenticatedVM from "../profile-button-authenticated/ProfileButtonAuthenticatedVM";
+import ProfileButtonLoadingVM from "../profile-button-loading/ProfileButtonLoadingVM";
 
 const ProfileButton = ({vm}: PropsProfileButton) => {
-    const [button] = useUpdatesFrom(vm.button);
+    const [button] = useUpdatesFrom(vm);
 
+    debugger
     switch (button.type) {
-        case ProfileButtonPresentationType.ANONYMOUS:
+        case ProfileButtonAnonymousVM.TYPE:
             return (
-                <ProfileButtonAnonymous vm={button.vm}/>
+                <ProfileButtonAnonymous vm={button}/>
             );
 
-        case ProfileButtonPresentationType.AUTHENTICATED:
+        case ProfileButtonAuthenticatedVM.TYPE:
             return (
-                <ProfileButtonAuthenticated vm={button.vm}/>
+                <ProfileButtonAuthenticated vm={button}/>
             );
 
-        case ProfileButtonPresentationType.PROCESSING:
+        case ProfileButtonLoadingVM.TYPE:
             return (
                 <div className={style.container}>
                     <div>Processing...</div>

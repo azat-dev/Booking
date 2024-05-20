@@ -5,9 +5,9 @@ import AccommodationId from "../../../domain/accommodations/AccommodationId";
 import Cost from "../../../domain/booking/values/Cost";
 import DatesRange from "../../../domain/booking/values/DatesRange";
 import GuestsQuantity from "../../../domain/booking/values/GuestsQuantity";
-import NavigationBarViewModel from "../../components/navigation-bar/NavigationBarViewModel";
-import PhotosGroupViewModel from "./photos-group/PhotosGroupViewModel";
-import RequestReservationCardViewModel from "./request-reservation-card/RequestReservationCardViewModel";
+import NavigationBarVM from "../../components/navigation-bar/NavigationBarVM";
+import PhotosGroupVM from "./photos-group/PhotosGroupVM";
+import RequestReservationCardVM from "./request-reservation-card/RequestReservationCardVM";
 
 const accommodationTypeToText = (type: AccommodationType): string => {
     switch (type) {
@@ -20,8 +20,8 @@ const accommodationTypeToText = (type: AccommodationType): string => {
     }
 };
 
-class PageAccommodationDetailsViewModel {
-    public readonly photosGroup: PhotosGroupViewModel;
+class PageAccommodationDetailsVM {
+    public readonly photosGroup: PhotosGroupVM;
 
     public readonly title: string;
     public readonly description: string;
@@ -30,18 +30,18 @@ class PageAccommodationDetailsViewModel {
     public readonly hostPhoto: string | undefined;
     public readonly roomInfo: string;
     public readonly rating: number | undefined;
-    public readonly requestReservationCard: RequestReservationCardViewModel;
+    public readonly requestReservationCard: RequestReservationCardVM;
 
     public constructor(
         accommodation: Accommodation,
-        public readonly navigationBar: NavigationBarViewModel,
+        public readonly navigationBar: NavigationBarVM,
         getCostDetails: (
             accommodation: AccommodationId,
             datesRange: DatesRange,
             guestsCount: GuestsQuantity
         ) => Promise<Cost>
     ) {
-        this.photosGroup = new PhotosGroupViewModel(accommodation.photos);
+        this.photosGroup = new PhotosGroupVM(accommodation.photos);
         this.title = accommodation.title.value;
         this.description = accommodation.description.value;
         this.location = `${accommodationTypeToText(accommodation.type)}, ${
@@ -54,7 +54,7 @@ class PageAccommodationDetailsViewModel {
             .join(", ");
 
         this.rating = accommodation.rating;
-        this.requestReservationCard = new RequestReservationCardViewModel(
+        this.requestReservationCard = new RequestReservationCardVM(
             async (datesRange, guests) => {
                 return getCostDetails(accommodation.id, datesRange, guests);
             }
@@ -62,4 +62,4 @@ class PageAccommodationDetailsViewModel {
     }
 }
 
-export default PageAccommodationDetailsViewModel;
+export default PageAccommodationDetailsVM;

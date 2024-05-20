@@ -9,7 +9,7 @@ export enum SelectionState {
     Middle = "middle",
 }
 
-class DayCellViewModel {
+class DayCellVM {
     public readonly selectionState: Subject<SelectionState>;
     public readonly isAvailable: Subject<boolean>;
 
@@ -42,4 +42,4 @@ class DayCellViewModel {
     };
 }
 
-export default DayCellViewModel;
+export default DayCellVM;

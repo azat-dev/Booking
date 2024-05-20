@@ -1,7 +1,7 @@
-import MonthViewModel from "./MonthViewModel";
+import MonthVM from "./MonthVM";
 
 interface PropsMonthView {
-    vm: MonthViewModel;
+    vm: MonthVM;
 }
 
 export default PropsMonthView;

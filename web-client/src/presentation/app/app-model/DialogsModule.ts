@@ -1,4 +1,4 @@
-import LoginDialogViewModel from "../../dialogs/login-dialog/LoginDialogViewModel";
+import LoginDialogVM from "../../dialogs/login-dialog/LoginDialogVM";
 import Bus from "../../../domain/utils/Bus";
 import CloseDialog from "../../commands/CloseDialog";
 import OpenSignUpDialog from "../../commands/OpenSignUpDialog";
@@ -25,7 +25,7 @@ class DialogsModule {
     }
 
     public loginDialog = () => {
-        return new LoginDialogViewModel(
+        return new LoginDialogVM(
             async (data): Promise<void> => {
 
                 await this.bus.publishAndWaitForResponse(

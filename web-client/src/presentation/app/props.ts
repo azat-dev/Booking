@@ -1,7 +1,7 @@
-import AppViewModel from "./app-model/AppViewModel";
+import AppVM from "./app-model/AppVM";
 
 interface PropsApp {
-    vm: AppViewModel;
+    vm: AppVM;
 }
 
 export default PropsApp;

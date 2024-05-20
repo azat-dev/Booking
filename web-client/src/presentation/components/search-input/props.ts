@@ -1,7 +1,7 @@
-import SearchInputViewModel from "./SearchInputViewModel";
+import SearchInputVM from "./SearchInputVM";
 
 interface PropsSearchInput {
-    vm: SearchInputViewModel;
+    vm: SearchInputVM;
 }
 
 export default PropsSearchInput;

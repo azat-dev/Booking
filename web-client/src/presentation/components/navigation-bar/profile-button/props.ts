@@ -1,7 +1,8 @@
-import ProfileButtonViewModel from "./ProfileButtonVM";
+import ProfileButtonVM from "./ProfileButtonVM";
+import Subject from "../../../utils/binding/Subject";
 
 interface PropsProfileButton {
-    vm: ProfileButtonViewModel;
+    vm: Subject<ProfileButtonVM>;
 }
 
 export default PropsProfileButton;

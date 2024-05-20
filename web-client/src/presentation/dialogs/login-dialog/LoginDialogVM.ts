@@ -1,20 +1,16 @@
-import {
-    AuthenticateByEmailData,
-    ConnectionError,
-    WrongCredentialsError
-} from "../../../domain/auth/interfaces/services/AuthService";
+import {AuthenticateByEmailData} from "../../../domain/auth/interfaces/services/AuthService";
 import Email from "../../../domain/auth/values/Email";
 import value from "../../utils/binding/value";
-import FormInputViewModel from "../sign-up-dialog/form-input/FormInputViewModel";
+import FormInputVM from "../sign-up-dialog/form-input/FormInputVM";
 
-class LoginDialogViewModel {
+class LoginDialogVM {
     public readonly isProcessing = value(false);
     public readonly showWrongCredentialsError = value(false);
 
-    public readonly passwordInput: FormInputViewModel;
-    public readonly emailInput: FormInputViewModel;
+    public readonly passwordInput: FormInputVM;
+    public readonly emailInput: FormInputVM;
 
-    private readonly inputs: FormInputViewModel[];
+    private readonly inputs: FormInputVM[];
 
     public constructor(
         private login?: (data: AuthenticateByEmailData) => Promise<void>,
@@ -22,7 +18,7 @@ class LoginDialogViewModel {
         private readonly onSignUp?: () => void
     ) {
 
-        this.emailInput = new FormInputViewModel(
+        this.emailInput = new FormInputVM(
             "",
             (value) => {
                 if (this.isProcessing.value) {
@@ -33,7 +29,7 @@ class LoginDialogViewModel {
             }
         )
 
-        this.passwordInput = new FormInputViewModel(
+        this.passwordInput = new FormInputVM(
             "",
             (value) => {
                 if (this.isProcessing.value) {
@@ -58,7 +54,7 @@ class LoginDialogViewModel {
 
         let isValid = true;
 
-        const updateErrorTextFromException = (input: FormInputViewModel, e: any, ValidationException: any) => {
+        const updateErrorTextFromException = (input: FormInputVM, e: any, ValidationException: any) => {
             input.updateErrorText(e instanceof ValidationException ? e.message : undefined);
             input.updateIsWrong(true);
         }
@@ -122,4 +118,4 @@ class LoginDialogViewModel {
     }
 }
 
-export default LoginDialogViewModel;
+export default LoginDialogVM;

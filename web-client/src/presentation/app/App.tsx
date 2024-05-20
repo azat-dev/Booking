@@ -5,7 +5,7 @@ import "reflect-metadata";
 import PropsApp from "./props";
 import style from "./style.module.scss";
 import LoginDialog from "../dialogs/login-dialog/LoginDialog";
-import {ActiveDialogType} from "./app-model/AppViewModel";
+import {ActiveDialogType} from "./app-model/AppVM";
 import SignUpDialog from "../dialogs/sign-up-dialog/SignUpDialog";
 import PageMain from "../pages/page-main/PageMain";
 import PageAccommodationDetails from "../pages/page-accommodation-details/PageAccommodationDetails";

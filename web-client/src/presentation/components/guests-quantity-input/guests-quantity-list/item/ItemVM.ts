@@ -1,10 +1,10 @@
 import Subject from "../../../../utils/binding/Subject";
 import value from "../../../../utils/binding/value";
-import ButtonViewModel from "./button/ButtonViewModel";
+import ButtonVM from "./button/ButtonVM";
 
-class ItemViewModel {
-    public readonly incrementButton: ButtonViewModel;
-    public readonly decrementButton: ButtonViewModel;
+class ItemVM {
+    public readonly incrementButton: ButtonVM;
+    public readonly decrementButton: ButtonVM;
 
     public readonly value: Subject<number>;
 
@@ -14,8 +14,8 @@ class ItemViewModel {
         private readonly onIncrement: () => void
     ) {
         this.value = value(initialValue);
-        this.incrementButton = new ButtonViewModel(false, this.onIncrement);
-        this.decrementButton = new ButtonViewModel(false, this.onDecrement);
+        this.incrementButton = new ButtonVM(false, this.onIncrement);
+        this.decrementButton = new ButtonVM(false, this.onDecrement);
     }
 
     public updateValue = (value: number): void => {
@@ -23,4 +23,4 @@ class ItemViewModel {
     };
 }
 
-export default ItemViewModel;
+export default ItemVM;

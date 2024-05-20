@@ -1,7 +1,7 @@
 import Subject from "../../../utils/binding/Subject";
 import value from "../../../utils/binding/value";
 
-class FormInputViewModel {
+class FormInputVM {
     public readonly isDisabled: Subject<boolean>;
     public readonly text: Subject<string | undefined>;
     public readonly isWrong: Subject<boolean>;
@@ -54,4 +54,4 @@ class FormInputViewModel {
     }
 }
 
-export default FormInputViewModel;
+export default FormInputVM;

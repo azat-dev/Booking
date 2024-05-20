@@ -1,7 +1,7 @@
-import RangePickerCalendarViewModel from "./RangePickerCalendarViewModel";
+import RangePickerCalendarVM from "./RangePickerCalendarVM";
 
 interface PropsRangePickerCalendar {
-    vm: RangePickerCalendarViewModel;
+    vm: RangePickerCalendarVM;
 }
 
 export default PropsRangePickerCalendar;

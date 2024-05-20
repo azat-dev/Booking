@@ -1,7 +1,7 @@
-import ProfileButtonAuthenticatedViewModel from "./ProfileButtonAuthenticatedViewModel";
+import ProfileButtonAuthenticatedVM from "./ProfileButtonAuthenticatedVM";
 
 interface PropsProfileButtonAuthenticated {
-    vm: ProfileButtonAuthenticatedViewModel;
+    vm: ProfileButtonAuthenticatedVM;
 }
 
 export default PropsProfileButtonAuthenticated;

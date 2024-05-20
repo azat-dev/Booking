@@ -1,6 +1,6 @@
 import AccommodationId from "../../../domain/accommodations/AccommodationId";
-import LoginDialogViewModel from "../../dialogs/login-dialog/LoginDialogViewModel";
-import SignUpDialogViewModel from "../../dialogs/sign-up-dialog/SignUpDialogViewModel";
+import LoginDialogVM from "../../dialogs/login-dialog/LoginDialogVM";
+import SignUpDialogVM from "../../dialogs/sign-up-dialog/SignUpDialogVM";
 import Subject from "../../utils/binding/Subject";
 import NavigationDelegate from "./NavigationDelegate";
 import Page from "../Page";
@@ -10,18 +10,18 @@ export enum ActiveDialogType {
     SignUp = "sign-up",
 }
 
-export type ActiveDialogViewModel =
+export type ActiveDialogVM =
     | {
     type: ActiveDialogType.Login;
-    vm: LoginDialogViewModel;
+    vm: LoginDialogVM;
 }
     | {
     type: ActiveDialogType.SignUp;
-    vm: SignUpDialogViewModel;
+    vm: SignUpDialogVM;
 };
 
 
-export interface InputAppViewModel {
+export interface InputAppVM {
     runProfilePage(): Promise<void>;
 
     runMainPage(): Promise<void>;
@@ -29,10 +29,10 @@ export interface InputAppViewModel {
     runAccommodationDetailsPage(id: AccommodationId): Promise<void>;
 }
 
-export default interface AppViewModel extends InputAppViewModel {
+export default interface AppVM extends InputAppVM {
     readonly currentPage: Subject<Page | null>;
 
-    readonly activeDialog: Subject<ActiveDialogViewModel | null>;
+    readonly activeDialog: Subject<ActiveDialogVM | null>;
 
     navigationDelegate: NavigationDelegate | null;
 

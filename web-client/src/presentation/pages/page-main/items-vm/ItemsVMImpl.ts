@@ -1,10 +1,10 @@
-import AccommodationPreviewViewModel from "../../../components/accommodation-preview/AccommodationPreviewViewModel";
+import AccommodationPreviewVM from "../../../components/accommodation-preview/AccommodationPreviewVM";
 import Subject from "../../../utils/binding/Subject";
 import value from "../../../utils/binding/value";
-import ItemsViewModel, { Item, ItemsViewModelState } from "./ItemsViewModel";
+import ItemsVM, { Item, ItemsVMState } from "./ItemsVM";
 
-class ItemsViewModelImpl implements ItemsViewModel {
-    public state: Subject<ItemsViewModelState>;
+class ItemsVMImpl implements ItemsVM {
+    public state: Subject<ItemsVMState>;
 
     public constructor(private onToggleFavorite: (id: string) => void) {
         this.state = value({
@@ -33,7 +33,7 @@ class ItemsViewModelImpl implements ItemsViewModel {
             return {
                 id: itemId,
                 type: "loaded",
-                vm: new AccommodationPreviewViewModel(
+                vm: new AccommodationPreviewVM(
                     itemId,
                     `Hotel ${id}`,
                     `/accommodation/${itemId}`,
@@ -97,4 +97,4 @@ class ItemsViewModelImpl implements ItemsViewModel {
     };
 }
 
-export default ItemsViewModelImpl;
+export default ItemsVMImpl;

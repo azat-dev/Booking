@@ -1,7 +1,7 @@
-import ButtonViewModel from "./ButtonViewModel";
+import ButtonVM from "./ButtonVM";
 
 interface PropsButton {
-    vm: ButtonViewModel;
+    vm: ButtonVM;
     icon: JSX.Element;
 }
 

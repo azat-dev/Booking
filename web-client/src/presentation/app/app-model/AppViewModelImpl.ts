@@ -1,32 +1,32 @@
-// import AppViewModel, {ActiveDialogType, ActiveDialogViewModel, } from "./AppViewModel";
+// import AppVM, {ActiveDialogType, ActiveDialogVM, } from "./AppVM";
 // import Subject from "../../utils/binding/Subject";
 // import value from "../../utils/binding/value";
 // import CurrentSessionStore from "../../../domain/auth/CurrentSession/CurrentSessionStore";
-// import LoginDialogViewModel from "../../dialogs/login-dialog/LoginDialogViewModel";
+// import LoginDialogVM from "../../dialogs/login-dialog/LoginDialogVM";
 // import SessionStatus from "../../../domain/auth/CurrentSession/Session/SessionStatus";
-// import SignUpDialogViewModel from "../../dialogs/sign-up-dialog/SignUpDialogViewModel";
-// import PageMainViewModelImpl from "../../pages/page-main/PageMainViewModelImpl";
-// import PageMainViewModel from "../../pages/page-main/PageMainViewModel";
-// import PageAccommodationDetailsViewModel from "../../pages/page-accommodation-details/PageAccommodationDetailsViewModel";
+// import SignUpDialogVM from "../../dialogs/sign-up-dialog/SignUpDialogVM";
+// import PageMainVMImpl from "../../pages/page-main/PageMainVMImpl";
+// import PageMainVM from "../../pages/page-main/PageMainVM";
+// import PageAccommodationDetailsVM from "../../pages/page-accommodation-details/PageAccommodationDetailsVM";
 // import AccommodationsRegistry from "../../../domain/accommodations/AccommodationsRegistry";
 // import AccommodationId from "../../../domain/accommodations/AccommodationId";
 // import ReservationService from "../../../domain/booking/ReservationService";
 // import SignUpByEmailData from "../../../domain/auth/interfaces/services/SignUpByEmailData";
 // import {AuthenticateByEmailData} from "../../../domain/auth/interfaces/services/AuthService";
 // import {Session} from "../../../domain/auth/CurrentSession/Session/Session";
-// import NavigationBarViewModel from "../../components/navigation-bar/NavigationBarViewModel";
-// import ProfileButtonAnonymousViewModel
-//     from "../../components/navigation-bar/profile-button-anonymous/ProfileButtonAnonymousViewModel";
-// import ProfileButtonAuthenticatedViewModel
-//     from "../../components/navigation-bar/profile-button-authenticated/ProfileButtonAuthenticatedViewModel";
+// import NavigationBarVM from "../../components/navigation-bar/NavigationBarVM";
+// import ProfileButtonAnonymousVM
+//     from "../../components/navigation-bar/profile-button-anonymous/ProfileButtonAnonymousVM";
+// import ProfileButtonAuthenticatedVM
+//     from "../../components/navigation-bar/profile-button-authenticated/ProfileButtonAuthenticatedVM";
 // import SessionAuthenticated from "../../../domain/auth/CurrentSession/Session/SessionAuthenticated";
 // import ProfileButtonVM from "../../components/navigation-bar/profile-button/ProfileButtonVM";
 // import PageUserProfileVM from "../../pages/page-user-profile/PageUserProfileVM";
 // import NavigationDelegate from "./NavigationDelegate";
 // import Page from "../Page";
 //
-// class AppViewModelImpl implements AppViewModel {
-//     public activeDialog: Subject<ActiveDialogViewModel | null>;
+// class AppVMImpl implements AppVM {
+//     public activeDialog: Subject<ActiveDialogVM | null>;
 //     public currentPage: Subject<Page | null> = value({type: "loading"});
 //     public navigationDelegate: NavigationDelegate | null = null
 //
@@ -44,7 +44,7 @@
 //     public openLoginDialog = async (): Promise<void> => {
 //         this.activeDialog.set({
 //             type: ActiveDialogType.Login,
-//             vm: new LoginDialogViewModel(
+//             vm: new LoginDialogVM(
 //                 this.authenticateByEmail,
 //                 this.closeDialog,
 //                 this.openSignUpDialog
@@ -55,7 +55,7 @@
 //     public openSignUpDialog = (): void => {
 //         this.activeDialog.set({
 //             type: ActiveDialogType.SignUp,
-//             vm: new SignUpDialogViewModel(
+//             vm: new SignUpDialogVM(
 //                 this.signUpByEmail,
 //                 this.closeDialog,
 //                 this.openLoginDialog
@@ -73,10 +73,10 @@
 //         throw new Error("Not implemented");
 //     };
 //
-//     public makeMainPage = async (): Promise<PageMainViewModel> => {
+//     public makeMainPage = async (): Promise<PageMainVM> => {
 //
 //         await new Promise(resolve => setTimeout(resolve, 1000));
-//         return new PageMainViewModelImpl(
+//         return new PageMainVMImpl(
 //             this.makeNavigationBar(),
 //             this.toggleFavorite
 //         );
@@ -95,13 +95,13 @@
 //
 //     public makeAccommodationDetailsPage = async (
 //         accommodationId: AccommodationId
-//     ): Promise<PageAccommodationDetailsViewModel> => {
+//     ): Promise<PageAccommodationDetailsVM> => {
 //         await new Promise(resolve => setTimeout(resolve, 1000));
 //         const accommodation =
 //             await this.accommodationsRegistry.getAccommodationById(
 //                 accommodationId
 //             );
-//         return new PageAccommodationDetailsViewModel(
+//         return new PageAccommodationDetailsVM(
 //             accommodation,
 //             this.makeNavigationBar(),
 //             this.reservationService.getAccommodationCost
@@ -222,7 +222,7 @@
 //         const profileButton = new ProfileButtonVM(
 //             this.currentSession,
 //             () =>
-//                 new ProfileButtonAnonymousViewModel(
+//                 new ProfileButtonAnonymousVM(
 //                     this.openLoginDialog,
 //                     this.openSignUpDialog
 //                 ),
@@ -231,7 +231,7 @@
 //                     .value as SessionAuthenticated;
 //                 const userInfo = session.getUserInfo();
 //
-//                 return new ProfileButtonAuthenticatedViewModel(
+//                 return new ProfileButtonAuthenticatedVM(
 //                     userInfo.fullName,
 //                     userInfo.email,
 //                     userInfo.photo,
@@ -243,14 +243,14 @@
 //             }
 //         );
 //
-//         return new NavigationBarViewModel(
+//         return new NavigationBarVM(
 //             profileButton
 //         );
 //     };
 // }
 //
-// export default AppViewModelImpl;
+// export default AppVMImpl;
 
-export default class AppViewModelImpl {
+export default class AppVMImpl {
 
 }

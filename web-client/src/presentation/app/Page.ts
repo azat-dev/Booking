@@ -1,13 +1,13 @@
-import PageMainViewModelImpl from "../pages/page-main/PageMainViewModelImpl";
-import PageAccommodationDetailsViewModel from "../pages/page-accommodation-details/PageAccommodationDetailsViewModel";
+import PageMainVMImpl from "../pages/page-main/PageMainVMImpl";
+import PageAccommodationDetailsVM from "../pages/page-accommodation-details/PageAccommodationDetailsVM";
 import PageUserProfileVM from "../pages/page-user-profile/PageUserProfileVM";
 
 type Page = {
     type: "main",
-    vm: PageMainViewModelImpl
+    vm: PageMainVMImpl
 } | {
     type: "accommodation-details",
-    vm: PageAccommodationDetailsViewModel
+    vm: PageAccommodationDetailsVM
 } | {
     type: "profile",
     vm: PageUserProfileVM

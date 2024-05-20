@@ -1,16 +1,16 @@
 import GuestsQuantity from "../../../domain/booking/values/GuestsQuantity";
 import Subject from "../../utils/binding/Subject";
 import value from "../../utils/binding/value";
-import GuestsQuantityListViewModel from "./guests-quantity-list/GuestsQuantityListViewModel";
+import GuestsQuantityListVM from "./guests-quantity-list/GuestsQuantityListVM";
 
-class GuestsQuantityInputViewModel {
-    public readonly guestsQuantityList: GuestsQuantityListViewModel;
+class GuestsQuantityInputVM {
+    public readonly guestsQuantityList: GuestsQuantityListVM;
     public readonly guestsSummary: Subject<string>;
     public constructor(
         initialQuantity: GuestsQuantity,
         onChange: (guests: GuestsQuantity) => void
     ) {
-        this.guestsQuantityList = new GuestsQuantityListViewModel(
+        this.guestsQuantityList = new GuestsQuantityListVM(
             initialQuantity,
             onChange
         );
@@ -24,4 +24,4 @@ class GuestsQuantityInputViewModel {
     };
 }
 
-export default GuestsQuantityInputViewModel;
+export default GuestsQuantityInputVM;

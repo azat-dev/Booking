@@ -1,7 +1,7 @@
-import LoginDialogViewModel from "./LoginDialogViewModel";
+import LoginDialogVM from "./LoginDialogVM";
 
 interface PropsLoginDialog {
-    vm: LoginDialogViewModel;
+    vm: LoginDialogVM;
 }
 
 export default PropsLoginDialog;

@@ -1,16 +1,16 @@
 import dayjs from "dayjs";
-import MonthViewModel, {
+import MonthVM, {
     AvailableDates,
     CalendarRange,
     MonthPosition,
-} from "../month-view/MonthViewModel";
+} from "../month-view/MonthVM";
 import Subject from "../../../utils/binding/Subject";
 import value from "../../../utils/binding/value";
 
-class RangePickerCalendarViewModel {
+class RangePickerCalendarVM {
     private currentPosition: MonthPosition;
-    public leftMonth: Subject<MonthViewModel>;
-    public rightMonth: Subject<MonthViewModel>;
+    public leftMonth: Subject<MonthVM>;
+    public rightMonth: Subject<MonthVM>;
 
     public leftMonthTitle: Subject<string>;
     public rightMonthTitle: Subject<string>;
@@ -57,7 +57,7 @@ class RangePickerCalendarViewModel {
     };
 
     private getMonthVm = (position: MonthPosition) => {
-        return new MonthViewModel(
+        return new MonthVM(
             position,
             this.selectionRange,
             this.clickDay,
@@ -122,4 +122,4 @@ class RangePickerCalendarViewModel {
     };
 }
 
-export default RangePickerCalendarViewModel;
+export default RangePickerCalendarVM;

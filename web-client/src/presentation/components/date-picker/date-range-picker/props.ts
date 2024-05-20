@@ -1,7 +1,7 @@
-import DateRangePickerViewModel from "./DateRangePickerViewModel";
+import DateRangePickerVM from "./DateRangePickerVM";
 
 interface PropsDateRangePicker {
-    vm: DateRangePickerViewModel;
+    vm: DateRangePickerVM;
 }
 
 export default PropsDateRangePicker;

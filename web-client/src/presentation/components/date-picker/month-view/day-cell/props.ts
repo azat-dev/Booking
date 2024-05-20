@@ -1,7 +1,7 @@
-import DayCellViewModel from "./DayCellViewModel";
+import DayCellVM from "./DayCellVM";
 
 interface PropsDayCell {
-    vm: DayCellViewModel;
+    vm: DayCellVM;
 }
 
 export default PropsDayCell;

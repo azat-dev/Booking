@@ -1,22 +1,22 @@
 import GuestsQuantity from "../../../../domain/booking/values/GuestsQuantity";
 import value from "../../../utils/binding/value";
-import ItemViewModel from "./item/ItemViewModel";
+import ItemVM from "./item/ItemVM";
 
-class GuestsQuantityListViewModel {
-    public readonly adultsItem: ItemViewModel;
-    public readonly childrenItem: ItemViewModel;
+class GuestsQuantityListVM {
+    public readonly adultsItem: ItemVM;
+    public readonly childrenItem: ItemVM;
 
     public constructor(
         initialQuantity: GuestsQuantity,
         onChange: (guests: GuestsQuantity) => void
     ) {
-        this.adultsItem = new ItemViewModel(
+        this.adultsItem = new ItemVM(
             initialQuantity.adults.val,
             () => {},
             () => {}
         );
 
-        this.childrenItem = new ItemViewModel(
+        this.childrenItem = new ItemVM(
             initialQuantity.children.val,
             () => {},
             () => {}
@@ -29,4 +29,4 @@ class GuestsQuantityListViewModel {
     };
 }
 
-export default GuestsQuantityListViewModel;
+export default GuestsQuantityListVM;

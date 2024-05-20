@@ -1,7 +1,7 @@
 import Subject from "../../../../../utils/binding/Subject";
 import value from "../../../../../utils/binding/value";
 
-class ButtonViewModel {
+class ButtonVM {
     public readonly isDisabled: Subject<boolean>;
 
     public constructor(disabled: boolean, private onClick: () => void) {
@@ -17,4 +17,4 @@ class ButtonViewModel {
     };
 }
 
-export default ButtonViewModel;
+export default ButtonVM;

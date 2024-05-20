@@ -1,7 +1,7 @@
-import NavigationBarViewModel from "./NavigationBarViewModel";
+import NavigationBarVM from "./NavigationBarVM";
 
 interface PropsNavigationBar {
-    vm: NavigationBarViewModel;
+    vm: NavigationBarVM;
 }
 
 export default PropsNavigationBar;
