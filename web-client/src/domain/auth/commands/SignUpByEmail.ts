@@ -5,8 +5,6 @@ import Command from "../../utils/Command";
 
 class SignUpByEmail extends Command {
 
-    public static readonly TYPE = 'SIGNUP_BY_EMAIL';
-
     public constructor(
         public readonly fullName: FullName,
         public readonly email: Email,

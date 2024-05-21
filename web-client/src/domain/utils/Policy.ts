@@ -1,9 +1,13 @@
+import POLICIES_TYPE_INFO from "../../generated/POLICIES_TYPE_INFO";
+
 class Policy {
 
-    public static readonly TYPE: string = 'Policy';
+    static get type() {
+        return POLICIES_TYPE_INFO[this.name];
+    }
 
     get type() {
-        return (this.constructor as any).TYPE;
+        return POLICIES_TYPE_INFO[this.constructor.name];
     }
 
     get isPolicy() {

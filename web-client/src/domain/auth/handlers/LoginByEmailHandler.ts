@@ -8,8 +8,6 @@ import Handler from "../../utils/Handler";
 
 class LoginByEmailHandler extends Handler {
 
-    public static readonly TYPE = "LOGIN_BY_EMAIL_HANDLER";
-
     public constructor(
         private readonly authService: AuthService,
         private readonly userInfoService: PersonalUserInfoService,

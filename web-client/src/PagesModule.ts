@@ -1,15 +1,17 @@
 import PageMainVMImpl from "./presentation/pages/page-main/PageMainVMImpl";
 import ComponentsModule from "./presentation/app/app-model/ComponentsModule";
-import PageAccommodationDetailsVM
-    from "./presentation/pages/page-accommodation-details/PageAccommodationDetailsVM";
+import PageAccommodationDetailsVM from "./presentation/pages/page-accommodation-details/PageAccommodationDetailsVM";
 import Accommodation from "./domain/accommodations/Accommodation";
 import PageUserProfileVM from "./presentation/pages/page-user-profile/PageUserProfileVM";
 import AppSessionAuthenticated from "./domain/auth/entities/AppSessionAuthenticated";
+import OpenFileDialogForUploadingUserPhoto from "./presentation/commands/OpenFileDialogForUploadingUserPhoto";
+import Bus from "./domain/utils/Bus";
 
 class PagesModule {
 
     public constructor(
-        private readonly components: ComponentsModule
+        private readonly components: ComponentsModule,
+        private readonly bus: Bus
     ) {
     }
 
@@ -38,8 +40,7 @@ class PagesModule {
         return new PageUserProfileVM(
             session.userInfo,
             () => {
-                console.log("Toggle favorite");
-                throw new Error("Method not implemented.");
+                this.bus.publish(new OpenFileDialogForUploadingUserPhoto());
             }
         )
     }

@@ -8,8 +8,6 @@ import PersonalUserInfoService from "../interfaces/services/PersonalUserInfoServ
 
 class SignUpByEmailHandler extends Handler {
 
-    public static readonly TYPE = "SIGN_UP_BY_EMAIL_HANDLER";
-
     public constructor(
         private readonly auth: AuthService,
         private readonly userInfoService: PersonalUserInfoService,

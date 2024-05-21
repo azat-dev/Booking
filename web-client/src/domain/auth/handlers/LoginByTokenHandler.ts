@@ -8,8 +8,6 @@ import Handler from "../../utils/Handler";
 
 class LoginByTokenHandler extends Handler {
 
-    public static readonly TYPE = "LOGIN_BY_TOKEN_HANDLER";
-
     public constructor(
         private readonly authService: AuthService,
         private readonly bus: Bus

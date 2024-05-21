@@ -45,13 +45,13 @@ class DialogsModule {
         );
 
         switch (foundEvent.type) {
-            case LoginDialogDidClose.TYPE:
+            case LoginDialogDidClose.type:
                 return;
 
-            case UserLoggedIn.TYPE:
+            case UserLoggedIn.type:
                 return;
 
-            case LoginByEmailFailed.TYPE:
+            case LoginByEmailFailed.type:
                 throw foundEvent.error;
         }
     }
@@ -67,20 +67,20 @@ class DialogsModule {
         const foundEvent = await this.bus.publishAndWaitFor(
             command,
             matchTypes(
-                UserSignedUpByEmail.TYPE,
-                FailedSignUpByEmail.TYPE,
-                SignUpDialogDidClose.TYPE
+                UserSignedUpByEmail.type,
+                FailedSignUpByEmail.type,
+                SignUpDialogDidClose.type
             ),
         );
 
         switch (foundEvent.type) {
-            case UserSignedUpByEmail.TYPE:
+            case UserSignedUpByEmail.type:
                 return;
 
-            case FailedSignUpByEmail.TYPE:
+            case FailedSignUpByEmail.type:
                 throw foundEvent.error;
 
-            case SignUpDialogDidClose.TYPE:
+            case SignUpDialogDidClose.type:
                 return;
         }
     }

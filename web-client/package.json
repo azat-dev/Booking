@@ -22,7 +22,6 @@
     "react-router-dom": "^6.23.0",
     "react-scripts": "5.0.1",
     "tsyringe": "^4.8.0",
-    "typescript": "^4.9.5",
     "usehooks-ts": "^3.1.0",
     "web-vitals": "^2.1.4"
   },
@@ -31,7 +30,8 @@
     "build": "react-scripts build",
     "test": "react-scripts test",
     "eject": "react-scripts eject",
-    "generate-api-client": "openapi-generator-cli generate -g typescript-fetch -i ../backend/openapi-users.yaml -o ./src/data/API"
+    "generate-api-client": "openapi-generator-cli generate -g typescript-fetch -i ../backend/openapi-users.yaml -o ./src/data/API",
+    "generate-class-map": "ts-node generateTypesInfo.ts"
   },
   "eslintConfig": {
     "extends": [
@@ -54,6 +54,8 @@
   "devDependencies": {
     "@openapitools/openapi-generator-cli": "^2.13.4",
     "@types/node-sass": "^4.11.7",
-    "node-sass": "^7.0.3"
+    "node-sass": "^7.0.3",
+    "ts-node": "^10.9.2",
+    "typescript": "^5.4.5"
   }
 }

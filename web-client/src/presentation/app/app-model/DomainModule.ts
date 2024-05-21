@@ -26,6 +26,11 @@ import SignUpByEmail from "../../../domain/auth/commands/SignUpByEmail";
 import SignUpByEmailHandler from "../../../domain/auth/handlers/SignUpByEmailHandler";
 import WhenUserSignedUpThenUpdateAppSession from "../../../domain/auth/policies/WhenUserSignedUpThenUpdateAppSession";
 import UserSignedUpByEmail from "../../../domain/auth/events/UserSignedUpByEmail";
+import UpdatedUserPhoto from "../../../domain/auth/events/UpdatedUserPhoto";
+import WhenUpdatedUserPhotoThenUpdateUserInfoInAppSession
+    from "../../../domain/auth/policies/WhenUpdatedUserPhotoThenUpdateUserInfoInAppSession";
+import UpdateUserInfoInAppSession from "../../../domain/auth/commands/UpdateUserInfoInAppSession";
+import UpdateUserInfoInAppSessionHandler from "../../../domain/auth/handlers/UpdateUserInfoInAppSessionHandler";
 
 class DomainModule {
 
@@ -48,24 +53,29 @@ class DomainModule {
 
     private registerPolicies = (): void => {
 
+        console.log("AppStarted", AppStarted)
+
         const policiesByEvents = {
-            [AppStarted.TYPE]: [
+            [AppStarted.type]: [
                 new WhenAppStartedThenTryLoginByToken(this.localAuthData, this.bus),
             ],
-            [PersonalInfoDidChange.TYPE]: [
+            [PersonalInfoDidChange.type]: [
                 new WhenPersonalInfoChangedUpdateAppSession(this.appSession)
             ],
-            [UserLoggedOut.TYPE]: [
+            [UserLoggedOut.type]: [
                 new WhenLogoutThenUpdateAppSession(this.appSession)
             ],
-            [UserLoggedIn.TYPE]: [
+            [UserLoggedIn.type]: [
                 new WhenLoggedInThenUpdateAppSession(this.appSession)
             ],
-            [FailedLoginByToken.TYPE]: [
+            [FailedLoginByToken.type]: [
                 new WhenFailedLoginByTokenThenUpdateAppSession(this.appSession)
             ],
-            [UserSignedUpByEmail.TYPE]: [
+            [UserSignedUpByEmail.type]: [
                 new WhenUserSignedUpThenUpdateAppSession(this.appSession)
+            ],
+            [UpdatedUserPhoto.type]: [
+                new WhenUpdatedUserPhotoThenUpdateUserInfoInAppSession(this.appSession, this.bus)
             ]
         };
 
@@ -78,7 +88,7 @@ class DomainModule {
             }
 
             policies.forEach(policy => {
-                console.log("%cDOMAIN/POLICY: ",  "color: #FF33FF; font-weight: bold;", policy.type);
+                console.log("%cDOMAIN/POLICY: ", "color: #FF33FF; font-weight: bold;", policy.type);
                 policy.execute(event)
             });
         });
@@ -87,10 +97,11 @@ class DomainModule {
     private registerCommandHandlers = (): void => {
 
         const handlersByCommands = {
-            [LoginByEmail.TYPE]: new LoginByEmailHandler(this.authService, this.userInfoService, this.bus),
-            [LoginByToken.TYPE]: new LoginByTokenHandler(this.authService, this.bus),
-            [Logout.TYPE]: new LogoutHandler(this.authService, this.bus),
-            [SignUpByEmail.TYPE]: new SignUpByEmailHandler(this.authService, this.userInfoService, this.bus)
+            [LoginByEmail.type]: new LoginByEmailHandler(this.authService, this.userInfoService, this.bus),
+            [LoginByToken.type]: new LoginByTokenHandler(this.authService, this.bus),
+            [Logout.type]: new LogoutHandler(this.authService, this.bus),
+            [SignUpByEmail.type]: new SignUpByEmailHandler(this.authService, this.userInfoService, this.bus),
+            [UpdateUserInfoInAppSession.type]: new UpdateUserInfoInAppSessionHandler(this.appSession, this.userInfoService, this.bus)
         };
 
         this.bus.subscribe(async command => {

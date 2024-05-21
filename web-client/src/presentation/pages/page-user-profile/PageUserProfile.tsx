@@ -1,16 +1,13 @@
 import React from "react";
 import PropsPageUserProfile from "./props";
-import useUpdatesFrom from "../../utils/binding/useUpdatesFrom";
 import UserPhoto from "./user-photo/UserPhoto";
 
 const PageUserProfile = ({vm}: PropsPageUserProfile) => {
 
-    // const [pho] = useUpdatesFrom(vm.photo);
-
     return (
-        <div>
+        <div onClick={vm.updatePhoto}>
 
-            <UserPhoto vm={vm.photo} />
+            <UserPhoto vm={vm.photo}/>
         </div>
     );
 }

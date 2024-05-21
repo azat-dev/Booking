@@ -1,9 +1,13 @@
+import TYPE_INFO from "../../generated/HANDLERS_TYPE_INFO";
+
 class Handler {
 
-    public static readonly TYPE: string = 'Handler';
+    static get type() {
+        return TYPE_INFO[this.name];
+    }
 
     get type() {
-        return (this.constructor as any).TYPE;
+        return TYPE_INFO[this.constructor.name];
     }
 
     get isHandler() {

@@ -45,21 +45,21 @@ class DialogsStore {
     public handle = (event: Command) => {
 
         switch (event.type) {
-            case OpenLoginDialog.TYPE: {
+            case OpenLoginDialog.type: {
                 const vm = this.dialogs.loginDialog();
                 this.activeDialog.set(vm);
                 this.bus.publish(new OpenedLoginDialog());
                 return;
             }
 
-            case OpenSignUpDialog.TYPE: {
+            case OpenSignUpDialog.type: {
                 const vm = this.dialogs.signUpDialog();
                 this.activeDialog.set(vm);
                 this.bus.publish(new OpenedSignUpDialog());
                 return;
             }
 
-            case CloseDialog.TYPE:
+            case CloseDialog.type:
                 this.closeDialogs();
                 return;
         }

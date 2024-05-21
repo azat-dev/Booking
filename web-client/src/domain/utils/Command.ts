@@ -1,11 +1,14 @@
+import TYPE_INFO from "../../generated/COMMANDS_TYPE_INFO";
+
 class Command {
 
-    public static readonly TYPE: string = 'Command';
-
-    get type() {
-        return (this.constructor as any).TYPE;
+    static get type() {
+        return TYPE_INFO[this.name];
     }
 
+    get type() {
+        return TYPE_INFO[this.constructor.name];
+    }
     get isCommand() {
         return true;
     }

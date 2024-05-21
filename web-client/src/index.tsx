@@ -16,6 +16,7 @@ import AnonymousAppVM from "./presentation/app/app-model/AnonymousAppVM";
 import DialogsStore from "./presentation/stores/DialogsStore";
 import OpenUserProfilePage from "./presentation/commands/OpenUserProfilePage";
 import AppVmImpl from "./presentation/app/app-model/AppVmImpl";
+import OpenFileDialogForUploadingUserPhoto from "./presentation/commands/OpenFileDialogForUploadingUserPhoto";
 
 const root = ReactDOM.createRoot(
     document.getElementById("root") as HTMLElement
@@ -43,7 +44,7 @@ domainModule.bus.subscribe(async (event) => {
     dialogsStore.handle(event);
 });
 
-const pagesModule = new PagesModule(componentsModule);
+const pagesModule = new PagesModule(componentsModule, domainModule.bus);
 
 const accommodationsRegistry = new AccommodationsRegistryImpl();
 
@@ -62,8 +63,10 @@ domainModule.bus.subscribe(async (event) => {
     }
 
     switch (event.type) {
-        case OpenUserProfilePage.TYPE:
+        case OpenUserProfilePage.type:
             appVm.runProfilePage();
+            break;
+        case OpenFileDialogForUploadingUserPhoto.type:
             break;
     }
 });
