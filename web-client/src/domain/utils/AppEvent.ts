@@ -1,14 +1,12 @@
-import TYPE_INFO from "../../generated/EVENTS_TYPE_INFO";
-
 abstract class AppEvent {
     static readonly TYPE: string = 'AppEvent';
 
     static get type() {
-        return TYPE_INFO[this.name];
+        return this.name;
     }
 
     get type() {
-        return TYPE_INFO[this.constructor.name];
+        return this.constructor.name;
     }
 
     get isEvent() {

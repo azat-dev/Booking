@@ -1,13 +1,11 @@
-import POLICIES_TYPE_INFO from "../../generated/POLICIES_TYPE_INFO";
-
 class Policy {
 
     static get type() {
-        return POLICIES_TYPE_INFO[this.name];
+        return this.name;
     }
 
     get type() {
-        return POLICIES_TYPE_INFO[this.constructor.name];
+        return this.constructor.name;
     }
 
     get isPolicy() {

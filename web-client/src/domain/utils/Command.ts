@@ -1,14 +1,13 @@
-import TYPE_INFO from "../../generated/COMMANDS_TYPE_INFO";
-
 class Command {
 
     static get type() {
-        return TYPE_INFO[this.name];
+        return this.name;
     }
 
     get type() {
-        return TYPE_INFO[this.constructor.name];
+        return this.constructor.name;
     }
+
     get isCommand() {
         return true;
     }
