@@ -4,20 +4,23 @@ import React from "react";
 import ReactDOM from "react-dom/client";
 import "./index.css";
 import reportWebVitals from "./reportWebVitals";
-import App from "./presentation/app/App";
-import AccommodationsRegistryImpl from "./domain/accommodations/AccommodationsRegistryImpl";
-import ReservationServiceImpl from "./domain/booking/ReservationServiceImpl";
-import DataModule from "./DataModule";
-import DomainModule from "./presentation/app/app-model/DomainModule";
-import ComponentsModule from "./presentation/app/app-model/ComponentsModule";
-import DialogsModule from "./presentation/app/app-model/DialogsModule";
-import PagesModule from "./PagesModule";
-import AnonymousAppVM from "./presentation/app/app-model/AnonymousAppVM";
-import DialogsStore from "./presentation/stores/DialogsStore";
-import OpenUserProfilePage from "./presentation/commands/OpenUserProfilePage";
-import AppVmImpl from "./presentation/app/app-model/AppVmImpl";
-import OpenFileDialogForUploadingUserPhoto from "./presentation/commands/OpenFileDialogForUploadingUserPhoto";
+import RouteItem from "./presentation/app/router/RouteItem.ts";
+import PageMain from "./presentation/pages/page-main/PageMain.tsx";
+import PageUserProfile from "./presentation/pages/page-user-profile/PageUserProfile.tsx";
+import PrivateRoute from "./presentation/app/router/PrivateRoute.tsx";
+import DataModule from "./DataModule.ts";
+import DomainModule from "./presentation/app/app-model/DomainModule.ts";
+import ComponentsModule from "./presentation/app/app-model/ComponentsModule.ts";
+import DialogsModule from "./presentation/app/app-model/DialogsModule.ts";
+import DialogsStore from "./presentation/stores/DialogsStore.ts";
+import PagesConfig from "./PagesConfig.ts";
+import OpenFileDialogForUploadingUserPhoto from "./presentation/commands/OpenFileDialogForUploadingUserPhoto.ts";
 import PresentationModule from "./presentation/app/app-model/PresentationModule.ts";
+import App from "./presentation/app/App.tsx";
+import RouterVM from "./presentation/app/router/RouterVM.tsx";
+import AppVM from "./presentation/app/AppVM.tsx";
+import PublicRoute from "./presentation/app/router/PublicRoute.tsx";
+import useLoadedValue from "./presentation/app/router/useLoadedValue.ts";
 
 const root = ReactDOM.createRoot(
     document.getElementById("root") as HTMLElement
@@ -45,18 +48,43 @@ domainModule.bus.subscribe(async (event) => {
     dialogsStore.handle(event);
 });
 
-const pagesModule = new PagesModule(componentsModule, domainModule.bus);
+const pagesModule = new PagesConfig(componentsModule, domainModule.bus);
 
-const accommodationsRegistry = new AccommodationsRegistryImpl();
+// const accommodationsRegistry = new AccommodationsRegistryImpl();
+//
+// const reservationService = new ReservationServiceImpl();
 
-const reservationService = new ReservationServiceImpl();
 
-const appVm = new AppVmImpl(
-    domainModule.appSession,
-    dialogsStore,
-    pagesModule,
-    domainModule.bus,
-);
+const routes: RouteItem[] = [
+    new PublicRoute(
+        "/",
+        () => {
+            const vm = useLoadedValue(() => pagesModule.mainPage(), []);
+            if (!vm) {
+                return <h1>Loading...</h1>;
+            }
+
+            return <PageMain vm={vm}/>;
+        }
+    ),
+    new PrivateRoute(
+        "/profile",
+        "/",
+        () => <h1>Authenticating...</h1>,
+        ({session}) => {
+            const vm = useLoadedValue(() => pagesModule.profilePage(session), [session]);
+            if (!vm) {
+                return <h1>Loading...</h1>;
+            }
+
+            return <PageUserProfile vm={vm}/>;
+        }
+    )
+];
+
+const router = new RouterVM(routes, domainModule.appSession);
+
+const app = new AppVM(router);
 
 domainModule.bus.subscribe(async (event) => {
     if (!event.isCommand) {
@@ -64,9 +92,9 @@ domainModule.bus.subscribe(async (event) => {
     }
 
     switch (event.type) {
-        case OpenUserProfilePage.type:
-            appVm.runProfilePage();
-            break;
+        // case OpenUserProfilePage.type:
+        //     app.runProfilePage();
+        //     break;
         case OpenFileDialogForUploadingUserPhoto.type:
             break;
     }
@@ -79,7 +107,7 @@ new PresentationModule(
 
 root.render(
     <React.StrictMode>
-        <App vm={appVm}/>
+        <App vm={app}/>
     </React.StrictMode>
 );
 

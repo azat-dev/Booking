@@ -5,7 +5,7 @@ abstract class KeepType {
     }
 
     get type() {
-        return this.constructor.name;
+        return (this.constructor as any).type;
     }
 }
 

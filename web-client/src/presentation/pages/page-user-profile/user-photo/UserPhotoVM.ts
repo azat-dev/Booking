@@ -1,9 +1,8 @@
 import Subject, {ReadonlySubject} from "../../../utils/binding/Subject";
 import value from "../../../utils/binding/value";
-import { fileDialog } from "file-select-dialog";
-import fullName from "../../../../domain/auth/values/FullName";
+import {fileDialog} from "file-select-dialog";
 import FullName from "../../../../domain/auth/values/FullName";
-import {PhotoPath} from "../../../../domain/auth/values/PhotoPath";
+import PhotoPath from "../../../../domain/auth/values/PhotoPath";
 import Disposables from "../../../utils/binding/Disposables";
 
 class UserPhotoVM {
@@ -25,7 +24,6 @@ class UserPhotoVM {
         this.initials = value(fullName.value.getInitials());
 
         this.disposables.addItems(
-
             fullName.listen((newFullName) => {
                 this.initials.set(newFullName.getInitials());
             }),
@@ -47,7 +45,7 @@ class UserPhotoVM {
 
     public openUploadDialog = async () => {
 
-        const files = await fileDialog({ accept: ['.png', '.jpg', '.webp', '.jpeg'] });
+        const files = await fileDialog({accept: ['.png', '.jpg', '.webp', '.jpeg']});
         if (files.length === 0) {
             return;
         }

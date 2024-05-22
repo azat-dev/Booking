@@ -60,7 +60,7 @@ class AuthServiceImpl implements AuthService {
 
     public authenticateByToken = async (token: AccessToken): Promise<PersonalUserInfo> => {
         const userInfo = await this.api.apiWithAuthUsersCurrentGet();
-        const photo = userInfo.photo?.url ?? null;
+        const photo = userInfo.photo?.url ? new PhotoPath(userInfo.photo?.url) : null;
 
         return new PersonalUserInfo(
             UserId.fromString(userInfo.id),
@@ -69,7 +69,7 @@ class AuthServiceImpl implements AuthService {
                 FirstName.dangerouslyCreate(userInfo.fullName.firstName),
                 LastName.dangerouslyCreate(userInfo.fullName.lastName)
             ),
-            photo && new PhotoPath(photo)
+            photo
         )
     };
 

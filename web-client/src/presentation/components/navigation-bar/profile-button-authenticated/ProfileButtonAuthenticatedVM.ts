@@ -2,17 +2,12 @@ import FullName from "../../../../domain/auth/values/FullName";
 import AvatarButtonVM from "./avatar-button/AvatarButtonVM";
 import Subject, {ReadonlySubject} from "../../../utils/binding/Subject";
 import Email from "../../../../domain/auth/values/Email";
-import {PhotoPath} from "../../../../domain/auth/values/PhotoPath";
+import PhotoPath from "../../../../domain/auth/values/PhotoPath";
 import value from "../../../utils/binding/value";
 import Disposables from "../../../utils/binding/Disposables";
+import KeepType from "../../../../domain/utils/KeepType.ts";
 
-class ProfileButtonAuthenticatedVM {
-
-    public static readonly TYPE = "PROFILE_BUTTON_AUTHENTICATED";
-
-    public get type() {
-        return (this.constructor as any).TYPE;
-    }
+class ProfileButtonAuthenticatedVM extends KeepType {
 
     public readonly fullName: Subject<string>;
     public readonly email: Subject<string>;
@@ -28,6 +23,8 @@ class ProfileButtonAuthenticatedVM {
         private readonly onOpenProfile: () => void,
         private readonly onLogout: () => void
     ) {
+
+        super();
         this.avatar = new AvatarButtonVM(fullName, photo);
         this.email = value(email.value.toString());
         this.fullName = value(fullName.value.toString());

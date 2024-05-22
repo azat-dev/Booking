@@ -1,7 +1,7 @@
 import UserId from "./UserId";
 import Email from "./Email";
 import FullName from "./FullName";
-import {PhotoPath} from "./PhotoPath";
+import PhotoPath from "./PhotoPath";
 
 class PersonalUserInfo {
     public constructor(

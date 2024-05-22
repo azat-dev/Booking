@@ -1,9 +1,6 @@
-class ProfileButtonLoadingVM {
-    public static readonly TYPE: string = 'ProfileButtonLoadingVM';
+import KeepType from "../../../../domain/utils/KeepType.ts";
 
-    public get type() {
-        return (this.constructor as any).TYPE;
-    }
+class ProfileButtonLoadingVM extends KeepType {
 }
 
 export default ProfileButtonLoadingVM;

@@ -14,17 +14,17 @@ const ProfileButton = ({vm}: PropsProfileButton) => {
 
 
     switch (button.type) {
-        case ProfileButtonAnonymousVM.TYPE:
+        case ProfileButtonAnonymousVM.type:
             return (
                 <ProfileButtonAnonymous vm={button}/>
             );
 
-        case ProfileButtonAuthenticatedVM.TYPE:
+        case ProfileButtonAuthenticatedVM.type:
             return (
                 <ProfileButtonAuthenticated vm={button}/>
             );
 
-        case ProfileButtonLoadingVM.TYPE:
+        case ProfileButtonLoadingVM.type:
             return (
                 <div className={style.container}>
                     <div>Processing...</div>

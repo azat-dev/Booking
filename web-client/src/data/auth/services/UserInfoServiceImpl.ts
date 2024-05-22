@@ -17,7 +17,7 @@ class UserInfoServiceImpl implements PersonalUserInfoService {
 
     public getUserInfo = async (): Promise<PersonalUserInfo> => {
         const userInfo = await this.api.apiWithAuthUsersCurrentGet();
-        const photoUrl = userInfo.photo?.url ?? null;
+        const photo = userInfo.photo?.url ? new PhotoPath(userInfo.photo?.url) : null;
 
         return new PersonalUserInfo(
             UserId.fromString(userInfo.id),
@@ -26,7 +26,7 @@ class UserInfoServiceImpl implements PersonalUserInfoService {
                 FirstName.dangerouslyCreate(userInfo.fullName.firstName),
                 LastName.dangerouslyCreate(userInfo.fullName.lastName)
             ),
-            photoUrl && new PhotoPath(photoUrl)
+            photo
         );
     };
 
@@ -35,7 +35,7 @@ class UserInfoServiceImpl implements PersonalUserInfoService {
         const response = await this.api.generateUploadUserPhototUrl(
             {
                 generateUploadUserPhotoUrlRequest: {
-                    idempotentOperationId: "string",
+                    idempotentOperationId: "FIXME: idempotentOperationId",
                     fileName: this.getFileNameWithoutExtension(photo),
                     fileExtension: this.getFileExtension(photo),
                     fileSize: photo.size

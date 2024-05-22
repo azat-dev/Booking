@@ -1,15 +1,12 @@
-class ProfileButtonAnonymousVM {
+import KeepType from "../../../../domain/utils/KeepType.ts";
 
-    public static readonly TYPE = "PROFILE_BUTTON_ANONYMOUS";
+class ProfileButtonAnonymousVM extends KeepType {
 
     public constructor(
         private readonly onLogin: () => void,
         private readonly onSignUp: () => void
     ) {
-    }
-
-    public get type() {
-        return (this.constructor as any).TYPE;
+        super();
     }
 
     public login = () => {

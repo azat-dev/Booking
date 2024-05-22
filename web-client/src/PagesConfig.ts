@@ -7,15 +7,14 @@ import AppSessionAuthenticated from "./domain/auth/entities/AppSessionAuthentica
 import OpenFileDialogForUploadingUserPhoto from "./presentation/commands/OpenFileDialogForUploadingUserPhoto";
 import Bus from "./domain/utils/Bus";
 
-class PagesModule {
+class PagesConfig {
 
     public constructor(
         private readonly components: ComponentsModule,
         private readonly bus: Bus
     ) {
     }
-
-    public mainPage = () => {
+    public mainPage = async () => {
         return new PageMainVMImpl(
             this.components.navigationBar(),
             () => {
@@ -25,7 +24,7 @@ class PagesModule {
         );
     }
 
-    public accomodateDetailsPage = (accomodation: Accommodation) => {
+    public accomodateDetailsPage = async (accomodation: Accommodation) => {
         return new PageAccommodationDetailsVM(
             accomodation,
             this.components.navigationBar(),
@@ -36,7 +35,7 @@ class PagesModule {
         )
     }
 
-    public profilePage = (session: AppSessionAuthenticated) => {
+    public profilePage = async (session: AppSessionAuthenticated) => {
         return new PageUserProfileVM(
             session.userInfo,
             () => {
@@ -46,4 +45,4 @@ class PagesModule {
     }
 }
 
-export default PagesModule;
+export default PagesConfig;

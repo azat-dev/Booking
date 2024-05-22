@@ -3,11 +3,10 @@ import UserPhotoVM from "./user-photo/UserPhotoVM";
 import {ReadonlySubject} from "../../utils/binding/Subject";
 import Disposables from "../../utils/binding/Disposables";
 import value from "../../utils/binding/value";
-import Page from "../../app/Page";
+import KeepType from "../../../domain/utils/KeepType.ts";
 
-class PageUserProfileVM extends Page {
+class PageUserProfileVM extends KeepType {
 
-    public static readonly TYPE = "PAGE_USER_PROFILE_VM";
     public readonly photo: UserPhotoVM;
     private disposables = new Disposables();
 
@@ -35,11 +34,6 @@ class PageUserProfileVM extends Page {
             }
         );
     }
-
-    public get type() {
-        return PageUserProfileVM.TYPE;
-    }
-
     public updatePhoto = () => {
         this.onOpenUploadPhotoDialog();
     }

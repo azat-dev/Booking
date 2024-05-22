@@ -1,7 +1,6 @@
-abstract class Page {
-    public static readonly TYPE: string = "PAGE";
+import KeepType from "../../domain/utils/KeepType.ts";
 
-    public abstract get type(): string;
+abstract class Page extends KeepType {
 }
 
 export default Page;

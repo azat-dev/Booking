@@ -8,6 +8,7 @@ import GuestsQuantity from "../../../domain/booking/values/GuestsQuantity";
 import NavigationBarVM from "../../components/navigation-bar/NavigationBarVM";
 import PhotosGroupVM from "./photos-group/PhotosGroupVM";
 import RequestReservationCardVM from "./request-reservation-card/RequestReservationCardVM";
+import KeepType from "../../../domain/utils/KeepType.ts";
 
 const accommodationTypeToText = (type: AccommodationType): string => {
     switch (type) {
@@ -20,7 +21,7 @@ const accommodationTypeToText = (type: AccommodationType): string => {
     }
 };
 
-class PageAccommodationDetailsVM {
+class PageAccommodationDetailsVM extends KeepType {
     public readonly photosGroup: PhotosGroupVM;
 
     public readonly title: string;
@@ -41,6 +42,8 @@ class PageAccommodationDetailsVM {
             guestsCount: GuestsQuantity
         ) => Promise<Cost>
     ) {
+
+        super();
         this.photosGroup = new PhotosGroupVM(accommodation.photos);
         this.title = accommodation.title.value;
         this.description = accommodation.description.value;

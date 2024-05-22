@@ -5,6 +5,11 @@ import ItemsVMImpl from "./items-vm/ItemsVMImpl";
 import PageMainVM from "./PageMainVM";
 
 class PageMainVMImpl extends PageMainVM {
+
+    static get type() {
+        return "PageMainVM";
+    }
+
     public readonly itemsVM: ItemsVM;
     public readonly searchInput: SearchInputVM;
 

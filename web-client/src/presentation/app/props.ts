@@ -1,4 +1,5 @@
-import AppVM from "./app-model/AppVM";
+import AppVM from "./AppVM.tsx";
+
 
 interface PropsApp {
     vm: AppVM;
