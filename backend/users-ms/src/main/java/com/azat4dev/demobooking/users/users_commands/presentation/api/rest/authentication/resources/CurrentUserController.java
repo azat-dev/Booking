@@ -63,7 +63,7 @@ public class CurrentUserController implements CurrentUserResource {
     @Override
     public ResponseEntity<String> updateUserPhoto(
         JwtAuthenticationToken jwtAuthenticationToken,
-        UpdateUserPhotoRequestBody requestBody
+        @RequestBody UpdateUserPhotoRequestBody requestBody
     ) throws UserId.WrongFormatException {
 
         final UserId userId = UserId.checkAndMakeFrom(jwtAuthenticationToken.getName());

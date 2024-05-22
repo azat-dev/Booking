@@ -47,7 +47,7 @@ public class GenerateUserPhotoUploadUrlHandlerTest {
     }
 
     IdempotentOperationId anyOperationId() {
-        return new IdempotentOperationId(UUID.randomUUID());
+        return new IdempotentOperationId(UUID.randomUUID().toString());
     }
 
     @Test

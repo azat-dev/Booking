@@ -18,6 +18,11 @@ public class MinioMediaObjectsBucket implements MediaObjectsBucket {
     private final MinioClient minioClient;
     private final BucketName bucketName;
 
+    public URL getBucketUrl() throws MalformedURLException {
+        return baseUrl.urlWithPath(bucketName.toString());
+    }
+
+
     public URL getObjectUrl(MediaObjectName objectName) throws MalformedURLException {
         return baseUrl.urlWithPath(bucketName.toString() + "/" + objectName.toString());
     }
@@ -64,19 +69,24 @@ public class MinioMediaObjectsBucket implements MediaObjectsBucket {
 
         final URL url;
         try {
-            url = getObjectUrl(objectName);
+            url = getBucketUrl();
         } catch (MalformedURLException e) {
             throw new RuntimeException(e);
         }
 
         try {
+
+            final var formData = minioClient.getPresignedPostFormData(
+                formPolicy
+            );
+
+            formData.put("key", objectName.toString());
+
             return new UploadFileFormData(
                 url,
                 bucketName,
                 objectName,
-                minioClient.getPresignedPostFormData(
-                    formPolicy
-                )
+                formData
             );
 
         } catch (Throwable e) {

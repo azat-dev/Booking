@@ -80,6 +80,12 @@ paths:
     post:
       summary: "POST api/with-auth/users/current/update-photo"
       operationId: "updateUserPhoto"
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/UpdateUserPhotoRequest"
+        required: true
       responses:
         "200":
           description: "OK"
@@ -281,8 +287,23 @@ components:
         fileSize:
           type: "integer"
           format: "int32"
+    UpdateUserPhotoRequest:
+      type: "object"
+      required:
+        - idempotentOperationId
+        - bucketName
+        - objectName
+      properties:
+        idempotentOperationId:
+          type: "string"
+        uploadedFile:
+          $ref: "#/components/schemas/UploadedFileDataDTO"
     UploadedFileDataDTO:
       type: "object"
+      required:
+        - url
+        - bucketName
+        - objectName
       properties:
         url:
           type: "string"
@@ -292,11 +313,14 @@ components:
           type: "string"
     GenerateUploadUserPhotoUrlResponse:
       type: "object"
+      required:
+        - objectPath
+        - formData
       properties:
         objectPath:
           $ref: "#/components/schemas/UploadedFileDataDTO"
         formData:
-          type: "string"
+          type: "object"
     PhotoPathDTO:
       type: "object"
       properties:

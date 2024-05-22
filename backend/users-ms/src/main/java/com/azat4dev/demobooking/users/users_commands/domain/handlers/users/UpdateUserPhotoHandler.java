@@ -60,6 +60,8 @@ public final class UpdateUserPhotoHandler implements CommandHandler<UpdateUserPh
         } catch (Throwable e) {
             unitOfWork.rollback();
             bus.publish(new FailedUpdateUserPhoto(command.idempotentOperationId(), command.userId(), command.uploadedFileData()));
+
+            throw new Exception.FailedToSaveUser();
         }
     }
 
@@ -71,6 +73,12 @@ public final class UpdateUserPhotoHandler implements CommandHandler<UpdateUserPh
         public static final class UserNotFound extends Exception {
             public UserNotFound(UserId userId) {
                 super("User not found: " + userId);
+            }
+        }
+
+        public static final class FailedToSaveUser extends Exception {
+            public FailedToSaveUser() {
+                super("Failed to save user");
             }
         }
     }

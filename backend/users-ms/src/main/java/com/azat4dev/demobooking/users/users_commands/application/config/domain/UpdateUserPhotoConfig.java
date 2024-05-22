@@ -9,6 +9,7 @@ import com.azat4dev.demobooking.users.users_commands.domain.handlers.users.Gener
 import com.azat4dev.demobooking.users.users_commands.domain.handlers.users.GenerateUserPhotoUploadUrlHandler;
 import com.azat4dev.demobooking.users.users_commands.domain.handlers.users.UpdateUserPhotoHandler;
 import com.azat4dev.demobooking.users.users_commands.domain.interfaces.repositories.MediaObjectsBucket;
+import com.azat4dev.demobooking.users.users_commands.domain.interfaces.repositories.UnitOfWorkFactory;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
@@ -19,9 +20,13 @@ public class UpdateUserPhotoConfig {
 
     @CommandHandlerBean
     UpdateUserPhotoHandler updateUserPhotoHandler(
-        DomainEventsFactory domainEventsFactory
+        DomainEventsFactory domainEventsFactory,
+        @Qualifier("usersPhotoBucket")
+        MediaObjectsBucket userPhotoBucket,
+        UnitOfWorkFactory unitOfWorkFactory,
+        DomainEventsBus bus
     ) {
-        return null;
+        return new UpdateUserPhotoHandler(userPhotoBucket, unitOfWorkFactory, bus);
     }
 
     @Bean

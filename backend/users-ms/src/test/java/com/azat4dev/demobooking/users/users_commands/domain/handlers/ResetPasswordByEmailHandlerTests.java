@@ -56,7 +56,7 @@ public class ResetPasswordByEmailHandlerTests {
         final var sut = createSUT();
 
         final var command = new ResetPasswordByEmail(
-            new IdempotentOperationId(UUID.randomUUID()),
+            new IdempotentOperationId(UUID.randomUUID().toString()),
             anyValidEmail()
         );
 
@@ -84,7 +84,7 @@ public class ResetPasswordByEmailHandlerTests {
         final var user = anyUser();
 
         final var command = new ResetPasswordByEmail(
-            new IdempotentOperationId(UUID.randomUUID()),
+            new IdempotentOperationId(UUID.randomUUID().toString()),
             user.getEmail()
         );
 

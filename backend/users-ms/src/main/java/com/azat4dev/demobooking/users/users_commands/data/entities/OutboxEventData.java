@@ -2,6 +2,7 @@ package com.azat4dev.demobooking.users.users_commands.data.entities;
 
 import com.azat4dev.demobooking.common.domain.event.DomainEventNew;
 import com.azat4dev.demobooking.users.users_commands.data.repositories.DomainEventSerializer;
+import com.azat4dev.demobooking.users.users_commands.domain.core.events.UpdatedUserPhoto;
 import com.azat4dev.demobooking.users.users_commands.domain.core.events.UserCreated;
 
 import java.sql.ResultSet;
@@ -23,7 +24,8 @@ public record OutboxEventData(
             event.issuedAt(),
             switch (event.payload()) {
                 case UserCreated userCreated -> EventType.USER_CREATED;
-                default -> throw new IllegalStateException("Unexpected value: " + event);
+                case UpdatedUserPhoto inst -> EventType.UPDATED_USER_PHOTO;
+                default -> throw new IllegalStateException("Unexpected outbox event value: " + event);
             },
             serializer.serialize(event),
             false
@@ -42,6 +44,7 @@ public record OutboxEventData(
     }
 
     public enum EventType {
-        USER_CREATED
+        USER_CREATED,
+        UPDATED_USER_PHOTO
     }
 }

@@ -27,6 +27,6 @@ public interface CurrentUserResource {
     @PostMapping("/update-photo")
     ResponseEntity<String> updateUserPhoto(
         JwtAuthenticationToken jwtAuthenticationToken,
-        UpdateUserPhotoRequestBody requestBody
+        @RequestBody UpdateUserPhotoRequestBody requestBody
     ) throws UserId.WrongFormatException, UpdateUserPhotoHandler.Exception;
 }
