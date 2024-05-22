@@ -2,7 +2,6 @@
   "name": "web-client",
   "version": "0.1.0",
   "private": true,
-  "type": "module",
   "dependencies": {
     "@emotion/react": "^11.11.4",
     "@emotion/styled": "^11.11.5",
@@ -30,7 +29,7 @@
     "build": "tsc && vite build",
     "preview": "vite preview",
     "generate-api-client": "openapi-generator-cli generate -g typescript-fetch -i ../backend/openapi-users.yaml -o ./src/data/API",
-    "generate-class-map": "ts-node generateTypesInfo.ts"
+    "generate-class-map": "ts-node update_types_info.ts"
   },
   "devDependencies": {
     "@openapitools/openapi-generator-cli": "^2.13.4",

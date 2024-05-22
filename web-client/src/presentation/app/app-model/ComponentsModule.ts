@@ -31,13 +31,13 @@ class ComponentsModule {
         const toButton = (session: SessionState): ProfileButtonVM => {
 
             switch (session.type) {
-                case AppSessionAuthenticated.TYPE:
+                case AppSessionAuthenticated.type:
                     return this.authenticatedProfileButton(session as AppSessionAuthenticated);
 
-                case AppSessionAnonymous.TYPE:
+                case AppSessionAnonymous.type:
                     return this.anonymousProfileButton();
 
-                case AppSessionLoading.TYPE:
+                case AppSessionLoading.type:
                     return this.loadingProfileButton();
 
                 default:

@@ -1,4 +1,6 @@
-class Handler {
+import KeepType from "./KeepType.ts";
+
+class Handler extends KeepType {
 
     static get type() {
         return this.name;

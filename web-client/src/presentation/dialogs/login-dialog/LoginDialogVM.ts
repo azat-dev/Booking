@@ -2,12 +2,9 @@ import {AuthenticateByEmailData} from "../../../domain/auth/interfaces/services/
 import Email from "../../../domain/auth/values/Email";
 import value from "../../utils/binding/value";
 import FormInputVM from "../sign-up-dialog/form-input/FormInputVM";
+import KeepType from "../../../domain/utils/KeepType.ts";
 
-class LoginDialogVM {
-    public static readonly TYPE = "LoginDialogVM";
-    public get type() {
-        return LoginDialogVM.TYPE;
-    }
+class LoginDialogVM extends KeepType {
 
     public readonly isProcessing = value(false);
     public readonly showWrongCredentialsError = value(false);
@@ -22,7 +19,7 @@ class LoginDialogVM {
         private readonly onClose?: () => void,
         private readonly onSignUp?: () => void
     ) {
-
+        super();
         this.emailInput = new FormInputVM(
             "",
             (value) => {

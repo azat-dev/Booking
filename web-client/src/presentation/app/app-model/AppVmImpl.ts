@@ -70,8 +70,8 @@ class AppVmImpl implements AppVM {
     }
 
     public makeState = (sessionState: SessionState) => {
-        if (sessionState.type === AppSessionAuthenticated.TYPE) {
-            return this.makeAuthenticatedState(sessionState as any);
+        if (sessionState instanceof AppSessionAuthenticated) {
+            return this.makeAuthenticatedState(sessionState);
         }
         return this.makeAnonymousState();
     }

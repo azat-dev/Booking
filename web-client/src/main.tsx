@@ -17,6 +17,7 @@ import DialogsStore from "./presentation/stores/DialogsStore";
 import OpenUserProfilePage from "./presentation/commands/OpenUserProfilePage";
 import AppVmImpl from "./presentation/app/app-model/AppVmImpl";
 import OpenFileDialogForUploadingUserPhoto from "./presentation/commands/OpenFileDialogForUploadingUserPhoto";
+import PresentationModule from "./presentation/app/app-model/PresentationModule.ts";
 
 const root = ReactDOM.createRoot(
     document.getElementById("root") as HTMLElement
@@ -70,6 +71,11 @@ domainModule.bus.subscribe(async (event) => {
             break;
     }
 });
+
+new PresentationModule(
+    domainModule.appSession,
+    domainModule.bus
+);
 
 root.render(
     <React.StrictMode>

@@ -33,10 +33,10 @@ class DialogsStore {
         this.activeDialog.set(null);
 
         switch (exisitingDialogType) {
-            case LoginDialogVM.TYPE:
+            case LoginDialogVM.type:
                 this.bus.publish(new LoginDialogDidClose());
                 return;
-            case SignUpDialogVM.TYPE:
+            case SignUpDialogVM.type:
                 this.bus.publish(new SignUpDialogDidClose());
                 return;
         }

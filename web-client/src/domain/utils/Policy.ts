@@ -1,12 +1,6 @@
-class Policy {
+import KeepType from "./KeepType.ts";
 
-    static get type() {
-        return this.name;
-    }
-
-    get type() {
-        return this.constructor.name;
-    }
+class Policy extends KeepType {
 
     get isPolicy() {
         return true;

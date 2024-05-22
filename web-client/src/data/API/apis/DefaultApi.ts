@@ -24,6 +24,7 @@ import type {
   PersonalUserInfo,
   SignUpByEmailRequest,
   SignUpByEmailResponse,
+  UpdateUserPhotoRequest,
   UserWithSameEmailAlreadyExistsError,
 } from '../models/index';
 import {
@@ -45,6 +46,8 @@ import {
     SignUpByEmailRequestToJSON,
     SignUpByEmailResponseFromJSON,
     SignUpByEmailResponseToJSON,
+    UpdateUserPhotoRequestFromJSON,
+    UpdateUserPhotoRequestToJSON,
     UserWithSameEmailAlreadyExistsErrorFromJSON,
     UserWithSameEmailAlreadyExistsErrorToJSON,
 } from '../models/index';
@@ -63,6 +66,10 @@ export interface ApiPublicAuthTokenVerifyPostOperationRequest {
 
 export interface GenerateUploadUserPhototUrlRequest {
     generateUploadUserPhotoUrlRequest: GenerateUploadUserPhotoUrlRequest;
+}
+
+export interface UpdateUserPhotoOperationRequest {
+    updateUserPhotoRequest: UpdateUserPhotoRequest;
 }
 
 /**
@@ -258,10 +265,19 @@ export class DefaultApi extends runtime.BaseAPI {
     /**
      * POST api/with-auth/users/current/update-photo
      */
-    async updateUserPhotoRaw(initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<runtime.ApiResponse<string>> {
+    async updateUserPhotoRaw(requestParameters: UpdateUserPhotoOperationRequest, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<runtime.ApiResponse<string>> {
+        if (requestParameters['updateUserPhotoRequest'] == null) {
+            throw new runtime.RequiredError(
+                'updateUserPhotoRequest',
+                'Required parameter "updateUserPhotoRequest" was null or undefined when calling updateUserPhoto().'
+            );
+        }
+
         const queryParameters: any = {};
 
         const headerParameters: runtime.HTTPHeaders = {};
+
+        headerParameters['Content-Type'] = 'application/json';
 
         if (this.configuration && this.configuration.accessToken) {
             const token = this.configuration.accessToken;
@@ -276,6 +292,7 @@ export class DefaultApi extends runtime.BaseAPI {
             method: 'POST',
             headers: headerParameters,
             query: queryParameters,
+            body: UpdateUserPhotoRequestToJSON(requestParameters['updateUserPhotoRequest']),
         }, initOverrides);
 
         if (this.isJsonMime(response.headers.get('content-type'))) {
@@ -288,8 +305,8 @@ export class DefaultApi extends runtime.BaseAPI {
     /**
      * POST api/with-auth/users/current/update-photo
      */
-    async updateUserPhoto(initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<string> {
-        const response = await this.updateUserPhotoRaw(initOverrides);
+    async updateUserPhoto(requestParameters: UpdateUserPhotoOperationRequest, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<string> {
+        const response = await this.updateUserPhotoRaw(requestParameters, initOverrides);
         return await response.value();
     }
 

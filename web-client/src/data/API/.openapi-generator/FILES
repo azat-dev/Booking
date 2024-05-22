@@ -16,6 +16,7 @@ models/SignUpByEmailRequest.ts
 models/SignUpByEmailResponse.ts
 models/SignUpResponse.ts
 models/SignUpResponseTokens.ts
+models/UpdateUserPhotoRequest.ts
 models/UploadedFileDataDTO.ts
 models/UserWithSameEmailAlreadyExistsError.ts
 models/ValidationError.ts

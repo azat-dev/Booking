@@ -1,14 +1,9 @@
 import Subject from "../../../presentation/utils/binding/Subject";
 import value from "../../../presentation/utils/binding/value";
 import PersonalUserInfo from "../values/PersonalUserInfo";
+import KeepType from "../../utils/KeepType.ts";
 
-class AppSessionAuthenticated {
-
-    public static readonly TYPE: string = 'AppSessionAuthenticated';
-
-    public get type() {
-        return (this.constructor as any).TYPE;
-    }
+class AppSessionAuthenticated extends KeepType {
 
     public readonly userInfo: Subject<PersonalUserInfo>;
 
@@ -16,6 +11,7 @@ class AppSessionAuthenticated {
         userInfo: PersonalUserInfo,
         private setAnonymousState: () => void
     ) {
+        super();
         this.userInfo = value(userInfo);
     }
 

@@ -1,10 +1,6 @@
-class AppSessionAnonymous {
+import KeepType from "../../utils/KeepType.ts";
 
-    public static readonly TYPE: string = 'AppSessionAnonymous';
-
-    public get type() {
-        return (this.constructor as any).TYPE;
-    }
+class AppSessionAnonymous extends KeepType {
 
 }
 

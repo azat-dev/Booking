@@ -68,8 +68,8 @@ const App = ({vm}: PropsApp) => {
             <ActiveDialog
                 vm={activeDialog}
                 views={{
-                    [LoginDialogVM.TYPE]: LoginDialog,
-                    [SignUpDialogVM.TYPE]: SignUpDialog
+                    [LoginDialogVM.type]: LoginDialog,
+                    [SignUpDialogVM.type]: SignUpDialog
                 }}
             />
         </div>

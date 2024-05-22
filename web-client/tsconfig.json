@@ -1,17 +1,20 @@
 {
   "compilerOptions": {
-    "target": "ES2020",
+    "target": "es5",
     "useDefineForClassFields": true,
-    "lib": ["ES2020", "DOM", "DOM.Iterable"],
-    "module": "ESNext",
+    "lib": [
+      "dom",
+      "dom.iterable",
+      "esnext"
+    ],
     "allowJs": true,
     "skipLibCheck": true,
     "esModuleInterop": true,
     "allowSyntheticDefaultImports": true,
+    "strict": true,
     "forceConsistentCasingInFileNames": true,
-
-    /* Bundler mode */
-    "moduleResolution": "bundler",
+    "module": "esnext",
+    "moduleResolution": "node",
     "allowImportingTsExtensions": true,
     "resolveJsonModule": true,
     "isolatedModules": true,
@@ -19,11 +22,13 @@
     "jsx": "react-jsx",
 
     /* Linting */
-    "strict": true,
     "noFallthroughCasesInSwitch": true,
     "experimentalDecorators": true,
     "emitDecoratorMetadata": true
   },
-  "include": ["src"],
+  "include": [
+    "src",
+    "dist/assets/index-B3oikwqs.js"
+  ],
   "references": [{ "path": "./tsconfig.node.json" }]
 }

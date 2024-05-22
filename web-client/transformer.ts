@@ -91,7 +91,7 @@ const programTransformer = (program: ts.Program) => {
             ts.factory.createBlock(
                 [ts.factory.createReturnStatement(ts.factory.createPropertyAccessExpression(
                     ts.factory.createIdentifier(name),
-                    ts.factory.createIdentifier("TYPE11111111")
+                    ts.factory.createIdentifier("TYPE")
                 ))],
                 true
             )
@@ -104,7 +104,6 @@ const programTransformer = (program: ts.Program) => {
                 node = ts.visitEachChild(node, visitor, context);
 
                 if (ts.isClassDeclaration(node)) {
-                    console.log("VISITOR");
                     return transformClass(node, context);
                 }
 

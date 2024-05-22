@@ -24,25 +24,28 @@ export interface UploadedFileDataDTO {
      * @type {string}
      * @memberof UploadedFileDataDTO
      */
-    url?: string;
+    url: string;
     /**
      * 
      * @type {string}
      * @memberof UploadedFileDataDTO
      */
-    bucketName?: string;
+    bucketName: string;
     /**
      * 
      * @type {string}
      * @memberof UploadedFileDataDTO
      */
-    objectName?: string;
+    objectName: string;
 }
 
 /**
  * Check if a given object implements the UploadedFileDataDTO interface.
  */
 export function instanceOfUploadedFileDataDTO(value: object): boolean {
+    if (!('url' in value)) return false;
+    if (!('bucketName' in value)) return false;
+    if (!('objectName' in value)) return false;
     return true;
 }
 
@@ -56,9 +59,9 @@ export function UploadedFileDataDTOFromJSONTyped(json: any, ignoreDiscriminator:
     }
     return {
         
-        'url': json['url'] == null ? undefined : json['url'],
-        'bucketName': json['bucketName'] == null ? undefined : json['bucketName'],
-        'objectName': json['objectName'] == null ? undefined : json['objectName'],
+        'url': json['url'],
+        'bucketName': json['bucketName'],
+        'objectName': json['objectName'],
     };
 }
 

@@ -1,12 +1,6 @@
-class Command {
+import KeepType from "./KeepType.ts";
 
-    static get type() {
-        return this.name;
-    }
-
-    get type() {
-        return this.constructor.name;
-    }
+class Command extends KeepType {
 
     get isCommand() {
         return true;

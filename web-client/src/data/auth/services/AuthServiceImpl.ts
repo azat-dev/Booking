@@ -14,6 +14,7 @@ import Email from "../../../domain/auth/values/Email";
 import UserId from "../../../domain/auth/values/UserId";
 import {DefaultApi, ResponseError, UserWithSameEmailAlreadyExistsError, ValidationError,} from "../../API";
 import PersonalUserInfo from "../../../domain/auth/values/PersonalUserInfo";
+import PhotoPath from "../../../domain/auth/values/PhotoPath.ts";
 
 
 class AuthServiceImpl implements AuthService {
@@ -59,6 +60,8 @@ class AuthServiceImpl implements AuthService {
 
     public authenticateByToken = async (token: AccessToken): Promise<PersonalUserInfo> => {
         const userInfo = await this.api.apiWithAuthUsersCurrentGet();
+        const photo = userInfo.photo?.url ?? null;
+
         return new PersonalUserInfo(
             UserId.fromString(userInfo.id),
             Email.dangerouslyCreate(userInfo.email),
@@ -66,7 +69,7 @@ class AuthServiceImpl implements AuthService {
                 FirstName.dangerouslyCreate(userInfo.fullName.firstName),
                 LastName.dangerouslyCreate(userInfo.fullName.lastName)
             ),
-            null
+            photo && new PhotoPath(photo)
         )
     };
 

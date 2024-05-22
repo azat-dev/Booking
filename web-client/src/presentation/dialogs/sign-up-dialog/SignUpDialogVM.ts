@@ -6,13 +6,9 @@ import FirstName from "../../../domain/auth/values/FirstName";
 import LastName from "../../../domain/auth/values/LastName";
 import FormInputVM from "./form-input/FormInputVM";
 import SignUpByEmailData from "../../../domain/auth/interfaces/services/SignUpByEmailData";
+import KeepType from "../../../domain/utils/KeepType.ts";
 
-class SignUpDialogVM {
-
-    public static readonly TYPE = "SignUpDialogVM";
-    public get type() {
-        return SignUpDialogVM.TYPE;
-    }
+class SignUpDialogVM extends KeepType {
 
     public isProcessing = value(false);
     public errorText = value<string | undefined>(undefined);
@@ -29,6 +25,7 @@ class SignUpDialogVM {
         private readonly onClose?: () => void,
         private readonly onOpenLoginDialog?: () => void
     ) {
+        super();
         this.firstNameInput = new FormInputVM("", (newValue) => {
             this.resetErrors();
             this.firstNameInput.updateValue(newValue);

@@ -31,6 +31,8 @@ import WhenUpdatedUserPhotoThenUpdateUserInfoInAppSession
     from "../../../domain/auth/policies/WhenUpdatedUserPhotoThenUpdateUserInfoInAppSession";
 import UpdateUserInfoInAppSession from "../../../domain/auth/commands/UpdateUserInfoInAppSession";
 import UpdateUserInfoInAppSessionHandler from "../../../domain/auth/handlers/UpdateUserInfoInAppSessionHandler";
+import UploadNewUserPhotoHandler from "../../../domain/auth/handlers/UploadNewUserPhotoHandler.ts";
+import UploadNewUserPhoto from "../../../domain/auth/commands/UploadNewUserPhoto.ts";
 
 class DomainModule {
 
@@ -101,7 +103,8 @@ class DomainModule {
             [LoginByToken.type]: new LoginByTokenHandler(this.authService, this.bus),
             [Logout.type]: new LogoutHandler(this.authService, this.bus),
             [SignUpByEmail.type]: new SignUpByEmailHandler(this.authService, this.userInfoService, this.bus),
-            [UpdateUserInfoInAppSession.type]: new UpdateUserInfoInAppSessionHandler(this.appSession, this.userInfoService, this.bus)
+            [UpdateUserInfoInAppSession.type]: new UpdateUserInfoInAppSessionHandler(this.appSession, this.userInfoService, this.bus),
+            [UploadNewUserPhoto.type]: new UploadNewUserPhotoHandler(this.userInfoService, this.bus)
         };
 
         this.bus.subscribe(async command => {

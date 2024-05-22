@@ -31,19 +31,21 @@ export interface GenerateUploadUserPhotoUrlResponse {
      * @type {UploadedFileDataDTO}
      * @memberof GenerateUploadUserPhotoUrlResponse
      */
-    objectPath?: UploadedFileDataDTO;
+    objectPath: UploadedFileDataDTO;
     /**
      * 
-     * @type {string}
+     * @type {object}
      * @memberof GenerateUploadUserPhotoUrlResponse
      */
-    formData?: string;
+    formData: object;
 }
 
 /**
  * Check if a given object implements the GenerateUploadUserPhotoUrlResponse interface.
  */
 export function instanceOfGenerateUploadUserPhotoUrlResponse(value: object): boolean {
+    if (!('objectPath' in value)) return false;
+    if (!('formData' in value)) return false;
     return true;
 }
 
@@ -57,8 +59,8 @@ export function GenerateUploadUserPhotoUrlResponseFromJSONTyped(json: any, ignor
     }
     return {
         
-        'objectPath': json['objectPath'] == null ? undefined : UploadedFileDataDTOFromJSON(json['objectPath']),
-        'formData': json['formData'] == null ? undefined : json['formData'],
+        'objectPath': UploadedFileDataDTOFromJSON(json['objectPath']),
+        'formData': json['formData'],
     };
 }
 

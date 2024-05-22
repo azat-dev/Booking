@@ -1,10 +1,6 @@
-class AppSessionLoading {
+import KeepType from "../../utils/KeepType.ts";
 
-    public static readonly TYPE: string = 'AppSessionLoading';
-
-    public get type() {
-        return (this.constructor as any).TYPE;
-    }
+class AppSessionLoading extends KeepType {
 }
 
 export default AppSessionLoading;
