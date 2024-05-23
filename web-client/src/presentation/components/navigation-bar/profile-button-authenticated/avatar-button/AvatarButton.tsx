@@ -14,9 +14,9 @@ const AvatarButton = ({ vm }: PropsAvatarButton) => {
     return (
         <Avatar
             sx={{ maxWidth: "48px", maxHeight: "48px" }}
-            variant="soft"
             alt={fullName}
             src={photoUrl}
+            variant={photoUrl ? "outlined" : "soft"}
         >
             {shortName}
         </Avatar>

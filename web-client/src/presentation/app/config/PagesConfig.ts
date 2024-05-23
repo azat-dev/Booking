@@ -6,6 +6,7 @@ import Bus, {matchClasses} from "../../../domain/utils/Bus";
 import UpdatedUserPhoto from "../../../domain/auth/events/UpdatedUserPhoto.ts";
 import FailedUpdateUserInfoInAppSession from "../../../domain/auth/events/FailedUpdateUserInfoInAppSession.ts";
 import FailedUpdateUserPhoto from "../../../domain/auth/events/FailedUpdateUserPhoto.ts";
+import navigationBar from "../../components/navigation-bar/NavigationBar.tsx";
 
 class PagesConfig {
     public constructor(
@@ -45,6 +46,7 @@ class PagesConfig {
         const PageUserProfileVM = (await import("../../pages/page-user-profile/PageUserProfileVM")).default;
 
         return new PageUserProfileVM(
+            this.components.navigationBar(),
             session.userInfo,
             async () => {
                 const response = await this.bus.publishAndWaitFor(

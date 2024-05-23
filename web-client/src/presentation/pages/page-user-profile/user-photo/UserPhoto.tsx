@@ -10,11 +10,10 @@ const UserPhoto = ({vm}: PropsUserPhoto) => {
     const [isUploading, photo, initials] = useUpdatesFrom(vm.isUploading, vm.photo, vm.initials);
 
     const screenType = useScreenType();
-    const size = screenType === ScreenType.MOBILE ? 120 : 240;
+    const size = screenType === ScreenType.MOBILE ? 240 : 240;
 
     return (
-        <Stack direction="column" spacing={1} sx={{position: "relative", maxHeight: size}}>
-
+        <Stack direction="column" spacing={1} sx={{display: "inline-flex", position: "relative", maxHeight: size}}>
             <Avatar
                 src={isUploading ? '' : photo}
                 sx={{minWidth: size, minHeight: size}}
