@@ -1,16 +1,14 @@
-import PageMainVMImpl from "./presentation/pages/page-main/PageMainVMImpl";
-import ComponentsModule from "./presentation/app/app-model/ComponentsModule";
-import PageAccommodationDetailsVM from "./presentation/pages/page-accommodation-details/PageAccommodationDetailsVM";
-import Accommodation from "./domain/accommodations/Accommodation";
-import PageUserProfileVM from "./presentation/pages/page-user-profile/PageUserProfileVM";
-import AppSessionAuthenticated from "./domain/auth/entities/AppSessionAuthenticated";
-import OpenFileDialogForUploadingUserPhoto from "./presentation/commands/OpenFileDialogForUploadingUserPhoto";
-import Bus from "./domain/utils/Bus";
+import PageMainVMImpl from "../../pages/page-main/PageMainVMImpl";
+import ComponentsConfig from "./ComponentsConfig";
+import PageAccommodationDetailsVM from "../../pages/page-accommodation-details/PageAccommodationDetailsVM";
+import Accommodation from "../../../domain/accommodations/Accommodation";
+import AppSessionAuthenticated from "../../../domain/auth/entities/AppSessionAuthenticated";
+import OpenFileDialogForUploadingUserPhoto from "../../commands/OpenFileDialogForUploadingUserPhoto";
+import Bus from "../../../domain/utils/Bus";
 
 class PagesConfig {
-
     public constructor(
-        private readonly components: ComponentsModule,
+        private readonly components: ComponentsConfig,
         private readonly bus: Bus
     ) {
     }
@@ -36,6 +34,9 @@ class PagesConfig {
     }
 
     public profilePage = async (session: AppSessionAuthenticated) => {
+
+        const PageUserProfileVM = (await import("../../pages/page-user-profile/PageUserProfileVM")).default;
+
         return new PageUserProfileVM(
             session.userInfo,
             () => {

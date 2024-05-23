@@ -2,15 +2,11 @@ import {createBrowserRouter, useLoaderData} from "react-router-dom";
 import RouteItem from "./RouteItem";
 import AppSession from "../../../domain/auth/entities/AppSession.ts";
 import React from "react";
-import useUpdatesFrom from "../../utils/binding/useUpdatesFrom.ts";
+import PagesConfig from "../config/PagesConfig.ts";
 
-const RouteComponent = React.memo(({session}: any) => {
+const RouteComponent = React.memo(() => {
 
-    debugger
-    const element = useLoaderData() as any;
-    const [sessionValue] = useUpdatesFrom(session);
-
-    return element;
+    return  useLoaderData() as any;
 });
 
 RouteComponent.displayName = "RouteComponent";
@@ -19,15 +15,15 @@ class RouterVM {
 
     public reactRouter: any;
 
-    constructor(routes: RouteItem[], appSession: AppSession) {
+    constructor(routes: RouteItem[], appSession: AppSession, pagesConfig: PagesConfig) {
 
         const mappedRoutes = routes.map((route) => {
             return {
                 path: route.path,
                 loader: async (params: any) => {
-                    return await route.view(appSession.state, params);
+                    return await route.view(appSession.state, params, pagesConfig);
                 },
-                element: <RouteComponent session={appSession.state}/>,
+                element: <RouteComponent/>,
             };
         });
 

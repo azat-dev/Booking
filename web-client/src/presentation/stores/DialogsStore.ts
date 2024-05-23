@@ -1,5 +1,5 @@
 import Bus from "../../domain/utils/Bus";
-import DialogsModule from "../app/app-model/DialogsModule";
+import DialogsConfig from "../app/config/DialogsConfig.ts";
 import Subject from "../utils/binding/Subject";
 import value from "../utils/binding/value";
 import OpenLoginDialog from "../commands/OpenLoginDialog";
@@ -18,7 +18,7 @@ class DialogsStore {
     public readonly activeDialog: Subject<any | null>;
 
     public constructor(
-        private readonly dialogs: DialogsModule,
+        private readonly dialogs: DialogsConfig,
         private readonly bus: Bus
     ) {
         this.activeDialog = value(null);

@@ -1,8 +1,6 @@
 import Disposable from "../../presentation/utils/binding/Disposable";
-
-export interface Cancelable {
-    cancel(): void;
-}
+import AppEvent from "./AppEvent.ts";
+import Command from "./Command.ts";
 
 interface Bus {
 
@@ -19,5 +17,10 @@ export const matchTypes = (...types: string[]) => {
     const set = new Set(types);
     return (event: any) => set.has(event.type);
 };
+
+export const matchClasses = (...classes: any[]) => {
+    const set = new Set(classes as any);
+    return (event: (AppEvent | Command)) => set.has(event.constructor);
+}
 
 export default Bus;

@@ -1,5 +1,5 @@
 import LoginDialogVM from "../../dialogs/login-dialog/LoginDialogVM";
-import Bus, {matchTypes} from "../../../domain/utils/Bus";
+import Bus, {matchClasses, matchTypes} from "../../../domain/utils/Bus";
 import CloseDialog from "../../commands/CloseDialog";
 import OpenSignUpDialog from "../../commands/OpenSignUpDialog";
 import LoginByEmail from "../../../domain/auth/commands/LoginByEmail";
@@ -14,7 +14,7 @@ import SignUpDialogDidClose from "../../../domain/auth/events/SignUpDialogDidClo
 import SignUpByEmailData from "../../../domain/auth/interfaces/services/SignUpByEmailData";
 import {AuthenticateByEmailData} from "../../../domain/auth/interfaces/services/AuthService";
 
-class DialogsModule {
+class DialogsConfig {
 
     public constructor(private readonly bus: Bus) {
     }
@@ -41,17 +41,17 @@ class DialogsModule {
         const command = new LoginByEmail(data.email, data.password);
         const foundEvent = await this.bus.publishAndWaitFor(
             command,
-            matchTypes(LoginDialogDidClose.TYPE, UserLoggedIn.TYPE, LoginByEmailFailed.TYPE)
+            matchClasses(LoginDialogDidClose, UserLoggedIn, LoginByEmailFailed)
         );
 
-        switch (foundEvent.type) {
-            case LoginDialogDidClose.type:
+        switch (foundEvent.constructor) {
+            case LoginDialogDidClose:
                 return;
 
-            case UserLoggedIn.type:
+            case UserLoggedIn:
                 return;
 
-            case LoginByEmailFailed.type:
+            case LoginByEmailFailed:
                 throw foundEvent.error;
         }
     }
@@ -66,21 +66,21 @@ class DialogsModule {
 
         const foundEvent = await this.bus.publishAndWaitFor(
             command,
-            matchTypes(
-                UserSignedUpByEmail.type,
-                FailedSignUpByEmail.type,
-                SignUpDialogDidClose.type
+            matchClasses(
+                UserSignedUpByEmail,
+                FailedSignUpByEmail,
+                SignUpDialogDidClose
             ),
         );
 
-        switch (foundEvent.type) {
-            case UserSignedUpByEmail.type:
+        switch (foundEvent.constructor) {
+            case UserSignedUpByEmail:
                 return;
 
-            case FailedSignUpByEmail.type:
+            case FailedSignUpByEmail:
                 throw foundEvent.error;
 
-            case SignUpDialogDidClose.type:
+            case SignUpDialogDidClose:
                 return;
         }
     }
@@ -90,4 +90,4 @@ class DialogsModule {
     }
 }
 
-export default DialogsModule;
+export default DialogsConfig;

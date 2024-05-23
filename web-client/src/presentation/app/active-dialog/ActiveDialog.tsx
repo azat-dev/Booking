@@ -10,6 +10,7 @@ const ActiveDialog = ({vm, views}: PropsActiveDialog) => {
     }
 
     const View = views[dialog.type as any];
+    console.log("ActiveDialog", dialog.type, dialog, View);
     if (!View) {
         return null;
     }

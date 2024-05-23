@@ -8,102 +8,130 @@ import RouteItem from "./presentation/app/router/RouteItem.ts";
 import PageMain from "./presentation/pages/page-main/PageMain.tsx";
 import PageUserProfile from "./presentation/pages/page-user-profile/PageUserProfile.tsx";
 import PrivateRoute from "./presentation/app/router/PrivateRoute.tsx";
-import DataModule from "./DataModule.ts";
-import DomainModule from "./presentation/app/app-model/DomainModule.ts";
-import ComponentsModule from "./presentation/app/app-model/ComponentsModule.ts";
-import DialogsModule from "./presentation/app/app-model/DialogsModule.ts";
+import DataConfig from "./presentation/app/config/DataConfig.ts";
+import DomainConfig from "./presentation/app/config/DomainConfig.ts";
+import ComponentsConfig from "./presentation/app/config/ComponentsConfig.ts";
+import DialogsConfig from "./presentation/app/config/DialogsConfig.ts";
 import DialogsStore from "./presentation/stores/DialogsStore.ts";
-import PagesConfig from "./PagesConfig.ts";
-import OpenFileDialogForUploadingUserPhoto from "./presentation/commands/OpenFileDialogForUploadingUserPhoto.ts";
-import PresentationModule from "./presentation/app/app-model/PresentationModule.ts";
+import PagesConfig from "./presentation/app/config/PagesConfig.ts";
+import PresentationConfig from "./presentation/app/config/PresentationConfig.ts";
 import App from "./presentation/app/App.tsx";
 import RouterVM from "./presentation/app/router/RouterVM.tsx";
 import AppVM from "./presentation/app/AppVM.tsx";
 import PublicRoute from "./presentation/app/router/PublicRoute.tsx";
 import useLoadedValue from "./presentation/app/router/useLoadedValue.ts";
+import DomainPoliciesConfig from "./presentation/app/config/DomainPoliciesConfig.ts";
+import AppSessionImpl from "./domain/auth/entities/AppSessionImpl.ts";
+import BusImpl from "./domain/utils/BusImpl.ts";
+import DomainCommandHandlersConfig from "./presentation/app/config/DomainCommandHandlersConfig.ts";
+import AppStarted from './domain/auth/events/AppStarted.ts';
+import PresentationCommandHandlersConfig from "./presentation/app/config/PresentationCommandHandlersConfig.ts";
+import DialogsCommandHandlersConfig from "./presentation/app/config/DialogsCommandHandlersConfig.ts";
+
+
+const buildApp = (baseApiUrl: string) => {
+
+    const dataConfig = new DataConfig(baseApiUrl);
+
+
+    const bus = new BusImpl();
+
+    const appSession = new AppSessionImpl(bus)
+
+    const domainPoliciesConfig = new DomainPoliciesConfig(
+        appSession,
+        dataConfig.localAuthDataRepository(),
+        bus
+    );
+
+    const domainCommandHandlersConfig = new DomainCommandHandlersConfig(
+        appSession,
+        bus,
+        dataConfig.localAuthService(),
+        dataConfig.userInfoService(),
+        domainPoliciesConfig
+    );
+
+    const domainConfig = new DomainConfig(
+        domainPoliciesConfig,
+        domainCommandHandlersConfig,
+        bus
+    );
+
+
+    const components = new ComponentsConfig(appSession, bus);
+
+    const dialogs = new DialogsConfig(bus);
+
+    const activeDialogStore = new DialogsStore(dialogs, bus);
+
+    bus.subscribe(async (event) => {
+        activeDialogStore.handle(event);
+    });
+
+    const pagesConfig = new PagesConfig(components, bus);
+
+    const routes: RouteItem[] = [
+        new PublicRoute(
+            "/",
+            () => {
+                const vm = useLoadedValue(() => pagesConfig.mainPage(), []);
+                if (!vm) {
+                    return <h1>Loading...</h1>;
+                }
+
+                return <PageMain vm={vm}/>;
+            }
+        ),
+        new PrivateRoute(
+            "/profile",
+            "/",
+            () => <h1>Authenticating...</h1>,
+            ({session}) => {
+                const vm = useLoadedValue(() => pagesConfig.profilePage(session), [session]);
+                if (!vm) {
+                    return <h1>Loading...</h1>;
+                }
+
+                return <PageUserProfile vm={vm}/>;
+            }
+        )
+    ];
+
+    const router = new RouterVM(routes, appSession, pagesConfig);
+
+    components.navigation = {
+        openUserProfilePage() {
+            router.navigate("/profile");
+        }
+    }
+
+    const presentationHandlersConfig = new PresentationCommandHandlersConfig(
+        appSession,
+        bus
+    )
+
+    new PresentationConfig(presentationHandlersConfig, bus);
+
+    new DialogsCommandHandlersConfig(
+        activeDialogStore.activeDialog,
+        dialogs,
+        bus
+    );
+
+    const app = new AppVM(router, activeDialogStore.activeDialog);
+    bus.publish(new AppStarted());
+
+    return app;
+}
+
+
+const app = buildApp("http://localhost:8080");
 
 const root = ReactDOM.createRoot(
     document.getElementById("root") as HTMLElement
 );
 
-const dataModule = new DataModule("http://localhost:8080");
-
-const domainModule = new DomainModule(
-    dataModule.localAuthDataRepository(),
-    dataModule.authService(),
-    dataModule.userInfoService()
-);
-
-const componentsModule = new ComponentsModule(
-    domainModule.appSession,
-    domainModule.bus
-);
-
-const dialogsModule = new DialogsModule(
-    domainModule.bus
-);
-
-const dialogsStore = new DialogsStore(dialogsModule, domainModule.bus);
-domainModule.bus.subscribe(async (event) => {
-    dialogsStore.handle(event);
-});
-
-const pagesModule = new PagesConfig(componentsModule, domainModule.bus);
-
-// const accommodationsRegistry = new AccommodationsRegistryImpl();
-//
-// const reservationService = new ReservationServiceImpl();
-
-
-const routes: RouteItem[] = [
-    new PublicRoute(
-        "/",
-        () => {
-            const vm = useLoadedValue(() => pagesModule.mainPage(), []);
-            if (!vm) {
-                return <h1>Loading...</h1>;
-            }
-
-            return <PageMain vm={vm}/>;
-        }
-    ),
-    new PrivateRoute(
-        "/profile",
-        "/",
-        () => <h1>Authenticating...</h1>,
-        ({session}) => {
-            const vm = useLoadedValue(() => pagesModule.profilePage(session), [session]);
-            if (!vm) {
-                return <h1>Loading...</h1>;
-            }
-
-            return <PageUserProfile vm={vm}/>;
-        }
-    )
-];
-
-const router = new RouterVM(routes, domainModule.appSession);
-
-const app = new AppVM(router);
-
-domainModule.bus.subscribe(async (event) => {
-    if (!event.isCommand) {
-        return;
-    }
-
-    switch (event.type) {
-        // case OpenUserProfilePage.type:
-        //     app.runProfilePage();
-        //     break;
-        case OpenFileDialogForUploadingUserPhoto.type:
-            break;
-    }
-});
-
-new PresentationModule(
-    domainModule.appSession,
-    domainModule.bus
-);
 
 root.render(
     <React.StrictMode>

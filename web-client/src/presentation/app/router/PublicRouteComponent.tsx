@@ -16,7 +16,6 @@ export interface PropsPrivateRouteComponent {
 }
 
 const PublicRouteComponent = (props: PropsPrivateRouteComponent) => {
-    debugger
     const {
         params,
         session,

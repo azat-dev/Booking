@@ -55,4 +55,5 @@ const AccommodationPreviewLoading = (
     );
 };
 
+AccommodationPreviewLoading.displayName = "AccommodationPreviewLoading";
 export default React.memo(AccommodationPreviewLoading);

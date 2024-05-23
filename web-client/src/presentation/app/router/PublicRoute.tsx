@@ -14,7 +14,6 @@ class PublicRoute implements RouteItem {
     }
 
     public view = async (session: Subject<SessionState>, params: any): Promise<React.ReactElement> => {
-        debugger
         return (
             <PublicRouteComponent
                 params={params}

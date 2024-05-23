@@ -15,9 +15,11 @@ import OpenLoginDialog from "../../commands/OpenLoginDialog";
 import OpenSignUpDialog from "../../commands/OpenSignUpDialog";
 import Subject from "../../utils/binding/Subject";
 import ProfileButtonLoadingVM from "../../components/navigation-bar/profile-button-loading/ProfileButtonLoadingVM";
-import OpenUserProfilePage from "../../commands/OpenUserProfilePage";
+import NavigationDelegate from "../NavigationDelegate.ts";
 
-class ComponentsModule {
+class ComponentsConfig {
+
+    public navigation: NavigationDelegate | null = null;
 
     public constructor(
         private readonly appSession: AppSession,
@@ -93,7 +95,7 @@ class ComponentsModule {
             email,
             photo,
             () => {
-                this.bus.publish(new OpenUserProfilePage());
+                this.navigation?.openUserProfilePage();
             },
             () => {
                 this.bus.publish(new Logout());
@@ -111,4 +113,4 @@ class ComponentsModule {
     }
 }
 
-export default ComponentsModule;
+export default ComponentsConfig;

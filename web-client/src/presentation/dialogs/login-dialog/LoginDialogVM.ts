@@ -102,6 +102,8 @@ class LoginDialogVM extends KeepType {
                 email,
                 password,
             });
+
+            this.close();
             return;
 
         } catch (e) {

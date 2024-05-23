@@ -3,11 +3,11 @@ import {fileDialog} from "file-select-dialog";
 import Bus from "../../domain/utils/Bus";
 import UploadNewUserPhoto from "../../domain/auth/commands/UploadNewUserPhoto";
 import UserClosedFileDialogForUploadingUserPhoto from "../events/UserClosedFileDialogForUploadingUserPhoto";
-import KeepType from "../../domain/utils/KeepType.ts";
 import AppSession from "../../domain/auth/entities/AppSession.ts";
 import AppSessionAuthenticated from "../../domain/auth/entities/AppSessionAuthenticated.ts";
+import Handler from "../../domain/utils/Handler.ts";
 
-class OpenFileDialogForUploadingUserPhotoHandler extends KeepType {
+class OpenFileDialogForUploadingUserPhotoHandler extends Handler {
 
     public constructor(
         private readonly appSession: AppSession,

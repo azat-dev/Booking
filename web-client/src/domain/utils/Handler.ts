@@ -1,6 +1,7 @@
 import KeepType from "./KeepType.ts";
+import Command from "./Command.ts";
 
-class Handler extends KeepType {
+abstract class Handler extends KeepType {
 
     static get type() {
         return this.name;
@@ -13,6 +14,8 @@ class Handler extends KeepType {
     get isHandler() {
         return true;
     }
+
+    abstract execute(command: Command): Promise<void>;
 }
 
 export default Handler;
