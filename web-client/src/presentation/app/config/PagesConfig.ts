@@ -1,10 +1,11 @@
-import PageMainVMImpl from "../../pages/page-main/PageMainVMImpl";
 import ComponentsConfig from "./ComponentsConfig";
-import PageAccommodationDetailsVM from "../../pages/page-accommodation-details/PageAccommodationDetailsVM";
 import Accommodation from "../../../domain/accommodations/Accommodation";
 import AppSessionAuthenticated from "../../../domain/auth/entities/AppSessionAuthenticated";
 import OpenFileDialogForUploadingUserPhoto from "../../commands/OpenFileDialogForUploadingUserPhoto";
-import Bus from "../../../domain/utils/Bus";
+import Bus, {matchClasses} from "../../../domain/utils/Bus";
+import UpdatedUserPhoto from "../../../domain/auth/events/UpdatedUserPhoto.ts";
+import FailedUpdateUserInfoInAppSession from "../../../domain/auth/events/FailedUpdateUserInfoInAppSession.ts";
+import FailedUpdateUserPhoto from "../../../domain/auth/events/FailedUpdateUserPhoto.ts";
 
 class PagesConfig {
     public constructor(
@@ -12,7 +13,11 @@ class PagesConfig {
         private readonly bus: Bus
     ) {
     }
+
     public mainPage = async () => {
+        const imp = import("../../pages/page-main/PageMainVMImpl");
+        const PageMainVMImpl = (await imp).default;
+
         return new PageMainVMImpl(
             this.components.navigationBar(),
             () => {
@@ -23,6 +28,8 @@ class PagesConfig {
     }
 
     public accomodateDetailsPage = async (accomodation: Accommodation) => {
+        const imp = import("../../pages/page-accommodation-details/PageAccommodationDetailsVM");
+        const PageAccommodationDetailsVM = (await imp).default;
         return new PageAccommodationDetailsVM(
             accomodation,
             this.components.navigationBar(),
@@ -39,8 +46,18 @@ class PagesConfig {
 
         return new PageUserProfileVM(
             session.userInfo,
-            () => {
-                this.bus.publish(new OpenFileDialogForUploadingUserPhoto());
+            async () => {
+                const response = await this.bus.publishAndWaitFor(
+                    new OpenFileDialogForUploadingUserPhoto(),
+                    matchClasses(UpdatedUserPhoto, FailedUpdateUserPhoto)
+                );
+
+                switch (response.constructor) {
+                    case UpdatedUserPhoto:
+                        break;
+                    case FailedUpdateUserPhoto:
+                        throw new Error("Failed to update user photo");
+                }
             }
         )
     }

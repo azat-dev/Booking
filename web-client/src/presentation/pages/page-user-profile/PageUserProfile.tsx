@@ -9,7 +9,7 @@ import style from "./style.module.scss";
 const PageUserProfile = ({vm}: PropsPageUserProfile) => {
 
     return (
-        <Box onClick={vm.updatePhoto}
+        <Box
              className={style.pageUserProfile}
              display="flex"
              align-items="center"

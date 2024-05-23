@@ -1,7 +1,7 @@
 import {SubjectCallback} from "./SubjectCallback";
 import Disposable from "./Disposable";
 
-export interface ReadonlySubject<Value> {
+export interface ReadonlySubject<Value>  extends Disposable {
     value: Value;
 
     listen(callback: SubjectCallback<Value>): Disposable;

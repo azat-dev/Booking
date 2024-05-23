@@ -3,6 +3,7 @@ import UploadNewUserPhoto from "../commands/UploadNewUserPhoto.ts";
 import PersonalUserInfoService from "../interfaces/services/PersonalUserInfoService.ts";
 import Bus from "../../utils/Bus.ts";
 import UpdatedUserPhoto from "../events/UpdatedUserPhoto.ts";
+import FailedUpdateUserPhoto from "../events/FailedUpdateUserPhoto.ts";
 
 class UploadNewUserPhotoHandler extends Handler {
 
@@ -14,8 +15,13 @@ class UploadNewUserPhotoHandler extends Handler {
     }
 
     public execute = async (command: UploadNewUserPhoto): Promise<void> => {
-        await this.infoService.updateUserPhoto(command.userId, command.file);
-        this.bus.publish(new UpdatedUserPhoto());
+        try {
+            await this.infoService.updateUserPhoto(command.userId, command.file);
+            this.bus.publish(new UpdatedUserPhoto());
+        } catch (e) {
+            console.info(e);
+            this.bus.publish(new FailedUpdateUserPhoto());
+        }
     }
 }
 
