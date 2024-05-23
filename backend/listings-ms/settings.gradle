@@ -1,1 +1,5 @@
 rootProject.name = 'listings-ms'
+
+include ':shared'
+project(':shared').projectDir = new File('../shared')
+

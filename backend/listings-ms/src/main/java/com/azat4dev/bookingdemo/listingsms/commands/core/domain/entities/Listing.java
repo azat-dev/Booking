@@ -1,5 +1,6 @@
 package com.azat4dev.bookingdemo.listingsms.commands.core.domain.entities;
 
+import com.azat4dev.booking.shared.domain.DomainException;
 import com.azat4dev.bookingdemo.listingsms.commands.core.domain.values.*;
 import lombok.Getter;
 
@@ -14,10 +15,10 @@ public class Listing {
 
     private final ListingId id;
     private final OwnerId ownerId;
-    private ListingTitle title;
+    private final ListingTitle title;
     private Optional<ListingDescription> description;
     private ListingStatus status;
-    private List<ListingPhoto> photos;
+    private final List<ListingPhoto> photos;
 
     public Listing(
         ListingId id,
@@ -31,7 +32,7 @@ public class Listing {
         this.photos = new LinkedList<>();
     }
 
-    private void validateFieldsBeforePublishing() {
+    private void validateFieldsBeforePublishing() throws Exception.DescriptionIsRequired, Exception.MinimumNumberOfPhotos {
 
         if (title == null) {
             throw new IllegalStateException("Title is required");
@@ -44,7 +45,7 @@ public class Listing {
         }
     }
 
-    public void setStatus(ListingStatus status) {
+    public void setStatus(ListingStatus status) throws Exception.MinimumNumberOfPhotos, Exception.DescriptionIsRequired {
 
         if (status == ListingStatus.PUBLISHED) {
             validateFieldsBeforePublishing();
@@ -55,7 +56,7 @@ public class Listing {
 
     // Exceptions
 
-    public static class Exception extends RuntimeException {
+    public static class Exception extends DomainException {
         public Exception(String message) {
             super(message);
         }

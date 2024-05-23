@@ -1,1 +1,7 @@
 /backend/.idea/
+/backend/shared/.idea/
+/backend/shared/.gradle/
+/backend/users-ms/.idea/
+/backend/users-ms/.gradle/
+/backend/listings-ms/.idea/
+/backend/listings-ms/.gradle/
