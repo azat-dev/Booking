@@ -56,6 +56,9 @@ public class AddNewListingCommandHandlerTests {
             ListingTitle.dangerouslyMakeFrom("title")
         );
 
+        given(sut.makeListingId.make())
+            .willReturn(command.getListingId());
+
         willDoNothing().given(sut.repository)
             .addNew(any());
 
