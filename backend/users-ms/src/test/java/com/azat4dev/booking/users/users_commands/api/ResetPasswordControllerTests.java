@@ -5,22 +5,16 @@ import com.azat4dev.booking.shared.domain.event.EventIdGenerator;
 import com.azat4dev.booking.shared.domain.event.RandomEventIdGenerator;
 import com.azat4dev.booking.shared.utils.SystemTimeProvider;
 import com.azat4dev.booking.shared.utils.TimeProvider;
-import com.azat4dev.booking.users.common.presentation.security.services.jwt.JwtService;
+import com.azat4dev.booking.users.users_commands.application.commands.password.CompletePasswordReset;
 import com.azat4dev.booking.users.users_commands.application.config.presentation.WebSecurityConfig;
-import com.azat4dev.booking.users.users_commands.application.handlers.SignUpHandler;
+import com.azat4dev.booking.users.users_commands.application.handlers.password.CompletePasswordResetHandler;
 import com.azat4dev.booking.users.users_commands.application.handlers.password.ResetPasswordByEmailHandler;
 import com.azat4dev.booking.users.users_commands.domain.UserHelpers;
-import com.azat4dev.booking.users.users_commands.domain.core.commands.CompletePasswordReset;
 import com.azat4dev.booking.users.users_commands.domain.core.values.IdempotentOperationId;
-import com.azat4dev.booking.users.users_commands.domain.core.values.password.EncodedPassword;
-import com.azat4dev.booking.users.users_commands.domain.core.values.password.Password;
 import com.azat4dev.booking.users.users_commands.domain.core.values.password.reset.TokenForPasswordReset;
-import com.azat4dev.booking.users.users_commands.domain.handlers.password.reset.CompletePasswordResetHandler;
-import com.azat4dev.booking.users.users_commands.domain.interfaces.services.PasswordService;
 import com.azat4dev.booking.users.users_commands.presentation.api.rest.authentication.entities.CompleteResetPasswordRequest;
 import com.azat4dev.booking.users.users_commands.presentation.api.rest.authentication.entities.ResetPasswordByEmailRequest;
 import com.azat4dev.booking.users.users_commands.presentation.api.rest.authentication.resources.ResetPasswordController;
-import com.azat4dev.booking.users.users_queries.domain.services.UsersQueryService;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -32,7 +26,6 @@ import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Import;
 import org.springframework.http.MediaType;
 import org.springframework.security.oauth2.jwt.JwtDecoder;
-import org.springframework.security.oauth2.jwt.JwtEncoder;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.ResultActions;
 
@@ -53,15 +46,6 @@ public class ResetPasswordControllerTests {
 
     @Autowired
     private ObjectMapper objectMapper;
-
-    @MockBean
-    private UsersQueryService usersService;
-
-    @MockBean
-    private JwtService tokenProvider;
-
-    @MockBean
-    private JwtEncoder jwtEncoder;
 
     @MockBean
     @Qualifier("accessTokenDecoder")
@@ -122,18 +106,17 @@ public class ResetPasswordControllerTests {
     public void test_completeResetPassword_givenValidToken_thenPassToHandlerReturnOk() throws Exception {
 
         // Given
-        final var idempotencyKey = anyIdempotentOperationId();
-        final var token = "tokenValue";
+        final var operationId = anyIdempotentOperationId();
+        final var tokenValue = "tokenValue";
 
         final var newPassword = "newPassword";
-        final var encodedPassword = new EncodedPassword("encodedPassword");
+        final var token = TokenForPasswordReset.dangerouslyMakeFrom(tokenValue);
 
         final var request = new CompleteResetPasswordRequest(
-            idempotencyKey.toString(),
+            operationId.toString(),
             newPassword,
-            token
+            tokenValue
         );
-
 
         willDoNothing().given(resetPasswordByEmailHandler)
             .handle(any());
@@ -145,17 +128,13 @@ public class ResetPasswordControllerTests {
         result.andExpect(status().isOk());
 
         final var expectedCommand = new CompletePasswordReset(
-            idempotencyKey,
-            encodedPassword,
-            TokenForPasswordReset.dangerouslyMakeFrom(token)
+            operationId.toString(),
+            newPassword,
+            token.getValue()
         );
 
         then(completePasswordResetHandler).should(times(1))
-            .handle(
-                eq(expectedCommand),
-                any(),
-                any()
-            );
+            .handle(expectedCommand);
     }
 
     private ResultActions performCompleteResetPassword(CompleteResetPasswordRequest request) throws Exception {

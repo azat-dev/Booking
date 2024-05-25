@@ -4,8 +4,9 @@ import com.azat4dev.booking.common.presentation.ControllerException;
 import com.azat4dev.booking.common.presentation.ErrorDTO;
 import com.azat4dev.booking.shared.domain.event.EventIdGenerator;
 import com.azat4dev.booking.shared.utils.TimeProvider;
+import com.azat4dev.booking.users.users_commands.application.commands.password.CompletePasswordReset;
+import com.azat4dev.booking.users.users_commands.application.handlers.password.CompletePasswordResetHandler;
 import com.azat4dev.booking.users.users_commands.application.handlers.password.ResetPasswordByEmailHandler;
-import com.azat4dev.booking.users.users_commands.domain.handlers.password.reset.CompletePasswordResetHandler;
 import com.azat4dev.booking.users.users_commands.domain.interfaces.services.PasswordService;
 import com.azat4dev.booking.users.users_commands.presentation.api.rest.authentication.entities.CompleteResetPasswordRequest;
 import com.azat4dev.booking.users.users_commands.presentation.api.rest.authentication.entities.ResetPasswordByEmailRequest;
@@ -23,15 +24,6 @@ public class ResetPasswordController implements ResetPasswordResource {
 
     @Autowired
     ResetPasswordByEmailHandler resetPasswordByEmailHandler;
-
-    @Autowired
-    private EventIdGenerator eventIdGenerator;
-
-    @Autowired
-    private TimeProvider timeProvider;
-
-    @Autowired
-    private PasswordService passwordService;
 
     @Autowired
     private CompletePasswordResetHandler completePasswordResetHandler;
@@ -63,9 +55,14 @@ public class ResetPasswordController implements ResetPasswordResource {
         HttpServletResponse response
     ) {
 
-        final var command = requestBody.toCommand(passwordService);
+        final var command = new CompletePasswordReset(
+            requestBody.operationId(),
+            requestBody.newPassword(),
+            requestBody.resetPasswordToken()
+        );
+
         try {
-            completePasswordResetHandler.handle(command, eventIdGenerator.generate(), timeProvider.currentTime());
+            completePasswordResetHandler.handle(command);
         } catch (CompletePasswordResetHandler.Exception e) {
             throw ControllerException.createError(HttpStatus.BAD_REQUEST, e);
         }

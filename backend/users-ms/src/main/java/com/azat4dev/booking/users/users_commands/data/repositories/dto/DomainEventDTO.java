@@ -36,7 +36,6 @@ public record DomainEventDTO(
         @JsonSubTypes.Type(value = FailedToSendVerificationEmailDTO.class),
         @JsonSubTypes.Type(value = CompleteEmailVerificationDTO.class),
         @JsonSubTypes.Type(value = SentEmailForPasswordResetDTO.class),
-        @JsonSubTypes.Type(value = ResetPasswordByEmailDTO.class),
         @JsonSubTypes.Type(value = UserDidResetPasswordDTO.class),
         @JsonSubTypes.Type(value = CompletePasswordResetDTO.class),
         @JsonSubTypes.Type(value = GenerateUserPhotoUploadUrlDTO.class),

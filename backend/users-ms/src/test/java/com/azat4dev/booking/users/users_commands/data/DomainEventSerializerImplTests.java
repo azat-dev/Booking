@@ -86,12 +86,6 @@ public class DomainEventSerializerImplTests {
                 )
             ),
             eventsFactory.issue(
-                new ResetPasswordByEmail(
-                    anyIdempotentOperationId(),
-                    anyValidEmail()
-                )
-            ),
-            eventsFactory.issue(
                 new UserDidResetPassword(
                     anyValidUserId()
                 )

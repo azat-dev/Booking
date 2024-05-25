@@ -1,13 +1,13 @@
 package com.azat4dev.booking.users.users_commands.application.config.domain;
 
-import com.azat4dev.booking.common.domain.annotations.CommandHandlerBean;
 import com.azat4dev.booking.shared.domain.event.DomainEventsBus;
 import com.azat4dev.booking.shared.utils.TimeProvider;
 import com.azat4dev.booking.users.common.presentation.security.services.jwt.JwtDataDecoder;
 import com.azat4dev.booking.users.users_commands.domain.core.values.email.EmailAddress;
-import com.azat4dev.booking.users.users_commands.domain.handlers.password.reset.CompletePasswordResetHandler;
 import com.azat4dev.booking.users.users_commands.domain.handlers.password.reset.SendResetPasswordEmail;
 import com.azat4dev.booking.users.users_commands.domain.handlers.password.reset.SendResetPasswordEmailImpl;
+import com.azat4dev.booking.users.users_commands.domain.handlers.password.reset.SetNewPasswordByToken;
+import com.azat4dev.booking.users.users_commands.domain.handlers.password.reset.SetNewPasswordByTokenImpl;
 import com.azat4dev.booking.users.users_commands.domain.handlers.password.reset.utils.*;
 import com.azat4dev.booking.users.users_commands.domain.interfaces.repositories.UsersRepository;
 import com.azat4dev.booking.users.users_commands.domain.interfaces.services.EmailService;
@@ -25,9 +25,12 @@ public class ResetPasswordConfig {
     private final EmailService emailService;
     private final UsersRepository usersRepository;
     private final DomainEventsBus bus;
+    private final TimeProvider timeProvider;
+    private final JwtDataDecoder decoder;
 
     @Bean
     public SendResetPasswordEmail sendResetPasswordEmail(BuildResetPasswordEmail buildResetPasswordEmail) {
+
         return new SendResetPasswordEmailImpl(
             usersRepository,
             buildResetPasswordEmail,
@@ -36,11 +39,9 @@ public class ResetPasswordConfig {
         );
     }
 
-    @CommandHandlerBean
-    public CompletePasswordResetHandler completePasswordResetHandler(
-        ValidateTokenForPasswordResetAndGetUserId validateTokenForPasswordResetAndGetUserId
-    ) {
-        return new CompletePasswordResetHandler(
+    @Bean
+    public SetNewPasswordByToken resetPasswordByToken(ValidateTokenForPasswordResetAndGetUserId validateTokenForPasswordResetAndGetUserId) {
+        return new SetNewPasswordByTokenImpl(
             validateTokenForPasswordResetAndGetUserId,
             usersRepository,
             bus
@@ -76,8 +77,7 @@ public class ResetPasswordConfig {
 
     @Bean
     ValidateTokenForPasswordResetAndGetUserId validateTokenForPasswordResetAndGetUserId(
-        GetInfoForPasswordResetToken getTokenInfo,
-        TimeProvider timeProvider
+        GetInfoForPasswordResetToken getTokenInfo
     ) {
         return new ValidateTokenForPasswordResetAndGetUserIdImpl(
             getTokenInfo,
@@ -86,7 +86,7 @@ public class ResetPasswordConfig {
     }
 
     @Bean
-    GetInfoForPasswordResetToken getInfoForPasswordResetToken(JwtDataDecoder decoder) {
+    GetInfoForPasswordResetToken getInfoForPasswordResetToken() {
         return new GetInfoForPasswordResetTokenImpl(decoder);
     }
 }

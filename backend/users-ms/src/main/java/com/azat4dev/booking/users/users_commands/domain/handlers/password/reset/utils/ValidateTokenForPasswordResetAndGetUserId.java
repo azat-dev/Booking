@@ -7,7 +7,7 @@ import com.azat4dev.booking.users.users_commands.domain.core.values.password.res
 @FunctionalInterface
 public interface ValidateTokenForPasswordResetAndGetUserId {
 
-    UserId execute(TokenForPasswordReset token) throws Exception;
+    UserId execute(TokenForPasswordReset token) throws Exception.InvalidToken, Exception.TokenExpired;
 
     // Exceptions
 

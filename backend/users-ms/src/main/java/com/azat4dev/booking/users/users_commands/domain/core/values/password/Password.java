@@ -21,6 +21,7 @@ public final class Password {
 
     public static void validate(String password) throws Exception {
 
+        Assert.notNull(password, Exception.WrongFormat::new);
         Assert.string(password, Exception.Length::new)
             .notNull()
             .notBlank()

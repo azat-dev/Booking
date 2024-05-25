@@ -5,10 +5,13 @@ import com.azat4dev.booking.users.users_commands.application.handlers.SignUpHand
 import com.azat4dev.booking.users.users_commands.application.handlers.SignUpHandlerImpl;
 import com.azat4dev.booking.users.users_commands.application.handlers.email.verification.CompleteEmailVerificationHandler;
 import com.azat4dev.booking.users.users_commands.application.handlers.email.verification.CompleteEmailVerificationHandlerImpl;
+import com.azat4dev.booking.users.users_commands.application.handlers.password.CompletePasswordResetHandler;
+import com.azat4dev.booking.users.users_commands.application.handlers.password.CompletePasswordResetHandlerImpl;
 import com.azat4dev.booking.users.users_commands.application.handlers.password.ResetPasswordByEmailHandler;
 import com.azat4dev.booking.users.users_commands.application.handlers.password.ResetPasswordByEmailHandlerImpl;
 import com.azat4dev.booking.users.users_commands.domain.handlers.email.verification.VerifyEmailByToken;
 import com.azat4dev.booking.users.users_commands.domain.handlers.password.reset.SendResetPasswordEmail;
+import com.azat4dev.booking.users.users_commands.domain.handlers.password.reset.SetNewPasswordByToken;
 import com.azat4dev.booking.users.users_commands.domain.handlers.users.Users;
 import com.azat4dev.booking.users.users_commands.domain.interfaces.services.PasswordService;
 import org.springframework.context.annotation.Bean;
@@ -31,14 +34,26 @@ public class CommandHandlersConfig {
     }
 
     @Bean
-    public CompleteEmailVerificationHandler completeEmailVerificationHandler(VerifyEmailByToken verifyEmailByToken) {
+    public CompleteEmailVerificationHandler completeEmailVerificationHandler(
+        VerifyEmailByToken verifyEmailByToken
+    ) {
         return new CompleteEmailVerificationHandlerImpl(
             verifyEmailByToken
         );
     }
 
     @Bean
-    public ResetPasswordByEmailHandler resetPasswordByEmailHandler(SendResetPasswordEmail sendResetPasswordEmail) {
+    public ResetPasswordByEmailHandler resetPasswordByEmailHandler(
+        SendResetPasswordEmail sendResetPasswordEmail
+    ) {
         return new ResetPasswordByEmailHandlerImpl(sendResetPasswordEmail);
+    }
+
+    @Bean
+    public CompletePasswordResetHandler completePasswordResetHandler(
+        SetNewPasswordByToken setNewPasswordByToken,
+        PasswordService passwordService
+    ) {
+        return new CompletePasswordResetHandlerImpl(setNewPasswordByToken, passwordService);
     }
 }

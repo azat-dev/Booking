@@ -1,21 +1,19 @@
 package com.azat4dev.booking.users.users_commands.domain.handlers;
 
 import com.azat4dev.booking.shared.domain.event.DomainEventsBus;
-import com.azat4dev.booking.users.users_commands.domain.EventHelpers;
 import com.azat4dev.booking.users.users_commands.domain.UserHelpers;
-import com.azat4dev.booking.users.users_commands.domain.core.commands.CompletePasswordReset;
 import com.azat4dev.booking.users.users_commands.domain.core.events.FailedToCompleteResetPassword;
 import com.azat4dev.booking.users.users_commands.domain.core.events.UserDidResetPassword;
 import com.azat4dev.booking.users.users_commands.domain.core.values.IdempotentOperationId;
 import com.azat4dev.booking.users.users_commands.domain.core.values.password.EncodedPassword;
 import com.azat4dev.booking.users.users_commands.domain.core.values.password.reset.TokenForPasswordReset;
-import com.azat4dev.booking.users.users_commands.domain.handlers.password.reset.CompletePasswordResetHandler;
+import com.azat4dev.booking.users.users_commands.domain.handlers.password.reset.SetNewPasswordByToken;
+import com.azat4dev.booking.users.users_commands.domain.handlers.password.reset.SetNewPasswordByTokenImpl;
 import com.azat4dev.booking.users.users_commands.domain.handlers.password.reset.utils.ValidateTokenForPasswordResetAndGetUserId;
 import com.azat4dev.booking.users.users_commands.domain.interfaces.repositories.UsersRepository;
 import com.azat4dev.booking.users.users_commands.domain.interfaces.services.PasswordService;
 import org.junit.jupiter.api.Test;
 
-import java.time.LocalDateTime;
 import java.util.Optional;
 import java.util.UUID;
 
@@ -28,7 +26,7 @@ import static org.mockito.BDDMockito.then;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.times;
 
-public class CompletePasswordResetHandlerTests {
+public class SetNewPasswordByTokenTests {
 
     SUT createSUT() {
 
@@ -38,7 +36,7 @@ public class CompletePasswordResetHandlerTests {
         final var passwordService = mock(PasswordService.class);
 
         return new SUT(
-            new CompletePasswordResetHandler(
+            new SetNewPasswordByTokenImpl(
                 validatePasswordResetTokenAnGetUserId,
                 usersRepository,
                 bus
@@ -54,49 +52,56 @@ public class CompletePasswordResetHandlerTests {
         return IdempotentOperationId.checkAndMakeFrom(UUID.randomUUID().toString());
     }
 
-    CompletePasswordReset anyCommand() throws IdempotentOperationId.Exception {
-        return new CompletePasswordReset(
-            anyIdempotentOperationId(),
-            new EncodedPassword("encodedPassword"),
-            TokenForPasswordReset.dangerouslyMakeFrom("invalidToken")
-        );
+    EncodedPassword anyPassword() {
+        return new EncodedPassword("encodedPassword");
+    }
+
+    TokenForPasswordReset anyToken() {
+        return TokenForPasswordReset.dangerouslyMakeFrom("token");
     }
 
     @Test
-    void test_handle_givenNotValidToken_thenPublishFailedPasswordResetEventAndThrowException() throws ValidateTokenForPasswordResetAndGetUserId.Exception, IdempotentOperationId.Exception {
+    void test_execute_givenNotValidToken_thenPublishFailedPasswordResetEventAndThrowException() throws ValidateTokenForPasswordResetAndGetUserId.Exception, IdempotentOperationId.Exception {
 
         // Given
         var sut = createSUT();
 
-        final var command = anyCommand();
+
+        final var operationId = anyIdempotentOperationId();
+        final var token = anyToken();
+        final var password = anyPassword();
 
         given(sut.validateTokenForPasswordResetAndGetUserId.execute(any()))
             .willThrow(new ValidateTokenForPasswordResetAndGetUserId.Exception.InvalidToken());
 
         // When
-        final var exception = assertThrows(CompletePasswordResetHandler.Exception.InvalidToken.class, () -> {
-            sut.handler.handle(
-                command,
-                EventHelpers.anyEventId(),
-                LocalDateTime.now()
+        final var exception = assertThrows(SetNewPasswordByToken.Exception.InvalidToken.class, () -> {
+            sut.resetPassword.execute(
+                operationId,
+                token,
+                password
             );
         });
 
         // Then
-        assertThat(exception).isInstanceOf(CompletePasswordResetHandler.Exception.InvalidToken.class);
+        assertThat(exception).isInstanceOf(SetNewPasswordByToken.Exception.InvalidToken.class);
 
         then(sut.bus).should(times(1))
-            .publish(new FailedToCompleteResetPassword(command.idempotentOperationId()));
+            .publish(new FailedToCompleteResetPassword(operationId));
     }
 
     @Test
-    void test_handle_givenValidToken_thenUpdateUserAndPublishPasswordDidResetEvent() throws ValidateTokenForPasswordResetAndGetUserId.Exception, CompletePasswordResetHandler.Exception, IdempotentOperationId.Exception {
+    void test_handle_givenValidToken_thenUpdateUserAndPublishPasswordDidResetEvent() throws ValidateTokenForPasswordResetAndGetUserId.Exception, SetNewPasswordByToken.Exception, IdempotentOperationId.Exception {
 
         // Given
         final var sut = createSUT();
-        final var command = anyCommand();
+
+        final var operationId = anyIdempotentOperationId();
+        final var token = anyToken();
+        final var password = anyPassword();
         final var user = UserHelpers.anyUser();
         final var userId = user.getId();
+        final var encodedPassword = new EncodedPassword("encodedPassword");
 
         given(sut.validateTokenForPasswordResetAndGetUserId.execute(any()))
             .willReturn(userId);
@@ -105,21 +110,20 @@ public class CompletePasswordResetHandlerTests {
             .willReturn(Optional.of(user));
 
         given(sut.passwordService.encodePassword(any()))
-            .willReturn(command.newPassword());
+            .willReturn(encodedPassword);
 
         // When
-        sut.handler.handle(
-            command,
-            EventHelpers.anyEventId(),
-            LocalDateTime.now()
+        sut.resetPassword.execute(
+            operationId,
+            token,
+            password
         );
 
         // Then
-
         then(sut.usersRepository).should(times(1))
             .update(assertArg(u -> {
                 assertThat(u.getId()).isEqualTo(userId);
-                assertThat(u.getEncodedPassword()).isEqualTo(command.newPassword());
+                assertThat(u.getEncodedPassword()).isEqualTo(encodedPassword);
             }));
 
         then(sut.bus).should(times(1))
@@ -127,7 +131,7 @@ public class CompletePasswordResetHandlerTests {
     }
 
     record SUT(
-        CompletePasswordResetHandler handler,
+        SetNewPasswordByToken resetPassword,
         UsersRepository usersRepository,
         ValidateTokenForPasswordResetAndGetUserId validateTokenForPasswordResetAndGetUserId,
         PasswordService passwordService,
