@@ -1,4 +1,4 @@
-package com.azat4dev.booking.users.users_commands.application.config;
+package com.azat4dev.booking.users.users_commands.application.config.data;
 
 import com.azat4dev.booking.shared.domain.event.DomainEventsFactory;
 import com.azat4dev.booking.shared.utils.SystemTimeProvider;

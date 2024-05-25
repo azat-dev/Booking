@@ -1,11 +1,8 @@
 package com.azat4dev.booking.users.users_commands.presentation.api.rest.authentication.resources;
 
-import com.azat4dev.booking.shared.domain.event.EventIdGenerator;
 import com.azat4dev.booking.common.presentation.ErrorDTO;
-import com.azat4dev.booking.shared.utils.TimeProvider;
-import com.azat4dev.booking.users.users_commands.domain.core.commands.CompleteEmailVerification;
-import com.azat4dev.booking.users.users_commands.domain.core.values.email.verification.EmailVerificationToken;
-import com.azat4dev.booking.users.users_commands.domain.handlers.email.verification.CompleteEmailVerificationHandler;
+import com.azat4dev.booking.users.users_commands.application.commands.email.verification.CompleteEmailVerification;
+import com.azat4dev.booking.users.users_commands.application.handlers.CompleteEmailVerificationHandler;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -19,13 +16,7 @@ import org.springframework.web.bind.annotation.RequestParam;
 public class EmailVerificationController implements EmailVerificationResource {
 
     @Autowired
-    CompleteEmailVerificationHandler completeEmailVerificationHandler;
-
-    @Autowired
-    private EventIdGenerator eventIdGenerator;
-
-    @Autowired
-    private TimeProvider timeProvider;
+    private CompleteEmailVerificationHandler completeEmailVerificationHandler;
 
     @ExceptionHandler({CompleteEmailVerificationHandler.Exception.class})
     public ResponseEntity<ErrorDTO> handleTokenIsNotValidException(CompleteEmailVerificationHandler.Exception ex) {
@@ -40,13 +31,10 @@ public class EmailVerificationController implements EmailVerificationResource {
         HttpServletResponse response
     ) throws Exception {
 
-        final var token = new EmailVerificationToken(rawToken);
-        final var command = new CompleteEmailVerification(token);
+        final var command = new CompleteEmailVerification(rawToken);
 
         completeEmailVerificationHandler.handle(
-            command,
-            eventIdGenerator.generate(),
-            timeProvider.currentTime()
+            command
         );
 
         return ResponseEntity.ok("Email verified");

@@ -1,5 +1,6 @@
 package com.azat4dev.booking.users.users_commands.data;
 
+import com.azat4dev.booking.shared.domain.DomainException;
 import com.azat4dev.booking.users.users_commands.data.repositories.MapUserDataToDomain;
 import com.azat4dev.booking.users.users_commands.data.repositories.MapUserToData;
 import com.azat4dev.booking.users.users_commands.data.repositories.MapUserToDataImpl;

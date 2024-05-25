@@ -1,7 +1,7 @@
 package com.azat4dev.booking.users.users_commands.data;
 
-import com.azat4dev.booking.users.users_commands.application.config.DaoConfig;
-import com.azat4dev.booking.users.users_commands.application.config.DataConfig;
+import com.azat4dev.booking.users.users_commands.application.config.data.DaoConfig;
+import com.azat4dev.booking.users.users_commands.application.config.data.DataConfig;
 import com.azat4dev.booking.users.users_commands.data.jpa.PostgresTest;
 import com.azat4dev.booking.users.users_commands.data.repositories.UnitOfWorkImpl;
 import com.azat4dev.booking.users.users_commands.domain.UserHelpers;

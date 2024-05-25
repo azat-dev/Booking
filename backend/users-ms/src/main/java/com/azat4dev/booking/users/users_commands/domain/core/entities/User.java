@@ -114,6 +114,13 @@ public final class User {
         this.photo = Optional.of(photoPath);
     }
 
+    public void verifyEmail(EmailAddress verifiedEmail) throws Exception.VerifiedEmailDoesntExist {
+        if (!email.equals(verifiedEmail)) {
+            throw new Exception.VerifiedEmailDoesntExist();
+        }
+        this.emailVerificationStatus = EmailVerificationStatus.VERIFIED;
+    }
+
     // Exceptions
 
     public static abstract class Exception extends DomainException {
@@ -148,6 +155,12 @@ public final class User {
         public static final class EmailVerificationStatusIsRequired extends Exception {
             public EmailVerificationStatusIsRequired() {
                 super("Email verification status is required");
+            }
+        }
+
+        public static final class VerifiedEmailDoesntExist extends Exception {
+            public VerifiedEmailDoesntExist() {
+                super("Verified email doesn't exist");
             }
         }
     }

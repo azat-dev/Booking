@@ -7,8 +7,9 @@ import com.azat4dev.booking.shared.domain.event.*;
 import com.azat4dev.booking.shared.utils.TimeProvider;
 import com.azat4dev.booking.users.users_commands.data.KafkaDomainEventsBus;
 import com.azat4dev.booking.users.users_commands.data.repositories.DomainEventSerializer;
-import com.azat4dev.booking.users.users_commands.domain.handlers.users.UsersService;
-import com.azat4dev.booking.users.users_commands.domain.handlers.users.UsersServiceImpl;
+import com.azat4dev.booking.users.users_commands.domain.handlers.email.verification.VerifyEmailByToken;
+import com.azat4dev.booking.users.users_commands.domain.handlers.users.Users;
+import com.azat4dev.booking.users.users_commands.domain.handlers.users.UsersImpl;
 import com.azat4dev.booking.users.users_commands.domain.interfaces.repositories.OutboxEventsRepository;
 import com.azat4dev.booking.users.users_commands.domain.interfaces.repositories.UnitOfWorkFactory;
 import com.azat4dev.booking.users.users_commands.domain.producers.OutboxEventsPublisher;
@@ -48,12 +49,12 @@ public class DomainConfig {
     }
 
     @Bean
-    public UsersService usersService(
+    public Users usersService(
         TimeProvider timeProvider,
         UnitOfWorkFactory unitOfWorkFactory,
         OutboxEventsPublisher outboxEventsPublisher
     ) {
-        return new UsersServiceImpl(
+        return new UsersImpl(
             timeProvider,
             outboxEventsPublisher::publishEvents,
             unitOfWorkFactory
@@ -83,5 +84,10 @@ public class DomainConfig {
         DomainEventsBus domainEventsBus
     ) {
         return new OutboxEventsPublisherImpl(outboxEventsRepository, domainEventsBus);
+    }
+
+    @Bean
+    VerifyEmailByToken emailVerificationService() {
+        return null;
     }
 }

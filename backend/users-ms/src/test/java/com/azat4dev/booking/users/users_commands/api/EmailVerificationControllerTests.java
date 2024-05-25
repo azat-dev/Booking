@@ -6,8 +6,8 @@ import com.azat4dev.booking.shared.domain.event.RandomEventIdGenerator;
 import com.azat4dev.booking.shared.utils.SystemTimeProvider;
 import com.azat4dev.booking.shared.utils.TimeProvider;
 import com.azat4dev.booking.users.users_commands.application.config.presentation.WebSecurityConfig;
+import com.azat4dev.booking.users.users_commands.application.handlers.CompleteEmailVerificationHandler;
 import com.azat4dev.booking.users.users_commands.domain.EventHelpers;
-import com.azat4dev.booking.users.users_commands.domain.handlers.email.verification.CompleteEmailVerificationHandler;
 import com.azat4dev.booking.users.users_commands.presentation.api.rest.authentication.resources.EmailVerificationController;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.junit.jupiter.api.Test;
@@ -61,7 +61,7 @@ public class EmailVerificationControllerTests {
 
         willThrow(new CompleteEmailVerificationHandler.Exception.TokenIsNotValid())
             .given(completeEmailVerificationHandler)
-            .handle(any(), any(), any());
+            .handle(any());
 
         // When
         final var response = performVerifyEmailRequest(invalidToken);
@@ -84,10 +84,8 @@ public class EmailVerificationControllerTests {
         then(completeEmailVerificationHandler).should(times(1))
             .handle(
                 assertArg(a -> {
-                    assertThat(a.token().value()).isEqualTo(validToken);
-                }),
-                any(),
-                any()
+                    assertThat(a.token()).isEqualTo(validToken);
+                })
             );
         response.andExpect(status().isOk());
     }

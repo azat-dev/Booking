@@ -5,10 +5,11 @@ import com.azat4dev.booking.shared.domain.event.DomainEventsBus;
 import com.azat4dev.booking.shared.utils.TimeProvider;
 import com.azat4dev.booking.users.common.presentation.security.services.jwt.JwtDataEncoder;
 import com.azat4dev.booking.users.users_commands.domain.core.values.email.EmailAddress;
-import com.azat4dev.booking.users.users_commands.domain.handlers.email.verification.utils.*;
-import com.azat4dev.booking.users.users_commands.domain.handlers.email.verification.CompleteEmailVerificationHandler;
 import com.azat4dev.booking.users.users_commands.domain.handlers.email.verification.SendVerificationEmailHandler;
-import com.azat4dev.booking.users.users_commands.domain.interfaces.repositories.UsersRepository;
+import com.azat4dev.booking.users.users_commands.domain.handlers.email.verification.VerifyEmailByToken;
+import com.azat4dev.booking.users.users_commands.domain.handlers.email.verification.VerifyEmailByTokenImpl;
+import com.azat4dev.booking.users.users_commands.domain.handlers.email.verification.utils.*;
+import com.azat4dev.booking.users.users_commands.domain.handlers.users.Users;
 import com.azat4dev.booking.users.users_commands.domain.interfaces.services.EmailService;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
@@ -54,21 +55,6 @@ public class EmailVerificationConfig {
         );
     }
 
-    @CommandHandlerBean
-    CompleteEmailVerificationHandler completeEmailVerificationCommandHandler(
-        GetInfoForEmailVerificationToken getTokenInfo,
-        DomainEventsBus domainEventsBus,
-        UsersRepository usersRepository,
-        TimeProvider timeProvider
-    ) {
-        return new CompleteEmailVerificationHandler(
-            getTokenInfo,
-            usersRepository,
-            domainEventsBus,
-            timeProvider
-        );
-    }
-
     @Bean
     public ProvideEmailVerificationToken emailVerificationTokenProvider(
         @Value("${app.verification_email.token_expiration_in_ms}")
@@ -79,6 +65,19 @@ public class EmailVerificationConfig {
         return new ProvideEmailVerificationTokenImpl(
             tokenExpirationInMs,
             jwtDataEncoder,
+            timeProvider
+        );
+    }
+
+    @Bean
+    public VerifyEmailByToken verifyEmailByToken(
+        GetInfoForEmailVerificationToken emailVerificationTokenInfoProvider,
+        Users users,
+        TimeProvider timeProvider
+    ) {
+        return new VerifyEmailByTokenImpl(
+            emailVerificationTokenInfoProvider,
+            users,
             timeProvider
         );
     }

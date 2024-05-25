@@ -1,7 +1,7 @@
 package com.azat4dev.booking.users.users_commands.data.jpa;
 
 
-import com.azat4dev.booking.users.users_commands.application.config.DaoConfig;
+import com.azat4dev.booking.users.users_commands.application.config.data.DaoConfig;
 import com.azat4dev.booking.users.users_commands.data.entities.UserData;
 import com.azat4dev.booking.users.users_commands.data.repositories.dao.UsersDao;
 import com.azat4dev.booking.users.users_commands.domain.UserHelpers;

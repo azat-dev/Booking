@@ -2,12 +2,13 @@ package com.azat4dev.booking.users.users_commands.domain.services;
 
 import com.azat4dev.booking.shared.utils.TimeProvider;
 import com.azat4dev.booking.users.users_commands.domain.UserHelpers;
-import com.azat4dev.booking.users.users_commands.domain.core.commands.CreateUser;
+import com.azat4dev.booking.users.users_commands.domain.core.commands.NewUserData;
 import com.azat4dev.booking.users.users_commands.domain.core.events.UserCreated;
+import com.azat4dev.booking.users.users_commands.domain.core.events.UserVerifiedEmail;
 import com.azat4dev.booking.users.users_commands.domain.core.values.password.EncodedPassword;
 import com.azat4dev.booking.users.users_commands.domain.core.values.user.EmailVerificationStatus;
-import com.azat4dev.booking.users.users_commands.domain.handlers.users.UsersService;
-import com.azat4dev.booking.users.users_commands.domain.handlers.users.UsersServiceImpl;
+import com.azat4dev.booking.users.users_commands.domain.handlers.users.Users;
+import com.azat4dev.booking.users.users_commands.domain.handlers.users.UsersImpl;
 import com.azat4dev.booking.users.users_commands.domain.interfaces.repositories.OutboxEventsRepository;
 import com.azat4dev.booking.users.users_commands.domain.interfaces.repositories.UnitOfWork;
 import com.azat4dev.booking.users.users_commands.domain.interfaces.repositories.UnitOfWorkFactory;
@@ -15,6 +16,7 @@ import com.azat4dev.booking.users.users_commands.domain.interfaces.repositories.
 import org.junit.jupiter.api.Test;
 
 import java.time.LocalDateTime;
+import java.util.Optional;
 import java.util.function.Consumer;
 
 import static org.assertj.core.api.Assertions.assertThat;
@@ -24,7 +26,7 @@ import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.times;
 
 
-public class UsersServiceImplTests {
+public class UsersImplTests {
 
     SUT createSUT() {
 
@@ -36,7 +38,7 @@ public class UsersServiceImplTests {
 
         final var outboxEventsRepository = mock(OutboxEventsRepository.class);
 
-        final var markOutboxNeedsSynchronization = mock(UsersServiceImpl.MarkOutboxNeedsSynchronization.class);
+        final var markOutboxNeedsSynchronization = mock(UsersImpl.MarkOutboxNeedsSynchronization.class);
 
         given(unitOfWork.getUsersRepository()).willReturn(usersRepository);
         given(unitOfWork.getOutboxEventsRepository()).willReturn(outboxEventsRepository);
@@ -44,7 +46,7 @@ public class UsersServiceImplTests {
         final var timeProvider = mock(TimeProvider.class);
 
         return new SUT(
-            new UsersServiceImpl(
+            new UsersImpl(
                 timeProvider,
                 markOutboxNeedsSynchronization,
                 unitOfWorkFactory
@@ -65,13 +67,13 @@ public class UsersServiceImplTests {
         return LocalDateTime.now();
     }
 
-    private CreateUser anyCreateUserCommand() {
+    private NewUserData anyNewUserData() {
         final var email = UserHelpers.anyValidEmail();
         final var encodedPassword = anyEncodedPassword();
         final var userId = UserHelpers.anyValidUserId();
         final var fullName = UserHelpers.anyFullName();
 
-        return new CreateUser(
+        return new NewUserData(
             userId,
             fullName,
             email,
@@ -80,12 +82,12 @@ public class UsersServiceImplTests {
     }
 
     @Test
-    void test_handle_givenValidCommand_thenCreateUserAndProduceEvent() {
+    void test_createNew_givenValidNewUserData_thenCreateNewAndProduceEvent() {
 
         // Given
         final var currentTime = anyDateTime();
         final var sut = createSUT();
-        final var validCommand = anyCreateUserCommand();
+        final var newUserData = anyNewUserData();
 
         willDoNothing().given(sut.outboxEventsRepository).publish(any());
 
@@ -94,7 +96,7 @@ public class UsersServiceImplTests {
 
         // When
         try {
-            sut.usersService.handle(validCommand);
+            sut.users.createNew(newUserData);
         } catch (Exception e) {
             throw new RuntimeException(e);
         }
@@ -102,20 +104,20 @@ public class UsersServiceImplTests {
         // Then
         final Consumer<UserCreated> assertUserCreatedEvent = (payload) -> {
 
-            assertThat(payload.userId()).isEqualTo(validCommand.userId());
-            assertThat(payload.email()).isEqualTo(validCommand.email());
+            assertThat(payload.userId()).isEqualTo(newUserData.userId());
+            assertThat(payload.email()).isEqualTo(newUserData.email());
             assertThat(payload.createdAt()).isEqualTo(currentTime);
             assertThat(payload.emailVerificationStatus()).isEqualTo(EmailVerificationStatus.NOT_VERIFIED);
-            assertThat(payload.fullName()).isEqualTo(validCommand.fullName());
+            assertThat(payload.fullName()).isEqualTo(newUserData.fullName());
         };
 
         then(sut.usersRepository)
             .should(times(1))
             .addNew(
                 assertArg(userData -> {
-                    assertThat(userData.getId()).isEqualTo(validCommand.userId());
-                    assertThat(userData.getEmail()).isEqualTo(validCommand.email());
-                    assertThat(userData.getEncodedPassword()).isEqualTo(validCommand.encodedPassword());
+                    assertThat(userData.getId()).isEqualTo(newUserData.userId());
+                    assertThat(userData.getEmail()).isEqualTo(newUserData.email());
+                    assertThat(userData.getEncodedPassword()).isEqualTo(newUserData.encodedPassword());
                     assertThat(userData.getCreatedAt()).isEqualTo(currentTime);
                 })
             );
@@ -133,11 +135,11 @@ public class UsersServiceImplTests {
     }
 
     @Test
-    void test_handle_givenValidCommandAndUserExists_thenRollBackAndThrowException() {
+    void test_createNew_givenValidCommandAndUserExists_thenRollBackAndThrowException() {
         // Given
         final var currentTime = anyDateTime();
         final var sut = createSUT();
-        final var validCommand = anyCreateUserCommand();
+        final var newUserData = anyNewUserData();
 
         willThrow(new UsersRepository.Exception.UserWithSameEmailAlreadyExists())
             .given(sut.usersRepository).addNew(any());
@@ -146,8 +148,8 @@ public class UsersServiceImplTests {
             .willReturn(currentTime);
 
         // When
-        assertThrows(UsersService.Exception.UserWithSameEmailAlreadyExists.class, () -> {
-            sut.usersService.handle(validCommand);
+        assertThrows(Users.Exception.UserWithSameEmailAlreadyExists.class, () -> {
+            sut.users.createNew(newUserData);
         });
 
         // Then
@@ -155,13 +157,46 @@ public class UsersServiceImplTests {
             .rollback();
     }
 
+    @Test
+    void test_addVerifiedEmail_givenValidEmail_thanUpdateStatus() throws Exception {
+
+        // Given
+        final var sut = createSUT();
+        final var user = UserHelpers.anyUser();
+
+        given(sut.usersRepository.findById(user.getId()))
+            .willReturn(Optional.of(user));
+
+        // When
+        sut.users.addVerifiedEmail(user.getId(), user.getEmail());
+
+        // Then
+        then(sut.usersRepository).should(times(1))
+            .update(
+                assertArg(u -> {
+                    assertThat(u.getEmailVerificationStatus()).isEqualTo(EmailVerificationStatus.VERIFIED);
+                })
+            );
+
+        final var expectedEvent = new UserVerifiedEmail(
+            user.getId(),
+            user.getEmail()
+        );
+
+        then(sut.outboxEventsRepository).should(times(1))
+            .publish(expectedEvent);
+
+        then(sut.unitOfWork).should(times(1))
+            .save();
+    }
+
     record SUT(
-        UsersService usersService,
+        Users users,
         UnitOfWork unitOfWork,
         OutboxEventsRepository outboxEventsRepository,
         UsersRepository usersRepository,
         TimeProvider timeProvider,
-        UsersServiceImpl.MarkOutboxNeedsSynchronization markOutboxNeedsSynchronization
+        UsersImpl.MarkOutboxNeedsSynchronization markOutboxNeedsSynchronization
     ) {
     }
 }

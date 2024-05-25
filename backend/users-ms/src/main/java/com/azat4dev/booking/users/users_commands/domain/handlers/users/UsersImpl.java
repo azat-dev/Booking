@@ -1,10 +1,13 @@
 package com.azat4dev.booking.users.users_commands.domain.handlers.users;
 
 
+import com.azat4dev.booking.shared.domain.core.UserId;
 import com.azat4dev.booking.shared.utils.TimeProvider;
-import com.azat4dev.booking.users.users_commands.domain.core.commands.CreateUser;
+import com.azat4dev.booking.users.users_commands.domain.core.commands.NewUserData;
 import com.azat4dev.booking.users.users_commands.domain.core.entities.User;
 import com.azat4dev.booking.users.users_commands.domain.core.events.UserCreated;
+import com.azat4dev.booking.users.users_commands.domain.core.events.UserVerifiedEmail;
+import com.azat4dev.booking.users.users_commands.domain.core.values.email.EmailAddress;
 import com.azat4dev.booking.users.users_commands.domain.core.values.user.EmailVerificationStatus;
 import com.azat4dev.booking.users.users_commands.domain.interfaces.repositories.UnitOfWorkFactory;
 import com.azat4dev.booking.users.users_commands.domain.interfaces.repositories.UsersRepository;
@@ -13,16 +16,16 @@ import lombok.RequiredArgsConstructor;
 import java.util.Optional;
 
 @RequiredArgsConstructor
-public final class UsersServiceImpl implements UsersService {
+public final class UsersImpl implements Users {
 
     private final TimeProvider timeProvider;
     private final MarkOutboxNeedsSynchronization markOutboxNeedsSynchronization;
     private final UnitOfWorkFactory unitOfWorkFactory;
 
     @Override
-    public void handle(CreateUser command) throws Exception.UserWithSameEmailAlreadyExists {
+    public void createNew(NewUserData newUserData) throws Exception.UserWithSameEmailAlreadyExists {
 
-        final var userId = command.userId();
+        final var userId = newUserData.userId();
         final var currentDate = timeProvider.currentTime();
 
         final var unitOfWork = unitOfWorkFactory.make();
@@ -36,9 +39,9 @@ public final class UsersServiceImpl implements UsersService {
                 userId,
                 currentDate,
                 currentDate,
-                command.email(),
-                command.fullName(),
-                command.encodedPassword(),
+                newUserData.email(),
+                newUserData.fullName(),
+                newUserData.encodedPassword(),
                 Optional.empty()
             );
 
@@ -48,8 +51,8 @@ public final class UsersServiceImpl implements UsersService {
                 new UserCreated(
                     currentDate,
                     userId,
-                    command.fullName(),
-                    command.email(),
+                    newUserData.fullName(),
+                    newUserData.email(),
                     EmailVerificationStatus.NOT_VERIFIED
                 )
             );
@@ -65,6 +68,39 @@ public final class UsersServiceImpl implements UsersService {
         }
 
         markOutboxNeedsSynchronization.execute();
+    }
+
+    @Override
+    public void addVerifiedEmail(UserId userId, EmailAddress email) throws Exception.UserNotFound, Exception.EmailNotFound {
+
+        final var unitOfWork = unitOfWorkFactory.make();
+
+        try {
+
+            final var usersRepository = unitOfWork.getUsersRepository();
+            final var outboxEventsRepository = unitOfWork.getOutboxEventsRepository();
+
+            final var user = usersRepository.findById(userId)
+                .orElseThrow(Exception.UserNotFound::new);
+
+            user.verifyEmail(email);
+            usersRepository.update(user);
+
+            outboxEventsRepository.publish(new UserVerifiedEmail(userId, email));
+
+            unitOfWork.save();
+            markOutboxNeedsSynchronization.execute();
+
+        } catch (UsersRepository.Exception.UserNotFound e) {
+            unitOfWork.rollback();
+            throw new Exception.UserNotFound();
+        } catch (User.Exception.VerifiedEmailDoesntExist e) {
+            unitOfWork.rollback();
+            throw new Exception.EmailNotFound();
+        } catch (Throwable e) {
+            unitOfWork.rollback();
+            throw new RuntimeException(e);
+        }
     }
 
     @FunctionalInterface

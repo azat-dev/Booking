@@ -1,14 +1,13 @@
 package com.azat4dev.booking.users.users_commands.presentation.api.rest.authentication.resources;
 
-import com.azat4dev.booking.shared.domain.core.UserIdFactory;
 import com.azat4dev.booking.common.presentation.ErrorDTO;
 import com.azat4dev.booking.shared.domain.core.UserId;
 import com.azat4dev.booking.users.common.presentation.security.services.CustomUserDetailsService;
 import com.azat4dev.booking.users.common.presentation.security.services.jwt.JwtService;
 import com.azat4dev.booking.users.common.presentation.security.services.jwt.UserIdNotFoundException;
-import com.azat4dev.booking.users.users_commands.domain.core.commands.CreateUser;
+import com.azat4dev.booking.users.users_commands.application.commands.SignUp;
+import com.azat4dev.booking.users.users_commands.application.handlers.SignUpHandler;
 import com.azat4dev.booking.users.users_commands.domain.core.values.password.EncodedPassword;
-import com.azat4dev.booking.users.users_commands.domain.handlers.users.UsersService;
 import com.azat4dev.booking.users.users_commands.domain.interfaces.services.PasswordService;
 import com.azat4dev.booking.users.users_commands.presentation.api.rest.authentication.entities.*;
 import jakarta.servlet.http.HttpServletRequest;
@@ -39,9 +38,6 @@ public class AuthenticationController implements AuthenticationResource {
         .getContextHolderStrategy();
 
     @Autowired
-    private UserIdFactory userIdFactory;
-
-    @Autowired
     private JwtService tokenProvider;
 
     @Autowired
@@ -51,14 +47,14 @@ public class AuthenticationController implements AuthenticationResource {
     private PasswordService passwordService;
 
     @Autowired
-    private UsersService usersService;
-
-    @Autowired
     private CustomUserDetailsService userDetailsService;
 
-    @ExceptionHandler(UsersService.Exception.UserWithSameEmailAlreadyExists.class)
+    @Autowired
+    private SignUpHandler signUpHandler;
+
+    @ExceptionHandler(SignUpHandler.Exception.UserWithSameEmailAlreadyExists.class)
     @ResponseStatus(HttpStatus.CONFLICT)
-    public ErrorDTO handleUserWithSameEmailAlreadyExists(UsersService.Exception.UserWithSameEmailAlreadyExists e) {
+    public ErrorDTO handleUserWithSameEmailAlreadyExists(SignUpHandler.Exception.UserWithSameEmailAlreadyExists e) {
         return new ErrorDTO(e.getCode(), e.getMessage());
     }
 
@@ -69,21 +65,16 @@ public class AuthenticationController implements AuthenticationResource {
         HttpServletResponse response
     ) throws Exception {
 
-        final var email = signUpRequest.parseEmail();
-        final var password = signUpRequest.parsePassword();
-        final var fullName = signUpRequest.parseFullName();
-
-        final var encodedPassword = passwordService.encodePassword(password);
-        final var userId = userIdFactory.generateNewUserId();
-
-        usersService.handle(
-            new CreateUser(
-                userId,
-                fullName,
-                email,
-                encodedPassword
-            )
+        final var command = new SignUp(
+            new SignUp.FullName(
+                signUpRequest.fullName().firstName(),
+                signUpRequest.fullName().lastName()
+            ),
+            signUpRequest.email(),
+            signUpRequest.password()
         );
+
+        final var userId = signUpHandler.handle(command);
 
         final var authorities = new String[]{"ROLE_USER"};
         final var authenticationResult = this.authenticateUser(userId, authorities, request, response);

@@ -6,7 +6,7 @@ import com.azat4dev.booking.users.users_commands.domain.core.values.user.FullNam
 import com.azat4dev.booking.users.users_commands.domain.core.values.password.EncodedPassword;
 import com.azat4dev.booking.users.users_commands.domain.core.values.email.EmailAddress;
 
-public record CreateUser(
+public record NewUserData(
     UserId userId,
     FullName fullName,
     EmailAddress email,

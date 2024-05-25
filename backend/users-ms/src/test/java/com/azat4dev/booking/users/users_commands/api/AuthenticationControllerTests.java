@@ -2,19 +2,20 @@ package com.azat4dev.booking.users.users_commands.api;
 
 import com.azat4dev.booking.common.presentation.GlobalControllerExceptionHandler;
 import com.azat4dev.booking.common.presentation.ValidationErrorDTO;
+import com.azat4dev.booking.common.presentation.ValidationException;
+import com.azat4dev.booking.shared.domain.core.UserIdFactory;
 import com.azat4dev.booking.users.common.presentation.security.entities.UserPrincipal;
 import com.azat4dev.booking.users.common.presentation.security.services.CustomUserDetailsService;
 import com.azat4dev.booking.users.common.presentation.security.services.jwt.JwtService;
 import com.azat4dev.booking.users.common.presentation.security.services.jwt.UserIdNotFoundException;
+import com.azat4dev.booking.users.users_commands.application.commands.SignUp;
 import com.azat4dev.booking.users.users_commands.application.config.presentation.WebSecurityConfig;
+import com.azat4dev.booking.users.users_commands.application.handlers.SignUpHandler;
 import com.azat4dev.booking.users.users_commands.domain.UserHelpers;
-import com.azat4dev.booking.users.users_commands.domain.core.commands.CreateUser;
-import com.azat4dev.booking.users.users_commands.domain.interfaces.repositories.UsersRepository;
 import com.azat4dev.booking.users.users_commands.domain.core.values.password.EncodedPassword;
-import com.azat4dev.booking.users.users_commands.domain.interfaces.services.PasswordService;
-import com.azat4dev.booking.users.users_commands.domain.handlers.users.UsersService;
 import com.azat4dev.booking.users.users_commands.domain.core.values.password.Password;
-import com.azat4dev.booking.shared.domain.core.UserIdFactory;
+import com.azat4dev.booking.users.users_commands.domain.interfaces.repositories.UsersRepository;
+import com.azat4dev.booking.users.users_commands.domain.interfaces.services.PasswordService;
 import com.azat4dev.booking.users.users_commands.presentation.api.rest.authentication.entities.FullNameDTO;
 import com.azat4dev.booking.users.users_commands.presentation.api.rest.authentication.entities.LoginByEmailRequest;
 import com.azat4dev.booking.users.users_commands.presentation.api.rest.authentication.entities.SignUpRequest;
@@ -64,7 +65,7 @@ public class AuthenticationControllerTests {
     private CustomUserDetailsService customUserDetailsService;
 
     @MockBean
-    private UsersService usersService;
+    private SignUpHandler signUpHandler;
 
     @MockBean
     private PasswordService passwordService;
@@ -158,31 +159,6 @@ public class AuthenticationControllerTests {
     }
 
     @Test
-    void test_singUp_givenWrongFormat_thenReturnError() throws Exception {
-
-        // Given
-        final var password = "";
-        final var validEmail = "valid@email.com";
-
-        final SignUpRequest request = new SignUpRequest(
-            new FullNameDTO(
-                "John",
-                "Doe"
-            ),
-            validEmail,
-            password
-        );
-
-        // When
-        final var response = performSignUpRequest(request);
-
-        // Then
-        response.andExpect(status().isBadRequest())
-            .andExpect(jsonPath("$.type").value(ValidationErrorDTO.TYPE))
-            .andExpect(jsonPath("$.errors").isNotEmpty());
-    }
-
-    @Test
     void test_singUp_givenUserExists_thenReturnError() throws Exception {
 
         // Given
@@ -190,9 +166,9 @@ public class AuthenticationControllerTests {
         final var validEmail = anyValidEmail();
         final var fullName = anyValidFullName();
 
-        willThrow(new UsersService.Exception.UserWithSameEmailAlreadyExists())
-            .given(usersService)
-            .handle(any(CreateUser.class));
+        willThrow(new SignUpHandler.Exception.UserWithSameEmailAlreadyExists())
+            .given(signUpHandler)
+            .handle(any(SignUp.class));
 
         final SignUpRequest request = new SignUpRequest(
             fullName,
@@ -242,7 +218,7 @@ public class AuthenticationControllerTests {
         given(userIdFactory.generateNewUserId())
             .willReturn(userId);
 
-        willDoNothing().given(usersService).handle(any(CreateUser.class));
+        given(signUpHandler.handle(any())).willReturn(userId);
 
         given(tokenProvider.generateAccessToken(any(), any()))
             .willReturn(expectedAccessToken);
@@ -271,9 +247,6 @@ public class AuthenticationControllerTests {
         then(tokenProvider).should(times(1))
             .generateRefreshToken(eq(userId), any());
 
-        then(passwordService).should(times(1))
-            .encodePassword(password);
-
         action.andExpect(status().isCreated())
             .andExpect(authenticated());
 
@@ -283,24 +256,36 @@ public class AuthenticationControllerTests {
 
     }
 
+    ValidationException anyValidationException() {
+        return ValidationException.with("Error", "field", "message");
+    }
+
     @Test
-    void test_singUp_givenWrongDataFormat_thenReturnError() throws Exception {
+    void test_singUp_givenWrongFormat_thenReturnError() throws Exception {
 
         // Given
-        final var request = new SignUpRequest(
+        final var password = "";
+        final var validEmail = "valid@email.com";
+
+        final SignUpRequest request = new SignUpRequest(
             new FullNameDTO(
-                "",
-                ""
+                "John",
+                "Doe"
             ),
-            "",
-            ""
+            validEmail,
+            password
         );
+
+        given(signUpHandler.handle(any()))
+            .willThrow(anyValidationException());
 
         // When
         final var response = performSignUpRequest(request);
 
         // Then
-        response.andExpect(status().isBadRequest());
+        response.andExpect(status().isBadRequest())
+            .andExpect(jsonPath("$.type").value(ValidationErrorDTO.TYPE))
+            .andExpect(jsonPath("$.errors").isNotEmpty());
     }
 
     // Helpers
