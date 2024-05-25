@@ -1,10 +1,11 @@
 package com.azat4dev.booking.users.users_commands.presentation.api.rest.authentication.resources;
 
-import com.azat4dev.booking.shared.domain.event.EventIdGenerator;
 import com.azat4dev.booking.common.presentation.ControllerException;
+import com.azat4dev.booking.common.presentation.ErrorDTO;
+import com.azat4dev.booking.shared.domain.event.EventIdGenerator;
 import com.azat4dev.booking.shared.utils.TimeProvider;
+import com.azat4dev.booking.users.users_commands.application.handlers.password.ResetPasswordByEmailHandler;
 import com.azat4dev.booking.users.users_commands.domain.handlers.password.reset.CompletePasswordResetHandler;
-import com.azat4dev.booking.users.users_commands.domain.handlers.password.reset.ResetPasswordByEmailHandler;
 import com.azat4dev.booking.users.users_commands.domain.interfaces.services.PasswordService;
 import com.azat4dev.booking.users.users_commands.presentation.api.rest.authentication.entities.CompleteResetPasswordRequest;
 import com.azat4dev.booking.users.users_commands.presentation.api.rest.authentication.entities.ResetPasswordByEmailRequest;
@@ -14,13 +15,14 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
+import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.RequestBody;
 
 @Controller
 public class ResetPasswordController implements ResetPasswordResource {
 
     @Autowired
-    ResetPasswordByEmailHandler handler;
+    ResetPasswordByEmailHandler resetPasswordByEmailHandler;
 
     @Autowired
     private EventIdGenerator eventIdGenerator;
@@ -30,8 +32,14 @@ public class ResetPasswordController implements ResetPasswordResource {
 
     @Autowired
     private PasswordService passwordService;
+
     @Autowired
     private CompletePasswordResetHandler completePasswordResetHandler;
+
+    @ExceptionHandler(ResetPasswordByEmailHandler.Exception.EmailNotFound.class)
+    public ErrorDTO handleEmailNotFound(ResetPasswordByEmailHandler.Exception.EmailNotFound e) {
+        return new ErrorDTO(e.getCode(), e.getMessage());
+    }
 
     @Override
     public ResponseEntity<String> resetPasswordByEmail(
@@ -40,10 +48,8 @@ public class ResetPasswordController implements ResetPasswordResource {
         HttpServletResponse response
     ) {
 
-        final var command = requestBody.toCommand();
-
         try {
-            handler.handle(command, eventIdGenerator.generate(), timeProvider.currentTime());
+            resetPasswordByEmailHandler.handle(requestBody);
         } catch (ResetPasswordByEmailHandler.Exception e) {
             throw ControllerException.createError(HttpStatus.BAD_REQUEST, e);
         }

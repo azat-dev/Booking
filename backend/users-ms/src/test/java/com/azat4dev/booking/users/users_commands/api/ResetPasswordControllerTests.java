@@ -7,6 +7,8 @@ import com.azat4dev.booking.shared.utils.SystemTimeProvider;
 import com.azat4dev.booking.shared.utils.TimeProvider;
 import com.azat4dev.booking.users.common.presentation.security.services.jwt.JwtService;
 import com.azat4dev.booking.users.users_commands.application.config.presentation.WebSecurityConfig;
+import com.azat4dev.booking.users.users_commands.application.handlers.SignUpHandler;
+import com.azat4dev.booking.users.users_commands.application.handlers.password.ResetPasswordByEmailHandler;
 import com.azat4dev.booking.users.users_commands.domain.UserHelpers;
 import com.azat4dev.booking.users.users_commands.domain.core.commands.CompletePasswordReset;
 import com.azat4dev.booking.users.users_commands.domain.core.values.IdempotentOperationId;
@@ -14,7 +16,6 @@ import com.azat4dev.booking.users.users_commands.domain.core.values.password.Enc
 import com.azat4dev.booking.users.users_commands.domain.core.values.password.Password;
 import com.azat4dev.booking.users.users_commands.domain.core.values.password.reset.TokenForPasswordReset;
 import com.azat4dev.booking.users.users_commands.domain.handlers.password.reset.CompletePasswordResetHandler;
-import com.azat4dev.booking.users.users_commands.domain.handlers.password.reset.ResetPasswordByEmailHandler;
 import com.azat4dev.booking.users.users_commands.domain.interfaces.services.PasswordService;
 import com.azat4dev.booking.users.users_commands.presentation.api.rest.authentication.entities.CompleteResetPasswordRequest;
 import com.azat4dev.booking.users.users_commands.presentation.api.rest.authentication.entities.ResetPasswordByEmailRequest;
@@ -35,12 +36,10 @@ import org.springframework.security.oauth2.jwt.JwtEncoder;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.ResultActions;
 
-import java.util.Map;
 import java.util.UUID;
 
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.BDDMockito.*;
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
@@ -72,9 +71,6 @@ public class ResetPasswordControllerTests {
     private ResetPasswordByEmailHandler resetPasswordByEmailHandler;
 
     @MockBean
-    private PasswordService passwordService;
-
-    @MockBean
     private CompletePasswordResetHandler completePasswordResetHandler;
 
     IdempotentOperationId anyIdempotentOperationId() throws IdempotentOperationId.Exception {
@@ -91,26 +87,19 @@ public class ResetPasswordControllerTests {
         );
 
         willDoNothing().given(resetPasswordByEmailHandler)
-            .handle(any(), any(), any());
+            .handle(any());
 
         // When
         final var result = performResetPasswordByEmail(request);
 
         // Then
         result.andExpect(status().isOk());
-
-        final var expectedCommand = request.toCommand();
-
         then(resetPasswordByEmailHandler).should(times(1))
-            .handle(
-                eq(expectedCommand),
-                any(),
-                any()
-            );
+            .handle(request);
     }
 
     @Test
-    public void test_resetPasswordByEmail_givenInvalid_thenReturnBadRequest() throws Exception {
+    public void test_resetPasswordByEmail_givenEmailNotFound_thenReturnBadRequest() throws Exception {
 
         // Given
         final var request = new ResetPasswordByEmailRequest(
@@ -118,12 +107,15 @@ public class ResetPasswordControllerTests {
             "notValidEmail"
         );
 
+        willThrow(new ResetPasswordByEmailHandler.Exception.EmailNotFound())
+            .given(resetPasswordByEmailHandler).handle(any());
+
         // When
         final var result = performResetPasswordByEmail(request);
 
         // Then
         result.andExpect(status().isBadRequest())
-            .andExpect(jsonPath("$.errors[0].code").value("WrongFormat"));
+            .andExpect(jsonPath("$.code").value("EmailNotFound"));
     }
 
     @Test
@@ -142,11 +134,9 @@ public class ResetPasswordControllerTests {
             token
         );
 
-        given(passwordService.encodePassword(any()))
-            .willReturn(encodedPassword);
 
         willDoNothing().given(resetPasswordByEmailHandler)
-            .handle(any(), any(), any());
+            .handle(any());
 
         // When
         final var result = performCompleteResetPassword(request);
@@ -159,9 +149,6 @@ public class ResetPasswordControllerTests {
             encodedPassword,
             TokenForPasswordReset.dangerouslyMakeFrom(token)
         );
-
-        then(passwordService).should(times(1))
-            .encodePassword(Password.checkAndMakeFromString(newPassword));
 
         then(completePasswordResetHandler).should(times(1))
             .handle(
@@ -185,20 +172,6 @@ public class ResetPasswordControllerTests {
             url,
             request
         );
-    }
-
-    private ResultActions performGetRequest(
-        String url,
-        Map<String, String> params
-    ) throws Exception {
-
-        var request = get(url);
-
-        for (var entry : params.entrySet()) {
-            request = request.param(entry.getKey(), entry.getValue());
-        }
-
-        return mockMvc.perform(request);
     }
 
     private ResultActions performPostRequest(

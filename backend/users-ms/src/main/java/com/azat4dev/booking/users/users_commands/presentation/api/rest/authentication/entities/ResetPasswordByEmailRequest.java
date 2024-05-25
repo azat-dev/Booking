@@ -1,26 +1,9 @@
 package com.azat4dev.booking.users.users_commands.presentation.api.rest.authentication.entities;
 
-import com.azat4dev.booking.common.presentation.ValidationException;
-import com.azat4dev.booking.users.users_commands.domain.core.commands.ResetPasswordByEmail;
-import com.azat4dev.booking.users.users_commands.domain.core.values.IdempotentOperationId;
-import com.azat4dev.booking.users.users_commands.domain.core.values.email.EmailAddress;
+import com.azat4dev.booking.users.users_commands.application.commands.password.ResetPasswordByEmail;
 
-public record ResetPasswordByEmailRequest(
-    String idempotencyKey,
-    String email
-) {
-
-    public ResetPasswordByEmail toCommand() {
-
-        try {
-            return new ResetPasswordByEmail(
-                IdempotentOperationId.checkAndMakeFrom(idempotencyKey),
-                EmailAddress.checkAndMakeFromString(email)
-            );
-        } catch (IdempotentOperationId.Exception e) {
-            throw ValidationException.withPath("idempotencyKey", e);
-        } catch (EmailAddress.WrongFormatException e) {
-            throw ValidationException.withPath("email", e);
-        }
+public final class ResetPasswordByEmailRequest extends ResetPasswordByEmail {
+    public ResetPasswordByEmailRequest(String idempotentOperationToken, String email) {
+        super(idempotentOperationToken, email);
     }
 }

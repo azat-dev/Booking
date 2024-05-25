@@ -7,6 +7,10 @@ public record IdempotentOperationId(
 ) {
 
     public static IdempotentOperationId checkAndMakeFrom(String value) throws Exception {
+        if (value == null || value.isEmpty()) {
+            throw new Exception.InvalidIdempotentOperationId();
+        }
+
         try {
             return new IdempotentOperationId(value);
         } catch (IllegalArgumentException e) {

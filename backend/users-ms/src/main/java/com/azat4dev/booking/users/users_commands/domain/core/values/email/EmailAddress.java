@@ -26,6 +26,11 @@ public final class EmailAddress implements Serializable {
     }
 
     public static EmailAddress checkAndMakeFromString(String text) throws WrongFormatException {
+
+        if (text == null) {
+            throw new WrongFormatException("null");
+        }
+
         final var cleanedText = text.trim().toLowerCase();
         validate(cleanedText);
         return new EmailAddress(cleanedText);

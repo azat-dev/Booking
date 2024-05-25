@@ -2,7 +2,7 @@ package com.azat4dev.booking.users.users_commands.presentation.api.rest.authenti
 
 import com.azat4dev.booking.common.presentation.ErrorDTO;
 import com.azat4dev.booking.users.users_commands.application.commands.email.verification.CompleteEmailVerification;
-import com.azat4dev.booking.users.users_commands.application.handlers.CompleteEmailVerificationHandler;
+import com.azat4dev.booking.users.users_commands.application.handlers.email.verification.CompleteEmailVerificationHandler;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import org.springframework.beans.factory.annotation.Autowired;

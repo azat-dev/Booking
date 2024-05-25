@@ -1,4 +1,4 @@
-package com.azat4dev.booking.users.users_commands.application.handlers;
+package com.azat4dev.booking.users.users_commands.application.handlers.email.verification;
 
 import com.azat4dev.booking.shared.domain.DomainException;
 import com.azat4dev.booking.users.users_commands.application.commands.email.verification.CompleteEmailVerification;

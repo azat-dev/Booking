@@ -85,9 +85,4 @@ public class DomainConfig {
     ) {
         return new OutboxEventsPublisherImpl(outboxEventsRepository, domainEventsBus);
     }
-
-    @Bean
-    VerifyEmailByToken emailVerificationService() {
-        return null;
-    }
 }
