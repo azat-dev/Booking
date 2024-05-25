@@ -1,45 +1,51 @@
-package com.azat4dev.booking.users.users_commands.domain.handlers.users;
+package com.azat4dev.booking.users.users_commands.domain.handlers.users.photo;
 
-import com.azat4dev.booking.shared.domain.DomainException;
+import com.azat4dev.booking.common.presentation.ValidationException;
+import com.azat4dev.booking.shared.domain.core.UserId;
 import com.azat4dev.booking.shared.domain.event.DomainEventsBus;
-import com.azat4dev.booking.users.users_commands.domain.core.commands.GenerateUserPhotoUploadUrl;
 import com.azat4dev.booking.users.users_commands.domain.core.events.FailedGenerateUserPhotoUploadUrl;
 import com.azat4dev.booking.users.users_commands.domain.core.events.GeneratedUserPhotoUploadUrl;
+import com.azat4dev.booking.users.users_commands.domain.core.values.IdempotentOperationId;
+import com.azat4dev.booking.users.users_commands.domain.core.values.user.PhotoFileExtension;
+import com.azat4dev.booking.users.users_commands.domain.handlers.users.GenerateUserPhotoObjectName;
 import com.azat4dev.booking.users.users_commands.domain.interfaces.repositories.MediaObjectsBucket;
 import lombok.RequiredArgsConstructor;
 
 import java.util.Optional;
 
 @RequiredArgsConstructor
-public final class GenerateUserPhotoUploadUrlHandler {
-
-    public static final int MIN_FILE_SIZE = 0;
-    public static final int MAX_FILE_SIZE = 5 * 1024 * 1024;
+public final class GenerateUrlForUploadUserPhotoImpl implements GenerateUrlForUploadUserPhoto {
 
     private final int expireInSeconds;
     private final GenerateUserPhotoObjectName generateUserPhotoObjectName;
     private final MediaObjectsBucket usersPhotoBucket;
     private final DomainEventsBus bus;
 
-    public GeneratedUserPhotoUploadUrl handle(GenerateUserPhotoUploadUrl command) throws Exception {
+    @Override
+    public GeneratedUserPhotoUploadUrl execute(
+        IdempotentOperationId operationId,
+        UserId userId,
+        PhotoFileExtension fileExtension,
+        int fileSize
+    ) throws ValidationException, Exception.FailedGenerateUserPhotoUploadUrl, Exception.WrongFileSize {
 
         final Runnable publishFailedEvent = () -> {
             bus.publish(new FailedGenerateUserPhotoUploadUrl(
-                command.getUserId(),
-                command.getFileExtension(),
-                command.getFileSize(),
-                command.getOperationId()
+                userId,
+                fileExtension,
+                fileSize,
+                operationId
             ));
         };
 
-        if (command.getFileSize() < MIN_FILE_SIZE || command.getFileSize() > MAX_FILE_SIZE) {
+        if (fileSize < MIN_FILE_SIZE || fileSize > MAX_FILE_SIZE) {
             publishFailedEvent.run();
             throw new Exception.WrongFileSize();
         }
 
         try {
 
-            final var objectName = generateUserPhotoObjectName.execute(command.getUserId(), command.getFileExtension());
+            final var objectName = generateUserPhotoObjectName.execute(userId, fileExtension);
 
             final var formData = usersPhotoBucket.generateUploadFormData(
                 objectName,
@@ -56,7 +62,7 @@ public final class GenerateUserPhotoUploadUrlHandler {
                 )
             );
 
-            final var event = new GeneratedUserPhotoUploadUrl(command.getUserId(), formData);
+            final var event = new GeneratedUserPhotoUploadUrl(userId, formData);
             bus.publish(event);
             return event;
 
@@ -64,26 +70,6 @@ public final class GenerateUserPhotoUploadUrlHandler {
 
             publishFailedEvent.run();
             throw new Exception.FailedGenerateUserPhotoUploadUrl();
-        }
-    }
-
-    // Exceptions
-
-    public static abstract class Exception extends DomainException {
-        public Exception(String message) {
-            super(message);
-        }
-
-        public static final class FailedGenerateUserPhotoUploadUrl extends Exception {
-            public FailedGenerateUserPhotoUploadUrl() {
-                super("Failed to generate presigned URL for uploading user photo");
-            }
-        }
-
-        public static final class WrongFileSize extends Exception {
-            public WrongFileSize() {
-                super("File size must be at least " + MIN_FILE_SIZE + " bytes and not exceed " + MAX_FILE_SIZE + " bytes");
-            }
         }
     }
 }

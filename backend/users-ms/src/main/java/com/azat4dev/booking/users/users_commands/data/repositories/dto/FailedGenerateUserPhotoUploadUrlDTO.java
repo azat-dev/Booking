@@ -11,8 +11,7 @@ public record FailedGenerateUserPhotoUploadUrlDTO(
     String userId,
     String fileExtension,
     int fileSize,
-    String idempotentOperationId,
-    LocalDateTime requestedAt
+    String idempotentOperationId
 ) implements DomainEventPayloadDTO {
 
     public static FailedGenerateUserPhotoUploadUrlDTO fromDomain(FailedGenerateUserPhotoUploadUrl event) {
@@ -20,8 +19,7 @@ public record FailedGenerateUserPhotoUploadUrlDTO(
             event.userId().value().toString(),
             event.fileExtension().toString(),
             event.fileSize(),
-            event.idempotentOperationId().value().toString(),
-            event.requestedAt()
+            event.idempotentOperationId().value()
         );
     }
 
@@ -31,8 +29,7 @@ public record FailedGenerateUserPhotoUploadUrlDTO(
             UserId.dangerouslyMakeFrom(userId),
             PhotoFileExtension.dangerouslyMakeFrom(fileExtension),
             fileSize,
-            IdempotentOperationId.dangerouslyMakeFrom(idempotentOperationId),
-            requestedAt
+            IdempotentOperationId.dangerouslyMakeFrom(idempotentOperationId)
         );
     }
 }

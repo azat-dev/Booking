@@ -2,7 +2,10 @@ package com.azat4dev.booking.users.users_commands.data;
 
 import com.azat4dev.booking.users.users_commands.data.repositories.DomainEventSerializer;
 import com.azat4dev.booking.users.users_commands.data.repositories.DomainEventSerializerImpl;
-import com.azat4dev.booking.users.users_commands.domain.core.commands.*;
+import com.azat4dev.booking.users.users_commands.domain.core.commands.CompleteEmailVerification;
+import com.azat4dev.booking.users.users_commands.domain.core.commands.CompletePasswordReset;
+import com.azat4dev.booking.users.users_commands.domain.core.commands.SendVerificationEmail;
+import com.azat4dev.booking.users.users_commands.domain.core.commands.UpdateUserPhoto;
 import com.azat4dev.booking.users.users_commands.domain.core.entities.UserPhotoPath;
 import com.azat4dev.booking.users.users_commands.domain.core.events.*;
 import com.azat4dev.booking.users.users_commands.domain.core.values.IdempotentOperationId;
@@ -113,8 +116,7 @@ public class DomainEventSerializerImplTests {
                     anyValidUserId(),
                     PhotoFileExtension.checkAndMakeFrom("png"),
                     100,
-                    anyIdempotentOperationId(),
-                    LocalDateTime.now()
+                    anyIdempotentOperationId()
                 )
             ),
             eventsFactory.issue(
