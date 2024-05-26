@@ -38,6 +38,10 @@ dependencies {
 	testImplementation "org.testcontainers:postgresql:1.19.8"
 
 	implementation project(":shared")
+
+	testImplementation('com.github.javafaker:javafaker:1.0.2') {
+		exclude group: 'org.yaml', module: 'snakeyaml'
+	}
 }
 
 tasks.named('test') {

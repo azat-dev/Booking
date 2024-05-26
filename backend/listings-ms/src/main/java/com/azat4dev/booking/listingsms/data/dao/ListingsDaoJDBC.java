@@ -7,7 +7,7 @@ import lombok.AllArgsConstructor;
 import lombok.RequiredArgsConstructor;
 import org.springframework.dao.DuplicateKeyException;
 import org.springframework.dao.EmptyResultDataAccessException;
-import org.springframework.jdbc.core.JdbcTemplate;
+import org.springframework.jdbc.core.RowMapper;
 import org.springframework.jdbc.core.namedparam.NamedParameterJdbcTemplate;
 
 import java.sql.ResultSet;
@@ -17,7 +17,6 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.Optional;
 import java.util.UUID;
-import org.springframework.jdbc.core.RowMapper;
 
 @AllArgsConstructor
 public final class ListingsDaoJDBC implements ListingsDao {
@@ -38,8 +37,8 @@ public final class ListingsDaoJDBC implements ListingsDao {
         try {
             jdbcTemplate.update(
                 """
-                        INSERT INTO listings (id, created_at, created_at_nano, updated_at, updated_at_nano, title, description, status, photos)
-                        VALUES (:id, :created_at, :created_at_nano, :updated_at, :updated_at_nano, :title, :description, :status, :photos::jsonb)
+                        INSERT INTO listings (id, created_at, created_at_nano, updated_at, updated_at_nano, owner_id, title, description, status, photos)
+                        VALUES (:id, :created_at, :created_at_nano, :updated_at, :updated_at_nano, :owner_id, :title, :description, :status, :photos::jsonb)
                     """,
                 listingDataToParams(listing)
             );
@@ -66,6 +65,7 @@ public final class ListingsDaoJDBC implements ListingsDao {
         params.put("created_at_nano", listingData.createdAt().getNano());
         params.put("updated_at", Timestamp.valueOf(listingData.updatedAt().withNano(0)));
         params.put("updated_at_nano", listingData.updatedAt().getNano());
+        params.put("owner_id", listingData.ownerId());
         params.put("title", listingData.title());
         params.put("description", listingData.description().orElse(null));
         params.put("status", listingData.status());
