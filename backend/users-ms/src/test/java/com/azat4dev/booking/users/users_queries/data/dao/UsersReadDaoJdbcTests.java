@@ -1,10 +1,14 @@
 package com.azat4dev.booking.users.users_queries.data.dao;
 
+import com.azat4dev.booking.users.users_commands.application.config.data.DaoConfig;
 import com.azat4dev.booking.users.users_commands.data.jpa.PostgresTest;
 import com.azat4dev.booking.users.users_queries.data.dao.records.UserRecord;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.test.autoconfigure.jdbc.AutoConfigureTestDatabase;
+import org.springframework.boot.test.autoconfigure.jdbc.JdbcTest;
+import org.springframework.context.annotation.Import;
 import org.springframework.jdbc.core.namedparam.NamedParameterJdbcTemplate;
 import org.springframework.test.context.jdbc.Sql;
 
@@ -13,7 +17,8 @@ import java.util.UUID;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
-@PostgresTest
+@JdbcTest(properties = {"spring.datasource.url=jdbc:tc:postgresql:15-alpine:///"})
+@AutoConfigureTestDatabase(replace = AutoConfigureTestDatabase.Replace.NONE)
 public class UsersReadDaoJdbcTests {
 
     @Autowired

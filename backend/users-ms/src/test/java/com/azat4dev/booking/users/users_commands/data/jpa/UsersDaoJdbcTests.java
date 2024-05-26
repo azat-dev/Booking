@@ -1,18 +1,22 @@
 package com.azat4dev.booking.users.users_commands.data.jpa;
 
 
+import com.azat4dev.booking.PostgresTests;
 import com.azat4dev.booking.users.users_commands.application.config.data.DaoConfig;
 import com.azat4dev.booking.users.users_commands.data.entities.UserData;
 import com.azat4dev.booking.users.users_commands.data.repositories.dao.UsersDao;
 import com.azat4dev.booking.users.users_commands.domain.UserHelpers;
 import com.azat4dev.booking.users.users_commands.domain.core.values.user.EmailVerificationStatus;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.*;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.test.autoconfigure.jdbc.AutoConfigureTestDatabase;
+import org.springframework.boot.test.autoconfigure.jdbc.JdbcTest;
 import org.springframework.boot.test.context.TestConfiguration;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Import;
 import org.springframework.test.context.jdbc.Sql;
+import org.testcontainers.junit.jupiter.Testcontainers;
 
 import java.time.LocalDateTime;
 import java.util.Optional;
@@ -20,9 +24,11 @@ import java.util.Optional;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 
+@Testcontainers
 
-@PostgresTest
-@Import(DaoConfig.class)
+@Import({DaoConfig.class})
+@JdbcTest(properties = {"spring.datasource.url=jdbc:tc:postgresql:15-alpine:///"})
+@AutoConfigureTestDatabase(replace = AutoConfigureTestDatabase.Replace.NONE)
 public class UsersDaoJdbcTests {
 
     @Autowired

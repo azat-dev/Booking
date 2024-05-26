@@ -27,14 +27,14 @@ public class KafkaConfig {
 
     public Map<String, Object> producerConfigs() {
 
-        Map<String, Object> props = new HashMap<>(kafkaProperties.buildProducerProperties());
+        Map<String, Object> props = new HashMap<>(kafkaProperties.buildProducerProperties(null));
         props.put(ProducerConfig.KEY_SERIALIZER_CLASS_CONFIG, StringSerializer.class);
         props.put(ProducerConfig.VALUE_SERIALIZER_CLASS_CONFIG, StringSerializer.class);
         return props;
     }
 
     public Map<String, Object> consumerConfigs() {
-        Map<String, Object> props = new HashMap<>(kafkaProperties.buildConsumerProperties());
+        Map<String, Object> props = new HashMap<>(kafkaProperties.buildConsumerProperties(null));
         props.put(ProducerConfig.KEY_SERIALIZER_CLASS_CONFIG, StringSerializer.class);
         props.put(ProducerConfig.VALUE_SERIALIZER_CLASS_CONFIG, StringSerializer.class);
         return props;
