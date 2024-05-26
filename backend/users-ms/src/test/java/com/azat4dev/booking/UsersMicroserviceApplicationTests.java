@@ -1,5 +1,7 @@
 package com.azat4dev.booking;
 
+import com.azat4dev.booking.helpers.EmailBoxMock;
+import com.azat4dev.booking.shared.domain.core.UserId;
 import com.azat4dev.booking.users.users_commands.domain.core.values.email.EmailAddress;
 import com.azat4dev.booking.users.users_commands.domain.core.values.password.Password;
 import com.azat4dev.booking.users.users_commands.domain.interfaces.services.EmailService;
@@ -21,6 +23,7 @@ import org.springframework.boot.test.context.TestConfiguration;
 import org.springframework.boot.test.web.client.TestRestTemplate;
 import org.springframework.boot.test.web.server.LocalServerPort;
 import org.springframework.context.annotation.Bean;
+import org.springframework.context.annotation.Import;
 import org.springframework.context.annotation.Primary;
 import org.springframework.http.*;
 import org.springframework.test.context.DynamicPropertyRegistry;
@@ -33,56 +36,25 @@ import org.testcontainers.utility.DockerImageName;
 
 import java.net.MalformedURLException;
 import java.net.URI;
-import java.time.Duration;
-import java.time.LocalDateTime;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Optional;
-import java.util.function.Predicate;
 
-import static java.util.concurrent.TimeUnit.SECONDS;
 import static org.assertj.core.api.Assertions.assertThat;
-import static org.awaitility.Awaitility.await;
 
 @SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
-@Testcontainers
-class UsersMicroserviceApplicationTests {
+class UsersMicroserviceApplicationTests implements KafkaTests, PostgresTests {
 
     public static final Faker faker = Faker.instance();
-
-    @Container
-    static final KafkaContainer kafka = new KafkaContainer(
-        DockerImageName.parse("confluentinc/cp-kafka:7.3.3")
-    );
-
-    @Container
-    static final PostgreSQLContainer<?> postgres = new PostgreSQLContainer<>(
-        "postgres:15-alpine"
-    );
 
     @Autowired
     EmailService emailService;
 
     @Autowired
-    TestConfig.EmailBox emailBox;
+    EmailBoxMock emailBox;
 
     @LocalServerPort
     private int port;
 
     @Autowired
     private TestRestTemplate restTemplate;
-
-    @DynamicPropertySource
-    static void configureProperties(DynamicPropertyRegistry registry) {
-        registry.add("spring.datasource.url", postgres::getJdbcUrl);
-        registry.add("spring.datasource.username", postgres::getUsername);
-        registry.add("spring.datasource.password", postgres::getPassword);
-    }
-
-    @DynamicPropertySource
-    static void configurePropertiesKafka(DynamicPropertyRegistry registry) {
-        registry.add("spring.kafka.bootstrap-servers", kafka::getBootstrapServers);
-    }
 
     @BeforeAll
     static void beforeAll() {
@@ -110,8 +82,46 @@ class UsersMicroserviceApplicationTests {
     }
 
     @Test
-    void test_signUp_User() throws Exception {
+    void test_verifyEmail() throws Exception {
         // Given
+        final var user = givenAnyConfirmedUser();
+
+        // Then
+        assertThat(user).isNotNull();
+    }
+
+    SignedUpUser givenAnyConfirmedUser() throws Exception {
+        // Given
+        final var signedUpUser = givenAnySignedUpUser();
+
+        // When
+        confirmEmail(signedUpUser.verificationLink);
+
+        // Then
+        final var userInfo = performGetCurrentUser(signedUpUser.accessToken);
+
+        // Then
+        assertThat(userInfo.emailVerficationStatus()).isEqualTo("VERIFIED");
+        return signedUpUser;
+    }
+
+    @Test
+    void test_resetPassword() throws Exception {
+        // Given
+        final var signedUpUser = givenAnySignedUpUser();
+
+        // When
+        confirmEmail(signedUpUser.verificationLink);
+
+        // Then
+        final var userInfo = performGetCurrentUser(signedUpUser.accessToken);
+
+        // Then
+        assertThat(userInfo.emailVerficationStatus()).isEqualTo("VERIFIED");
+    }
+
+    private SignedUpUser givenAnySignedUpUser() throws Exception {
+
         final var request = anySignUpRequest();
         final var email = EmailAddress.dangerMakeWithoutChecks(request.email());
 
@@ -119,21 +129,28 @@ class UsersMicroserviceApplicationTests {
         final var response = performSignUpRequest(request);
 
         // Then
+        assertThat(response.tokens().access()).isNotNull();
+
+        // When
+        final var userInfo = performGetCurrentUser(response.tokens().access());
+
+        // Then
+        assertThat(userInfo.email()).isEqualTo(email.getValue());
+
         final var lastEmail = emailBox.waitFor(10, item -> {
             return item.email().equals(email);
         }).orElseThrow();
 
         final var emailBody = lastEmail.data().body().value();
         final var confirmationLink = parseLink(emailBody);
-        assertThat(confirmationLink).isNotNull();
 
-        confirmEmail(confirmationLink);
-
-        final var userInfo = performGetCurrentUser(response.tokens().access());
-
-        // Then
-        assertThat(userInfo.email()).isEqualTo(email.getValue());
-        assertThat(userInfo.emailVerficationStatus()).isEqualTo("VERIFIED");
+        return new SignedUpUser(
+            UserId.checkAndMakeFrom(userInfo.id()),
+            EmailAddress.checkAndMakeFromString(userInfo.email()),
+            Password.checkAndMakeFromString(request.password()),
+            response.tokens().access(),
+            confirmationLink
+        );
     }
 
     HttpHeaders headersWithToken(String token) {
@@ -197,70 +214,32 @@ class UsersMicroserviceApplicationTests {
         return link.attr("href");
     }
 
+    record SignedUpUser(
+        UserId userId,
+        EmailAddress email,
+        Password password,
+        String accessToken,
+        String verificationLink
+    ) {
+    }
+
     @TestConfiguration
     static class TestConfig {
 
         @Bean
-        EmailBox emailBox() {
-            return new EmailBox();
+        EmailBoxMock emailBox() {
+            return new EmailBoxMock();
         }
 
         @Bean
         @Primary
-        public EmailService emailServiceTest(EmailBox emailBox) {
+        public EmailService emailServiceTest(EmailBoxMock emailBox) {
             return new EmailService() {
                 @Override
                 public void send(EmailAddress email, EmailData data) {
                     emailBox.add(email, data);
                 }
             };
-        }
-
-        public record EmailBoxItem(
-            LocalDateTime capturedAt,
-            EmailAddress email,
-            EmailService.EmailData data
-        ) {
-        }
-
-        public static class EmailBox {
-            private final List<EmailBoxItem> items = new ArrayList<>();
-
-            public void add(EmailAddress email, EmailService.EmailData body) {
-                items.add(new EmailBoxItem(LocalDateTime.now(), email, body));
-            }
-
-            public EmailBoxItem last() {
-                return items.get(items.size() - 1);
-            }
-
-            public void clear() {
-                items.clear();
-            }
-
-            public Optional<EmailBoxItem> lastFor(Predicate<EmailBoxItem> predicate) {
-                for (int i = items.size() - 1; i >= 0; i--) {
-
-                    EmailBoxItem item = items.get(i);
-
-                    if (predicate.test(item)) {
-                        return Optional.of(item);
-                    }
-                }
-                return Optional.empty();
-            }
-
-            public Optional<EmailBoxItem> waitFor(int seconds, Predicate<EmailBoxItem> predicate) {
-                await()
-                    .pollInterval(Duration.ofMillis(200))
-                    .atMost(seconds, SECONDS)
-                    .until(() -> {
-                        final var isPresent = lastFor(predicate).isPresent();
-                        return isPresent;
-                    });
-
-                return lastFor(predicate);
-            }
         }
     }
 }

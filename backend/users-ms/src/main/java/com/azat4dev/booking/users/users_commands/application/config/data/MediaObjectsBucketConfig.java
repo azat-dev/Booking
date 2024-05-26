@@ -2,6 +2,7 @@ package com.azat4dev.booking.users.users_commands.application.config.data;
 
 import com.azat4dev.booking.users.users_commands.data.repositories.MinioMediaObjectsBucket;
 import com.azat4dev.booking.users.users_commands.domain.interfaces.repositories.BucketName;
+import com.azat4dev.booking.users.users_commands.domain.interfaces.repositories.MediaObjectsBucket;
 import com.azat4dev.booking.users.users_queries.domain.values.BaseUrl;
 import io.minio.MinioClient;
 import org.springframework.beans.factory.annotation.Qualifier;
@@ -32,7 +33,7 @@ public class MediaObjectsBucketConfig {
 
     @Bean
     @Qualifier("usersPhotoBucket")
-    MinioMediaObjectsBucket minioMediaObjectsBucket(
+    MediaObjectsBucket minioMediaObjectsBucket(
         @Qualifier("usersPhotoBaseUrl")
         BaseUrl usersPhotoBaseUrl,
         @Qualifier("usersPhotoClient")
