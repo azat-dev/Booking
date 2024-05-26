@@ -2,9 +2,14 @@ package com.azat4dev.booking.users.users_commands.domain.handlers.users;
 
 
 import com.azat4dev.booking.shared.domain.core.UserId;
+import com.azat4dev.booking.shared.domain.event.EventId;
 import com.azat4dev.booking.shared.utils.TimeProvider;
 import com.azat4dev.booking.users.users_commands.domain.core.commands.NewUserData;
+import com.azat4dev.booking.users.users_commands.domain.core.commands.UpdateUserPhoto;
 import com.azat4dev.booking.users.users_commands.domain.core.entities.User;
+import com.azat4dev.booking.users.users_commands.domain.core.entities.UserPhotoPath;
+import com.azat4dev.booking.users.users_commands.domain.core.events.FailedUpdateUserPhoto;
+import com.azat4dev.booking.users.users_commands.domain.core.events.UpdatedUserPhoto;
 import com.azat4dev.booking.users.users_commands.domain.core.events.UserCreated;
 import com.azat4dev.booking.users.users_commands.domain.core.events.UserVerifiedEmail;
 import com.azat4dev.booking.users.users_commands.domain.core.values.email.EmailAddress;
@@ -13,6 +18,7 @@ import com.azat4dev.booking.users.users_commands.domain.interfaces.repositories.
 import com.azat4dev.booking.users.users_commands.domain.interfaces.repositories.UsersRepository;
 import lombok.RequiredArgsConstructor;
 
+import java.time.LocalDateTime;
 import java.util.Optional;
 
 @RequiredArgsConstructor
@@ -102,6 +108,42 @@ public final class UsersImpl implements Users {
             throw new RuntimeException(e);
         }
     }
+
+//    @Override
+//    public void updateUserPhoto(
+//        UserId userId,
+//        UserPhotoPath newPhotoPath
+//        ) throws UpdateUserPhotoHandler.Exception {
+//
+//        final var unitOfWork = unitOfWorkFactory.make();
+//
+//        try {
+//            final var usersRepository = unitOfWork.getUsersRepository();
+//
+//            final var user = usersRepository.findById(userId)
+//                .orElseThrow(() -> new UpdateUserPhotoHandler.Exception.UserNotFound(userId));
+//
+//            final var prePhotoPath = user.getPhoto();
+//
+//            user.setPhoto(newPhotoPath);
+//            usersRepository.update(user);
+//
+//            final var outboxRepository = unitOfWork.getOutboxEventsRepository();
+//
+//            final var event = new UpdatedUserPhoto(
+//                userId,
+//                newPhotoPath,
+//                prePhotoPath
+//            );
+//
+//            outboxRepository.publish(event);
+//            unitOfWork.save();
+//
+//        } catch (Throwable e) {
+//            unitOfWork.rollback();
+//            throw new UpdateUserPhotoHandler.Exception.FailedToSaveUser();
+//        }
+//    }
 
     @FunctionalInterface
     public interface MarkOutboxNeedsSynchronization {

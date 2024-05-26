@@ -48,7 +48,6 @@ public final class UpdateUserPhotoHandler implements CommandHandler<UpdateUserPh
             final var outboxRepository = unitOfWork.getOutboxEventsRepository();
 
             final var event = new UpdatedUserPhoto(
-                command.idempotentOperationId(),
                 command.userId(),
                 newPhotoPath,
                 prePhotoPath

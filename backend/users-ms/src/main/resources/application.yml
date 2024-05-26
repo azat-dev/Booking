@@ -52,8 +52,6 @@ app:
 
     base_verification_link_url: http://localhost:3000/reset-password
 
-
-
   objects_storage:
     bucket:
       users-photo:

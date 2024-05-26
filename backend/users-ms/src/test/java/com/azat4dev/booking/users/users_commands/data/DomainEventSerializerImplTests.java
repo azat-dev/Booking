@@ -132,7 +132,6 @@ public class DomainEventSerializerImplTests {
 
             eventsFactory.issue(
                 new UpdatedUserPhoto(
-                    anyIdempotentOperationId(),
                     anyValidUserId(),
                     new UserPhotoPath(
                         BucketName.checkAndMake("bucketname"),

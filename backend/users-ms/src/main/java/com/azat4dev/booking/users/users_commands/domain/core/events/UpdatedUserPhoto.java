@@ -8,7 +8,6 @@ import com.azat4dev.booking.users.users_commands.domain.core.values.IdempotentOp
 import java.util.Optional;
 
 public record UpdatedUserPhoto(
-    IdempotentOperationId idempotentOperationId,
     UserId userId,
     UserPhotoPath newPhotoPath,
     Optional<UserPhotoPath> prevPhotoPath

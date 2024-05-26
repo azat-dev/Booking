@@ -7,7 +7,6 @@ import com.azat4dev.booking.users.users_commands.domain.core.values.IdempotentOp
 import java.util.Optional;
 
 public record UpdatedUserPhotoDTO(
-    String idempotentOperationId,
     String userId,
     UserPhotoPathDTO newPhotoPath,
     UserPhotoPathDTO prevPhotoPath
@@ -15,7 +14,6 @@ public record UpdatedUserPhotoDTO(
 
     public static UpdatedUserPhotoDTO fromDomain(UpdatedUserPhoto dm) {
         return new UpdatedUserPhotoDTO(
-            dm.idempotentOperationId().toString(),
             dm.userId().toString(),
             UserPhotoPathDTO.fromDomain(dm.newPhotoPath()),
             dm.prevPhotoPath().map(UserPhotoPathDTO::fromDomain).orElse(null)
@@ -24,7 +22,6 @@ public record UpdatedUserPhotoDTO(
 
     public UpdatedUserPhoto toDomain() {
         return new UpdatedUserPhoto(
-            IdempotentOperationId.dangerouslyMakeFrom(idempotentOperationId),
             UserId.dangerouslyMakeFrom(userId),
             newPhotoPath.toDomain(),
             prevPhotoPath == null ? Optional.empty() : Optional.of(prevPhotoPath.toDomain())

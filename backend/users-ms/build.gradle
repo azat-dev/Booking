@@ -62,7 +62,9 @@ dependencies {
         exclude group: 'org.yaml', module: 'snakeyaml'
     }
 
-    testImplementation 'io.zonky.test:embedded-database-spring-test:2.5.1'
+    testImplementation 'org.testcontainers:kafka'
+    testImplementation 'org.testcontainers:postgresql'
+    testImplementation 'org.jsoup:jsoup:1.14.3'
 }
 
 tasks.named('test') {
