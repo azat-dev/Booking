@@ -7,14 +7,14 @@ import com.azat4dev.booking.users.users_commands.domain.core.values.IdempotentOp
 import com.azat4dev.booking.users.users_commands.domain.core.values.files.UploadFileFormData;
 import com.azat4dev.booking.users.users_commands.domain.core.values.user.PhotoFileExtension;
 import com.azat4dev.booking.users.users_commands.domain.handlers.users.GenerateUserPhotoObjectName;
-import com.azat4dev.booking.users.users_commands.domain.handlers.users.GenerateUserPhotoUploadUrlHandler;
+import com.azat4dev.booking.users.users_commands.domain.handlers.users.photo.GenerateUrlForUploadUserPhoto;
+import com.azat4dev.booking.users.users_commands.domain.handlers.users.photo.GenerateUrlForUploadUserPhotoImpl;
 import com.azat4dev.booking.users.users_commands.domain.interfaces.repositories.BucketName;
 import com.azat4dev.booking.users.users_commands.domain.interfaces.repositories.MediaObjectName;
 import com.azat4dev.booking.users.users_commands.domain.interfaces.repositories.MediaObjectsBucket;
 import org.junit.jupiter.api.Test;
 
 import java.net.URI;
-import java.time.LocalDateTime;
 import java.util.Map;
 import java.util.UUID;
 
@@ -22,7 +22,7 @@ import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.BDDMockito.*;
 import static org.mockito.Mockito.mock;
 
-public class GenerateUserPhotoUploadUrlHandlerTest {
+public class GenerateUrlForUploadUserPhotoTests {
 
     SUT createSUT() {
 
@@ -33,7 +33,7 @@ public class GenerateUserPhotoUploadUrlHandlerTest {
         final var expiresIn = 5;
 
         return new SUT(
-            new GenerateUserPhotoUploadUrlHandler(
+            new GenerateUrlForUploadUserPhotoImpl(
                 expiresIn,
                 generateUserPhotoObjectName,
                 usersPhotoBucket,
@@ -55,13 +55,10 @@ public class GenerateUserPhotoUploadUrlHandlerTest {
 
         // Given
         final var sut = createSUT();
-        final var command = new GenerateUserPhotoUploadUrl(
-            UserHelpers.anyValidUserId(),
-            PhotoFileExtension.checkAndMakeFrom("jpg"),
-            GenerateUserPhotoUploadUrl.MAX_FILE_SIZE,
-            anyOperationId(),
-            LocalDateTime.now()
-        );
+        final var operationId = anyOperationId();
+        final var fileExtension = PhotoFileExtension.checkAndMakeFrom("jpg");
+        final var fileSize = GenerateUserPhotoUploadUrl.MAX_FILE_SIZE;
+        final var userId = UserHelpers.anyValidUserId();
 
         final var objectName = MediaObjectName.dangerouslyMake("testObjectName");
 
@@ -80,12 +77,17 @@ public class GenerateUserPhotoUploadUrlHandlerTest {
 
 
         // When
-        final var result = sut.handler.handle(command);
+        final var result = sut.generateUrl.execute(
+            operationId,
+            userId,
+            fileExtension,
+            fileSize
+        );
 
         // Then
         then(sut.generateUserPhotoObjectName())
             .should(times(1))
-            .execute(command.getUserId(), command.getFileExtension());
+            .execute(userId, fileExtension);
 
         then(sut.usersPhotoBucket)
             .should(times(1))
@@ -99,12 +101,12 @@ public class GenerateUserPhotoUploadUrlHandlerTest {
             .publish(result);
 
         assertThat(result).isNotNull();
-        assertThat(result.userId()).isEqualTo(command.getUserId());
+        assertThat(result.userId()).isEqualTo(userId);
         assertThat(result.formData()).isEqualTo(formData);
     }
 
     record SUT(
-        GenerateUserPhotoUploadUrlHandler handler,
+        GenerateUrlForUploadUserPhoto generateUrl,
         GenerateUserPhotoObjectName generateUserPhotoObjectName,
         MediaObjectsBucket usersPhotoBucket,
         DomainEventsBus bus,

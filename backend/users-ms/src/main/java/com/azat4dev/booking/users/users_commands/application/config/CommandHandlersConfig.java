@@ -9,10 +9,13 @@ import com.azat4dev.booking.users.users_commands.application.handlers.password.C
 import com.azat4dev.booking.users.users_commands.application.handlers.password.CompletePasswordResetHandlerImpl;
 import com.azat4dev.booking.users.users_commands.application.handlers.password.ResetPasswordByEmailHandler;
 import com.azat4dev.booking.users.users_commands.application.handlers.password.ResetPasswordByEmailHandlerImpl;
+import com.azat4dev.booking.users.users_commands.application.handlers.photo.GenerateUserPhotoUploadUrlHandler;
+import com.azat4dev.booking.users.users_commands.application.handlers.photo.GenerateUserPhotoUploadUrlHandlerImpl;
 import com.azat4dev.booking.users.users_commands.domain.handlers.email.verification.VerifyEmailByToken;
 import com.azat4dev.booking.users.users_commands.domain.handlers.password.reset.SendResetPasswordEmail;
 import com.azat4dev.booking.users.users_commands.domain.handlers.password.reset.SetNewPasswordByToken;
 import com.azat4dev.booking.users.users_commands.domain.handlers.users.Users;
+import com.azat4dev.booking.users.users_commands.domain.handlers.users.photo.GenerateUrlForUploadUserPhoto;
 import com.azat4dev.booking.users.users_commands.domain.interfaces.services.PasswordService;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -55,5 +58,14 @@ public class CommandHandlersConfig {
         PasswordService passwordService
     ) {
         return new CompletePasswordResetHandlerImpl(setNewPasswordByToken, passwordService);
+    }
+
+    @Bean
+    public GenerateUserPhotoUploadUrlHandler generateUserPhotoUploadUrlHandler(
+        GenerateUrlForUploadUserPhoto generateUrlForUploadUserPhoto
+    ) {
+        return new GenerateUserPhotoUploadUrlHandlerImpl(
+            generateUrlForUploadUserPhoto
+        );
     }
 }

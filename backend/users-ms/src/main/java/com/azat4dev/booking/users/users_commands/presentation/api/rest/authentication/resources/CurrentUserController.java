@@ -4,7 +4,8 @@ import com.azat4dev.booking.shared.domain.event.EventIdGenerator;
 import com.azat4dev.booking.common.presentation.ControllerException;
 import com.azat4dev.booking.shared.utils.TimeProvider;
 import com.azat4dev.booking.shared.domain.core.UserId;
-import com.azat4dev.booking.users.users_commands.domain.handlers.users.GenerateUserPhotoUploadUrlHandler;
+import com.azat4dev.booking.users.users_commands.application.commands.photo.GenerateUserPhotoUploadUrl;
+import com.azat4dev.booking.users.users_commands.application.handlers.photo.GenerateUserPhotoUploadUrlHandler;
 import com.azat4dev.booking.users.users_commands.domain.handlers.users.UpdateUserPhotoHandler;
 import com.azat4dev.booking.users.users_commands.presentation.api.rest.authentication.entities.*;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -43,11 +44,15 @@ public class CurrentUserController implements CurrentUserResource {
     public ResponseEntity<GenerateUploadUserPhotoUrlResponse> generateUploadUserPhototUrl(
         @RequestBody GenerateUploadUserPhotoUrlRequest requestBody,
         JwtAuthenticationToken jwtAuthenticationToken
-    ) throws UserId.WrongFormatException, GenerateUserPhotoUploadUrlHandler.Exception {
+    ) throws GenerateUserPhotoUploadUrlHandler.Exception {
 
-        final UserId userId = UserId.checkAndMakeFrom(jwtAuthenticationToken.getName());
+        final var command = new GenerateUserPhotoUploadUrl(
+            requestBody.idempotentOperationId(),
+            jwtAuthenticationToken.getName(),
+            requestBody.fileExtension(),
+            requestBody.fileSize()
+        );
 
-        final var command = requestBody.toCommand(userId, timeProvider);
         final var result = generateUserPhotoUploadUrlHandler.handle(command);
 
         return ResponseEntity.ok(new GenerateUploadUserPhotoUrlResponse(

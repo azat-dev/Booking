@@ -6,8 +6,9 @@ import com.azat4dev.booking.shared.domain.event.DomainEventsFactory;
 import com.azat4dev.booking.shared.utils.TimeProvider;
 import com.azat4dev.booking.users.users_commands.domain.handlers.users.GenerateUserPhotoObjectName;
 import com.azat4dev.booking.users.users_commands.domain.handlers.users.GenerateUserPhotoObjectNameImpl;
-import com.azat4dev.booking.users.users_commands.domain.handlers.users.GenerateUserPhotoUploadUrlHandler;
 import com.azat4dev.booking.users.users_commands.domain.handlers.users.UpdateUserPhotoHandler;
+import com.azat4dev.booking.users.users_commands.domain.handlers.users.photo.GenerateUrlForUploadUserPhoto;
+import com.azat4dev.booking.users.users_commands.domain.handlers.users.photo.GenerateUrlForUploadUserPhotoImpl;
 import com.azat4dev.booking.users.users_commands.domain.interfaces.repositories.MediaObjectsBucket;
 import com.azat4dev.booking.users.users_commands.domain.interfaces.repositories.UnitOfWorkFactory;
 import org.springframework.beans.factory.annotation.Qualifier;
@@ -30,7 +31,12 @@ public class UpdateUserPhotoConfig {
     }
 
     @Bean
-    GenerateUserPhotoUploadUrlHandler generateUserPhotoUploadUrlHandler(
+    GenerateUserPhotoObjectName generateUserPhotoObjectName(TimeProvider timeProvider) {
+        return new GenerateUserPhotoObjectNameImpl(timeProvider);
+    }
+
+    @Bean
+    GenerateUrlForUploadUserPhoto generateUrlForUploadUserPhoto(
         @Value("${app.objects_storage.bucket.users-photo.upload-url.expires-in-seconds}")
         int expireInSeconds,
         @Qualifier("usersPhotoBucket")
@@ -38,16 +44,11 @@ public class UpdateUserPhotoConfig {
         GenerateUserPhotoObjectName generateUserPhotoObjectName,
         DomainEventsBus bus
     ) {
-        return new GenerateUserPhotoUploadUrlHandler(
+        return new GenerateUrlForUploadUserPhotoImpl(
             expireInSeconds,
             generateUserPhotoObjectName,
             userPhotoBucket,
             bus
         );
-    }
-
-    @Bean
-    GenerateUserPhotoObjectName generateUserPhotoObjectName(TimeProvider timeProvider) {
-        return new GenerateUserPhotoObjectNameImpl(timeProvider);
     }
 }

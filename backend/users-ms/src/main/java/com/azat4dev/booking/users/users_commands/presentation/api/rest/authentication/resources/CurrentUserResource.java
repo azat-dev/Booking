@@ -1,7 +1,7 @@
 package com.azat4dev.booking.users.users_commands.presentation.api.rest.authentication.resources;
 
 import com.azat4dev.booking.shared.domain.core.UserId;
-import com.azat4dev.booking.users.users_commands.domain.handlers.users.GenerateUserPhotoUploadUrlHandler;
+import com.azat4dev.booking.users.users_commands.application.handlers.photo.GenerateUserPhotoUploadUrlHandler;
 import com.azat4dev.booking.users.users_commands.domain.handlers.users.UpdateUserPhotoHandler;
 import com.azat4dev.booking.users.users_commands.presentation.api.rest.authentication.entities.GenerateUploadUserPhotoUrlRequest;
 import com.azat4dev.booking.users.users_commands.presentation.api.rest.authentication.entities.GenerateUploadUserPhotoUrlResponse;
