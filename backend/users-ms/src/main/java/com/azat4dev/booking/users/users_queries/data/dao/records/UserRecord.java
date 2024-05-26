@@ -6,6 +6,7 @@ import java.util.UUID;
 public record UserRecord(
     UUID id,
     String email,
+    EmailVerificationStatus emailVerificationStatus,
     String firstName,
     String lastName,
     Optional<PhotoPath> photo
@@ -15,5 +16,10 @@ public record UserRecord(
         String bucketName,
         String objectName
     ) {
+    }
+
+    public enum EmailVerificationStatus {
+        NOT_VERIFIED,
+        VERIFIED
     }
 }

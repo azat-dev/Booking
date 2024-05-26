@@ -19,6 +19,13 @@ public class MapUserRecordToPersonalInfoImpl implements MapUserRecordToPersonalI
             return new PersonalUserInfo(
                 UserId.fromUUID(userRecord.id()),
                 userRecord.email(),
+                switch (userRecord.emailVerificationStatus()) {
+                    case UserRecord.EmailVerificationStatus.VERIFIED ->
+                        PersonalUserInfo.EmailVerificationStatus.VERIFIED;
+                    case UserRecord.EmailVerificationStatus.NOT_VERIFIED ->
+                        PersonalUserInfo.EmailVerificationStatus.NOT_VERIFIED;
+                    default -> throw new RuntimeException("Unknown email verification status");
+                },
                 new FullName(
                     FirstName.dangerMakeFromStringWithoutCheck(userRecord.firstName()),
                     LastName.dangerMakeFromStringWithoutCheck(userRecord.lastName())

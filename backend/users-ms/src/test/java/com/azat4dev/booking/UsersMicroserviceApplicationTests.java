@@ -1,5 +1,6 @@
 package com.azat4dev.booking;
 
+import com.azat4dev.booking.users.users_commands.domain.core.values.email.EmailAddress;
 import com.azat4dev.booking.users.users_commands.domain.core.values.password.Password;
 import com.azat4dev.booking.users.users_commands.domain.interfaces.services.EmailService;
 import com.azat4dev.booking.users.users_commands.presentation.api.rest.authentication.entities.FullNameDTO;
@@ -16,9 +17,11 @@ import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
-import org.springframework.boot.test.mock.mockito.MockBean;
+import org.springframework.boot.test.context.TestConfiguration;
 import org.springframework.boot.test.web.client.TestRestTemplate;
 import org.springframework.boot.test.web.server.LocalServerPort;
+import org.springframework.context.annotation.Bean;
+import org.springframework.context.annotation.Primary;
 import org.springframework.http.*;
 import org.springframework.test.context.DynamicPropertyRegistry;
 import org.springframework.test.context.DynamicPropertySource;
@@ -28,14 +31,18 @@ import org.testcontainers.junit.jupiter.Container;
 import org.testcontainers.junit.jupiter.Testcontainers;
 import org.testcontainers.utility.DockerImageName;
 
+import java.net.MalformedURLException;
+import java.net.URI;
 import java.time.Duration;
+import java.time.LocalDateTime;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Optional;
+import java.util.function.Predicate;
 
 import static java.util.concurrent.TimeUnit.SECONDS;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.awaitility.Awaitility.await;
-import static org.mockito.ArgumentMatchers.any;
-import static org.mockito.BDDMockito.then;
-import static org.mockito.Mockito.times;
 
 @SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
 @Testcontainers
@@ -53,8 +60,11 @@ class UsersMicroserviceApplicationTests {
         "postgres:15-alpine"
     );
 
-    @MockBean
+    @Autowired
     EmailService emailService;
+
+    @Autowired
+    TestConfig.EmailBox emailBox;
 
     @LocalServerPort
     private int port;
@@ -72,8 +82,6 @@ class UsersMicroserviceApplicationTests {
     @DynamicPropertySource
     static void configurePropertiesKafka(DynamicPropertyRegistry registry) {
         registry.add("spring.kafka.bootstrap-servers", kafka::getBootstrapServers);
-        registry.add("spring.datasource.username", postgres::getUsername);
-        registry.add("spring.datasource.password", postgres::getPassword);
     }
 
     @BeforeAll
@@ -105,48 +113,27 @@ class UsersMicroserviceApplicationTests {
     void test_signUp_User() throws Exception {
         // Given
         final var request = anySignUpRequest();
-        final var email = request.email();
+        final var email = EmailAddress.dangerMakeWithoutChecks(request.email());
 
         // When
         final var response = performSignUpRequest(request);
 
         // Then
-        then(emailService).should(times(1))
-            .send(any(), any());
-        await()
-            .pollInterval(Duration.ofSeconds(3))
-            .atMost(10, SECONDS)
-            .untilAsserted(() -> {
-                then(emailService).should(times(1))
-                    .send(any(), any());
-            });
+        final var lastEmail = emailBox.waitFor(10, item -> {
+            return item.email().equals(email);
+        }).orElseThrow();
 
+        final var emailBody = lastEmail.data().body().value();
+        final var confirmationLink = parseLink(emailBody);
+        assertThat(confirmationLink).isNotNull();
+
+        confirmEmail(confirmationLink);
 
         final var userInfo = performGetCurrentUser(response.tokens().access());
 
         // Then
-        assertThat(userInfo.email()).isEqualTo(email);
-    }
-
-    private void givenSignedUpUser() throws Exception {
-        // Given
-        final var request = anySignUpRequest();
-        final var email = request.email();
-
-        // When
-        final var response = performSignUpRequest(request);
-
-        // Then
-
-        then(emailService).should(times(1))
-            .send(any(), any());
-        await()
-            .pollInterval(Duration.ofSeconds(3))
-            .atMost(10, SECONDS)
-            .untilAsserted(() -> {
-                then(emailService).should(times(1))
-                    .send(any(), any());
-            });
+        assertThat(userInfo.email()).isEqualTo(email.getValue());
+        assertThat(userInfo.emailVerficationStatus()).isEqualTo("VERIFIED");
     }
 
     HttpHeaders headersWithToken(String token) {
@@ -158,6 +145,17 @@ class UsersMicroserviceApplicationTests {
 
     private String baseURL() {
         return "http://localhost:" + port;
+    }
+
+    private void confirmEmail(String confirmationLink) {
+        try {
+            final var query = URI.create(confirmationLink).toURL().getQuery();
+            final var url = baseURL() + "/api/public/verify-email" + "?" + query;
+            final var response = restTemplate.getForEntity(url, String.class);
+            System.out.println(response.getBody());
+        } catch (MalformedURLException e) {
+            throw new RuntimeException(e);
+        }
     }
 
     private PersonalUserInfoDTO performGetCurrentUser(String accessToken) {
@@ -199,4 +197,70 @@ class UsersMicroserviceApplicationTests {
         return link.attr("href");
     }
 
+    @TestConfiguration
+    static class TestConfig {
+
+        @Bean
+        EmailBox emailBox() {
+            return new EmailBox();
+        }
+
+        @Bean
+        @Primary
+        public EmailService emailServiceTest(EmailBox emailBox) {
+            return new EmailService() {
+                @Override
+                public void send(EmailAddress email, EmailData data) {
+                    emailBox.add(email, data);
+                }
+            };
+        }
+
+        public record EmailBoxItem(
+            LocalDateTime capturedAt,
+            EmailAddress email,
+            EmailService.EmailData data
+        ) {
+        }
+
+        public static class EmailBox {
+            private final List<EmailBoxItem> items = new ArrayList<>();
+
+            public void add(EmailAddress email, EmailService.EmailData body) {
+                items.add(new EmailBoxItem(LocalDateTime.now(), email, body));
+            }
+
+            public EmailBoxItem last() {
+                return items.get(items.size() - 1);
+            }
+
+            public void clear() {
+                items.clear();
+            }
+
+            public Optional<EmailBoxItem> lastFor(Predicate<EmailBoxItem> predicate) {
+                for (int i = items.size() - 1; i >= 0; i--) {
+
+                    EmailBoxItem item = items.get(i);
+
+                    if (predicate.test(item)) {
+                        return Optional.of(item);
+                    }
+                }
+                return Optional.empty();
+            }
+
+            public Optional<EmailBoxItem> waitFor(int seconds, Predicate<EmailBoxItem> predicate) {
+                await()
+                    .pollInterval(Duration.ofMillis(200))
+                    .atMost(seconds, SECONDS)
+                    .until(() -> {
+                        final var isPresent = lastFor(predicate).isPresent();
+                        return isPresent;
+                    });
+
+                return lastFor(predicate);
+            }
+        }
+    }
 }

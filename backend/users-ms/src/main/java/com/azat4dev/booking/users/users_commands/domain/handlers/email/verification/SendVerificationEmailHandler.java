@@ -46,7 +46,7 @@ public class SendVerificationEmailHandler implements CommandHandler<SendVerifica
                     new EmailBody(
                         "Hello, " + command.fullName().toString() + "!\n\n" +
                         "Please verify your email by clicking the link below:\n\n" +
-                        verificationLink
+                        "<a href=\"" + verificationLink + "\">Verify email</a>\n\n"
                     )
                 )
             );

@@ -32,6 +32,7 @@ public class UsersReadDaoJdbcTests {
         return new UserRecord(
             UUID.fromString("00000000-0000-0000-0000-000000000001"),
             "john@example.com",
+            UserRecord.EmailVerificationStatus.VERIFIED,
             "John",
             "Doe",
             Optional.of(

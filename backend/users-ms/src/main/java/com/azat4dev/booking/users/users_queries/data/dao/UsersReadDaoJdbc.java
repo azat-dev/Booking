@@ -66,6 +66,7 @@ public class UsersReadDaoJdbc implements UsersReadDao {
             return new UserRecord(
                 UUID.fromString(rs.getString("id")),
                 rs.getString("email"),
+                UserRecord.EmailVerificationStatus.valueOf(rs.getString("email_verification_status")),
                 rs.getString("first_name"),
                 rs.getString("last_name"),
                 photo

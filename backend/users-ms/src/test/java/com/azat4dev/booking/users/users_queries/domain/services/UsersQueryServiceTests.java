@@ -44,6 +44,7 @@ public class UsersQueryServiceTests {
         return new PersonalUserInfo(
             UserHelpers.anyValidUserId(),
             anyEmail(),
+            PersonalUserInfo.EmailVerificationStatus.VERIFIED,
             UserHelpers.anyFullName(),
             Optional.of(anyUserPhoto())
         );

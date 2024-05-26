@@ -9,7 +9,13 @@ import java.util.Optional;
 public record PersonalUserInfo(
     UserId id,
     String email,
+    EmailVerificationStatus emailVerificationStatus,
     FullName fullName,
     Optional<UserPhoto> photo
 ) {
+
+    public enum EmailVerificationStatus {
+        NOT_VERIFIED,
+        VERIFIED
+    }
 }

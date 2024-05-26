@@ -8,6 +8,7 @@ import java.util.Optional;
 public record PersonalUserInfoDTO(
     String id,
     String email,
+    String emailVerficationStatus,
     FullNameDTO fullName,
     Optional<PhotoPathDTO> photo
 ) {
@@ -16,6 +17,7 @@ public record PersonalUserInfoDTO(
         return new PersonalUserInfoDTO(
             user.id().toString(),
             user.email(),
+            user.emailVerificationStatus().name(),
             FullNameDTO.fromDomain(user.fullName()),
             user.photo().map(p -> new PhotoPathDTO(p.url().toString()))
         );

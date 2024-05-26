@@ -4,6 +4,7 @@ import com.azat4dev.booking.shared.domain.event.DomainEvent;
 import com.azat4dev.booking.users.users_commands.data.repositories.DomainEventSerializer;
 import com.azat4dev.booking.users.users_commands.domain.core.events.UpdatedUserPhoto;
 import com.azat4dev.booking.users.users_commands.domain.core.events.UserCreated;
+import com.azat4dev.booking.users.users_commands.domain.core.events.UserVerifiedEmail;
 
 import java.sql.ResultSet;
 import java.sql.SQLException;
@@ -25,6 +26,7 @@ public record OutboxEventData(
             switch (event.payload()) {
                 case UserCreated userCreated -> EventType.USER_CREATED;
                 case UpdatedUserPhoto inst -> EventType.UPDATED_USER_PHOTO;
+                case UserVerifiedEmail inst -> EventType.USER_VERIFIED_EMAIL;
                 default -> throw new IllegalStateException("Unexpected outbox event value: " + event);
             },
             serializer.serialize(event),
@@ -45,6 +47,7 @@ public record OutboxEventData(
 
     public enum EventType {
         USER_CREATED,
-        UPDATED_USER_PHOTO
+        UPDATED_USER_PHOTO,
+        USER_VERIFIED_EMAIL
     }
 }
