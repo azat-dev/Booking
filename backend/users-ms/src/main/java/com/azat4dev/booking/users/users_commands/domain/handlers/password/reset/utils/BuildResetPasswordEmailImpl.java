@@ -28,7 +28,7 @@ public final class BuildResetPasswordEmailImpl implements BuildResetPasswordEmai
                     + "\n\n"
                     + "Please click the link below to reset your password."
                     + "\n\n"
-                    + link
+                    + "<a href=\"" + link + "\">Reset Password</a>"
                     + "\n\n"
                     + "If you did not request to reset your password, please ignore this email."
                     + "\n\n"

@@ -30,6 +30,10 @@ public class EmailBoxMock {
         items.clear();
     }
 
+    public void clearFor(EmailAddress email) {
+        items.removeIf(item -> item.email().equals(email));
+    }
+
     public Optional<EmailBoxItem> lastFor(Predicate<EmailBoxItem> predicate) {
         for (int i = items.size() - 1; i >= 0; i--) {
 

@@ -5,9 +5,7 @@ import com.azat4dev.booking.shared.domain.core.UserId;
 import com.azat4dev.booking.users.users_commands.domain.core.values.email.EmailAddress;
 import com.azat4dev.booking.users.users_commands.domain.core.values.password.Password;
 import com.azat4dev.booking.users.users_commands.domain.interfaces.services.EmailService;
-import com.azat4dev.booking.users.users_commands.presentation.api.rest.authentication.entities.FullNameDTO;
-import com.azat4dev.booking.users.users_commands.presentation.api.rest.authentication.entities.SignUpRequest;
-import com.azat4dev.booking.users.users_commands.presentation.api.rest.authentication.entities.SignUpResponse;
+import com.azat4dev.booking.users.users_commands.presentation.api.rest.authentication.entities.*;
 import com.azat4dev.booking.users.users_queries.presentation.api.rest.dto.PersonalUserInfoDTO;
 import com.github.javafaker.Faker;
 import org.jsoup.Jsoup;
@@ -23,19 +21,14 @@ import org.springframework.boot.test.context.TestConfiguration;
 import org.springframework.boot.test.web.client.TestRestTemplate;
 import org.springframework.boot.test.web.server.LocalServerPort;
 import org.springframework.context.annotation.Bean;
-import org.springframework.context.annotation.Import;
 import org.springframework.context.annotation.Primary;
 import org.springframework.http.*;
-import org.springframework.test.context.DynamicPropertyRegistry;
-import org.springframework.test.context.DynamicPropertySource;
-import org.testcontainers.containers.KafkaContainer;
-import org.testcontainers.containers.PostgreSQLContainer;
-import org.testcontainers.junit.jupiter.Container;
-import org.testcontainers.junit.jupiter.Testcontainers;
-import org.testcontainers.utility.DockerImageName;
+import org.springframework.web.util.UriComponents;
+import org.springframework.web.util.UriComponentsBuilder;
 
 import java.net.MalformedURLException;
 import java.net.URI;
+import java.util.UUID;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
@@ -81,6 +74,10 @@ class UsersMicroserviceApplicationTests implements KafkaTests, PostgresTests {
         );
     }
 
+    private String anyPassword() {
+        return faker.internet().password(Password.MIN_LENGTH, Password.MAX_LENGTH);
+    }
+
     @Test
     void test_verifyEmail() throws Exception {
         // Given
@@ -88,6 +85,41 @@ class UsersMicroserviceApplicationTests implements KafkaTests, PostgresTests {
 
         // Then
         assertThat(user).isNotNull();
+    }
+
+    String anyIdempotentOperationId() {
+        return UUID.randomUUID().toString();
+    }
+
+    @Test
+    void test_resetPasswordByEmail() throws Exception {
+        // Given
+        final var user = givenAnySignedUpUser();
+        final var request = new ResetPasswordByEmailRequest(
+            anyIdempotentOperationId(),
+            user.email().getValue()
+        );
+
+        emailBox.clearFor(user.email());
+
+        // When
+        performRequestResetPassword(request);
+
+        // Then
+        final var email = emailBox.waitFor(10, item -> {
+            return item.email().equals(user.email());
+        }).orElseThrow();
+
+        //Given
+        final var resetPasswordLink = parseLink(email.data().body().value());
+        final var newPassword = anyPassword();
+
+        //When
+        performResetPassword(resetPasswordLink, newPassword);
+
+        //Then
+        final var userInfo = performGetNewTokensByEmail(user.email.getValue(), newPassword);
+        assertThat(userInfo.tokens().access()).isNotNull();
     }
 
     SignedUpUser givenAnyConfirmedUser() throws Exception {
@@ -103,21 +135,6 @@ class UsersMicroserviceApplicationTests implements KafkaTests, PostgresTests {
         // Then
         assertThat(userInfo.emailVerficationStatus()).isEqualTo("VERIFIED");
         return signedUpUser;
-    }
-
-    @Test
-    void test_resetPassword() throws Exception {
-        // Given
-        final var signedUpUser = givenAnySignedUpUser();
-
-        // When
-        confirmEmail(signedUpUser.verificationLink);
-
-        // Then
-        final var userInfo = performGetCurrentUser(signedUpUser.accessToken);
-
-        // Then
-        assertThat(userInfo.emailVerficationStatus()).isEqualTo("VERIFIED");
     }
 
     private SignedUpUser givenAnySignedUpUser() throws Exception {
@@ -175,6 +192,38 @@ class UsersMicroserviceApplicationTests implements KafkaTests, PostgresTests {
         }
     }
 
+    private void performResetPassword(String resetPasswordLink, String newPassword) {
+        final var token = UriComponentsBuilder.fromUriString(resetPasswordLink)
+            .build().getQueryParams().get("token").getFirst();
+
+        final var url = baseURL() + "/api/public/set-new-password";
+        final var response = restTemplate.postForObject(
+            url,
+            new CompleteResetPasswordRequest(
+                anyIdempotentOperationId(),
+                newPassword,
+                token
+            ),
+            String.class
+        );
+
+        System.out.println(response);
+    }
+
+    private LoginByEmailResponse performGetNewTokensByEmail(String email, String password) {
+
+        final var url = baseURL() + "/api/public/auth/token";
+
+        return restTemplate.postForObject(
+            url,
+            new LoginByEmailRequest(
+                email,
+                password
+            ),
+            LoginByEmailResponse.class
+        );
+    }
+
     private PersonalUserInfoDTO performGetCurrentUser(String accessToken) {
 
         final var url = baseURL() + "/api/with-auth/users/current";
@@ -197,6 +246,14 @@ class UsersMicroserviceApplicationTests implements KafkaTests, PostgresTests {
             baseURL() + "/api/public/auth/sign-up",
             request,
             SignUpResponse.class
+        );
+    }
+
+    private String performRequestResetPassword(ResetPasswordByEmailRequest request) throws Exception {
+        return restTemplate.postForObject(
+            baseURL() + "/api/public/reset-password",
+            request,
+            String.class
         );
     }
 
