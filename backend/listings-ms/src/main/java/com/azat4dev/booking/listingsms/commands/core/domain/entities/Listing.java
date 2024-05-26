@@ -1,7 +1,8 @@
-package com.azat4dev.bookingdemo.listingsms.commands.core.domain.entities;
+package com.azat4dev.booking.listingsms.commands.core.domain.entities;
 
+import com.azat4dev.booking.listingsms.commands.core.domain.values.*;
 import com.azat4dev.booking.shared.domain.DomainException;
-import com.azat4dev.bookingdemo.listingsms.commands.core.domain.values.*;
+import lombok.EqualsAndHashCode;
 import lombok.Getter;
 
 import java.util.LinkedList;
@@ -9,6 +10,7 @@ import java.util.List;
 import java.util.Optional;
 
 @Getter
+@EqualsAndHashCode(of = "id")
 public class Listing {
 
     public static final int MINIMUM_NUMBER_OF_PHOTOS = 5;
@@ -16,9 +18,9 @@ public class Listing {
     private final ListingId id;
     private final OwnerId ownerId;
     private final ListingTitle title;
+    private final List<ListingPhoto> photos;
     private Optional<ListingDescription> description;
     private ListingStatus status;
-    private final List<ListingPhoto> photos;
 
     public Listing(
         ListingId id,

@@ -1,4 +1,4 @@
-package com.azat4dev.bookingdemo.listingsms.commands.core.domain.values;
+package com.azat4dev.booking.listingsms.commands.core.domain.values;
 
 @FunctionalInterface
 public interface MakeNewListingId {
