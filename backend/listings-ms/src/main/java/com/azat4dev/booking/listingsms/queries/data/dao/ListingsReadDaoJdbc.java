@@ -37,7 +37,12 @@ public final class ListingsReadDaoJdbc implements ListingsReadDao {
         public ListingRecord mapRow(ResultSet rs, int rowNum) throws SQLException {
             return new ListingRecord(
                 UUID.fromString(rs.getString("id")),
+                rs.getTimestamp("created_at").toLocalDateTime()
+                    .withNano(rs.getInt("created_at_nano")),
+                rs.getTimestamp("updated_at").toLocalDateTime()
+                    .withNano(rs.getInt("updated_at_nano")),
                 rs.getString("title"),
+                rs.getString("status"),
                 Optional.ofNullable(rs.getString("description"))
             );
         }

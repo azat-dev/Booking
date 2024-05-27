@@ -8,6 +8,7 @@ import org.springframework.boot.test.autoconfigure.jdbc.JdbcTest;
 import org.springframework.context.annotation.Import;
 import org.springframework.test.context.jdbc.Sql;
 
+import java.time.LocalDateTime;
 import java.util.Optional;
 import java.util.UUID;
 
@@ -54,8 +55,13 @@ public class ListingsReadDaoJdbcTests {
         // Then
         final var expectedListing = new ListingRecord(
             listingId,
+            LocalDateTime.of(2024, 5, 8, 12, 0, 0)
+                .withNano(1),
+            LocalDateTime.of(2024, 5, 8, 12, 0, 0)
+                .withNano(2),
             "listing1",
-            Optional.empty()
+            "DRAFT",
+            Optional.of("description1")
         );
 
         assertThat(foundListing).isEqualTo(expectedListing);
