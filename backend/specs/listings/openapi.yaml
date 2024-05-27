@@ -5,30 +5,95 @@ info:
   description: Describes the API of Listings service
 
 paths:
-  /api/public/listings:
-    post:
-      summary: Get accommodation details
+  /api/private/listings/{listingId}:
+    get:
+      operationId: getListingPrivateDetails
+      summary: Get private details for listing
       parameters:
-        - name: accommodationId
+        - name: listingId
           in: path
           required: true
           schema:
             type: string
             format: uuid
-          description: Accommodation ID
+          description: Listing ID
       responses:
         "200":
-          description: Accommodation details
+          description: Private details of listing
           content:
             application/json:
               schema:
-                "$ref": "#/components/schemas/AccommodationDetails"
+                "$ref": "#/components/schemas/GetListingPrivateDetailsResponse"
+        "401":
+          description: Not valid Token
+        "404":
+          description: Not found
+
+  /api/private/listings:
+    post:
+      summary: Add a new listing
+      operationId: addListing
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/AddListingRequestBody"
+      responses:
+        "200":
+          description: Listing added successfully
+          content:
+            application/json:
+              schema:
+                "$ref": "#/components/schemas/AddListingResponse"
         "401":
           description: Not valid Token
         "404":
           description: Not found
 components:
   schemas:
+    GetListingPrivateDetailsResponse:
+      type: object
+      required:
+          - listing
+      properties:
+        listing:
+          $ref: "#/components/schemas/ListingPrivateDetails"
+
+    ListingPrivateDetails:
+      type: object
+      required:
+        - id
+        - title
+      properties:
+        id:
+          type: string
+          format: uuid
+        title:
+          type: string
+        description:
+          type: string
+
+    AddListingRequestBody:
+      type: object
+      required:
+        - operationId
+        - title
+      properties:
+        operationId:
+          type: string
+          format: uuid
+        title:
+          type: string
+    AddListingResponse:
+      type: object
+      required:
+        - listingId
+      properties:
+        listingId:
+          type: string
+          format: uuid
+
     LocationDetails:
       type: object
       required:

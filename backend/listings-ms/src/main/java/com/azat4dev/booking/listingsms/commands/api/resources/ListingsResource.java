@@ -1,7 +1,7 @@
 package com.azat4dev.booking.listingsms.commands.api.resources;
 
-import com.azat4dev.booking.listingsms.commands.api.dto.AddListingResponse;
 import com.azat4dev.booking.listingsms.commands.api.dto.AddListingRequest;
+import com.azat4dev.booking.listingsms.commands.api.dto.AddListingResponse;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import org.springframework.http.ResponseEntity;
@@ -11,7 +11,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 @RestController
-@RequestMapping("/api/listings")
+@RequestMapping("/api/private/listings")
 public interface ListingsResource {
 
     @PostMapping

@@ -4,6 +4,7 @@ import com.azat4dev.booking.listingsms.commands.api.dto.AddListingResponse;
 import com.azat4dev.booking.listingsms.commands.application.handlers.AddNewListingHandler;
 import com.azat4dev.booking.listingsms.commands.domain.commands.AddNewListing;
 import com.azat4dev.booking.listingsms.commands.api.dto.AddListingRequest;
+import com.azat4dev.booking.listingsms.queries.presentation.api.entities.GetListingPrivateDetailsResponse;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import org.apache.kafka.common.security.oauthbearer.internals.secured.ValidateException;
