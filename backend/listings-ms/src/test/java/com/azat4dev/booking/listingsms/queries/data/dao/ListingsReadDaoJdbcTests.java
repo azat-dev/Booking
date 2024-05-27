@@ -27,6 +27,8 @@ public class ListingsReadDaoJdbcTests {
     }
 
     @Test
+    @Sql("/db/drop-schema.sql")
+    @Sql("/db/schema.sql")
     void test_findById_givenEmptyDb_thenReturnEmpty() {
         // Given
         final var listingId = anyRecordId();
@@ -39,8 +41,8 @@ public class ListingsReadDaoJdbcTests {
     }
 
     @Test
-    @Sql("/db/schema.sql")
     @Sql("/db/drop-schema.sql")
+    @Sql("/db/schema.sql")
     @Sql("/db/data.sql")
     void test_findById_givenValidId_thenReturnRecord() {
         // Given
