@@ -1,9 +1,11 @@
-package com.azat4dev.booking.listingsms.commands.core.domain.values;
+package com.azat4dev.booking.listingsms.commands.domain.values;
 
+import lombok.EqualsAndHashCode;
 import lombok.Getter;
 
 import java.util.UUID;
 
+@EqualsAndHashCode(of = "value")
 @Getter
 public final class ListingId {
 

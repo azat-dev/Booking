@@ -1,6 +1,6 @@
-package com.azat4dev.booking.listingsms.commands.core.domain.entities;
+package com.azat4dev.booking.listingsms.commands.domain.entities;
 
-import com.azat4dev.booking.listingsms.commands.core.domain.values.*;
+import com.azat4dev.booking.listingsms.commands.domain.values.*;
 import com.azat4dev.booking.shared.domain.DomainException;
 import lombok.EqualsAndHashCode;
 import lombok.Getter;
@@ -19,8 +19,8 @@ public class Listing {
     private final OwnerId ownerId;
     private final ListingTitle title;
     private final List<ListingPhoto> photos;
-    private Optional<ListingDescription> description;
     private ListingStatus status;
+    private Optional<ListingDescription> description;
 
     public Listing(
         ListingId id,

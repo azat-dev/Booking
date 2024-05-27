@@ -1,13 +1,12 @@
 package com.azat4dev.booking.listingsms.commands.domain.handlers;
 
 import com.azat4dev.booking.shared.domain.DomainException;
-import com.azat4dev.booking.listingsms.commands.core.domain.commands.AddNewListing;
-import com.azat4dev.booking.listingsms.commands.core.domain.handlers.AddNewListingCommandHandler;
-import com.azat4dev.booking.listingsms.commands.core.domain.interfaces.repositories.ListingsRepository;
-import com.azat4dev.booking.listingsms.commands.core.domain.values.ListingId;
-import com.azat4dev.booking.listingsms.commands.core.domain.values.ListingTitle;
-import com.azat4dev.booking.listingsms.commands.core.domain.values.MakeNewListingId;
-import com.azat4dev.booking.listingsms.commands.core.domain.values.OwnerId;
+import com.azat4dev.booking.listingsms.commands.domain.commands.AddNewListing;
+import com.azat4dev.booking.listingsms.commands.domain.interfaces.repositories.ListingsRepository;
+import com.azat4dev.booking.listingsms.commands.domain.values.ListingId;
+import com.azat4dev.booking.listingsms.commands.domain.values.ListingTitle;
+import com.azat4dev.booking.listingsms.commands.domain.values.MakeNewListingId;
+import com.azat4dev.booking.listingsms.commands.domain.values.OwnerId;
 import org.junit.jupiter.api.Test;
 
 import java.util.UUID;

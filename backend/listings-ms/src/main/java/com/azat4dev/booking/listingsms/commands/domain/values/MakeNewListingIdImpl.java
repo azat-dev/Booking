@@ -1,4 +1,4 @@
-package com.azat4dev.booking.listingsms.commands.core.domain.values;
+package com.azat4dev.booking.listingsms.commands.domain.values;
 
 import java.util.UUID;
 

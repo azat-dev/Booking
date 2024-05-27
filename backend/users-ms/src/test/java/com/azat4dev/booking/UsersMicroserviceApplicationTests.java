@@ -23,7 +23,6 @@ import org.springframework.boot.test.web.server.LocalServerPort;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Primary;
 import org.springframework.http.*;
-import org.springframework.web.util.UriComponents;
 import org.springframework.web.util.UriComponentsBuilder;
 
 import java.net.MalformedURLException;
@@ -36,9 +35,6 @@ import static org.assertj.core.api.Assertions.assertThat;
 class UsersMicroserviceApplicationTests implements KafkaTests, PostgresTests {
 
     public static final Faker faker = Faker.instance();
-
-    @Autowired
-    EmailService emailService;
 
     @Autowired
     EmailBoxMock emailBox;
@@ -206,8 +202,6 @@ class UsersMicroserviceApplicationTests implements KafkaTests, PostgresTests {
             ),
             String.class
         );
-
-        System.out.println(response);
     }
 
     private LoginByEmailResponse performGetNewTokensByEmail(String email, String password) {

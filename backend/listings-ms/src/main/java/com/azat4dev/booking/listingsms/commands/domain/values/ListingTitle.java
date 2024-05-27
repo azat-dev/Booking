@@ -1,9 +1,11 @@
-package com.azat4dev.booking.listingsms.commands.core.domain.values;
+package com.azat4dev.booking.listingsms.commands.domain.values;
 
 import com.azat4dev.booking.shared.domain.DomainException;
 import com.azat4dev.booking.shared.utils.Assert;
+import lombok.EqualsAndHashCode;
 import lombok.Getter;
 
+@EqualsAndHashCode(of = "value")
 @Getter
 public final class ListingTitle {
 

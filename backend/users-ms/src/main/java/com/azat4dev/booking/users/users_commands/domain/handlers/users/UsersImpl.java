@@ -109,42 +109,6 @@ public final class UsersImpl implements Users {
         }
     }
 
-//    @Override
-//    public void updateUserPhoto(
-//        UserId userId,
-//        UserPhotoPath newPhotoPath
-//        ) throws UpdateUserPhotoHandler.Exception {
-//
-//        final var unitOfWork = unitOfWorkFactory.make();
-//
-//        try {
-//            final var usersRepository = unitOfWork.getUsersRepository();
-//
-//            final var user = usersRepository.findById(userId)
-//                .orElseThrow(() -> new UpdateUserPhotoHandler.Exception.UserNotFound(userId));
-//
-//            final var prePhotoPath = user.getPhoto();
-//
-//            user.setPhoto(newPhotoPath);
-//            usersRepository.update(user);
-//
-//            final var outboxRepository = unitOfWork.getOutboxEventsRepository();
-//
-//            final var event = new UpdatedUserPhoto(
-//                userId,
-//                newPhotoPath,
-//                prePhotoPath
-//            );
-//
-//            outboxRepository.publish(event);
-//            unitOfWork.save();
-//
-//        } catch (Throwable e) {
-//            unitOfWork.rollback();
-//            throw new UpdateUserPhotoHandler.Exception.FailedToSaveUser();
-//        }
-//    }
-
     @FunctionalInterface
     public interface MarkOutboxNeedsSynchronization {
         void execute();
