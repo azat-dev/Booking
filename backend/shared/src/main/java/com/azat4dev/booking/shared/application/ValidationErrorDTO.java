@@ -1,4 +1,4 @@
-package com.azat4dev.booking.common.presentation;
+package com.azat4dev.booking.shared.application;
 
 import com.azat4dev.booking.shared.domain.DomainException;
 

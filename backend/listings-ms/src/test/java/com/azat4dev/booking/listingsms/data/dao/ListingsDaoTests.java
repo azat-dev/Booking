@@ -1,6 +1,6 @@
 package com.azat4dev.booking.listingsms.data.dao;
 
-import com.azat4dev.booking.listingsms.application.config.data.DaoConfig;
+import com.azat4dev.booking.listingsms.commands.application.config.data.DaoConfig;
 import com.azat4dev.booking.listingsms.commands.data.dao.listings.ListingsDao;
 import com.azat4dev.booking.listingsms.commands.data.dao.listings.ListingData;
 import com.fasterxml.jackson.databind.ObjectMapper;

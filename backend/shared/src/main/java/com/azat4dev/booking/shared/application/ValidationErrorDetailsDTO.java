@@ -1,4 +1,4 @@
-package com.azat4dev.booking.common.presentation;
+package com.azat4dev.booking.shared.application;
 
 public record ValidationErrorDetailsDTO(
     String code,

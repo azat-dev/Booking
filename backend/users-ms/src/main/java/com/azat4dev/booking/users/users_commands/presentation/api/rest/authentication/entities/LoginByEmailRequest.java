@@ -1,6 +1,6 @@
 package com.azat4dev.booking.users.users_commands.presentation.api.rest.authentication.entities;
 
-import com.azat4dev.booking.common.presentation.ValidationException;
+import com.azat4dev.booking.shared.application.ValidationException;
 import com.azat4dev.booking.users.users_commands.domain.core.values.email.EmailAddress;
 import com.azat4dev.booking.users.users_commands.domain.core.values.password.Password;
 

@@ -1,6 +1,6 @@
 package com.azat4dev.booking.users.users_commands.application.handlers;
 
-import com.azat4dev.booking.common.presentation.ValidationException;
+import com.azat4dev.booking.shared.application.ValidationException;
 import com.azat4dev.booking.shared.domain.DomainException;
 import com.azat4dev.booking.shared.domain.core.UserId;
 import com.azat4dev.booking.users.users_commands.application.commands.SignUp;

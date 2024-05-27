@@ -1,6 +1,6 @@
-package com.azat4dev.booking.listingsms.application.config.data;
+package com.azat4dev.booking.listingsms.commands.application.config.data;
 
-import com.azat4dev.booking.listingsms.application.config.data.serializer.dto.DomainEventDTO;
+import com.azat4dev.booking.listingsms.commands.application.config.data.serializer.dto.DomainEventDTO;
 import com.azat4dev.booking.listingsms.commands.data.repositories.UnitOfWorkImpl;
 import com.azat4dev.booking.listingsms.commands.domain.interfaces.repositories.ListingsRepository;
 import com.azat4dev.booking.listingsms.commands.domain.interfaces.repositories.UnitOfWork;

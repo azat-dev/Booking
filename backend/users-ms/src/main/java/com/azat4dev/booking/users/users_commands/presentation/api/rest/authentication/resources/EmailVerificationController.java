@@ -1,6 +1,6 @@
 package com.azat4dev.booking.users.users_commands.presentation.api.rest.authentication.resources;
 
-import com.azat4dev.booking.common.presentation.ErrorDTO;
+import com.azat4dev.booking.shared.application.ErrorDTO;
 import com.azat4dev.booking.users.users_commands.application.commands.email.verification.CompleteEmailVerification;
 import com.azat4dev.booking.users.users_commands.application.handlers.email.verification.CompleteEmailVerificationHandler;
 import jakarta.servlet.http.HttpServletRequest;

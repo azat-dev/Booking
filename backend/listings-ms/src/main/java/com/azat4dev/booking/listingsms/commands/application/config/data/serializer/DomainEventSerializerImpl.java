@@ -1,4 +1,4 @@
-package com.azat4dev.booking.listingsms.application.config.data.serializer;
+package com.azat4dev.booking.listingsms.commands.application.config.data.serializer;
 
 import com.azat4dev.booking.shared.data.DomainEventSerializer;
 import com.azat4dev.booking.shared.domain.event.DomainEvent;

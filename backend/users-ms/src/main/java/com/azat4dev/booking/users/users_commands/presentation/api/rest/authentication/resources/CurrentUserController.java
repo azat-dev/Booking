@@ -1,9 +1,9 @@
 package com.azat4dev.booking.users.users_commands.presentation.api.rest.authentication.resources;
 
-import com.azat4dev.booking.shared.domain.event.EventIdGenerator;
-import com.azat4dev.booking.common.presentation.ControllerException;
-import com.azat4dev.booking.shared.utils.TimeProvider;
+import com.azat4dev.booking.shared.application.ControllerException;
 import com.azat4dev.booking.shared.domain.core.UserId;
+import com.azat4dev.booking.shared.domain.event.EventIdGenerator;
+import com.azat4dev.booking.shared.utils.TimeProvider;
 import com.azat4dev.booking.users.users_commands.application.commands.photo.GenerateUserPhotoUploadUrl;
 import com.azat4dev.booking.users.users_commands.application.handlers.photo.GenerateUserPhotoUploadUrlHandler;
 import com.azat4dev.booking.users.users_commands.domain.handlers.users.UpdateUserPhotoHandler;

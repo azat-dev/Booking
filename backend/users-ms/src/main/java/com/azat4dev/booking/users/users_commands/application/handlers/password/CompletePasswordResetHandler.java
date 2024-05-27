@@ -1,6 +1,6 @@
 package com.azat4dev.booking.users.users_commands.application.handlers.password;
 
-import com.azat4dev.booking.common.presentation.ValidationException;
+import com.azat4dev.booking.shared.application.ValidationException;
 import com.azat4dev.booking.shared.domain.DomainException;
 import com.azat4dev.booking.users.users_commands.application.commands.password.CompletePasswordReset;
 
@@ -10,7 +10,7 @@ public interface CompletePasswordResetHandler {
 
     // Exceptions
 
-    public static sealed abstract class Exception extends DomainException permits Exception.InvalidToken, Exception.TokenExpired {
+    sealed abstract class Exception extends DomainException permits Exception.InvalidToken, Exception.TokenExpired {
         Exception(String message) {
             super(message);
         }

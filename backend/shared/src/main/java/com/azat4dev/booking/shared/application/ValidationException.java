@@ -1,9 +1,10 @@
-package com.azat4dev.booking.common.presentation;
+package com.azat4dev.booking.shared.application;
 
 import com.azat4dev.booking.shared.domain.DomainException;
-import org.springframework.http.ResponseEntity;
+import lombok.Getter;
 
-public class ValidationException extends RuntimeException {
+@Getter
+public final class ValidationException extends RuntimeException {
 
     private final ValidationErrorDTO error;
 
@@ -18,9 +19,5 @@ public class ValidationException extends RuntimeException {
 
     public static ValidationException with(String code, String path, String message) {
         return new ValidationException(ValidationErrorDTO.withError(code, path, message));
-    }
-
-    public ResponseEntity<ValidationErrorDTO> toResponseEntity() {
-        return ResponseEntity.badRequest().body(error);
     }
 }

@@ -1,13 +1,10 @@
 package com.azat4dev.booking.users.users_commands.presentation.api.rest.authentication.resources;
 
-import com.azat4dev.booking.common.presentation.ControllerException;
-import com.azat4dev.booking.common.presentation.ErrorDTO;
-import com.azat4dev.booking.shared.domain.event.EventIdGenerator;
-import com.azat4dev.booking.shared.utils.TimeProvider;
+import com.azat4dev.booking.shared.application.ControllerException;
+import com.azat4dev.booking.shared.application.ErrorDTO;
 import com.azat4dev.booking.users.users_commands.application.commands.password.CompletePasswordReset;
 import com.azat4dev.booking.users.users_commands.application.handlers.password.CompletePasswordResetHandler;
 import com.azat4dev.booking.users.users_commands.application.handlers.password.ResetPasswordByEmailHandler;
-import com.azat4dev.booking.users.users_commands.domain.interfaces.services.PasswordService;
 import com.azat4dev.booking.users.users_commands.presentation.api.rest.authentication.entities.CompleteResetPasswordRequest;
 import com.azat4dev.booking.users.users_commands.presentation.api.rest.authentication.entities.ResetPasswordByEmailRequest;
 import jakarta.servlet.http.HttpServletRequest;

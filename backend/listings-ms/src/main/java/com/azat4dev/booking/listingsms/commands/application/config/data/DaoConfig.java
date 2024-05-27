@@ -1,4 +1,4 @@
-package com.azat4dev.booking.listingsms.application.config.data;
+package com.azat4dev.booking.listingsms.commands.application.config.data;
 
 import com.azat4dev.booking.listingsms.commands.data.dao.listings.ListingsDao;
 import com.azat4dev.booking.listingsms.commands.data.dao.listings.ListingsDaoJDBC;

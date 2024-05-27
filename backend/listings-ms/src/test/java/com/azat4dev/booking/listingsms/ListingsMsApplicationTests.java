@@ -1,8 +1,8 @@
 package com.azat4dev.booking.listingsms;
 
 import com.azat4dev.booking.listingsms.helpers.PostgresTests;
-import com.azat4dev.booking.listingsms.presentation.api.dto.RequestAddListing;
-import com.azat4dev.booking.listingsms.presentation.api.dto.ResponseAddListing;
+import com.azat4dev.booking.listingsms.presentation.api.dto.AddListingRequest;
+import com.azat4dev.booking.listingsms.presentation.api.dto.AddListingResponse;
 import com.github.javafaker.Faker;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -29,8 +29,8 @@ class ListingsMsApplicationTests implements PostgresTests {
 	void contextLoads() {
 	}
 
-	RequestAddListing anyRequestAddListing() {
-		return new RequestAddListing(
+	AddListingRequest anyRequestAddListing() {
+		return new AddListingRequest(
 			UUID.randomUUID().toString(),
 			faker.book().title(),
 			faker.lorem().toString()
@@ -59,7 +59,7 @@ class ListingsMsApplicationTests implements PostgresTests {
 		return headers;
 	}
 
-	ResponseAddListing performAddNewListing(RequestAddListing requestAddListing, String accessToken) {
+	AddListingResponse performAddNewListing(AddListingRequest addListingRequest, String accessToken) {
 
 		final var url = baseURL() + "/api/listings";
 		final var headers = headersWithToken(accessToken);
@@ -70,7 +70,7 @@ class ListingsMsApplicationTests implements PostgresTests {
 			url,
 			HttpMethod.POST,
 			requestEntity,
-			ResponseAddListing.class
+			AddListingResponse.class
 		);
 
 		return response.getBody();

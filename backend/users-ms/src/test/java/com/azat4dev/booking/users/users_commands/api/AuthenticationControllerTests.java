@@ -1,8 +1,8 @@
 package com.azat4dev.booking.users.users_commands.api;
 
-import com.azat4dev.booking.common.presentation.GlobalControllerExceptionHandler;
-import com.azat4dev.booking.common.presentation.ValidationErrorDTO;
-import com.azat4dev.booking.common.presentation.ValidationException;
+import com.azat4dev.booking.shared.application.GlobalControllerExceptionHandler;
+import com.azat4dev.booking.shared.application.ValidationErrorDTO;
+import com.azat4dev.booking.shared.application.ValidationException;
 import com.azat4dev.booking.shared.domain.core.UserIdFactory;
 import com.azat4dev.booking.users.common.presentation.security.entities.UserPrincipal;
 import com.azat4dev.booking.users.common.presentation.security.services.CustomUserDetailsService;

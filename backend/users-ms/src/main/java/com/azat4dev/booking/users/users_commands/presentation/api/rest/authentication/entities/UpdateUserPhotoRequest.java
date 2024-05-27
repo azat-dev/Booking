@@ -1,6 +1,6 @@
 package com.azat4dev.booking.users.users_commands.presentation.api.rest.authentication.entities;
 
-import com.azat4dev.booking.common.presentation.ValidationException;
+import com.azat4dev.booking.shared.application.ValidationException;
 import com.azat4dev.booking.shared.domain.core.UserId;
 import com.azat4dev.booking.users.users_commands.domain.core.commands.UpdateUserPhoto;
 import com.azat4dev.booking.users.users_commands.domain.core.values.IdempotentOperationId;

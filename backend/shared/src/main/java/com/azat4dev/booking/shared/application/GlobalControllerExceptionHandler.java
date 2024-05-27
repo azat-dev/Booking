@@ -1,4 +1,4 @@
-package com.azat4dev.booking.common.presentation;
+package com.azat4dev.booking.shared.application;
 
 import com.azat4dev.booking.shared.domain.DomainException;
 import org.springframework.http.HttpStatus;
@@ -11,7 +11,7 @@ public class GlobalControllerExceptionHandler {
 
     @ExceptionHandler({ValidationException.class})
     public ResponseEntity<?> handleException(ValidationException ex) {
-        return ex.toResponseEntity();
+        return ResponseEntity.badRequest().body(ex.getError());
     }
 
     @ExceptionHandler({ControllerException.class})

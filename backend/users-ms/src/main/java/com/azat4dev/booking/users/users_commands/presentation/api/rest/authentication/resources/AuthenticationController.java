@@ -1,6 +1,6 @@
 package com.azat4dev.booking.users.users_commands.presentation.api.rest.authentication.resources;
 
-import com.azat4dev.booking.common.presentation.ErrorDTO;
+import com.azat4dev.booking.shared.application.ErrorDTO;
 import com.azat4dev.booking.shared.domain.core.UserId;
 import com.azat4dev.booking.users.common.presentation.security.services.CustomUserDetailsService;
 import com.azat4dev.booking.users.common.presentation.security.services.jwt.JwtService;

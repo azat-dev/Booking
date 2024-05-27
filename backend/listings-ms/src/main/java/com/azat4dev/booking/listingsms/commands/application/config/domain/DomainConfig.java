@@ -1,4 +1,4 @@
-package com.azat4dev.booking.listingsms.application.config.domain;
+package com.azat4dev.booking.listingsms.commands.application.config.domain;
 
 import com.azat4dev.booking.listingsms.commands.domain.entities.ListingsCatalog;
 import com.azat4dev.booking.listingsms.commands.domain.entities.ListingsCatalogImpl;
