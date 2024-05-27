@@ -1,7 +1,6 @@
-package com.azat4dev.booking.users.users_commands.data.repositories;
+package com.azat4dev.booking.shared.data;
 
 import com.azat4dev.booking.shared.domain.event.DomainEvent;
-import com.azat4dev.booking.users.users_commands.data.repositories.dto.*;
 import com.fasterxml.jackson.databind.DeserializationFeature;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.SerializationFeature;
@@ -10,11 +9,16 @@ import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
 import java.io.IOException;
 
 
-public class DomainEventSerializerImpl implements DomainEventSerializer {
+public final class DomainEventSerializerImpl implements DomainEventSerializer {
 
     private final ObjectMapper objectMapper;
+    private final ConvertToDTO convertToDTO;
+    private final Class<? extends SerializableDomainEvent> dtoClass;
 
-    public DomainEventSerializerImpl() {
+    public DomainEventSerializerImpl(ConvertToDTO convertToDTO, Class<? extends SerializableDomainEvent> dtoClass) {
+
+        this.convertToDTO = convertToDTO;
+        this.dtoClass = dtoClass;
 
         final var objectMapper = new ObjectMapper();
 
@@ -27,7 +31,8 @@ public class DomainEventSerializerImpl implements DomainEventSerializer {
     @Override
     public String serialize(DomainEvent<?> event) {
         try {
-            return objectMapper.writeValueAsString(DomainEventDTO.makeFrom(event));
+            final var dto = convertToDTO.execute(event);
+            return objectMapper.writeValueAsString(dto);
         } catch (IOException e) {
             throw new RuntimeException(e);
         }
@@ -36,11 +41,15 @@ public class DomainEventSerializerImpl implements DomainEventSerializer {
     @Override
     public DomainEvent<?> deserialize(String event) {
         try {
-            final var dto = this.objectMapper.readValue(event, DomainEventDTO.class);
+            final var dto = this.objectMapper.readValue(event, dtoClass);
             return dto.toDomain();
         } catch (Exception e) {
-            throw new RuntimeException(event.toString(), e);
+            throw new RuntimeException(event, e);
         }
+    }
+
+    public interface ConvertToDTO {
+        SerializableDomainEvent execute(DomainEvent<?> domainEvent);
     }
 }
 

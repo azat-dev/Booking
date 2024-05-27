@@ -1,5 +1,6 @@
 package com.azat4dev.booking.users.users_commands.data.repositories.dto;
 
+import com.azat4dev.booking.shared.data.DomainEventPayloadDTO;
 import com.azat4dev.booking.shared.domain.core.UserId;
 import com.azat4dev.booking.users.users_commands.domain.core.commands.GenerateUserPhotoUploadUrl;
 import com.azat4dev.booking.users.users_commands.domain.core.values.IdempotentOperationId;

@@ -1,8 +1,8 @@
 package com.azat4dev.booking.users.users_commands.data;
 
+import com.azat4dev.booking.shared.data.DomainEventSerializer;
 import com.azat4dev.booking.shared.domain.event.*;
 import com.azat4dev.booking.shared.utils.TimeProvider;
-import com.azat4dev.booking.users.users_commands.data.repositories.DomainEventSerializer;
 import lombok.RequiredArgsConstructor;
 import org.apache.kafka.clients.consumer.ConsumerRecord;
 import org.springframework.kafka.core.KafkaTemplate;

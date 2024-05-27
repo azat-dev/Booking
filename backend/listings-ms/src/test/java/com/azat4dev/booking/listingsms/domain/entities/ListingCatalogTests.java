@@ -5,15 +5,18 @@ import com.azat4dev.booking.listingsms.commands.domain.entities.ListingsCatalog;
 import com.azat4dev.booking.listingsms.commands.domain.entities.ListingsCatalogImpl;
 import com.azat4dev.booking.listingsms.commands.domain.events.NewListingAdded;
 import com.azat4dev.booking.listingsms.commands.domain.interfaces.repositories.ListingsRepository;
-import com.azat4dev.booking.listingsms.commands.domain.interfaces.repositories.OutboxEventsRepository;
 import com.azat4dev.booking.listingsms.commands.domain.interfaces.repositories.UnitOfWork;
+import com.azat4dev.booking.listingsms.commands.domain.interfaces.repositories.UnitOfWorkFactory;
+import com.azat4dev.booking.shared.data.repositories.outbox.OutboxEventsRepository;
+import com.azat4dev.booking.shared.utils.TimeProvider;
 import org.junit.jupiter.api.Test;
+
+import java.time.LocalDateTime;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.mockito.ArgumentMatchers.any;
-import static org.mockito.BDDMockito.then;
-import static org.mockito.BDDMockito.willThrow;
+import static org.mockito.BDDMockito.*;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.times;
 
@@ -26,13 +29,27 @@ public class ListingCatalogTests {
         final var listingsRepository = mock(ListingsRepository.class);
         final var outboxRepository = mock(OutboxEventsRepository.class);
 
+        given(unitOfWork.getListingsRepository())
+            .willReturn(listingsRepository);
+
+        given(unitOfWork.getOutboxEventsRepository())
+            .willReturn(outboxRepository);
+
+        final var timeProvider = mock(TimeProvider.class);
+
+        final var unitOfWorkFactory = mock(UnitOfWorkFactory.class);
+        given(unitOfWorkFactory.make())
+            .willReturn(unitOfWork);
+
         return new SUT(
             new ListingsCatalogImpl(
-                unitOfWork
+                unitOfWorkFactory,
+                timeProvider
             ),
             unitOfWork,
             listingsRepository,
-            outboxRepository
+            outboxRepository,
+            timeProvider
         );
     }
 
@@ -45,6 +62,11 @@ public class ListingCatalogTests {
         final var ownerId = DomainHelpers.anyOwnerId();
         final var title = DomainHelpers.anyListingTitle();
 
+        final var now = LocalDateTime.now();
+
+        given(sut.timeProvider.currentTime())
+            .willReturn(now);
+
         // When
         sut.listingsCatalog.addNew(
             listingId,
@@ -53,8 +75,9 @@ public class ListingCatalogTests {
         );
 
         // Then
-        final var expectedListing = new Listing(
+        final var expectedListing = Listing.makeNewDraft(
             listingId,
+            now,
             ownerId,
             title
         );
@@ -110,7 +133,8 @@ public class ListingCatalogTests {
         ListingsCatalog listingsCatalog,
         UnitOfWork unitOfWork,
         ListingsRepository listingsRepository,
-        OutboxEventsRepository outboxRepository
+        OutboxEventsRepository outboxRepository,
+        TimeProvider timeProvider
     ) {
     }
 }

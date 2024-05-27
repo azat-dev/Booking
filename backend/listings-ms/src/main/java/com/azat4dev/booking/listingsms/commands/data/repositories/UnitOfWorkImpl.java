@@ -1,8 +1,9 @@
-package com.azat4dev.booking.users.users_commands.data.repositories;
+package com.azat4dev.booking.listingsms.commands.data.repositories;
 
+
+import com.azat4dev.booking.listingsms.commands.domain.interfaces.repositories.ListingsRepository;
+import com.azat4dev.booking.listingsms.commands.domain.interfaces.repositories.UnitOfWork;
 import com.azat4dev.booking.shared.data.repositories.outbox.OutboxEventsRepository;
-import com.azat4dev.booking.users.users_commands.domain.interfaces.repositories.UnitOfWork;
-import com.azat4dev.booking.users.users_commands.domain.interfaces.repositories.UsersRepository;
 import org.springframework.transaction.PlatformTransactionManager;
 import org.springframework.transaction.TransactionStatus;
 import org.springframework.transaction.support.DefaultTransactionDefinition;
@@ -13,7 +14,7 @@ import java.util.Optional;
 public class UnitOfWorkImpl extends DefaultTransactionDefinition implements UnitOfWork {
 
     private final OutboxEventsRepository outboxEventsRepository;
-    private final UsersRepository usersRepository;
+    private final ListingsRepository listingsRepository;
     private final PlatformTransactionManager transactionManager;
     private Status status = Status.INITIAL;
     private Optional<TransactionStatus> transactionStatus;
@@ -22,13 +23,13 @@ public class UnitOfWorkImpl extends DefaultTransactionDefinition implements Unit
     public UnitOfWorkImpl(
         PlatformTransactionManager transactionManager,
         OutboxEventsRepository outboxEventsRepository,
-        UsersRepository usersRepository
+        ListingsRepository listingsRepository
     ) {
 
         this.setIsolationLevel(ISOLATION_READ_COMMITTED);
         this.transactionManager = transactionManager;
         this.outboxEventsRepository = outboxEventsRepository;
-        this.usersRepository = usersRepository;
+        this.listingsRepository = listingsRepository;
         this.transactionStatus = Optional.of(this.transactionManager.getTransaction(this));
     }
 
@@ -65,8 +66,8 @@ public class UnitOfWorkImpl extends DefaultTransactionDefinition implements Unit
     }
 
     @Override
-    public UsersRepository getUsersRepository() {
-        return this.usersRepository;
+    public ListingsRepository getListingsRepository() {
+        return this.listingsRepository;
     }
 
     enum Status {

@@ -1,6 +1,4 @@
-package com.azat4dev.booking.listingsms.data.dao;
-
-import com.azat4dev.booking.listingsms.data.dao.entities.ListingData;
+package com.azat4dev.booking.listingsms.commands.data.dao.listings;
 
 import java.util.Optional;
 import java.util.UUID;

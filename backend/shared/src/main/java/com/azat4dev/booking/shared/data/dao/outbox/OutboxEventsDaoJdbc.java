@@ -1,6 +1,5 @@
-package com.azat4dev.booking.users.users_commands.data.repositories.dao;
+package com.azat4dev.booking.shared.data.dao.outbox;
 
-import com.azat4dev.booking.users.users_commands.data.entities.OutboxEventData;
 import lombok.RequiredArgsConstructor;
 import org.springframework.jdbc.core.RowMapper;
 import org.springframework.jdbc.core.namedparam.NamedParameterJdbcTemplate;
@@ -24,7 +23,7 @@ public final class OutboxEventsDaoJdbc implements OutboxEventsDao {
             """;
         final var values = Map.of(
             "event_id", event.eventId(),
-            "event_type", event.eventType().name(),
+            "event_type", event.eventType(),
             "payload", event.payload(),
             "created_at", Timestamp.valueOf(event.createdAt().withNano(0)),
             "created_at_nano", event.createdAt().getNano(),

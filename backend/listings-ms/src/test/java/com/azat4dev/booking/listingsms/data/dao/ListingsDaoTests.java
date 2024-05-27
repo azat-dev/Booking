@@ -1,12 +1,10 @@
 package com.azat4dev.booking.listingsms.data.dao;
 
-import com.azat4dev.booking.listingsms.application.config.data.ListingsDaoConfig;
-import com.azat4dev.booking.listingsms.data.dao.entities.ListingData;
-import com.azat4dev.booking.listingsms.helpers.PostgresTests;
+import com.azat4dev.booking.listingsms.application.config.data.DaoConfig;
+import com.azat4dev.booking.listingsms.commands.data.dao.listings.ListingsDao;
+import com.azat4dev.booking.listingsms.commands.data.dao.listings.ListingData;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.github.javafaker.Faker;
-import org.junit.jupiter.api.AfterAll;
-import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.jdbc.AutoConfigureTestDatabase;
@@ -22,7 +20,7 @@ import java.util.UUID;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
-@Import(ListingsDaoConfig.class)
+@Import(DaoConfig.class)
 @JdbcTest(properties = {"spring.datasource.url=jdbc:tc:postgresql:15-alpine:///"})
 @AutoConfigureTestDatabase(replace = AutoConfigureTestDatabase.Replace.NONE)
 public class ListingsDaoTests  {

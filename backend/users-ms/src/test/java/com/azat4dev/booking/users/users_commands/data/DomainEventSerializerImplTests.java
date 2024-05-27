@@ -1,7 +1,8 @@
 package com.azat4dev.booking.users.users_commands.data;
 
-import com.azat4dev.booking.users.users_commands.data.repositories.DomainEventSerializer;
-import com.azat4dev.booking.users.users_commands.data.repositories.DomainEventSerializerImpl;
+import com.azat4dev.booking.shared.data.DomainEventSerializer;
+import com.azat4dev.booking.shared.data.DomainEventSerializerImpl;
+import com.azat4dev.booking.users.users_commands.data.repositories.dto.DomainEventDTO;
 import com.azat4dev.booking.users.users_commands.domain.core.commands.CompleteEmailVerification;
 import com.azat4dev.booking.users.users_commands.domain.core.commands.CompletePasswordReset;
 import com.azat4dev.booking.users.users_commands.domain.core.commands.SendVerificationEmail;
@@ -36,7 +37,10 @@ import static org.assertj.core.api.Assertions.assertThat;
 public class DomainEventSerializerImplTests {
 
     DomainEventSerializer createSUT() {
-        return new DomainEventSerializerImpl();
+        return new DomainEventSerializerImpl(
+            DomainEventDTO::makeFrom,
+            DomainEventDTO.class
+        );
     }
 
     IdempotentOperationId anyIdempotentOperationId() throws IdempotentOperationId.Exception {

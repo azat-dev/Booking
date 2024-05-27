@@ -1,5 +1,6 @@
 package com.azat4dev.booking.users.users_commands.data.repositories.dto;
 
+import com.azat4dev.booking.shared.data.DomainEventPayloadDTO;
 import com.azat4dev.booking.users.users_commands.domain.core.commands.CompletePasswordReset;
 import com.azat4dev.booking.users.users_commands.domain.core.values.IdempotentOperationId;
 import com.azat4dev.booking.users.users_commands.domain.core.values.password.EncodedPassword;

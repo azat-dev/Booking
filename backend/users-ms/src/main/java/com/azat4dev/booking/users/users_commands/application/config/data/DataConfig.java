@@ -1,16 +1,20 @@
 package com.azat4dev.booking.users.users_commands.application.config.data;
 
+import com.azat4dev.booking.shared.data.DomainEventSerializer;
+import com.azat4dev.booking.shared.data.DomainEventSerializerImpl;
+import com.azat4dev.booking.shared.data.dao.outbox.OutboxEventsDao;
+import com.azat4dev.booking.shared.data.dao.outbox.OutboxEventsDaoJdbc;
+import com.azat4dev.booking.shared.data.repositories.outbox.OutboxEventsRepository;
+import com.azat4dev.booking.shared.data.repositories.outbox.OutboxEventsRepositoryImpl;
 import com.azat4dev.booking.shared.domain.event.DomainEventsFactory;
 import com.azat4dev.booking.shared.utils.SystemTimeProvider;
 import com.azat4dev.booking.shared.utils.TimeProvider;
 import com.azat4dev.booking.users.common.presentation.security.services.jwt.JwtDataEncoder;
-import com.azat4dev.booking.users.users_commands.domain.handlers.password.reset.utils.ProvideResetPasswordTokenImpl;
 import com.azat4dev.booking.users.users_commands.data.repositories.*;
-import com.azat4dev.booking.users.users_commands.data.repositories.dao.OutboxEventsDao;
-import com.azat4dev.booking.users.users_commands.data.repositories.dao.OutboxEventsDaoJdbc;
 import com.azat4dev.booking.users.users_commands.data.repositories.dao.UsersDao;
+import com.azat4dev.booking.users.users_commands.data.repositories.dto.DomainEventDTO;
 import com.azat4dev.booking.users.users_commands.domain.handlers.password.reset.utils.ProvideResetPasswordToken;
-import com.azat4dev.booking.users.users_commands.domain.interfaces.repositories.OutboxEventsRepository;
+import com.azat4dev.booking.users.users_commands.domain.handlers.password.reset.utils.ProvideResetPasswordTokenImpl;
 import com.azat4dev.booking.users.users_commands.domain.interfaces.repositories.UnitOfWork;
 import com.azat4dev.booking.users.users_commands.domain.interfaces.repositories.UnitOfWorkFactory;
 import com.azat4dev.booking.users.users_commands.domain.interfaces.repositories.UsersRepository;
@@ -53,7 +57,10 @@ public class DataConfig {
 
     @Bean
     DomainEventSerializer domainEventSerializer() {
-        return new DomainEventSerializerImpl();
+        return new DomainEventSerializerImpl(
+            DomainEventDTO::makeFrom,
+            DomainEventDTO.class
+        );
     }
 
     @Bean

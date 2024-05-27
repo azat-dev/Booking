@@ -1,15 +1,15 @@
 package com.azat4dev.booking.users.users_commands.application.config.domain;
 
 import com.azat4dev.booking.common.domain.AutoConnectCommandHandlersToBus;
+import com.azat4dev.booking.shared.data.DomainEventSerializer;
+import com.azat4dev.booking.shared.data.repositories.outbox.OutboxEventsRepository;
 import com.azat4dev.booking.shared.domain.core.UserIdFactory;
 import com.azat4dev.booking.shared.domain.core.UserIdFactoryImpl;
 import com.azat4dev.booking.shared.domain.event.*;
 import com.azat4dev.booking.shared.utils.TimeProvider;
 import com.azat4dev.booking.users.users_commands.data.KafkaDomainEventsBus;
-import com.azat4dev.booking.users.users_commands.data.repositories.DomainEventSerializer;
 import com.azat4dev.booking.users.users_commands.domain.handlers.users.Users;
 import com.azat4dev.booking.users.users_commands.domain.handlers.users.UsersImpl;
-import com.azat4dev.booking.users.users_commands.domain.interfaces.repositories.OutboxEventsRepository;
 import com.azat4dev.booking.users.users_commands.domain.interfaces.repositories.UnitOfWorkFactory;
 import com.azat4dev.booking.users.users_commands.domain.producers.OutboxEventsPublisher;
 import com.azat4dev.booking.users.users_commands.domain.producers.OutboxEventsPublisherImpl;

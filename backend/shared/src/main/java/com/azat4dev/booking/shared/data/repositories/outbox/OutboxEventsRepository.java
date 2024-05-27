@@ -1,4 +1,4 @@
-package com.azat4dev.booking.listingsms.commands.domain.interfaces.repositories;
+package com.azat4dev.booking.shared.data.repositories.outbox;
 
 import com.azat4dev.booking.shared.domain.event.DomainEvent;
 import com.azat4dev.booking.shared.domain.event.DomainEventPayload;

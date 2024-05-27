@@ -1,17 +1,17 @@
-package com.azat4dev.booking.users.users_commands.data.repositories;
+package com.azat4dev.booking.shared.data.repositories.outbox;
 
+import com.azat4dev.booking.shared.data.DomainEventSerializer;
+import com.azat4dev.booking.shared.data.dao.outbox.OutboxEventData;
+import com.azat4dev.booking.shared.data.dao.outbox.OutboxEventsDao;
 import com.azat4dev.booking.shared.domain.event.DomainEvent;
 import com.azat4dev.booking.shared.domain.event.DomainEventPayload;
 import com.azat4dev.booking.shared.domain.event.DomainEventsFactory;
 import com.azat4dev.booking.shared.domain.event.EventId;
-import com.azat4dev.booking.users.users_commands.data.entities.OutboxEventData;
-import com.azat4dev.booking.users.users_commands.data.repositories.dao.OutboxEventsDao;
-import com.azat4dev.booking.users.users_commands.domain.interfaces.repositories.OutboxEventsRepository;
-import lombok.RequiredArgsConstructor;
+import lombok.AllArgsConstructor;
 
 import java.util.List;
 
-@RequiredArgsConstructor
+@AllArgsConstructor
 public class OutboxEventsRepositoryImpl implements OutboxEventsRepository {
 
     private final DomainEventSerializer domainEventSerializer;

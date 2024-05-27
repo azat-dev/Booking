@@ -27,7 +27,7 @@ public class AddNewListingCommandHandlerTests {
     SUT createSUT() {
         var repository = mock(ListingsRepository.class);
         var makeListingId = mock(MakeNewListingId.class);
-        var handler = new AddNewListingCommandHandler(repository, makeListingId);
+        var handler = new AddNewListingCommandHandler(repository, null, makeListingId);
 
         return new SUT(handler, repository, makeListingId);
     }

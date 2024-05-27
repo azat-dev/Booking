@@ -1,4 +1,4 @@
-package com.azat4dev.booking.users.users_commands.data.repositories.dto;
+package com.azat4dev.booking.listingsms.application.config.data.serializer.dto;
 
 import com.azat4dev.booking.shared.data.DomainEventPayloadDTO;
 import com.azat4dev.booking.shared.data.SerializableDomainEvent;
@@ -30,21 +30,7 @@ public record DomainEventDTO(
     )
     @JsonTypeIdResolver(DomainEventTypeResolver.class)
     @JsonSubTypes({
-        @JsonSubTypes.Type(value = UserCreatedDTO.class),
-        @JsonSubTypes.Type(value = UserVerifiedEmailDTO.class),
-        @JsonSubTypes.Type(value = SendVerificationEmailDTO.class),
-        @JsonSubTypes.Type(value = VerificationEmailSentDTO.class),
-        @JsonSubTypes.Type(value = FailedToSendVerificationEmailDTO.class),
-        @JsonSubTypes.Type(value = CompleteEmailVerificationDTO.class),
-        @JsonSubTypes.Type(value = SentEmailForPasswordResetDTO.class),
-        @JsonSubTypes.Type(value = UserDidResetPasswordDTO.class),
-        @JsonSubTypes.Type(value = CompletePasswordResetDTO.class),
-        @JsonSubTypes.Type(value = GenerateUserPhotoUploadUrlDTO.class),
-        @JsonSubTypes.Type(value = GeneratedUserPhotoUploadUrlDTO.class),
-        @JsonSubTypes.Type(value = FailedGenerateUserPhotoUploadUrlDTO.class),
-        @JsonSubTypes.Type(value = UpdatedUserPhotoDTO.class),
-        @JsonSubTypes.Type(value = UpdateUserPhotoDTO.class),
-        @JsonSubTypes.Type(value = FailedUpdateUserPhotoDTO.class),
+        @JsonSubTypes.Type(value = NewListingAddedDTO.class),
     })
     DomainEventPayloadDTO payload
 ) implements SerializableDomainEvent {
@@ -63,8 +49,6 @@ public record DomainEventDTO(
             final var fromDomainMethod = dtoClass.getDeclaredMethod("fromDomain", payload.getClass());
             assert fromDomainMethod != null;
             assert payload != null;
-            System.out.println(fromDomainMethod);
-            System.out.println(payload.getClass());
             return (DomainEventPayloadDTO) fromDomainMethod.invoke(null, payload);
         } catch (NoSuchFieldException e) {
             throw new RuntimeException(e);

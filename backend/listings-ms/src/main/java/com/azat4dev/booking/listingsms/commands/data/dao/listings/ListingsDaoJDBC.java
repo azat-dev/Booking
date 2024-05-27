@@ -1,6 +1,5 @@
-package com.azat4dev.booking.listingsms.data.dao;
+package com.azat4dev.booking.listingsms.commands.data.dao.listings;
 
-import com.azat4dev.booking.listingsms.data.dao.entities.ListingData;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import lombok.AllArgsConstructor;

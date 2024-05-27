@@ -1,6 +1,4 @@
-package com.azat4dev.booking.users.users_commands.data.repositories.dao;
-
-import com.azat4dev.booking.users.users_commands.data.entities.OutboxEventData;
+package com.azat4dev.booking.shared.data.dao.outbox;
 
 import java.util.List;
 

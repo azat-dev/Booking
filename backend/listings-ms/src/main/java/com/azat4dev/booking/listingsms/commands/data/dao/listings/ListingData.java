@@ -1,4 +1,4 @@
-package com.azat4dev.booking.listingsms.data.dao.entities;
+package com.azat4dev.booking.listingsms.commands.data.dao.listings;
 
 import java.time.LocalDateTime;
 import java.util.Optional;

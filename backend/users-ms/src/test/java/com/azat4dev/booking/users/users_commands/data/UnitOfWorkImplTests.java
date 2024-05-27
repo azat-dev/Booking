@@ -1,5 +1,6 @@
 package com.azat4dev.booking.users.users_commands.data;
 
+import com.azat4dev.booking.shared.data.repositories.outbox.OutboxEventsRepository;
 import com.azat4dev.booking.shared.domain.event.DomainEventsFactory;
 import com.azat4dev.booking.shared.domain.event.DomainEventsFactoryImpl;
 import com.azat4dev.booking.shared.domain.event.RandomEventIdGenerator;
@@ -7,10 +8,8 @@ import com.azat4dev.booking.shared.utils.SystemTimeProvider;
 import com.azat4dev.booking.users.common.presentation.security.services.jwt.JwtDataEncoder;
 import com.azat4dev.booking.users.users_commands.application.config.data.DaoConfig;
 import com.azat4dev.booking.users.users_commands.application.config.data.DataConfig;
-import com.azat4dev.booking.users.users_commands.data.jpa.PostgresTest;
 import com.azat4dev.booking.users.users_commands.data.repositories.UnitOfWorkImpl;
 import com.azat4dev.booking.users.users_commands.domain.UserHelpers;
-import com.azat4dev.booking.users.users_commands.domain.interfaces.repositories.OutboxEventsRepository;
 import com.azat4dev.booking.users.users_commands.domain.interfaces.repositories.UnitOfWork;
 import com.azat4dev.booking.users.users_commands.domain.interfaces.repositories.UsersRepository;
 import com.fasterxml.jackson.databind.ObjectMapper;

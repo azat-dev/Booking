@@ -1,5 +1,6 @@
 package com.azat4dev.booking.users.users_commands.domain.services;
 
+import com.azat4dev.booking.shared.data.repositories.outbox.OutboxEventsRepository;
 import com.azat4dev.booking.shared.utils.TimeProvider;
 import com.azat4dev.booking.users.users_commands.domain.UserHelpers;
 import com.azat4dev.booking.users.users_commands.domain.core.commands.NewUserData;
@@ -9,7 +10,6 @@ import com.azat4dev.booking.users.users_commands.domain.core.values.password.Enc
 import com.azat4dev.booking.users.users_commands.domain.core.values.user.EmailVerificationStatus;
 import com.azat4dev.booking.users.users_commands.domain.handlers.users.Users;
 import com.azat4dev.booking.users.users_commands.domain.handlers.users.UsersImpl;
-import com.azat4dev.booking.users.users_commands.domain.interfaces.repositories.OutboxEventsRepository;
 import com.azat4dev.booking.users.users_commands.domain.interfaces.repositories.UnitOfWork;
 import com.azat4dev.booking.users.users_commands.domain.interfaces.repositories.UnitOfWorkFactory;
 import com.azat4dev.booking.users.users_commands.domain.interfaces.repositories.UsersRepository;

@@ -1,14 +1,16 @@
 package com.azat4dev.booking.listingsms.application.config.data;
 
-import com.azat4dev.booking.listingsms.data.dao.ListingsDao;
-import com.azat4dev.booking.listingsms.data.dao.ListingsDaoJDBC;
+import com.azat4dev.booking.listingsms.commands.data.dao.listings.ListingsDao;
+import com.azat4dev.booking.listingsms.commands.data.dao.listings.ListingsDaoJDBC;
+import com.azat4dev.booking.shared.data.dao.outbox.OutboxEventsDao;
+import com.azat4dev.booking.shared.data.dao.outbox.OutboxEventsDaoJdbc;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.jdbc.core.namedparam.NamedParameterJdbcTemplate;
 
 @Configuration
-public class ListingsDaoConfig {
+public class DaoConfig {
 
     @Bean
     ListingsDao listingsDao(
@@ -16,5 +18,13 @@ public class ListingsDaoConfig {
         NamedParameterJdbcTemplate jdbcTemplate
     ) {
         return new ListingsDaoJDBC(objectMapper, jdbcTemplate);
+    }
+
+    @Bean
+    OutboxEventsDao outboxEventsDao(
+        ObjectMapper objectMapper,
+        NamedParameterJdbcTemplate jdbcTemplate
+    ) {
+        return new OutboxEventsDaoJdbc(jdbcTemplate);
     }
 }

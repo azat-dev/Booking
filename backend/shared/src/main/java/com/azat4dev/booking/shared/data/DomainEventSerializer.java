@@ -1,4 +1,4 @@
-package com.azat4dev.booking.users.users_commands.data.repositories;
+package com.azat4dev.booking.shared.data;
 
 import com.azat4dev.booking.shared.domain.event.DomainEvent;
 
