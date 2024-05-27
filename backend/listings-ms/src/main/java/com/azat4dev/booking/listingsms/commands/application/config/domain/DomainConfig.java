@@ -3,6 +3,8 @@ package com.azat4dev.booking.listingsms.commands.application.config.domain;
 import com.azat4dev.booking.listingsms.commands.domain.entities.ListingsCatalog;
 import com.azat4dev.booking.listingsms.commands.domain.entities.ListingsCatalogImpl;
 import com.azat4dev.booking.listingsms.commands.domain.interfaces.repositories.UnitOfWorkFactory;
+import com.azat4dev.booking.listingsms.commands.domain.values.MakeNewListingId;
+import com.azat4dev.booking.listingsms.commands.domain.values.MakeNewListingIdImpl;
 import com.azat4dev.booking.shared.domain.event.DomainEventsFactory;
 import com.azat4dev.booking.shared.domain.event.DomainEventsFactoryImpl;
 import com.azat4dev.booking.shared.domain.event.EventIdGenerator;
@@ -36,5 +38,10 @@ public class DomainConfig {
             eventIdGenerator,
             timeProvider
         );
+    }
+
+    @Bean
+    MakeNewListingId makeNewListingId() {
+        return new MakeNewListingIdImpl();
     }
 }

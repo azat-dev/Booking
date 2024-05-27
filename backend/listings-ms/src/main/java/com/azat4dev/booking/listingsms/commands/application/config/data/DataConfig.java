@@ -1,6 +1,8 @@
 package com.azat4dev.booking.listingsms.commands.application.config.data;
 
 import com.azat4dev.booking.listingsms.commands.application.config.data.serializer.dto.DomainEventDTO;
+import com.azat4dev.booking.listingsms.commands.data.dao.listings.ListingsDao;
+import com.azat4dev.booking.listingsms.commands.data.repositories.ListingsRepositoryImpl;
 import com.azat4dev.booking.listingsms.commands.data.repositories.UnitOfWorkImpl;
 import com.azat4dev.booking.listingsms.commands.domain.interfaces.repositories.ListingsRepository;
 import com.azat4dev.booking.listingsms.commands.domain.interfaces.repositories.UnitOfWork;
@@ -52,8 +54,14 @@ public class DataConfig {
     }
 
     @Bean
-    ListingsRepository listingsRepository() {
-        return null;
+    ListingsRepository listingsRepository(
+        ListingsDao listingsDao,
+        TimeProvider timeProvider
+    ) {
+        return new ListingsRepositoryImpl(
+            listingsDao,
+            timeProvider
+        );
     }
 
     @Bean

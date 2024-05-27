@@ -43,12 +43,10 @@ public class ListingsDaoTests  {
     @Test
     @Sql(scripts = {"/db/drop-schema.sql"})
     @Sql(scripts = {"/db/schema.sql"})
-    void test_addNew() {
+    void test_addNew() throws ListingsDao.Exception.ListingAlreadyExists {
         // Given
-        final var listingId = UUID.randomUUID();
-        final var ownerId = UUID.randomUUID();
-
         final var newListing = anyListingData();
+        final var listingId = newListing.id();
 
         // When
         dao.addNew(newListing);
@@ -64,7 +62,7 @@ public class ListingsDaoTests  {
     @Test
     @Sql(scripts = {"/db/drop-schema.sql"})
     @Sql(scripts = {"/db/schema.sql"})
-    void test_findById_givenExistingId_thenReturnListing() {
+    void test_findById_givenExistingId_thenReturnListing() throws ListingsDao.Exception.ListingAlreadyExists {
         // Given
         final var listing1 = anyListingData();
         final var listing2 = anyListingData();

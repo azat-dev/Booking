@@ -34,7 +34,11 @@ public final class ListingsRepositoryImpl implements ListingsRepository {
             Optional.empty()
         );
 
-        dao.addNew(data);
+        try {
+            dao.addNew(data);
+        } catch (ListingsDao.Exception.ListingAlreadyExists e) {
+            throw new RuntimeException(e);
+        }
     }
 
     @Override

@@ -1,7 +1,7 @@
-package com.azat4dev.booking.listingsms.presentation.api.resources;
+package com.azat4dev.booking.listingsms.commands.api.resources;
 
-import com.azat4dev.booking.listingsms.presentation.api.dto.AddListingRequest;
-import com.azat4dev.booking.listingsms.presentation.api.dto.AddListingResponse;
+import com.azat4dev.booking.listingsms.commands.api.dto.AddListingResponse;
+import com.azat4dev.booking.listingsms.commands.api.dto.AddListingRequest;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import org.springframework.http.ResponseEntity;

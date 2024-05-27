@@ -1,8 +1,8 @@
 package com.azat4dev.booking.listingsms;
 
 import com.azat4dev.booking.listingsms.helpers.PostgresTests;
-import com.azat4dev.booking.listingsms.presentation.api.dto.AddListingRequest;
-import com.azat4dev.booking.listingsms.presentation.api.dto.AddListingResponse;
+import com.azat4dev.booking.listingsms.commands.api.dto.AddListingRequest;
+import com.azat4dev.booking.listingsms.commands.api.dto.AddListingResponse;
 import com.github.javafaker.Faker;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
