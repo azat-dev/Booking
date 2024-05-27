@@ -1,6 +1,6 @@
 package com.azat4dev.booking.listingsms.commands.application.config.data;
 
-import com.azat4dev.booking.listingsms.commands.application.config.data.serializer.dto.DomainEventDTO;
+import com.azat4dev.booking.listingsms.commands.data.serializer.dto.DomainEventDTO;
 import com.azat4dev.booking.listingsms.commands.data.dao.listings.ListingsDao;
 import com.azat4dev.booking.listingsms.commands.data.repositories.ListingsRepositoryImpl;
 import com.azat4dev.booking.listingsms.commands.data.repositories.UnitOfWorkImpl;
@@ -19,7 +19,7 @@ import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.transaction.PlatformTransactionManager;
 
-@Configuration
+@Configuration("commandsDataConfig")
 public class DataConfig {
 
     @Bean

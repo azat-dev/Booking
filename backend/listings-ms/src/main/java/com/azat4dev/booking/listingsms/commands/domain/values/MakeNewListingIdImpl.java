@@ -6,6 +6,6 @@ public final class MakeNewListingIdImpl implements MakeNewListingId {
 
     @Override
     public ListingId make() {
-        return ListingId.checkAndMakeFrom(UUID.randomUUID().toString());
+        return ListingId.dangerouslyMakeFrom(UUID.randomUUID().toString());
     }
 }

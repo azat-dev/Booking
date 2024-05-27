@@ -1,4 +1,4 @@
-package com.azat4dev.booking.listingsms.commands.application.config.data.serializer.dto;
+package com.azat4dev.booking.listingsms.commands.data.serializer.dto;
 
 import com.azat4dev.booking.listingsms.commands.domain.events.NewListingAdded;
 import com.azat4dev.booking.listingsms.commands.domain.values.ListingId;

@@ -1,5 +1,6 @@
 package com.azat4dev.booking.listingsms.commands.domain.values;
 
+import com.azat4dev.booking.shared.domain.DomainException;
 import lombok.EqualsAndHashCode;
 import lombok.Getter;
 
@@ -15,8 +16,12 @@ public final class ListingId {
         this.value = value;
     }
 
-    public static ListingId checkAndMakeFrom(String value) {
-        return new ListingId(UUID.fromString(value));
+    public static ListingId checkAndMakeFrom(String value) throws Exception.WrongFormat {
+        try {
+            return new ListingId(UUID.fromString(value));
+        } catch (IllegalArgumentException e) {
+            throw new Exception.WrongFormat();
+        }
     }
 
     public static ListingId dangerouslyMakeFrom(String value) {
@@ -25,5 +30,19 @@ public final class ListingId {
 
     public String toString() {
         return value.toString();
+    }
+
+    // Exceptions
+
+    public static class Exception extends DomainException {
+        public Exception(String message) {
+            super(message);
+        }
+
+        public static class WrongFormat extends Exception {
+            public WrongFormat() {
+                super("Listing ID has wrong format");
+            }
+        }
     }
 }
