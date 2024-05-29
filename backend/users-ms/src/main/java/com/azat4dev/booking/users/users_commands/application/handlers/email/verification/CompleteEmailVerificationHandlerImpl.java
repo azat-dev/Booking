@@ -1,5 +1,6 @@
 package com.azat4dev.booking.users.users_commands.application.handlers.email.verification;
 
+import com.azat4dev.booking.shared.application.ValidationException;
 import com.azat4dev.booking.users.users_commands.application.commands.email.verification.CompleteEmailVerification;
 import com.azat4dev.booking.users.users_commands.domain.core.values.email.verification.EmailVerificationToken;
 import com.azat4dev.booking.users.users_commands.domain.handlers.email.verification.VerifyEmailByToken;
@@ -11,7 +12,7 @@ public final class CompleteEmailVerificationHandlerImpl implements CompleteEmail
     private final VerifyEmailByToken verifyEmailByToken;
 
     @Override
-    public void handle(CompleteEmailVerification command) throws Exception {
+    public void handle(CompleteEmailVerification command) throws Exception, ValidationException {
 
         final var token = new EmailVerificationToken(command.token());
 

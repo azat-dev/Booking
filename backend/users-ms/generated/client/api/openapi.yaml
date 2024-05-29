@@ -8,29 +8,37 @@ servers:
 security:
 - BearerAuth: []
 paths:
-  /api/public/auth/token:
-    post:
-      operationId: getNewTokensByEmail
-      requestBody:
-        content:
-          application/json:
-            schema:
-              $ref: "#/components/schemas/AuthenticateByEmailRequestBody"
-        description: JSON payload
+  /api/public/verify-email:
+    get:
+      operationId: verifyEmail
+      parameters:
+      - in: path
+        name: token
         required: true
+        schema:
+          type: string
       responses:
         "200":
           content:
             application/json:
               schema:
-                $ref: "#/components/schemas/GetTokenResponseBody"
-          description: Success
-      security: []
-      summary: "Get a new pair of tokens (access, refresh)"
+                $ref: "#/components/schemas/verifyEmail_200_response"
+          description: Email verified
+        "400":
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/verifyEmail_400_response"
+          description: Invalid token
+        "403":
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/verifyEmail_400_response"
+          description: User not found
+      summary: Send email for verification
       tags:
-      - commands
-      - auth
-      x-content-type: application/json
+      - commandsEmailVerification
       x-accepts:
       - application/json
   /api/public/auth/sign-up:
@@ -54,7 +62,7 @@ paths:
           content:
             application/json:
               schema:
-                $ref: "#/components/schemas/signUpByEmail_400_response"
+                $ref: "#/components/schemas/verifyEmail_400_response"
           description: Wrong request
         "409":
           content:
@@ -65,35 +73,41 @@ paths:
       security: []
       summary: Sign up a new user
       tags:
-      - commands
-      - auth
+      - commandsSignUp
       x-content-type: application/json
       x-accepts:
       - application/json
-  /api/public/auth/token/verify:
+  /api/public/auth/login:
     post:
-      operationId: verifyToken
+      operationId: loginByEmail
       requestBody:
         content:
           application/json:
             schema:
-              $ref: "#/components/schemas/verifyToken_request"
+              $ref: "#/components/schemas/LoginByEmailRequestBody"
         description: JSON payload
         required: true
       responses:
         "200":
-          description: Valid Token
-        "401":
-          description: Not valid Token
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/LoginByEmailResponseBody"
+          description: Success
+        "403":
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/verifyEmail_400_response"
+          description: User not found
       security: []
-      summary: Check if a token is valid
+      summary: "Get a new pair of tokens by email (access, refresh)"
       tags:
-      - commands
-      - auth
+      - commandsLogin
       x-content-type: application/json
       x-accepts:
       - application/json
-  /api/public/reset-password:
+  /api/public/password/reset:
     post:
       operationId: resetPasswordByEmail
       requestBody:
@@ -105,43 +119,65 @@ paths:
         required: true
       responses:
         "200":
+          content:
+            application/json:
+              schema:
+                default: Sent email with reset password instructions
+                type: string
           description: Sent email with reset password instructions
         "401":
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/verifyEmail_400_response"
           description: Not valid email
+        "404":
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/verifyEmail_400_response"
+          description: Email not found
       security: []
       summary: Reset password by email
       tags:
-      - commands
-      - password
+      - commandsResetPassword
       x-content-type: application/json
       x-accepts:
       - application/json
-  /api/with-auth/users/current/update-photo:
+  /api/public/password/set-new:
     post:
-      operationId: updateUserPhoto
+      operationId: completeResetPassword
       requestBody:
         content:
           application/json:
             schema:
-              $ref: "#/components/schemas/UpdateUserPhotoRequestBody"
+              $ref: "#/components/schemas/CompleteResetPasswordRequestBody"
+        description: JSON payload
         required: true
       responses:
         "200":
           content:
-            '*/*':
+            application/json:
               schema:
+                default: Set new password
                 type: string
-          description: OK
-      summary: POST api/with-auth/users/current/update-photo
+          description: Set new password
+        "403":
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/verifyEmail_400_response"
+          description: Token is not valid
+      security: []
+      summary: Reset password by email
       tags:
-      - commands
-      - currentUser
+      - commandsResetPassword
       x-content-type: application/json
       x-accepts:
-      - '*/*'
-  /api/with-auth/users/current/get-upload-url-user-photo:
+      - application/json
+  /api/with-auth/users/current/photo/get-upload-url:
     post:
-      operationId: generateUploadUserPhototUrl
+      operationId: generateUploadUserPhotoUrl
       requestBody:
         content:
           application/json:
@@ -155,10 +191,32 @@ paths:
               schema:
                 $ref: "#/components/schemas/GenerateUploadUserPhotoUrlResponseBody"
           description: OK
-      summary: POST api/with-auth/users/current/get-upload-url-user-photo
+      summary: Generate upload form for user photo
       tags:
-      - commands
-      - currentUser
+      - commandsUpdateUserPhoto
+      x-content-type: application/json
+      x-accepts:
+      - '*/*'
+  /api/with-auth/users/current/photo/update:
+    post:
+      operationId: updateUserPhoto
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/UpdateUserPhotoRequestBody"
+        required: true
+      responses:
+        "200":
+          content:
+            '*/*':
+              schema:
+                default: Photo updated
+                type: string
+          description: Photo updated
+      summary: Attach uploaded photo to the user
+      tags:
+      - commandsUpdateUserPhoto
       x-content-type: application/json
       x-accepts:
       - '*/*'
@@ -173,177 +231,16 @@ paths:
                 $ref: "#/components/schemas/PersonalUserInfoDTO"
           description: Current users info
         "401":
-          description: Not valid Token
+          description: User not authenticated
+        "404":
+          description: User not found
       summary: Gets current user info
       tags:
-      - queries
-      - currentUser
+      - queriesCurrentUser
       x-accepts:
       - application/json
 components:
   schemas:
-    SignUpByEmailRequestBody:
-      example:
-        password: password
-        fullName:
-          firstName: firstName
-          lastName: lastName
-        email: email
-      properties:
-        email:
-          format: email
-          type: string
-        password:
-          type: string
-        fullName:
-          $ref: "#/components/schemas/FullNameDTO"
-      required:
-      - email
-      - fullName
-      - password
-      type: object
-    SignUpResponseBody:
-      properties:
-        userId:
-          format: uuid
-          type: string
-        tokens:
-          $ref: "#/components/schemas/TokensPairDTO"
-      required:
-      - tokens
-      - userId
-      type: object
-    GetTokenResponseBody:
-      example:
-        tokens:
-          access: access
-          refresh: refresh
-        userId: 046b6c7f-0b8a-43b9-b35d-6489e6daee91
-      properties:
-        userId:
-          format: uuid
-          type: string
-        tokens:
-          $ref: "#/components/schemas/TokensPairDTO"
-      required:
-      - tokens
-      - userId
-      type: object
-    ResetPasswordByEmailRequestBody:
-      example:
-        operationId: 046b6c7f-0b8a-43b9-b35d-6489e6daee91
-        email: email
-      properties:
-        operationId:
-          format: uuid
-          type: string
-        email:
-          format: email
-          type: string
-      required:
-      - email
-      - operationId
-      type: object
-    OperationIdDTO:
-      format: uuid
-      type: string
-    UserIdDTO:
-      format: uuid
-      type: string
-    TokensPairDTO:
-      example:
-        access: access
-        refresh: refresh
-      properties:
-        access:
-          type: string
-        refresh:
-          type: string
-      required:
-      - access
-      - refresh
-      type: object
-    AuthenticateByEmailRequestBody:
-      example:
-        password: password
-        email: email
-      properties:
-        email:
-          format: email
-          type: string
-        password:
-          type: string
-      required:
-      - email
-      - password
-      type: object
-    SignUpByEmailResponseBody:
-      example:
-        tokens:
-          access: access
-          refresh: refresh
-        userId: 046b6c7f-0b8a-43b9-b35d-6489e6daee91
-      properties:
-        userId:
-          format: uuid
-          type: string
-        tokens:
-          $ref: "#/components/schemas/TokensPairDTO"
-      required:
-      - tokens
-      - userId
-      type: object
-    FullNameDTO:
-      example:
-        firstName: firstName
-        lastName: lastName
-      properties:
-        firstName:
-          maxLength: 255
-          minLength: 1
-          type: string
-        lastName:
-          maxLength: 255
-          minLength: 1
-          type: string
-      required:
-      - firstName
-      - lastName
-      type: object
-    EmailVerificationStatusDTO:
-      enum:
-      - VERIFIED
-      - NOT_VERIFIED
-      type: string
-    PersonalUserInfoDTO:
-      example:
-        fullName:
-          firstName: firstName
-          lastName: lastName
-        photo:
-          url: url
-        id: 046b6c7f-0b8a-43b9-b35d-6489e6daee91
-        emailVerificationStatus: VERIFIED
-        email: email
-      properties:
-        id:
-          format: uuid
-          type: string
-        fullName:
-          $ref: "#/components/schemas/FullNameDTO"
-        email:
-          format: email
-          type: string
-        photo:
-          $ref: "#/components/schemas/PhotoPathDTO"
-        emailVerificationStatus:
-          $ref: "#/components/schemas/EmailVerificationStatusDTO"
-      required:
-      - email
-      - emailVerificationStatus
-      - fullName
-      - id
-      type: object
     ValidationErrorDTO:
       example:
         type: validationError
@@ -383,6 +280,65 @@ components:
       - message
       - path
       type: object
+    ErrorDTO:
+      properties:
+        code:
+          type: string
+        message:
+          type: string
+      required:
+      - code
+      - message
+      type: object
+    SignUpByEmailRequestBody:
+      example:
+        password: password
+        fullName:
+          firstName: firstName
+          lastName: lastName
+        email: email
+      properties:
+        email:
+          format: email
+          type: string
+        password:
+          type: string
+        fullName:
+          $ref: "#/components/schemas/FullNameDTO"
+      required:
+      - email
+      - fullName
+      - password
+      type: object
+    SignUpByEmailResponseBody:
+      example:
+        tokens:
+          access: access
+          refresh: refresh
+        userId: 046b6c7f-0b8a-43b9-b35d-6489e6daee91
+      properties:
+        userId:
+          format: uuid
+          type: string
+        tokens:
+          $ref: "#/components/schemas/TokensPairDTO"
+      required:
+      - tokens
+      - userId
+      type: object
+    TokensPairDTO:
+      example:
+        access: access
+        refresh: refresh
+      properties:
+        access:
+          type: string
+        refresh:
+          type: string
+      required:
+      - access
+      - refresh
+      type: object
     UserWithSameEmailAlreadyExistsErrorDTO:
       example:
         code: UserWithSameEmailAlreadyExists
@@ -397,39 +353,108 @@ components:
       - code
       - message
       type: object
+    LoginByEmailRequestBody:
+      example:
+        password: password
+        email: email
+      properties:
+        email:
+          format: email
+          type: string
+        password:
+          type: string
+      required:
+      - email
+      - password
+      type: object
+    LoginByEmailResponseBody:
+      example:
+        tokens:
+          access: access
+          refresh: refresh
+        userId: 046b6c7f-0b8a-43b9-b35d-6489e6daee91
+      properties:
+        userId:
+          format: uuid
+          type: string
+        tokens:
+          $ref: "#/components/schemas/TokensPairDTO"
+      required:
+      - tokens
+      - userId
+      type: object
+    ResetPasswordByEmailRequestBody:
+      example:
+        operationId: 046b6c7f-0b8a-43b9-b35d-6489e6daee91
+        email: email
+      properties:
+        operationId:
+          format: uuid
+          type: string
+        email:
+          format: email
+          type: string
+      required:
+      - email
+      - operationId
+      type: object
+    CompleteResetPasswordRequestBody:
+      example:
+        resetPasswordToken: resetPasswordToken
+        operationId: 046b6c7f-0b8a-43b9-b35d-6489e6daee91
+        newPassword: newPassword
+      properties:
+        operationId:
+          format: uuid
+          type: string
+        newPassword:
+          minLength: 1
+          type: string
+        resetPasswordToken:
+          minLength: 1
+          type: string
+      required:
+      - newPassword
+      - operationId
+      - resetPasswordToken
+      type: object
     GenerateUploadUserPhotoUrlRequestBody:
       example:
         fileName: fileName
         fileSize: 0
         fileExtension: fileExtension
-        idempotentOperationId: idempotentOperationId
+        operationId: 046b6c7f-0b8a-43b9-b35d-6489e6daee91
       properties:
-        idempotentOperationId:
+        operationId:
+          format: uuid
           type: string
         fileName:
           type: string
         fileExtension:
+          maxLength: 10
           type: string
         fileSize:
-          format: int32
+          format: unsignedInt32
           type: integer
       type: object
-    UpdateUserPhotoRequestBody:
+    GenerateUploadUserPhotoUrlResponseBody:
       example:
-        idempotentOperationId: idempotentOperationId
-        uploadedFile:
+        objectPath:
           bucketName: bucketName
           objectName: objectName
           url: url
+        formData:
+          key: formData
       properties:
-        idempotentOperationId:
-          type: string
-        uploadedFile:
+        objectPath:
           $ref: "#/components/schemas/UploadedFileDataDTO"
+        formData:
+          additionalProperties:
+            type: string
+          type: object
       required:
-      - bucketName
-      - idempotentOperationId
-      - objectName
+      - formData
+      - objectPath
       type: object
     UploadedFileDataDTO:
       example:
@@ -448,22 +473,75 @@ components:
       - objectName
       - url
       type: object
-    GenerateUploadUserPhotoUrlResponseBody:
+    UpdateUserPhotoRequestBody:
       example:
-        objectPath:
+        operationId: 046b6c7f-0b8a-43b9-b35d-6489e6daee91
+        uploadedFile:
           bucketName: bucketName
           objectName: objectName
           url: url
-        formData: "{}"
       properties:
-        objectPath:
+        operationId:
+          format: uuid
+          type: string
+        uploadedFile:
           $ref: "#/components/schemas/UploadedFileDataDTO"
-        formData:
-          type: object
       required:
-      - formData
-      - objectPath
+      - operationId
+      - uploadedFile
       type: object
+    PersonalUserInfoDTO:
+      example:
+        fullName:
+          firstName: firstName
+          lastName: lastName
+        photo:
+          url: url
+        id: 046b6c7f-0b8a-43b9-b35d-6489e6daee91
+        emailVerificationStatus: VERIFIED
+        email: email
+      properties:
+        id:
+          format: uuid
+          type: string
+        fullName:
+          $ref: "#/components/schemas/FullNameDTO"
+        email:
+          format: email
+          type: string
+        photo:
+          $ref: "#/components/schemas/PhotoPathDTO"
+        emailVerificationStatus:
+          $ref: "#/components/schemas/EmailVerificationStatusDTO"
+      required:
+      - email
+      - emailVerificationStatus
+      - fullName
+      - id
+      type: object
+    FullNameDTO:
+      example:
+        firstName: firstName
+        lastName: lastName
+      properties:
+        firstName:
+          maxLength: 255
+          minLength: 1
+          type: string
+        lastName:
+          maxLength: 255
+          minLength: 1
+          type: string
+      required:
+      - firstName
+      - lastName
+      type: object
+    UserIdDTO:
+      format: uuid
+      type: string
+    OperationIdDTO:
+      format: uuid
+      type: string
     PhotoPathDTO:
       example:
         url: url
@@ -471,30 +549,23 @@ components:
         url:
           type: string
       type: object
-    ErrorDTO:
+    EmailVerificationStatusDTO:
+      enum:
+      - VERIFIED
+      - NOT_VERIFIED
+      type: string
+    verifyEmail_200_response:
+      example:
+        message: Email verified
       properties:
-        code:
-          type: string
         message:
+          default: Email verified
           type: string
-      required:
-      - code
-      - message
       type: object
-    ErrorsDTO:
-      items:
-        $ref: "#/components/schemas/ErrorDTO"
-      type: array
-    signUpByEmail_400_response:
+    verifyEmail_400_response:
       oneOf:
       - $ref: "#/components/schemas/ValidationErrorDTO"
-    verifyToken_request:
-      properties:
-        token:
-          type: string
-      required:
-      - token
-      type: object
+      - $ref: "#/components/schemas/ErrorDTO"
   securitySchemes:
     BearerAuth:
       bearerFormat: JWT

@@ -21,6 +21,8 @@ import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.annotation.JsonCreator;
 import com.fasterxml.jackson.annotation.JsonTypeName;
 import com.fasterxml.jackson.annotation.JsonValue;
+import java.util.HashMap;
+import java.util.Map;
 import com.fasterxml.jackson.annotation.JsonPropertyOrder;
 import com.fasterxml.jackson.annotation.JsonTypeName;
 
@@ -31,13 +33,13 @@ import com.fasterxml.jackson.annotation.JsonTypeName;
   GenerateUploadUserPhotoUrlResponseBody.JSON_PROPERTY_OBJECT_PATH,
   GenerateUploadUserPhotoUrlResponseBody.JSON_PROPERTY_FORM_DATA
 })
-@javax.annotation.Generated(value = "org.openapitools.codegen.languages.JavaClientCodegen", date = "2024-05-29T10:57:01.921409+03:00[Europe/Moscow]", comments = "Generator version: 7.6.0")
+@javax.annotation.Generated(value = "org.openapitools.codegen.languages.JavaClientCodegen", date = "2024-05-30T01:15:08.126842+03:00[Europe/Moscow]", comments = "Generator version: 7.6.0")
 public class GenerateUploadUserPhotoUrlResponseBody {
   public static final String JSON_PROPERTY_OBJECT_PATH = "objectPath";
   private UploadedFileDataDTO objectPath;
 
   public static final String JSON_PROPERTY_FORM_DATA = "formData";
-  private Object formData;
+  private Map<String, String> formData = new HashMap<>();
 
   public GenerateUploadUserPhotoUrlResponseBody() {
   }
@@ -68,9 +70,14 @@ public class GenerateUploadUserPhotoUrlResponseBody {
   }
 
 
-  public GenerateUploadUserPhotoUrlResponseBody formData(Object formData) {
+  public GenerateUploadUserPhotoUrlResponseBody formData(Map<String, String> formData) {
     
     this.formData = formData;
+    return this;
+  }
+
+  public GenerateUploadUserPhotoUrlResponseBody putFormDataItem(String key, String formDataItem) {
+    this.formData.put(key, formDataItem);
     return this;
   }
 
@@ -82,14 +89,14 @@ public class GenerateUploadUserPhotoUrlResponseBody {
   @JsonProperty(JSON_PROPERTY_FORM_DATA)
   @JsonInclude(value = JsonInclude.Include.ALWAYS)
 
-  public Object getFormData() {
+  public Map<String, String> getFormData() {
     return formData;
   }
 
 
   @JsonProperty(JSON_PROPERTY_FORM_DATA)
   @JsonInclude(value = JsonInclude.Include.ALWAYS)
-  public void setFormData(Object formData) {
+  public void setFormData(Map<String, String> formData) {
     this.formData = formData;
   }
 

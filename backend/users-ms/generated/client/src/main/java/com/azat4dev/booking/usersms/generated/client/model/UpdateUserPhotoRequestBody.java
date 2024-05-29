@@ -21,6 +21,7 @@ import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.annotation.JsonCreator;
 import com.fasterxml.jackson.annotation.JsonTypeName;
 import com.fasterxml.jackson.annotation.JsonValue;
+import java.util.UUID;
 import com.fasterxml.jackson.annotation.JsonPropertyOrder;
 import com.fasterxml.jackson.annotation.JsonTypeName;
 
@@ -28,13 +29,13 @@ import com.fasterxml.jackson.annotation.JsonTypeName;
  * UpdateUserPhotoRequestBody
  */
 @JsonPropertyOrder({
-  UpdateUserPhotoRequestBody.JSON_PROPERTY_IDEMPOTENT_OPERATION_ID,
+  UpdateUserPhotoRequestBody.JSON_PROPERTY_OPERATION_ID,
   UpdateUserPhotoRequestBody.JSON_PROPERTY_UPLOADED_FILE
 })
-@javax.annotation.Generated(value = "org.openapitools.codegen.languages.JavaClientCodegen", date = "2024-05-29T10:57:01.921409+03:00[Europe/Moscow]", comments = "Generator version: 7.6.0")
+@javax.annotation.Generated(value = "org.openapitools.codegen.languages.JavaClientCodegen", date = "2024-05-30T01:15:08.126842+03:00[Europe/Moscow]", comments = "Generator version: 7.6.0")
 public class UpdateUserPhotoRequestBody {
-  public static final String JSON_PROPERTY_IDEMPOTENT_OPERATION_ID = "idempotentOperationId";
-  private String idempotentOperationId;
+  public static final String JSON_PROPERTY_OPERATION_ID = "operationId";
+  private UUID operationId;
 
   public static final String JSON_PROPERTY_UPLOADED_FILE = "uploadedFile";
   private UploadedFileDataDTO uploadedFile;
@@ -42,29 +43,29 @@ public class UpdateUserPhotoRequestBody {
   public UpdateUserPhotoRequestBody() {
   }
 
-  public UpdateUserPhotoRequestBody idempotentOperationId(String idempotentOperationId) {
+  public UpdateUserPhotoRequestBody operationId(UUID operationId) {
     
-    this.idempotentOperationId = idempotentOperationId;
+    this.operationId = operationId;
     return this;
   }
 
    /**
-   * Get idempotentOperationId
-   * @return idempotentOperationId
+   * Get operationId
+   * @return operationId
   **/
   @javax.annotation.Nonnull
-  @JsonProperty(JSON_PROPERTY_IDEMPOTENT_OPERATION_ID)
+  @JsonProperty(JSON_PROPERTY_OPERATION_ID)
   @JsonInclude(value = JsonInclude.Include.ALWAYS)
 
-  public String getIdempotentOperationId() {
-    return idempotentOperationId;
+  public UUID getOperationId() {
+    return operationId;
   }
 
 
-  @JsonProperty(JSON_PROPERTY_IDEMPOTENT_OPERATION_ID)
+  @JsonProperty(JSON_PROPERTY_OPERATION_ID)
   @JsonInclude(value = JsonInclude.Include.ALWAYS)
-  public void setIdempotentOperationId(String idempotentOperationId) {
-    this.idempotentOperationId = idempotentOperationId;
+  public void setOperationId(UUID operationId) {
+    this.operationId = operationId;
   }
 
 
@@ -78,9 +79,9 @@ public class UpdateUserPhotoRequestBody {
    * Get uploadedFile
    * @return uploadedFile
   **/
-  @javax.annotation.Nullable
+  @javax.annotation.Nonnull
   @JsonProperty(JSON_PROPERTY_UPLOADED_FILE)
-  @JsonInclude(value = JsonInclude.Include.USE_DEFAULTS)
+  @JsonInclude(value = JsonInclude.Include.ALWAYS)
 
   public UploadedFileDataDTO getUploadedFile() {
     return uploadedFile;
@@ -88,7 +89,7 @@ public class UpdateUserPhotoRequestBody {
 
 
   @JsonProperty(JSON_PROPERTY_UPLOADED_FILE)
-  @JsonInclude(value = JsonInclude.Include.USE_DEFAULTS)
+  @JsonInclude(value = JsonInclude.Include.ALWAYS)
   public void setUploadedFile(UploadedFileDataDTO uploadedFile) {
     this.uploadedFile = uploadedFile;
   }
@@ -103,20 +104,20 @@ public class UpdateUserPhotoRequestBody {
       return false;
     }
     UpdateUserPhotoRequestBody updateUserPhotoRequestBody = (UpdateUserPhotoRequestBody) o;
-    return Objects.equals(this.idempotentOperationId, updateUserPhotoRequestBody.idempotentOperationId) &&
+    return Objects.equals(this.operationId, updateUserPhotoRequestBody.operationId) &&
         Objects.equals(this.uploadedFile, updateUserPhotoRequestBody.uploadedFile);
   }
 
   @Override
   public int hashCode() {
-    return Objects.hash(idempotentOperationId, uploadedFile);
+    return Objects.hash(operationId, uploadedFile);
   }
 
   @Override
   public String toString() {
     StringBuilder sb = new StringBuilder();
     sb.append("class UpdateUserPhotoRequestBody {\n");
-    sb.append("    idempotentOperationId: ").append(toIndentedString(idempotentOperationId)).append("\n");
+    sb.append("    operationId: ").append(toIndentedString(operationId)).append("\n");
     sb.append("    uploadedFile: ").append(toIndentedString(uploadedFile)).append("\n");
     sb.append("}");
     return sb.toString();

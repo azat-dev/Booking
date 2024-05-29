@@ -20,6 +20,7 @@ import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.annotation.JsonCreator;
 import com.fasterxml.jackson.annotation.JsonTypeName;
 import com.fasterxml.jackson.annotation.JsonValue;
+import java.util.UUID;
 import com.fasterxml.jackson.annotation.JsonPropertyOrder;
 import com.fasterxml.jackson.annotation.JsonTypeName;
 
@@ -27,15 +28,15 @@ import com.fasterxml.jackson.annotation.JsonTypeName;
  * GenerateUploadUserPhotoUrlRequestBody
  */
 @JsonPropertyOrder({
-  GenerateUploadUserPhotoUrlRequestBody.JSON_PROPERTY_IDEMPOTENT_OPERATION_ID,
+  GenerateUploadUserPhotoUrlRequestBody.JSON_PROPERTY_OPERATION_ID,
   GenerateUploadUserPhotoUrlRequestBody.JSON_PROPERTY_FILE_NAME,
   GenerateUploadUserPhotoUrlRequestBody.JSON_PROPERTY_FILE_EXTENSION,
   GenerateUploadUserPhotoUrlRequestBody.JSON_PROPERTY_FILE_SIZE
 })
-@javax.annotation.Generated(value = "org.openapitools.codegen.languages.JavaClientCodegen", date = "2024-05-29T10:57:01.921409+03:00[Europe/Moscow]", comments = "Generator version: 7.6.0")
+@javax.annotation.Generated(value = "org.openapitools.codegen.languages.JavaClientCodegen", date = "2024-05-30T01:15:08.126842+03:00[Europe/Moscow]", comments = "Generator version: 7.6.0")
 public class GenerateUploadUserPhotoUrlRequestBody {
-  public static final String JSON_PROPERTY_IDEMPOTENT_OPERATION_ID = "idempotentOperationId";
-  private String idempotentOperationId;
+  public static final String JSON_PROPERTY_OPERATION_ID = "operationId";
+  private UUID operationId;
 
   public static final String JSON_PROPERTY_FILE_NAME = "fileName";
   private String fileName;
@@ -49,29 +50,29 @@ public class GenerateUploadUserPhotoUrlRequestBody {
   public GenerateUploadUserPhotoUrlRequestBody() {
   }
 
-  public GenerateUploadUserPhotoUrlRequestBody idempotentOperationId(String idempotentOperationId) {
+  public GenerateUploadUserPhotoUrlRequestBody operationId(UUID operationId) {
     
-    this.idempotentOperationId = idempotentOperationId;
+    this.operationId = operationId;
     return this;
   }
 
    /**
-   * Get idempotentOperationId
-   * @return idempotentOperationId
+   * Get operationId
+   * @return operationId
   **/
   @javax.annotation.Nullable
-  @JsonProperty(JSON_PROPERTY_IDEMPOTENT_OPERATION_ID)
+  @JsonProperty(JSON_PROPERTY_OPERATION_ID)
   @JsonInclude(value = JsonInclude.Include.USE_DEFAULTS)
 
-  public String getIdempotentOperationId() {
-    return idempotentOperationId;
+  public UUID getOperationId() {
+    return operationId;
   }
 
 
-  @JsonProperty(JSON_PROPERTY_IDEMPOTENT_OPERATION_ID)
+  @JsonProperty(JSON_PROPERTY_OPERATION_ID)
   @JsonInclude(value = JsonInclude.Include.USE_DEFAULTS)
-  public void setIdempotentOperationId(String idempotentOperationId) {
-    this.idempotentOperationId = idempotentOperationId;
+  public void setOperationId(UUID operationId) {
+    this.operationId = operationId;
   }
 
 
@@ -162,7 +163,7 @@ public class GenerateUploadUserPhotoUrlRequestBody {
       return false;
     }
     GenerateUploadUserPhotoUrlRequestBody generateUploadUserPhotoUrlRequestBody = (GenerateUploadUserPhotoUrlRequestBody) o;
-    return Objects.equals(this.idempotentOperationId, generateUploadUserPhotoUrlRequestBody.idempotentOperationId) &&
+    return Objects.equals(this.operationId, generateUploadUserPhotoUrlRequestBody.operationId) &&
         Objects.equals(this.fileName, generateUploadUserPhotoUrlRequestBody.fileName) &&
         Objects.equals(this.fileExtension, generateUploadUserPhotoUrlRequestBody.fileExtension) &&
         Objects.equals(this.fileSize, generateUploadUserPhotoUrlRequestBody.fileSize);
@@ -170,14 +171,14 @@ public class GenerateUploadUserPhotoUrlRequestBody {
 
   @Override
   public int hashCode() {
-    return Objects.hash(idempotentOperationId, fileName, fileExtension, fileSize);
+    return Objects.hash(operationId, fileName, fileExtension, fileSize);
   }
 
   @Override
   public String toString() {
     StringBuilder sb = new StringBuilder();
     sb.append("class GenerateUploadUserPhotoUrlRequestBody {\n");
-    sb.append("    idempotentOperationId: ").append(toIndentedString(idempotentOperationId)).append("\n");
+    sb.append("    operationId: ").append(toIndentedString(operationId)).append("\n");
     sb.append("    fileName: ").append(toIndentedString(fileName)).append("\n");
     sb.append("    fileExtension: ").append(toIndentedString(fileExtension)).append("\n");
     sb.append("    fileSize: ").append(toIndentedString(fileSize)).append("\n");

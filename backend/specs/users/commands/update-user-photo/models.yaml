@@ -1,0 +1,60 @@
+openapi: 3.0.3
+info:
+  title: Update User Photo Models API
+  description: Update User Photo Models API
+  version: 1.0.0
+paths:
+  /:
+components:
+  schemas:
+    UpdateUserPhotoRequestBody:
+      type: "object"
+      required:
+        - operationId
+        - uploadedFile
+      properties:
+        operationId:
+          $ref: "../../common/models/OperationIdDTO.yaml"
+        uploadedFile:
+          $ref: "#/components/schemas/UploadedFileDataDTO"
+
+    UploadedFileDataDTO:
+      type: "object"
+      required:
+        - url
+        - bucketName
+        - objectName
+      properties:
+        url:
+          type: "string"
+        bucketName:
+          type: "string"
+        objectName:
+          type: "string"
+
+    GenerateUploadUserPhotoUrlRequestBody:
+      type: "object"
+      properties:
+        operationId:
+          $ref: "../../common/models/OperationIdDTO.yaml"
+        fileName:
+          type: "string"
+        fileExtension:
+          type: "string"
+          maxLength: 10
+        fileSize:
+          type: "integer"
+          format: "unsignedInt32"
+
+    GenerateUploadUserPhotoUrlResponseBody:
+      type: "object"
+      required:
+        - objectPath
+        - formData
+      properties:
+        objectPath:
+          $ref: "#/components/schemas/UploadedFileDataDTO"
+        formData:
+          type: "object"
+          additionalProperties:
+            type: "string"

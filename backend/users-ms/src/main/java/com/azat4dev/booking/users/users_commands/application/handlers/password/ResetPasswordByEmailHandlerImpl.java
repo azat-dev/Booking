@@ -13,7 +13,7 @@ public final class ResetPasswordByEmailHandlerImpl implements ResetPasswordByEma
     private final SendResetPasswordEmail sendResetPasswordEmail;
 
     @Override
-    public void handle(ResetPasswordByEmail command) throws Exception, ValidationException {
+    public void handle(ResetPasswordByEmail command) throws Exception.FailedToSendResetPasswordEmail, ValidationException {
 
         try {
             final var operationId = IdempotentOperationId.checkAndMakeFrom(command.getOperationId());

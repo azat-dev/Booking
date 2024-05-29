@@ -31,7 +31,7 @@ import com.fasterxml.jackson.annotation.JsonTypeName;
   UploadedFileDataDTO.JSON_PROPERTY_BUCKET_NAME,
   UploadedFileDataDTO.JSON_PROPERTY_OBJECT_NAME
 })
-@javax.annotation.Generated(value = "org.openapitools.codegen.languages.JavaClientCodegen", date = "2024-05-29T10:57:01.921409+03:00[Europe/Moscow]", comments = "Generator version: 7.6.0")
+@javax.annotation.Generated(value = "org.openapitools.codegen.languages.JavaClientCodegen", date = "2024-05-30T01:15:08.126842+03:00[Europe/Moscow]", comments = "Generator version: 7.6.0")
 public class UploadedFileDataDTO {
   public static final String JSON_PROPERTY_URL = "url";
   private String url;

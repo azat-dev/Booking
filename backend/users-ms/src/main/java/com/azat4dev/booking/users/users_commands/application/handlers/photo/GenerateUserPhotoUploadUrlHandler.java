@@ -6,7 +6,7 @@ import com.azat4dev.booking.users.users_commands.domain.core.events.GeneratedUse
 
 public interface GenerateUserPhotoUploadUrlHandler {
 
-    GeneratedUserPhotoUploadUrl handle(GenerateUserPhotoUploadUrl command) throws Exception;
+    GeneratedUserPhotoUploadUrl handle(GenerateUserPhotoUploadUrl command) throws Exception.FailedGenerateUserPhotoUploadUrl;
 
     abstract class Exception extends DomainException {
         public Exception(String message) {

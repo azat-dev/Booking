@@ -1,0 +1,44 @@
+openapi: 3.0.3
+info:
+  title: Email verification API
+  version: 1.0.0
+paths:
+  /verify-email:
+    get:
+      tags:
+        - commandsEmailVerification
+      operationId: verifyEmail
+      summary: Send email for verification
+      parameters:
+        - name: token
+          in: path
+          required: true
+          schema:
+            type: string
+      responses:
+        "200":
+          description: "Email verified"
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  message:
+                    type: string
+                    default: "Email verified"
+        "400":
+          description: "Invalid token"
+          content:
+            application/json:
+              schema:
+                oneOf:
+                  - $ref: "../../common/errors.yaml#/ValidationErrorDTO"
+                  - $ref: "../../common/errors.yaml#/ErrorDTO"
+        "403":
+          description: "User not found"
+          content:
+            application/json:
+              schema:
+                oneOf:
+                  - $ref: "../../common/errors.yaml#/ValidationErrorDTO"
+                  - $ref: "../../common/errors.yaml#/ErrorDTO"

@@ -1,5 +1,6 @@
 package com.azat4dev.booking.users.users_commands.domain.interfaces.repositories;
 
+import com.azat4dev.booking.shared.domain.DomainException;
 import com.azat4dev.booking.shared.utils.Assert;
 import lombok.EqualsAndHashCode;
 
@@ -18,7 +19,7 @@ public class MediaObjectName {
         return value;
     }
 
-    public static MediaObjectName checkAndMakeFrom(String value) {
+    public static MediaObjectName checkAndMakeFrom(String value) throws InvalidMediaObjectNameException {
         Assert.notNull(value, InvalidMediaObjectNameException::new);
         Assert.notBlank(value, InvalidMediaObjectNameException::new);
         Assert.hasPattern(value, PATTERN, InvalidMediaObjectNameException::new);
@@ -31,7 +32,7 @@ public class MediaObjectName {
     }
 
     // Exceptions
-    public static final class InvalidMediaObjectNameException extends RuntimeException {
+    public static final class InvalidMediaObjectNameException extends DomainException {
         public InvalidMediaObjectNameException() {
             super("Invalid media object name");
         }

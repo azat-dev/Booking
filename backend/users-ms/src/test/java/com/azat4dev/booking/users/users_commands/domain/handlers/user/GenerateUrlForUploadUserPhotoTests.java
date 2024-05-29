@@ -6,7 +6,7 @@ import com.azat4dev.booking.users.users_commands.domain.core.commands.GenerateUs
 import com.azat4dev.booking.users.users_commands.domain.core.values.IdempotentOperationId;
 import com.azat4dev.booking.users.users_commands.domain.core.values.files.UploadFileFormData;
 import com.azat4dev.booking.users.users_commands.domain.core.values.user.PhotoFileExtension;
-import com.azat4dev.booking.users.users_commands.domain.handlers.users.GenerateUserPhotoObjectName;
+import com.azat4dev.booking.users.users_commands.domain.handlers.users.photo.GenerateUserPhotoObjectName;
 import com.azat4dev.booking.users.users_commands.domain.handlers.users.photo.GenerateUrlForUploadUserPhoto;
 import com.azat4dev.booking.users.users_commands.domain.handlers.users.photo.GenerateUrlForUploadUserPhotoImpl;
 import com.azat4dev.booking.users.users_commands.domain.interfaces.repositories.BucketName;

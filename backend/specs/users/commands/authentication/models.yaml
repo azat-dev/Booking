@@ -1,0 +1,91 @@
+openapi: 3.0.3
+info:
+  title: Authentication API Models
+  description: Authentication API Models
+  version: 1.0.0
+paths:
+  \:
+components:
+  schemas:
+    SignUpByEmailRequestBody:
+      type: object
+      required:
+        - fullName
+        - email
+        - password
+      properties:
+        email:
+          type: string
+          format: email
+        password:
+          type: string
+        fullName:
+          $ref: "../../common/models/FullNameDTO.yaml"
+
+    SignUpResponseBody:
+      type: object
+      required:
+        - userId
+        - tokens
+      properties:
+        userId:
+          $ref: "../../common/models/UserIdDTO.yaml"
+        tokens:
+          $ref: "#/components/schemas/TokensPairDTO"
+
+    LoginByEmailRequestBody:
+      type: object
+      required:
+        - email
+        - password
+      properties:
+        email:
+          type: string
+          format: email
+        password:
+          type: string
+
+    LoginByEmailResponseBody:
+      type: object
+      required:
+        - tokens
+        - userId
+      properties:
+        userId:
+          $ref: "../../common/models/UserIdDTO.yaml"
+        tokens:
+          $ref: "#/components/schemas/TokensPairDTO"
+
+    SignUpByEmailResponseBody:
+      type: object
+      required:
+        - userId
+        - tokens
+      properties:
+        userId:
+          $ref: "../../common/models/UserIdDTO.yaml"
+        tokens:
+          $ref: "#/components/schemas/TokensPairDTO"
+
+    UserWithSameEmailAlreadyExistsErrorDTO:
+      type: object
+      required:
+        - code
+        - message
+      properties:
+        code:
+          type: string
+          default: UserWithSameEmailAlreadyExists
+        message:
+          type: string
+
+    TokensPairDTO:
+      type: object
+      required:
+        - access
+        - refresh
+      properties:
+        access:
+          type: string
+        refresh:
+          type: string

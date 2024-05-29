@@ -1,0 +1,19 @@
+type: object
+required:
+  - id
+  - fullName
+  - email
+  - emailVerificationStatus
+properties:
+  id:
+    type: string
+    format: uuid
+  fullName:
+    $ref: "../../../common/models/FullNameDTO.yaml"
+  email:
+    type: string
+    format: email
+  photo:
+    $ref: "../../../common/models/PhotoPathDTO.yaml"
+  emailVerificationStatus:
+    $ref: "../../../common/models/EmailVerificationStatusDTO.yaml"

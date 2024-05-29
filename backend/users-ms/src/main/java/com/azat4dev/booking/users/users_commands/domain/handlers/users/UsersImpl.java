@@ -2,13 +2,10 @@ package com.azat4dev.booking.users.users_commands.domain.handlers.users;
 
 
 import com.azat4dev.booking.shared.domain.core.UserId;
-import com.azat4dev.booking.shared.domain.event.EventId;
 import com.azat4dev.booking.shared.utils.TimeProvider;
 import com.azat4dev.booking.users.users_commands.domain.core.commands.NewUserData;
-import com.azat4dev.booking.users.users_commands.domain.core.commands.UpdateUserPhoto;
 import com.azat4dev.booking.users.users_commands.domain.core.entities.User;
 import com.azat4dev.booking.users.users_commands.domain.core.entities.UserPhotoPath;
-import com.azat4dev.booking.users.users_commands.domain.core.events.FailedUpdateUserPhoto;
 import com.azat4dev.booking.users.users_commands.domain.core.events.UpdatedUserPhoto;
 import com.azat4dev.booking.users.users_commands.domain.core.events.UserCreated;
 import com.azat4dev.booking.users.users_commands.domain.core.events.UserVerifiedEmail;
@@ -18,7 +15,6 @@ import com.azat4dev.booking.users.users_commands.domain.interfaces.repositories.
 import com.azat4dev.booking.users.users_commands.domain.interfaces.repositories.UsersRepository;
 import lombok.RequiredArgsConstructor;
 
-import java.time.LocalDateTime;
 import java.util.Optional;
 
 @RequiredArgsConstructor
@@ -95,7 +91,6 @@ public final class UsersImpl implements Users {
             outboxEventsRepository.publish(new UserVerifiedEmail(userId, email));
 
             unitOfWork.save();
-            markOutboxNeedsSynchronization.execute();
 
         } catch (UsersRepository.Exception.UserNotFound e) {
             unitOfWork.rollback();
@@ -107,6 +102,61 @@ public final class UsersImpl implements Users {
             unitOfWork.rollback();
             throw new RuntimeException(e);
         }
+
+        markOutboxNeedsSynchronization.execute();
+    }
+
+    @Override
+    public Optional<User> findByEmail(EmailAddress email) {
+
+        final var unitOfWork = unitOfWorkFactory.make();
+
+        try {
+            final var usersRepository = unitOfWork.getUsersRepository();
+            final var foundUser = usersRepository.findByEmail(email);
+            unitOfWork.save();
+
+            return foundUser;
+        } catch (Throwable e) {
+            unitOfWork.rollback();
+        }
+
+        return Optional.empty();
+    }
+
+    @Override
+    public void updatePhoto(UserId userId, UserPhotoPath newPhotoPath) throws Exception.UserNotFound, Exception.FailedToUpdateUser {
+
+        final var unitOfWork = unitOfWorkFactory.make();
+
+        try {
+            final var usersRepository = unitOfWork.getUsersRepository();
+
+            final var user = usersRepository.findById(userId)
+                .orElseThrow(Exception.UserNotFound::new);
+
+            final var prevPhoto = user.getPhoto();
+
+            user.setPhoto(newPhotoPath);
+            usersRepository.update(user);
+
+            final var outboxRepository = unitOfWork.getOutboxEventsRepository();
+
+            final var event = new UpdatedUserPhoto(
+                userId,
+                newPhotoPath,
+                prevPhoto
+            );
+
+            outboxRepository.publish(event);
+            unitOfWork.save();
+
+        } catch (Throwable e) {
+            unitOfWork.rollback();
+            throw new Exception.FailedToUpdateUser();
+        }
+
+        markOutboxNeedsSynchronization.execute();
     }
 
     @FunctionalInterface

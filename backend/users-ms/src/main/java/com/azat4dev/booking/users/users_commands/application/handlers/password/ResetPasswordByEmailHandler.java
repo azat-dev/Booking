@@ -6,7 +6,7 @@ import com.azat4dev.booking.users.users_commands.application.commands.password.R
 
 public interface ResetPasswordByEmailHandler {
 
-    void handle(ResetPasswordByEmail command) throws Exception;
+    void handle(ResetPasswordByEmail command) throws Exception.FailedToSendResetPasswordEmail, Exception.EmailNotFound;
 
     // Exceptions
 

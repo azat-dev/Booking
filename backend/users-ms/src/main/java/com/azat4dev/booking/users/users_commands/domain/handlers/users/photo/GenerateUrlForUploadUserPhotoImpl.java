@@ -7,7 +7,6 @@ import com.azat4dev.booking.users.users_commands.domain.core.events.FailedGenera
 import com.azat4dev.booking.users.users_commands.domain.core.events.GeneratedUserPhotoUploadUrl;
 import com.azat4dev.booking.users.users_commands.domain.core.values.IdempotentOperationId;
 import com.azat4dev.booking.users.users_commands.domain.core.values.user.PhotoFileExtension;
-import com.azat4dev.booking.users.users_commands.domain.handlers.users.GenerateUserPhotoObjectName;
 import com.azat4dev.booking.users.users_commands.domain.interfaces.repositories.MediaObjectsBucket;
 import lombok.RequiredArgsConstructor;
 

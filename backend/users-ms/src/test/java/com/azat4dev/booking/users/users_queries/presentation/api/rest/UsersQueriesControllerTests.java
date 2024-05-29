@@ -1,97 +1,87 @@
 package com.azat4dev.booking.users.users_queries.presentation.api.rest;
 
-import com.azat4dev.booking.shared.domain.core.UserId;
-import com.azat4dev.booking.users.common.presentation.security.services.jwt.JwtService;
-import com.azat4dev.booking.users.users_commands.application.config.presentation.WebSecurityConfig;
+import com.azat4dev.booking.shared.application.ControllerException;
 import com.azat4dev.booking.users.users_commands.domain.UserHelpers;
 import com.azat4dev.booking.users.users_queries.domain.services.UsersQueryService;
-import com.azat4dev.booking.users.users_queries.presentation.api.rest.resources.UsersQueriesController;
+import com.azat4dev.booking.users.users_queries.presentation.api.rest.resources.CurrentUserApi;
+import com.azat4dev.booking.users.users_queries.presentation.api.utils.CurrentAuthenticatedUserIdProvider;
+import com.azat4dev.booking.usersms.generated.server.api.QueriesCurrentUserApiDelegate;
 import org.junit.jupiter.api.Test;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
-import org.springframework.boot.test.mock.mockito.MockBean;
-import org.springframework.context.annotation.Import;
-import org.springframework.security.oauth2.jwt.JwtDecoder;
-import org.springframework.security.oauth2.jwt.JwtEncoder;
-import org.springframework.test.web.servlet.MockMvc;
-import org.springframework.test.web.servlet.ResultActions;
+import org.springframework.http.HttpStatus;
 
 import java.util.Optional;
 
+import static org.assertj.core.api.Assertions.assertThat;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.BDDMockito.given;
-import static org.springframework.security.test.web.servlet.request.SecurityMockMvcRequestPostProcessors.csrf;
-import static org.springframework.security.test.web.servlet.request.SecurityMockMvcRequestPostProcessors.jwt;
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
-import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
+import static org.mockito.Mockito.mock;
 
-@WebMvcTest(UsersQueriesController.class)
-@Import(WebSecurityConfig.class)
 public class UsersQueriesControllerTests {
 
-    @Autowired
-    private MockMvc mockMvc;
+    private SUT createSUT() {
 
-    @MockBean
-    private UsersQueryService usersService;
+        final var currentUserId = mock(CurrentAuthenticatedUserIdProvider.class);
+        final var usersQueryService = mock(UsersQueryService.class);
 
-    @MockBean
-    private JwtService tokenProvider;
-
-    @MockBean
-    private JwtEncoder jwtEncoder;
-
-    @MockBean(name = "accessTokenDecoder")
-    private JwtDecoder accessTokenDecoder;
+        return new SUT(
+            new CurrentUserApi(
+                currentUserId,
+                usersQueryService
+            ),
+            currentUserId,
+            usersQueryService
+        );
+    }
 
     @Test
     public void test_getCurrentUserInfo_givenUserDoesNotExist_thenReturn404() throws Exception {
 
         // Given
+        final var sut = createSUT();
         final var userId = UserHelpers.anyValidUserId();
 
-        given(usersService.getPersonalInfoById(any())).willReturn(Optional.empty());
+        given(sut.currentUserId.get())
+            .willReturn(Optional.of(userId));
+
+        given(sut.usersService.getPersonalInfoById(any()))
+            .willReturn(Optional.empty());
 
         // When
-        final var result = performGetCurrentUserInfoRequest(Optional.of(userId));
+        final var exception = assertThrows(
+            ControllerException.class,
+            () -> sut.api.getCurrentUser()
+        );
 
         // Then
-        result.andExpect(status().isNotFound());
+        assertThat(exception.status())
+            .isEqualTo(HttpStatus.NOT_FOUND);
     }
 
     @Test
     public void test_getCurrentUserInfo_givenUserIsNotAuthenticated_thenReturn401() throws Exception {
 
         // Given
+        final var sut = createSUT();
+
+        given(sut.currentUserId.get())
+            .willReturn(Optional.empty());
 
         // When
-        final var result = performGetCurrentUserInfoRequest(Optional.empty());
+        final var exception = assertThrows(
+            ControllerException.class,
+            () -> sut.api.getCurrentUser()
+        );
 
         // Then
-        result.andExpect(status().isUnauthorized());
+        assertThat(exception.status())
+            .isEqualTo(HttpStatus.UNAUTHORIZED);
     }
 
-    private ResultActions performGetCurrentUserInfoRequest(Optional<UserId> userId) throws Exception {
-        final String url = "/api/with-auth/users/current";
-        return performGetRequest(
-            url,
-            userId
-        );
-    }
-
-    private ResultActions performGetRequest(
-        String url,
-        Optional<UserId> userId
-    ) throws Exception {
-        if (userId.isEmpty()) {
-            return mockMvc.perform(
-                get(url)
-                    .with(csrf())
-            );
-        }
-        return mockMvc.perform(
-            get(url).with(jwt().jwt(c -> c.subject(userId.get().toString())))
-                .with(csrf())
-        );
+    private record SUT(
+        QueriesCurrentUserApiDelegate api,
+        CurrentAuthenticatedUserIdProvider currentUserId,
+        UsersQueryService usersService
+    ) {
     }
 }

@@ -1,6 +1,5 @@
 package com.azat4dev.booking.users.users_queries.presentation.api.rest.dto;
 
-import com.azat4dev.booking.users.users_commands.presentation.api.rest.authentication.entities.FullNameDTO;
 import com.azat4dev.booking.users.users_queries.domain.entities.PersonalUserInfo;
 
 import java.util.Optional;

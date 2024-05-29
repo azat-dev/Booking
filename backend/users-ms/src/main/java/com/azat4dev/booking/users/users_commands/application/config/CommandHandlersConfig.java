@@ -1,6 +1,8 @@
 package com.azat4dev.booking.users.users_commands.application.config;
 
 import com.azat4dev.booking.shared.domain.core.UserIdFactory;
+import com.azat4dev.booking.users.users_commands.application.handlers.LoginByEmailHandler;
+import com.azat4dev.booking.users.users_commands.application.handlers.LoginByEmailHandlerImpl;
 import com.azat4dev.booking.users.users_commands.application.handlers.SignUpHandler;
 import com.azat4dev.booking.users.users_commands.application.handlers.SignUpHandlerImpl;
 import com.azat4dev.booking.users.users_commands.application.handlers.email.verification.CompleteEmailVerificationHandler;
@@ -11,11 +13,14 @@ import com.azat4dev.booking.users.users_commands.application.handlers.password.R
 import com.azat4dev.booking.users.users_commands.application.handlers.password.ResetPasswordByEmailHandlerImpl;
 import com.azat4dev.booking.users.users_commands.application.handlers.photo.GenerateUserPhotoUploadUrlHandler;
 import com.azat4dev.booking.users.users_commands.application.handlers.photo.GenerateUserPhotoUploadUrlHandlerImpl;
+import com.azat4dev.booking.users.users_commands.application.handlers.photo.UpdateUserPhotoHandler;
+import com.azat4dev.booking.users.users_commands.application.handlers.photo.UpdateUserPhotoHandlerImpl;
 import com.azat4dev.booking.users.users_commands.domain.handlers.email.verification.VerifyEmailByToken;
 import com.azat4dev.booking.users.users_commands.domain.handlers.password.reset.SendResetPasswordEmail;
 import com.azat4dev.booking.users.users_commands.domain.handlers.password.reset.SetNewPasswordByToken;
 import com.azat4dev.booking.users.users_commands.domain.handlers.users.Users;
 import com.azat4dev.booking.users.users_commands.domain.handlers.users.photo.GenerateUrlForUploadUserPhoto;
+import com.azat4dev.booking.users.users_commands.domain.handlers.users.photo.SetNewPhotoForUser;
 import com.azat4dev.booking.users.users_commands.domain.interfaces.services.PasswordService;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -67,5 +72,18 @@ public class CommandHandlersConfig {
         return new GenerateUserPhotoUploadUrlHandlerImpl(
             generateUrlForUploadUserPhoto
         );
+    }
+
+    @Bean
+    public LoginByEmailHandler loginByEmailHandler(
+        PasswordService passwordService,
+        Users users
+    ) {
+        return new LoginByEmailHandlerImpl(passwordService, users);
+    }
+
+    @Bean
+    public UpdateUserPhotoHandler updateUserPhotoHandler(SetNewPhotoForUser setNewPhotoForUser) {
+        return new UpdateUserPhotoHandlerImpl(setNewPhotoForUser);
     }
 }

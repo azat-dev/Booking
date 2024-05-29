@@ -43,7 +43,6 @@ public record DomainEventDTO(
         @JsonSubTypes.Type(value = GeneratedUserPhotoUploadUrlDTO.class),
         @JsonSubTypes.Type(value = FailedGenerateUserPhotoUploadUrlDTO.class),
         @JsonSubTypes.Type(value = UpdatedUserPhotoDTO.class),
-        @JsonSubTypes.Type(value = UpdateUserPhotoDTO.class),
         @JsonSubTypes.Type(value = FailedUpdateUserPhotoDTO.class),
     })
     DomainEventPayloadDTO payload

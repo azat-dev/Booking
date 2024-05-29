@@ -6,7 +6,6 @@ import com.azat4dev.booking.users.users_commands.data.repositories.dto.DomainEve
 import com.azat4dev.booking.users.users_commands.domain.core.commands.CompleteEmailVerification;
 import com.azat4dev.booking.users.users_commands.domain.core.commands.CompletePasswordReset;
 import com.azat4dev.booking.users.users_commands.domain.core.commands.SendVerificationEmail;
-import com.azat4dev.booking.users.users_commands.domain.core.commands.UpdateUserPhoto;
 import com.azat4dev.booking.users.users_commands.domain.core.entities.UserPhotoPath;
 import com.azat4dev.booking.users.users_commands.domain.core.events.*;
 import com.azat4dev.booking.users.users_commands.domain.core.values.IdempotentOperationId;
@@ -48,7 +47,7 @@ public class DomainEventSerializerImplTests {
     }
 
     @Test
-    void test_serialize() throws MalformedURLException, PhotoFileExtension.InvalidPhotoFileExtensionException, IdempotentOperationId.Exception, BucketName.Exception {
+    void test_serialize() throws MalformedURLException, PhotoFileExtension.InvalidPhotoFileExtensionException, IdempotentOperationId.Exception, BucketName.Exception, MediaObjectName.InvalidMediaObjectNameException {
 
         final var events = List.of(
             eventsFactory.issue(
@@ -121,16 +120,6 @@ public class DomainEventSerializerImplTests {
                     PhotoFileExtension.checkAndMakeFrom("png"),
                     100,
                     anyIdempotentOperationId()
-                )
-            ),
-            eventsFactory.issue(
-                new UpdateUserPhoto(
-                    anyIdempotentOperationId(),
-                    anyValidUserId(),
-                    new UploadedFileData(
-                        BucketName.checkAndMake("bucketname"),
-                        MediaObjectName.checkAndMakeFrom("objectName")
-                    )
                 )
             ),
 

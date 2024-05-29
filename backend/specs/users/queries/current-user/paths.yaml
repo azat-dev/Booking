@@ -1,0 +1,22 @@
+openapi: 3.0.3
+info:
+  title: Current User API
+  version: 1.0.0
+paths:
+  /:
+    get:
+      tags:
+        - queriesCurrentUser
+      operationId: getCurrentUser
+      summary: Gets current user info
+      responses:
+        "200":
+          description: Current users info
+          content:
+            application/json:
+              schema:
+                "$ref": "models/PersonalUserInfoDTO.yaml"
+        "401":
+          description: "User not authenticated"
+        404:
+          description: "User not found"

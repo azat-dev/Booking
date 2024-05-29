@@ -1,0 +1,96 @@
+openapi: 3.0.3
+info:
+  title: Authentication API
+  description: Authentication API
+  version: 1.0.0
+paths:
+  /sign-up:
+    post:
+      tags:
+        - commandsSignUp
+      operationId: signUpByEmail
+      summary: Sign up a new user
+      security: [ ]
+      requestBody:
+        description: JSON payload
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "models.yaml#/components/schemas/SignUpByEmailRequestBody"
+      responses:
+        "201":
+          description: Success
+          content:
+            application/json:
+              schema:
+                $ref: "models.yaml#/components/schemas/SignUpByEmailResponseBody"
+        "400":
+          description: Wrong request
+          content:
+            application/json:
+              schema:
+                oneOf:
+                  - $ref: "../../common/errors.yaml#/ValidationErrorDTO"
+                  - $ref: "../../common/errors.yaml#/ErrorDTO"
+        "409":
+          description: Conflict - User with provided email already exists
+          content:
+            application/json:
+              schema:
+                $ref: "models.yaml#/components/schemas/UserWithSameEmailAlreadyExistsErrorDTO"
+
+  /login-by-email:
+    post:
+      tags:
+        - commandsLogin
+      summary: Get a new pair of tokens by email (access, refresh)
+      operationId: loginByEmail
+      security: [ ]
+      requestBody:
+        description: JSON payload
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "models.yaml#/components/schemas/LoginByEmailRequestBody"
+      responses:
+        200:
+          description: Success
+          content:
+            application/json:
+              schema:
+                $ref: "models.yaml#/components/schemas/LoginByEmailResponseBody"
+        403:
+          description: User not found
+          content:
+            application/json:
+              schema:
+                oneOf:
+                  - $ref: "../../common/errors.yaml#/ValidationErrorDTO"
+                  - $ref: "../../common/errors.yaml#/ErrorDTO"
+
+  /token/verify:
+    post:
+      tags:
+        - commandsToken
+      operationId: verifyToken
+      summary: Check if a token is valid
+      security: [ ]
+      requestBody:
+        description: JSON payload
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required:
+                - token
+              properties:
+                token:
+                  type: string
+      responses:
+        200:
+          description: Valid Token
+        401:
+          description: Not valid Token

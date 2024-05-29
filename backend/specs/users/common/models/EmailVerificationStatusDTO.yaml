@@ -1,0 +1,4 @@
+type: string
+enum:
+  - VERIFIED
+  - NOT_VERIFIED

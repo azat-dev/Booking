@@ -5,13 +5,9 @@ import com.azat4dev.booking.shared.domain.core.UserId;
 import com.azat4dev.booking.users.users_commands.domain.core.values.email.EmailAddress;
 import com.azat4dev.booking.users.users_commands.domain.core.values.password.Password;
 import com.azat4dev.booking.users.users_commands.domain.interfaces.services.EmailService;
-import com.azat4dev.booking.usersms.generated.client.api.CommandsApi;
-import com.azat4dev.booking.usersms.generated.client.api.QueriesApi;
+import com.azat4dev.booking.usersms.generated.client.api.*;
 import com.azat4dev.booking.usersms.generated.client.base.ApiClient;
-import com.azat4dev.booking.usersms.generated.client.model.EmailVerificationStatusDTO;
-import com.azat4dev.booking.usersms.generated.client.model.FullNameDTO;
-import com.azat4dev.booking.usersms.generated.client.model.ResetPasswordByEmailRequestBody;
-import com.azat4dev.booking.usersms.generated.client.model.SignUpByEmailRequestBody;
+import com.azat4dev.booking.usersms.generated.client.model.*;
 import com.github.javafaker.Faker;
 import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;
@@ -23,13 +19,11 @@ import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.context.TestConfiguration;
-import org.springframework.boot.test.web.client.TestRestTemplate;
 import org.springframework.boot.test.web.server.LocalServerPort;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Primary;
+import org.springframework.web.util.UriComponentsBuilder;
 
-import java.net.MalformedURLException;
-import java.net.URI;
 import java.util.UUID;
 
 import static org.assertj.core.api.Assertions.assertThat;
@@ -45,8 +39,6 @@ class UsersMicroserviceApplicationTests implements KafkaTests, PostgresTests {
     @LocalServerPort
     private int port;
 
-    @Autowired
-    private TestRestTemplate restTemplate;
 
     @BeforeAll
     static void beforeAll() {
@@ -92,7 +84,7 @@ class UsersMicroserviceApplicationTests implements KafkaTests, PostgresTests {
     @Test
     void test_resetPasswordByEmail() throws Exception {
         // Given
-        final var commandsApiClient = anonymousCommandsApiClient();
+        final var commandsApiClient = anonymousClient(CommandsResetPasswordApi.class);
 
         final var user = givenAnySignedUpUser();
         final var request = new ResetPasswordByEmailRequestBody()
@@ -112,30 +104,35 @@ class UsersMicroserviceApplicationTests implements KafkaTests, PostgresTests {
         //Given
         final var resetPasswordLink = parseLink(email.data().body().value());
         final var newPassword = anyPassword();
+        final var token = parseParamFromLink(resetPasswordLink, "token");
 
         //When
-        throw new UnsupportedOperationException("Implement me!");
-//        performResetPassword(resetPasswordLink, newPassword);
-//
-//        //Then
-//        final var tokensResponse = commandsApiClient.getNewTokensByEmail(
-//            new AuthenticateByEmailRequestBody(
-//                user.email().getValue(),
-//                newPassword
-//            )
-//        );
-//
-//        final var tokensPair = tokensResponse.getBody();
-//        assertThat(tokensPair.getTokens().getAccess()).isNotNull();
+        commandsApiClient.completeResetPassword(
+            new CompleteResetPasswordRequestBody()
+                .operationId(anyIdempotentOperationId())
+                .resetPasswordToken(token)
+                .newPassword(newPassword)
+        );
+
+        //Then
+        final var loginResponse = anonymousClient(CommandsLoginApi.class).loginByEmail(
+            new LoginByEmailRequestBody()
+                .email(user.email().getValue())
+                .password(newPassword)
+        );
+
+        assertThat(loginResponse.getTokens().getAccess()).isNotNull();
     }
 
     SignedUpUser givenAnyConfirmedUser() throws Exception {
         // Given
         final var signedUpUser = givenAnySignedUpUser();
-        final var queriesApiClient = queriesApiClient(signedUpUser.accessToken);
+        final var queriesApiClient = apiClient(signedUpUser.accessToken, QueriesCurrentUserApi.class);
 
+        final var token = parseParamFromLink(signedUpUser.verificationLink, "token");
         // When
-        confirmEmail(signedUpUser.verificationLink);
+        final var response = anonymousClient(CommandsEmailVerificationApi.class)
+            .verifyEmail(token);
 
         // Then
         final var userInfo = queriesApiClient.getCurrentUser();
@@ -153,14 +150,16 @@ class UsersMicroserviceApplicationTests implements KafkaTests, PostgresTests {
         final var email = EmailAddress.dangerMakeWithoutChecks(request.getEmail());
 
         // When
-        final var response = anonymousCommandsApiClient().signUpByEmail(request);
+        final var response = anonymousClient(CommandsSignUpApi.class)
+            .signUpByEmail(request);
 
         // Then
         String accessToken = response.getTokens().getAccess();
         assertThat(accessToken).isNotNull();
 
         // When
-        final var userInfo = queriesApiClient(accessToken).getCurrentUser();
+        final var userInfo = apiClient(accessToken, QueriesCurrentUserApi.class)
+            .getCurrentUser();
 
         // Then
         assertThat(userInfo.getEmail()).isEqualTo(email.getValue());
@@ -181,21 +180,6 @@ class UsersMicroserviceApplicationTests implements KafkaTests, PostgresTests {
         );
     }
 
-    private String baseURL() {
-        return "http://localhost:" + port;
-    }
-
-    private void confirmEmail(String confirmationLink) {
-        try {
-            final var query = URI.create(confirmationLink).toURL().getQuery();
-            final var url = baseURL() + "/api/public/verify-email" + "?" + query;
-            final var response = restTemplate.getForEntity(url, String.class);
-            System.out.println(response.getBody());
-        } catch (MalformedURLException e) {
-            throw new RuntimeException(e);
-        }
-    }
-
     private String parseLink(String htmlContent) {
         Document doc = Jsoup.parse(htmlContent);
 
@@ -210,30 +194,22 @@ class UsersMicroserviceApplicationTests implements KafkaTests, PostgresTests {
         return link.attr("href");
     }
 
-    private CommandsApi anonymousCommandsApiClient() {
-        final var api = new ApiClient();
-        api.setBasePath("http://localhost:" + port);
-        return api.buildClient(CommandsApi.class);
+    private String parseParamFromLink(String link, String paramName) {
+        return UriComponentsBuilder.fromUriString(link)
+            .build().getQueryParams().getFirst(paramName);
     }
 
-    private CommandsApi commandsApiClient(String accessToken) {
+    private <T extends ApiClient.Api> T anonymousClient(Class<T> apiClass) {
+        final var api = new ApiClient();
+        api.setBasePath("http://localhost:" + port);
+        return api.buildClient(apiClass);
+    }
+
+    private <T extends ApiClient.Api> T apiClient(String accessToken, Class<T> apiClass) {
         final var api = new ApiClient("BearerAuth");
         api.setBearerToken(accessToken);
         api.setBasePath("http://localhost:" + port);
-        return api.buildClient(CommandsApi.class);
-    }
-
-    private QueriesApi anonymousQueriesApiClient() {
-        final var api = new ApiClient();
-        api.setBasePath("http://localhost:" + port);
-        return api.buildClient(QueriesApi.class);
-    }
-
-    private QueriesApi queriesApiClient(String accessToken) {
-        final var api = new ApiClient("BearerAuth");
-        api.setBearerToken(accessToken);
-        api.setBasePath("http://localhost:" + port);
-        return api.buildClient(QueriesApi.class);
+        return api.buildClient(apiClass);
     }
 
     record SignedUpUser(

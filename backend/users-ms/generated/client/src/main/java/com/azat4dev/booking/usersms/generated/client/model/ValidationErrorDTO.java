@@ -34,7 +34,7 @@ import com.fasterxml.jackson.annotation.JsonTypeName;
   ValidationErrorDTO.JSON_PROPERTY_TYPE,
   ValidationErrorDTO.JSON_PROPERTY_ERRORS
 })
-@javax.annotation.Generated(value = "org.openapitools.codegen.languages.JavaClientCodegen", date = "2024-05-29T10:57:01.921409+03:00[Europe/Moscow]", comments = "Generator version: 7.6.0")
+@javax.annotation.Generated(value = "org.openapitools.codegen.languages.JavaClientCodegen", date = "2024-05-30T01:15:08.126842+03:00[Europe/Moscow]", comments = "Generator version: 7.6.0")
 public class ValidationErrorDTO {
   public static final String JSON_PROPERTY_TYPE = "type";
   private String type = "validationError";

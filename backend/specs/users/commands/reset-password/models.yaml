@@ -1,0 +1,36 @@
+openapi: 3.0.3
+info:
+  title: Reset passwords models
+  description: Reset passwords models
+  version: 1.0.0
+paths:
+  /:
+components:
+  schemas:
+    ResetPasswordByEmailRequestBody:
+      type: object
+      required:
+        - operationId
+        - email
+      properties:
+        operationId:
+          $ref: "../../common/models/OperationIdDTO.yaml"
+        email:
+          type: string
+          format: email
+
+    CompleteResetPasswordRequestBody:
+      type: object
+      required:
+        - operationId
+        - newPassword
+        - resetPasswordToken
+      properties:
+        operationId:
+          $ref: "../../common/models/OperationIdDTO.yaml"
+        newPassword:
+          type: string
+          minLength: 1
+        resetPasswordToken:
+          type: string
+          minLength: 1

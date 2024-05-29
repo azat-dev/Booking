@@ -1,0 +1,75 @@
+openapi: 3.0.3
+info:
+  title: Reset password paths
+  description: Reset password paths
+  version: 1.0.0
+paths:
+  /reset:
+    post:
+      tags:
+        - commandsResetPassword
+      operationId: resetPasswordByEmail
+      summary: Reset password by email
+      security: [ ]
+      requestBody:
+        description: JSON payload
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "models.yaml#/components/schemas/ResetPasswordByEmailRequestBody"
+      responses:
+        "200":
+          description: Sent email with reset password instructions
+          content:
+            application/json:
+              schema:
+                type: string
+                default: "Sent email with reset password instructions"
+        "401":
+          description: Not valid email
+          content:
+            application/json:
+              schema:
+                oneOf:
+                  - $ref: "../../common/errors.yaml#/ValidationErrorDTO"
+                  - $ref: "../../common/errors.yaml#/ErrorDTO"
+        404:
+          description: Email not found
+          content:
+            application/json:
+              schema:
+                oneOf:
+                  - $ref: "../../common/errors.yaml#/ValidationErrorDTO"
+                  - $ref: "../../common/errors.yaml#/ErrorDTO"
+
+  /set-new:
+    post:
+      tags:
+        - commandsResetPassword
+      operationId: completeResetPassword
+      summary: Reset password by email
+      security: [ ]
+      requestBody:
+        description: JSON payload
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "models.yaml#/components/schemas/CompleteResetPasswordRequestBody"
+      responses:
+        "200":
+          description: Set new password
+          content:
+            application/json:
+              schema:
+                type: string
+                default: "Set new password"
+        "403":
+          description: Token is not valid
+          content:
+            application/json:
+              schema:
+                oneOf:
+                  - $ref: "../../common/errors.yaml#/ValidationErrorDTO"
+                  - $ref: "../../common/errors.yaml#/ErrorDTO"

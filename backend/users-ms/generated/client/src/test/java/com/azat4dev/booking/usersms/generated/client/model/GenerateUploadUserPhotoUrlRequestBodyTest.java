@@ -18,6 +18,7 @@ import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.annotation.JsonCreator;
 import com.fasterxml.jackson.annotation.JsonTypeName;
 import com.fasterxml.jackson.annotation.JsonValue;
+import java.util.UUID;
 import org.junit.jupiter.api.Test;
 
 /**
@@ -35,11 +36,11 @@ class GenerateUploadUserPhotoUrlRequestBodyTest {
     }
 
     /**
-     * Test the property 'idempotentOperationId'
+     * Test the property 'operationId'
      */
     @Test
-    void idempotentOperationIdTest() {
-        // TODO: test idempotentOperationId
+    void operationIdTest() {
+        // TODO: test operationId
     }
 
     /**

@@ -1,0 +1,46 @@
+openapi: 3.0.3
+info:
+  title: Update User Photo API
+  description: Describes the API of Update User Photo Endpoint
+  version: 1.0.0
+paths:
+  /update:
+    post:
+      tags:
+        - commandsUpdateUserPhoto
+      operationId: updateUserPhoto
+      summary: Attach uploaded photo to the user
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: "models.yaml#/components/schemas/UpdateUserPhotoRequestBody"
+        required: true
+      responses:
+        "200":
+          description: Photo updated
+          content:
+            '*/*':
+              schema:
+                type: "string"
+                default: "Photo updated"
+
+  /get-upload-url:
+    post:
+      tags:
+        - commandsUpdateUserPhoto
+      operationId: generateUploadUserPhotoUrl
+      summary: Generate upload form for user photo
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: "models.yaml#/components/schemas/GenerateUploadUserPhotoUrlRequestBody"
+        required: true
+      responses:
+        "200":
+          description: "OK"
+          content:
+            '*/*':
+              schema:
+                $ref: "models.yaml#/components/schemas/GenerateUploadUserPhotoUrlResponseBody"
