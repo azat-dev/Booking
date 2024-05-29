@@ -1,0 +1,255 @@
+openapi: 3.0.0
+info:
+  description: Describes the API of Listings service
+  title: Listings API
+  version: 1.0.0
+servers:
+- url: /
+security:
+- BearerAuth: []
+paths:
+  /api/private/listings/{listingId}:
+    get:
+      operationId: getListingPrivateDetails
+      parameters:
+      - description: Listing ID
+        explode: false
+        in: path
+        name: listingId
+        required: true
+        schema:
+          format: uuid
+          type: string
+        style: simple
+      responses:
+        "200":
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/GetListingPrivateDetailsResponse'
+          description: Private details of listing
+        "401":
+          description: Not valid Token
+        "404":
+          description: Not found
+      summary: Get private details for listing
+      tags:
+      - queries
+      x-accepts: application/json
+      x-tags:
+      - tag: queries
+  /api/private/listings:
+    post:
+      operationId: addListing
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/AddListingRequestBody'
+        required: true
+      responses:
+        "200":
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/AddListingResponse'
+          description: Listing added successfully
+        "401":
+          description: Not valid Token
+        "404":
+          description: Not found
+      summary: Add a new listing
+      tags:
+      - commands
+      x-content-type: application/json
+      x-accepts: application/json
+      x-tags:
+      - tag: commands
+  /api/private/listings/{listingId}/get-photo-upload-url:
+    post:
+      operationId: getPhotoUploadUrl
+      parameters:
+      - description: Listing ID
+        explode: false
+        in: path
+        name: listingId
+        required: true
+        schema:
+          format: uuid
+          type: string
+        style: simple
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/AddListingRequestBody'
+        required: true
+      responses:
+        "200":
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/GetPhotoUploadUrlForListingResponse'
+          description: Listing added successfully
+        "401":
+          description: Not valid Token
+        "404":
+          description: Not found
+      summary: Get upload URL for listing photo
+      tags:
+      - commands
+      x-content-type: application/json
+      x-accepts: application/json
+      x-tags:
+      - tag: commands
+components:
+  schemas:
+    GetPhotoUploadUrlForListingResponse:
+      example:
+        url: https://openapi-generator.tech
+      properties:
+        url:
+          format: uri
+          type: string
+      required:
+      - url
+      type: object
+    GetListingPrivateDetailsResponse:
+      example:
+        listing:
+          description: description
+          id: 046b6c7f-0b8a-43b9-b35d-6489e6daee91
+          title: title
+      properties:
+        listing:
+          $ref: '#/components/schemas/ListingPrivateDetails'
+      required:
+      - listing
+      type: object
+    ListingPrivateDetails:
+      example:
+        description: description
+        id: 046b6c7f-0b8a-43b9-b35d-6489e6daee91
+        title: title
+      properties:
+        id:
+          format: uuid
+          type: string
+        title:
+          type: string
+        description:
+          type: string
+      required:
+      - id
+      - title
+      type: object
+    AddListingRequestBody:
+      example:
+        operationId: 046b6c7f-0b8a-43b9-b35d-6489e6daee91
+        title: title
+      properties:
+        operationId:
+          format: uuid
+          type: string
+        title:
+          type: string
+      required:
+      - operationId
+      - title
+      type: object
+    AddListingResponse:
+      example:
+        listingId: 046b6c7f-0b8a-43b9-b35d-6489e6daee91
+      properties:
+        listingId:
+          format: uuid
+          type: string
+      required:
+      - listingId
+      type: object
+    LocationDetails:
+      properties:
+        country:
+          type: string
+        city:
+          type: string
+      required:
+      - city
+      - country
+      type: object
+    ListingDetails:
+      properties:
+        id:
+          format: uuid
+          type: string
+        type:
+          format: uuid
+          type: string
+        title:
+          type: string
+        description:
+          type: string
+        photos:
+          items:
+            format: uri
+            type: string
+          type: array
+        location:
+          $ref: '#/components/schemas/LocationDetails'
+        hostId:
+          format: uuid
+          type: string
+      required:
+      - description
+      - hostId
+      - id
+      - location
+      - photos
+      - title
+      - type
+      type: object
+    ValidationError:
+      properties:
+        type:
+          default: validationError
+          type: string
+        errors:
+          items:
+            $ref: '#/components/schemas/ValidationErrorDetails'
+          type: array
+      required:
+      - errors
+      - type
+      type: object
+    ValidationErrorDetails:
+      properties:
+        path:
+          type: string
+        message:
+          type: string
+        code:
+          type: string
+      required:
+      - code
+      - message
+      - path
+      type: object
+    Error:
+      properties:
+        code:
+          type: string
+        message:
+          type: string
+      required:
+      - code
+      - message
+      type: object
+    Errors:
+      items:
+        $ref: '#/components/schemas/Error'
+      type: array
+  securitySchemes:
+    BearerAuth:
+      bearerFormat: JWT
+      scheme: bearer
+      type: http

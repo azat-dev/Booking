@@ -1,3 +1,5 @@
+import org.openapitools.generator.gradle.plugin.tasks.GenerateTask
+
 plugins {
     id 'java'
     id 'org.springframework.boot' version '3.2.5'
@@ -27,6 +29,7 @@ dependencies {
     implementation 'org.springframework.kafka:spring-kafka'
     implementation 'org.springframework.boot:spring-boot-starter-jdbc'
     compileOnly 'org.projectlombok:lombok'
+    annotationProcessor 'org.projectlombok:lombok'
     runtimeOnly 'org.postgresql:postgresql'
     annotationProcessor 'org.projectlombok:lombok'
     testImplementation 'org.springframework.boot:spring-boot-starter-test'
@@ -35,13 +38,25 @@ dependencies {
     implementation 'org.springframework.boot:spring-boot-starter-actuator'
     testImplementation 'org.springframework.boot:spring-boot-starter-actuator'
 
+    testCompileOnly 'org.projectlombok:lombok'
+    testAnnotationProcessor 'org.projectlombok:lombok'
     testImplementation "org.junit.jupiter:junit-jupiter:5.8.1"
     testImplementation "org.testcontainers:testcontainers:1.19.8"
     testImplementation "org.testcontainers:junit-jupiter:1.19.8"
     testImplementation "org.testcontainers:postgresql:1.19.8"
 
     implementation project(":shared")
-    testImplementation project(":apiclient")
+
+    implementation 'org.openapitools:jackson-databind-nullable:0.2.6'
+    implementation 'org.springframework.data:spring-data-commons'
+    implementation 'org.springframework.boot:spring-boot-starter-validation'
+    implementation 'com.fasterxml.jackson.dataformat:jackson-dataformat-yaml'
+    implementation 'com.fasterxml.jackson.datatype:jackson-datatype-jsr310'
+    implementation 'com.fasterxml.jackson.core:jackson-databind'
+    implementation 'io.swagger.core.v3:swagger-annotations:2.2.21'
+    implementation 'io.swagger.core.v3:swagger-models:2.2.21'
+
+    testImplementation 'org.springframework.cloud:spring-cloud-starter-openfeign:4.1.1'
 
     testImplementation('com.github.javafaker:javafaker:1.0.2') {
         exclude group: 'org.yaml', module: 'snakeyaml'
@@ -52,14 +67,79 @@ tasks.named('test') {
     useJUnitPlatform()
 }
 
-openApiGenerate {
-    generatorName.set("java")
+if (hasProperty('buildScan')) {
+    buildScan {
+        termsOfServiceUrl = 'https://gradle.com/terms-of-service'
+        termsOfServiceAgree = 'yes'
+    }
+}
+
+sourceSets {
+    main {
+        java {
+            srcDirs += "$rootDir/generated/server/src/main/java"
+        }
+    }
+
+    test {
+        java {
+            srcDirs += "$rootDir/generated/client/src/main/java"
+        }
+    }
+}
+
+task buildServerApi(type: GenerateTask) {
+    generatorName.set("spring")
+    library.set("spring-boot")
     inputSpec.set("$rootDir/../specs/listings/openapi.yaml")
-    outputDir.set("$buildDir/generated/apiclient")
-    apiPackage.set("com.azat4dev.booking.listingsms.apiclient")
-    invokerPackage.set("com.azat4dev.booking.listingsms.apiclient.invoker")
-    modelPackage.set("com.azat4dev.booking.listingsms.apiclient.api.model")
+    outputDir.set("$rootDir/generated/server")
+    invokerPackage.set("com.azat4dev.booking.listingsms.generated.server.base")
+    apiPackage.set("com.azat4dev.booking.listingsms.generated.server.api")
+    modelPackage.set("com.azat4dev.booking.listingsms.generated.server.model")
+    packageName.set("com.azat4dev.booking.listingsms.generated.server")
+    ignoreFileOverride.set(".openapi-generator-ignore")
     configOptions.set([
-            dateLibrary: "java8"
+            useOptional: "true",
+            openApiNullable: "false",
+            interfaceOnly: "false",
+            additionalModelTypeAnnotations: "@lombok.Builder(toBuilder = true)\n@lombok.RequiredArgsConstructor\n@lombok.AllArgsConstructor\n@com.fasterxml.jackson.annotation.JsonIgnoreProperties(ignoreUnknown=true)",
+            generatedConstructorWithRequiredArgs: "false",
+            useTags: "true",
+
+            dateLibrary: "java8-localdatetime",
+            generateConstructorWithAllArgs: "false",
+            serializationLibrary: "jackson",
+            useSpringBoot3: "true",
+            delegatePattern: "true",
+            generateBuilders: "false",
+            useSpringController: "false"
     ])
 }
+
+task buildApiClient(type: GenerateTask) {
+    generatorName.set("spring")
+    library.set("spring-cloud")
+    inputSpec.set("$rootDir/../specs/listings/openapi.yaml")
+    outputDir.set("$rootDir/generated/client")
+    invokerPackage.set("com.azat4dev.booking.listingsms.generated.client.base")
+    apiPackage.set("com.azat4dev.booking.listingsms.generated.client.api")
+    modelPackage.set("com.azat4dev.booking.listingsms.generated.client.model")
+    packageName.set("com.azat4dev.booking.listingsms.generated.client")
+    ignoreFileOverride.set(".openapi-generator-ignore")
+    configOptions.set([
+            useOptional: "true",
+            openApiNullable: "false",
+            interfaceOnly: "false",
+            additionalModelTypeAnnotations: "@lombok.Builder(toBuilder = true)\n@lombok.RequiredArgsConstructor\n@lombok.AllArgsConstructor",
+            generatedConstructorWithRequiredArgs: "false",
+            useTags: "true",
+            useFeignClient: "true",
+            useFeignClientUrl: "true",
+
+            useSpringBoot3: "true",
+            dateLibrary: "java8-localdatetime",
+            generateConstructorWithAllArgs: "false"
+    ])
+}
+
+task codegen(dependsOn: ['buildApiClient', 'buildServerApi'])

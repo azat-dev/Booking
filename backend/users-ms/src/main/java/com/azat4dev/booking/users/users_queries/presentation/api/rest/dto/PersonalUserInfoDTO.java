@@ -10,7 +10,8 @@ public record PersonalUserInfoDTO(
     String email,
     String emailVerficationStatus,
     FullNameDTO fullName,
-    Optional<PhotoPathDTO> photo
+    Optional<PhotoPathDTO> photo,
+    String emailVerificationStatus
 ) {
 
     public static PersonalUserInfoDTO from(PersonalUserInfo user) {
@@ -19,7 +20,8 @@ public record PersonalUserInfoDTO(
             user.email(),
             user.emailVerificationStatus().name(),
             FullNameDTO.fromDomain(user.fullName()),
-            user.photo().map(p -> new PhotoPathDTO(p.url().toString()))
+            user.photo().map(p -> new PhotoPathDTO(p.url().toString())),
+            user.emailVerificationStatus().name()
         );
     }
 }

@@ -3,6 +3,3 @@ rootProject.name = 'listings-ms'
 include ':shared'
 project(':shared').projectDir = new File('../shared')
 
-include ':apiclient'
-project(':apiclient').projectDir = new File('./build/generated/apiclient')
-

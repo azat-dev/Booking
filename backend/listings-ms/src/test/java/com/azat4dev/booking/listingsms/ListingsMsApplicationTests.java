@@ -1,84 +1,65 @@
 package com.azat4dev.booking.listingsms;
 
-import com.azat4dev.booking.listingsms.apiclient.DefaultApi;
-import com.azat4dev.booking.listingsms.apiclient.api.model.AddListingRequestBody;
-import com.azat4dev.booking.listingsms.apiclient.api.model.AddListingResponse;
-import com.azat4dev.booking.listingsms.apiclient.api.model.GetListingPrivateDetailsResponse;
-import com.azat4dev.booking.listingsms.apiclient.invoker.ApiException;
+import com.azat4dev.booking.listingsms.generated.client.api.CommandsApiClient;
+import com.azat4dev.booking.listingsms.generated.client.api.QueriesApi;
+import com.azat4dev.booking.listingsms.generated.client.model.AddListingRequestBody;
 import com.azat4dev.booking.listingsms.helpers.PostgresTests;
 import com.github.javafaker.Faker;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
-import org.springframework.boot.test.web.client.TestRestTemplate;
-import org.springframework.boot.test.web.server.LocalServerPort;
+import org.springframework.cloud.openfeign.EnableFeignClients;
+import org.springframework.test.context.DynamicPropertyRegistry;
+import org.springframework.test.context.DynamicPropertySource;
 
 import java.util.UUID;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
+@EnableFeignClients
 @SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
 class ListingsMsApplicationTests implements PostgresTests {
 
     private final static Faker faker = Faker.instance();
 
-    @LocalServerPort
-    private int port;
+    @Autowired
+    CommandsApiClient commandsApiClient;
 
     @Autowired
-    private TestRestTemplate restTemplate;
+    QueriesApi queriesApiClient;
 
+    @DynamicPropertySource
+    protected static void feignProperties(DynamicPropertyRegistry registry) {
+        registry.add("commands.url", () -> "http://localhost:${local.server.port}");
+        registry.add("queries.url", () -> "http://localhost:${local.server.port}");
+    }
 
     @Test
     void contextLoads() {
     }
 
     AddListingRequestBody anyRequestAddListing() {
-        final var request = new AddListingRequestBody();
-        request.setOperationId(UUID.randomUUID());
-        request.setTitle(faker.book().title());
-
-        return request;
+        return new AddListingRequestBody()
+            .operationId(UUID.randomUUID())
+            .title(faker.book().title());
     }
 
     @Test
-    void test_addListing() throws ApiException {
+    void test_addListing() {
         // Given
         final var requestAddListing = anyRequestAddListing();
 
         // When
-        final var response = performAddNewListing(requestAddListing, "accessToken");
+        final var response = commandsApiClient.addListing(requestAddListing);
 
         // Then
-        assertThat(response.getListingId()).isNotNull();
+        final var body = response.getBody();
+        assertThat(body.getListingId()).isNotNull();
 
-        final var details = performGetListingPrivateDetails(response.getListingId(), "accessToken");
+        final var detailsResponse = queriesApiClient.getListingPrivateDetails(body.getListingId());
+        final var details = detailsResponse.getBody();
+
         assertThat(details).isNotNull();
-        assertThat(details.getListing().getId()).isEqualTo(response.getListingId());
-    }
-
-    // Helpers
-
-    private String baseURL() {
-        return "http://localhost:" + port;
-    }
-
-    DefaultApi apiClient() {
-        final var api = new DefaultApi();
-        api.setCustomBaseUrl(baseURL());
-
-        return api;
-    }
-
-    AddListingResponse performAddNewListing(AddListingRequestBody requestBody, String accessToken) throws ApiException {
-
-        final var api = apiClient();
-        return api.addListing(requestBody);
-    }
-
-    GetListingPrivateDetailsResponse performGetListingPrivateDetails(UUID listingId, String accessToken) throws ApiException {
-
-        final var api = apiClient();
-        return api.getListingPrivateDetails(listingId);
+        assertThat(details.getListing().getId()).isEqualTo(body.getListingId());
     }
 }
