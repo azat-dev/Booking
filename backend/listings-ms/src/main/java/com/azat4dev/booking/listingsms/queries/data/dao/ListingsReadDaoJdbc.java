@@ -23,7 +23,8 @@ public final class ListingsReadDaoJdbc implements ListingsReadDao {
     public Optional<ListingRecord> findById(UUID listingId) {
 
         try {
-            final var row = jdbcTemplate.queryForObject("SELECT * FROM listings WHERE id = :id LIMIT 1",
+            final var row = jdbcTemplate.queryForObject(
+                "SELECT * FROM listings WHERE id = :id LIMIT 1",
                 Map.of("id", listingId),
                 this.rowMapper
             );
@@ -35,7 +36,11 @@ public final class ListingsReadDaoJdbc implements ListingsReadDao {
 
     @Override
     public List<ListingRecord> findAllByOwnerId(UUID ownerId) {
-        return List.of();
+        return jdbcTemplate.query(
+            "SELECT * FROM listings WHERE owner_id = :owner_id",
+            Map.of("owner_id", ownerId),
+            this.rowMapper
+        );
     }
 
     private static final class Mapper implements RowMapper<ListingRecord> {
