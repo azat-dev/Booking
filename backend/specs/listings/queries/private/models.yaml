@@ -12,13 +12,26 @@ components:
       required:
         - id
         - title
+        - status
       properties:
         id:
           $ref: "../../common/models/ListingIdDTO.yaml"
         title:
           type: string
+        status:
+          $ref: "../../common/models/ListingStatusDTO.yaml"
         description:
           type: string
+        guestCapacity:
+          $ref: "../../common/models/GuestsCapacityDTO.yaml"
+        propertyType:
+          $ref: "../../common/models/PropertyTypeDTO.yaml"
+        roomType:
+          $ref: "../../common/models/RoomTypeDTO.yaml"
+        address:
+          $ref: "../../common/models/AddressDTO.yaml"
+        location:
+          $ref: "../../common/models/LocationDTO.yaml"
 
     GetPhotoUploadUrlForListingResponse:
       type: object

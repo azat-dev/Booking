@@ -1,0 +1,14 @@
+type: object
+properties:
+  street:
+    type: string
+    example: "123 Main St"
+    maxLength: 255
+  city:
+    type: string
+    example: "San Francisco"
+    maxLength: 255
+  country:
+    type: string
+    example: "USA"
+    maxLength: 255
