@@ -37,7 +37,7 @@ public final class ListingsReadDaoJdbc implements ListingsReadDao {
     @Override
     public List<ListingRecord> findAllByOwnerId(UUID ownerId) {
         return jdbcTemplate.query(
-            "SELECT * FROM listings WHERE owner_id = :owner_id",
+            "SELECT * FROM listings WHERE owner_id = :owner_id ORDER BY title ASC",
             Map.of("owner_id", ownerId),
             this.rowMapper
         );
