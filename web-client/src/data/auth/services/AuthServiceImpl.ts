@@ -12,14 +12,22 @@ import AccessToken from "../../../domain/auth/interfaces/repositories/AccessToke
 import type LocalAuthDataRepository from "../../../domain/auth/interfaces/repositories/LocalAuthDataRepository";
 import Email from "../../../domain/auth/values/Email";
 import UserId from "../../../domain/auth/values/UserId";
-import {DefaultApi, ResponseError, UserWithSameEmailAlreadyExistsError, ValidationError,} from "../../API";
+import {
+    CommandsLoginApi, CommandsSignUpApi,
+    QueriesCurrentUserApi,
+    ResponseError,
+    UserWithSameEmailAlreadyExistsErrorDTO,
+    ValidationErrorDTO,
+} from "../../API";
 import PersonalUserInfo from "../../../domain/auth/values/PersonalUserInfo";
 import PhotoPath from "../../../domain/auth/values/PhotoPath.ts";
 
 
 class AuthServiceImpl implements AuthService {
     public constructor(
-        private readonly api: DefaultApi,
+        private readonly loginApi: CommandsLoginApi,
+        private readonly signUpApi: CommandsSignUpApi,
+        private readonly currentUserApi: QueriesCurrentUserApi,
         private readonly localAuthDataRepository: LocalAuthDataRepository
     ) {
     }
@@ -28,8 +36,8 @@ class AuthServiceImpl implements AuthService {
         data: AuthenticateByEmailData
     ): Promise<AuthenticationByEmailResult> => {
         try {
-            const result = await this.api.apiPublicAuthTokenPost({
-                authenticateByEmailRequest: {
+            const result = await this.loginApi.loginByEmail({
+                loginByEmailRequestBody: {
                     email: data.email.value,
                     password: data.password,
                 },
@@ -59,7 +67,7 @@ class AuthServiceImpl implements AuthService {
     };
 
     public authenticateByToken = async (token: AccessToken): Promise<PersonalUserInfo> => {
-        const userInfo = await this.api.apiWithAuthUsersCurrentGet();
+        const userInfo = await this.currentUserApi.getCurrentUser();
         const photo = userInfo.photo?.url ? new PhotoPath(userInfo.photo?.url) : null;
 
         return new PersonalUserInfo(
@@ -81,8 +89,8 @@ class AuthServiceImpl implements AuthService {
         data: SignUpByEmailData
     ): Promise<SignUpByEmailResult> => {
         try {
-            const result = await this.api.apiPublicAuthSignUpPost({
-                signUpByEmailRequest: {
+            const result = await this.signUpApi.signUpByEmail({
+                signUpByEmailRequestBody: {
                     email: data.email.value,
                     password: data.password.value,
                     fullName: {
@@ -104,13 +112,13 @@ class AuthServiceImpl implements AuthService {
         } catch (e) {
             if (e instanceof ResponseError) {
                 if (e.response.status === 400) {
-                    const error = (await e.response.json()) as ValidationError;
+                    const error = (await e.response.json()) as ValidationErrorDTO;
                     throw error;
                 }
 
                 if (e.response.status) {
                     const error =
-                        (await e.response.json()) as UserWithSameEmailAlreadyExistsError;
+                        (await e.response.json()) as UserWithSameEmailAlreadyExistsErrorDTO;
                     throw error;
                 }
             }

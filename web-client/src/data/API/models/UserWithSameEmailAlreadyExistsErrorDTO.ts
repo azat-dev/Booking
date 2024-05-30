@@ -16,37 +16,37 @@ import { mapValues } from '../runtime';
 /**
  * 
  * @export
- * @interface ModelError
+ * @interface UserWithSameEmailAlreadyExistsErrorDTO
  */
-export interface ModelError {
+export interface UserWithSameEmailAlreadyExistsErrorDTO {
     /**
      * 
      * @type {string}
-     * @memberof ModelError
+     * @memberof UserWithSameEmailAlreadyExistsErrorDTO
      */
     code: string;
     /**
      * 
      * @type {string}
-     * @memberof ModelError
+     * @memberof UserWithSameEmailAlreadyExistsErrorDTO
      */
     message: string;
 }
 
 /**
- * Check if a given object implements the ModelError interface.
+ * Check if a given object implements the UserWithSameEmailAlreadyExistsErrorDTO interface.
  */
-export function instanceOfModelError(value: object): boolean {
+export function instanceOfUserWithSameEmailAlreadyExistsErrorDTO(value: object): boolean {
     if (!('code' in value)) return false;
     if (!('message' in value)) return false;
     return true;
 }
 
-export function ModelErrorFromJSON(json: any): ModelError {
-    return ModelErrorFromJSONTyped(json, false);
+export function UserWithSameEmailAlreadyExistsErrorDTOFromJSON(json: any): UserWithSameEmailAlreadyExistsErrorDTO {
+    return UserWithSameEmailAlreadyExistsErrorDTOFromJSONTyped(json, false);
 }
 
-export function ModelErrorFromJSONTyped(json: any, ignoreDiscriminator: boolean): ModelError {
+export function UserWithSameEmailAlreadyExistsErrorDTOFromJSONTyped(json: any, ignoreDiscriminator: boolean): UserWithSameEmailAlreadyExistsErrorDTO {
     if (json == null) {
         return json;
     }
@@ -57,7 +57,7 @@ export function ModelErrorFromJSONTyped(json: any, ignoreDiscriminator: boolean)
     };
 }
 
-export function ModelErrorToJSON(value?: ModelError | null): any {
+export function UserWithSameEmailAlreadyExistsErrorDTOToJSON(value?: UserWithSameEmailAlreadyExistsErrorDTO | null): any {
     if (value == null) {
         return value;
     }

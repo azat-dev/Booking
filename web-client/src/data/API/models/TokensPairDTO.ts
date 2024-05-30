@@ -1,8 +1,8 @@
 /* tslint:disable */
 /* eslint-disable */
 /**
- * Demo Booking API
- * Describes the API of Daily Tasks
+ * Users  API
+ * Describes the API of Users Endpoint
  *
  * The version of the OpenAPI document: 1.0.0
  * 
@@ -16,37 +16,37 @@ import { mapValues } from '../runtime';
 /**
  * 
  * @export
- * @interface SignUpByEmailResponseTokens
+ * @interface TokensPairDTO
  */
-export interface SignUpByEmailResponseTokens {
+export interface TokensPairDTO {
     /**
      * 
      * @type {string}
-     * @memberof SignUpByEmailResponseTokens
+     * @memberof TokensPairDTO
      */
     access: string;
     /**
      * 
      * @type {string}
-     * @memberof SignUpByEmailResponseTokens
+     * @memberof TokensPairDTO
      */
     refresh: string;
 }
 
 /**
- * Check if a given object implements the SignUpByEmailResponseTokens interface.
+ * Check if a given object implements the TokensPairDTO interface.
  */
-export function instanceOfSignUpByEmailResponseTokens(value: object): boolean {
+export function instanceOfTokensPairDTO(value: object): boolean {
     if (!('access' in value)) return false;
     if (!('refresh' in value)) return false;
     return true;
 }
 
-export function SignUpByEmailResponseTokensFromJSON(json: any): SignUpByEmailResponseTokens {
-    return SignUpByEmailResponseTokensFromJSONTyped(json, false);
+export function TokensPairDTOFromJSON(json: any): TokensPairDTO {
+    return TokensPairDTOFromJSONTyped(json, false);
 }
 
-export function SignUpByEmailResponseTokensFromJSONTyped(json: any, ignoreDiscriminator: boolean): SignUpByEmailResponseTokens {
+export function TokensPairDTOFromJSONTyped(json: any, ignoreDiscriminator: boolean): TokensPairDTO {
     if (json == null) {
         return json;
     }
@@ -57,7 +57,7 @@ export function SignUpByEmailResponseTokensFromJSONTyped(json: any, ignoreDiscri
     };
 }
 
-export function SignUpByEmailResponseTokensToJSON(value?: SignUpByEmailResponseTokens | null): any {
+export function TokensPairDTOToJSON(value?: TokensPairDTO | null): any {
     if (value == null) {
         return value;
     }

@@ -33,7 +33,6 @@ const buildApp = (baseApiUrl: string) => {
 
     const dataConfig = new DataConfig(baseApiUrl);
 
-
     const bus = new BusImpl();
 
     const appSession = new AppSessionImpl(bus)

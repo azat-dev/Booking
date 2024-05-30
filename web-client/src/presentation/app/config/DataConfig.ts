@@ -1,5 +1,11 @@
 import LocalAuthDataRepositoryImpl from "../../../data/auth/repositories/LocalAuthDataRepositoryImpl.ts";
-import {Configuration, DefaultApi} from "../../../data/API";
+import {
+    CommandsLoginApi,
+    CommandsSignUpApi,
+    CommandsUpdateUserPhotoApi,
+    Configuration,
+    QueriesCurrentUserApi
+} from "../../../data/API";
 import AuthServiceImpl from "../../../data/auth/services/AuthServiceImpl.ts";
 import PersonalUserInfoService from "../../../domain/auth/interfaces/services/PersonalUserInfoService.ts";
 import UserInfoServiceImpl from "../../../data/auth/services/UserInfoServiceImpl.ts";
@@ -29,19 +35,46 @@ class DataConfig {
         }
     );
 
-    public api = singleton(
+    public currentUserApi = singleton(
         () => {
-            return new DefaultApi(this.apiConfig());
+            return new QueriesCurrentUserApi(this.apiConfig());
         }
     )
+
+    public updateUserPhotoApi = singleton(
+        () => {
+            return new CommandsUpdateUserPhotoApi(this.apiConfig());
+        }
+    )
+
+    public loginApi = singleton(
+        () => {
+            return new CommandsLoginApi(this.apiConfig());
+        }
+    )
+
+    public signUpApi = singleton(
+        () => {
+            return new CommandsSignUpApi(this.apiConfig());
+        }
+    )
+
     public localAuthService = singleton(
         (): AuthService => {
-            return new AuthServiceImpl(this.api(), this.localAuthDataRepository());
+            return new AuthServiceImpl(
+                this.loginApi(),
+                this.signUpApi(),
+                this.currentUserApi(),
+                this.localAuthDataRepository()
+            );
         }
     )
     public userInfoService = singleton(
         (): PersonalUserInfoService => {
-            return new UserInfoServiceImpl(this.api());
+            return new UserInfoServiceImpl(
+                this.currentUserApi(),
+                this.updateUserPhotoApi()
+            );
         }
     )
 

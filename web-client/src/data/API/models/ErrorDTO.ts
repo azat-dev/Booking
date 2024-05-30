@@ -1,8 +1,8 @@
 /* tslint:disable */
 /* eslint-disable */
 /**
- * Demo Booking API
- * Describes the API of Daily Tasks
+ * Users  API
+ * Describes the API of Users Endpoint
  *
  * The version of the OpenAPI document: 1.0.0
  * 
@@ -16,37 +16,37 @@ import { mapValues } from '../runtime';
 /**
  * 
  * @export
- * @interface UserAlreadyExistsError
+ * @interface ErrorDTO
  */
-export interface UserAlreadyExistsError {
+export interface ErrorDTO {
     /**
      * 
      * @type {string}
-     * @memberof UserAlreadyExistsError
+     * @memberof ErrorDTO
      */
     code: string;
     /**
      * 
      * @type {string}
-     * @memberof UserAlreadyExistsError
+     * @memberof ErrorDTO
      */
     message: string;
 }
 
 /**
- * Check if a given object implements the UserAlreadyExistsError interface.
+ * Check if a given object implements the ErrorDTO interface.
  */
-export function instanceOfUserAlreadyExistsError(value: object): boolean {
+export function instanceOfErrorDTO(value: object): boolean {
     if (!('code' in value)) return false;
     if (!('message' in value)) return false;
     return true;
 }
 
-export function UserAlreadyExistsErrorFromJSON(json: any): UserAlreadyExistsError {
-    return UserAlreadyExistsErrorFromJSONTyped(json, false);
+export function ErrorDTOFromJSON(json: any): ErrorDTO {
+    return ErrorDTOFromJSONTyped(json, false);
 }
 
-export function UserAlreadyExistsErrorFromJSONTyped(json: any, ignoreDiscriminator: boolean): UserAlreadyExistsError {
+export function ErrorDTOFromJSONTyped(json: any, ignoreDiscriminator: boolean): ErrorDTO {
     if (json == null) {
         return json;
     }
@@ -57,7 +57,7 @@ export function UserAlreadyExistsErrorFromJSONTyped(json: any, ignoreDiscriminat
     };
 }
 
-export function UserAlreadyExistsErrorToJSON(value?: UserAlreadyExistsError | null): any {
+export function ErrorDTOToJSON(value?: ErrorDTO | null): any {
     if (value == null) {
         return value;
     }

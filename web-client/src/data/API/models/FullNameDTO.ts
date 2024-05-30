@@ -16,37 +16,37 @@ import { mapValues } from '../runtime';
 /**
  * 
  * @export
- * @interface FullName
+ * @interface FullNameDTO
  */
-export interface FullName {
+export interface FullNameDTO {
     /**
      * 
      * @type {string}
-     * @memberof FullName
+     * @memberof FullNameDTO
      */
     firstName: string;
     /**
      * 
      * @type {string}
-     * @memberof FullName
+     * @memberof FullNameDTO
      */
     lastName: string;
 }
 
 /**
- * Check if a given object implements the FullName interface.
+ * Check if a given object implements the FullNameDTO interface.
  */
-export function instanceOfFullName(value: object): boolean {
+export function instanceOfFullNameDTO(value: object): boolean {
     if (!('firstName' in value)) return false;
     if (!('lastName' in value)) return false;
     return true;
 }
 
-export function FullNameFromJSON(json: any): FullName {
-    return FullNameFromJSONTyped(json, false);
+export function FullNameDTOFromJSON(json: any): FullNameDTO {
+    return FullNameDTOFromJSONTyped(json, false);
 }
 
-export function FullNameFromJSONTyped(json: any, ignoreDiscriminator: boolean): FullName {
+export function FullNameDTOFromJSONTyped(json: any, ignoreDiscriminator: boolean): FullNameDTO {
     if (json == null) {
         return json;
     }
@@ -57,7 +57,7 @@ export function FullNameFromJSONTyped(json: any, ignoreDiscriminator: boolean): 
     };
 }
 
-export function FullNameToJSON(value?: FullName | null): any {
+export function FullNameDTOToJSON(value?: FullNameDTO | null): any {
     if (value == null) {
         return value;
     }

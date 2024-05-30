@@ -1,5 +1,5 @@
 import PersonalUserInfoService from "../../../domain/auth/interfaces/services/PersonalUserInfoService";
-import {DefaultApi} from "../../API";
+import {CommandsUpdateUserPhotoApi, QueriesCurrentUserApi} from "../../API";
 import PersonalUserInfo from "../../../domain/auth/values/PersonalUserInfo";
 import Email from "../../../domain/auth/values/Email";
 import UserId from "../../../domain/auth/values/UserId";
@@ -11,12 +11,13 @@ import PhotoPath from "../../../domain/auth/values/PhotoPath";
 class UserInfoServiceImpl implements PersonalUserInfoService {
 
     public constructor(
-        private api: DefaultApi
+        private queriesCurrentUserApi: QueriesCurrentUserApi,
+        private commandsUpdateUserPhotoApi: CommandsUpdateUserPhotoApi
     ) {
     }
 
     public getUserInfo = async (): Promise<PersonalUserInfo> => {
-        const userInfo = await this.api.apiWithAuthUsersCurrentGet();
+        const userInfo = await this.queriesCurrentUserApi.getCurrentUser();
         const photo = userInfo.photo?.url ? new PhotoPath(userInfo.photo?.url) : null;
 
         return new PersonalUserInfo(
@@ -32,10 +33,10 @@ class UserInfoServiceImpl implements PersonalUserInfoService {
 
     updateUserPhoto = async (id: UserId, photo: File): Promise<void> => {
 
-        const response = await this.api.generateUploadUserPhototUrl(
+        const response = await this.commandsUpdateUserPhotoApi.generateUploadUserPhotoUrl(
             {
-                generateUploadUserPhotoUrlRequest: {
-                    idempotentOperationId: "FIXME: idempotentOperationId",
+                generateUploadUserPhotoUrlRequestBody: {
+                    operationId: crypto.randomUUID(),
                     fileName: this.getFileNameWithoutExtension(photo),
                     fileExtension: this.getFileExtension(photo),
                     fileSize: photo.size
@@ -44,9 +45,9 @@ class UserInfoServiceImpl implements PersonalUserInfoService {
         );
 
         await this.uploadPhoto(response.objectPath.url, response.formData as any, photo);
-        await this.api.updateUserPhoto({
-            updateUserPhotoRequest: {
-                idempotentOperationId: "string",
+        await this.commandsUpdateUserPhotoApi.updateUserPhoto({
+            updateUserPhotoRequestBody: {
+                operationId: crypto.randomUUID(),
                 uploadedFile: response.objectPath
             }
         })

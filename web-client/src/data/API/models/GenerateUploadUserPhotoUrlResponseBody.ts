@@ -23,37 +23,37 @@ import {
 /**
  * 
  * @export
- * @interface GenerateUploadUserPhotoUrlResponse
+ * @interface GenerateUploadUserPhotoUrlResponseBody
  */
-export interface GenerateUploadUserPhotoUrlResponse {
+export interface GenerateUploadUserPhotoUrlResponseBody {
     /**
      * 
      * @type {UploadedFileDataDTO}
-     * @memberof GenerateUploadUserPhotoUrlResponse
+     * @memberof GenerateUploadUserPhotoUrlResponseBody
      */
     objectPath: UploadedFileDataDTO;
     /**
      * 
-     * @type {object}
-     * @memberof GenerateUploadUserPhotoUrlResponse
+     * @type {{ [key: string]: string; }}
+     * @memberof GenerateUploadUserPhotoUrlResponseBody
      */
-    formData: object;
+    formData: { [key: string]: string; };
 }
 
 /**
- * Check if a given object implements the GenerateUploadUserPhotoUrlResponse interface.
+ * Check if a given object implements the GenerateUploadUserPhotoUrlResponseBody interface.
  */
-export function instanceOfGenerateUploadUserPhotoUrlResponse(value: object): boolean {
+export function instanceOfGenerateUploadUserPhotoUrlResponseBody(value: object): boolean {
     if (!('objectPath' in value)) return false;
     if (!('formData' in value)) return false;
     return true;
 }
 
-export function GenerateUploadUserPhotoUrlResponseFromJSON(json: any): GenerateUploadUserPhotoUrlResponse {
-    return GenerateUploadUserPhotoUrlResponseFromJSONTyped(json, false);
+export function GenerateUploadUserPhotoUrlResponseBodyFromJSON(json: any): GenerateUploadUserPhotoUrlResponseBody {
+    return GenerateUploadUserPhotoUrlResponseBodyFromJSONTyped(json, false);
 }
 
-export function GenerateUploadUserPhotoUrlResponseFromJSONTyped(json: any, ignoreDiscriminator: boolean): GenerateUploadUserPhotoUrlResponse {
+export function GenerateUploadUserPhotoUrlResponseBodyFromJSONTyped(json: any, ignoreDiscriminator: boolean): GenerateUploadUserPhotoUrlResponseBody {
     if (json == null) {
         return json;
     }
@@ -64,7 +64,7 @@ export function GenerateUploadUserPhotoUrlResponseFromJSONTyped(json: any, ignor
     };
 }
 
-export function GenerateUploadUserPhotoUrlResponseToJSON(value?: GenerateUploadUserPhotoUrlResponse | null): any {
+export function GenerateUploadUserPhotoUrlResponseBodyToJSON(value?: GenerateUploadUserPhotoUrlResponseBody | null): any {
     if (value == null) {
         return value;
     }

@@ -16,44 +16,44 @@ import { mapValues } from '../runtime';
 /**
  * 
  * @export
- * @interface ValidationErrorDetails
+ * @interface ValidationErrorDetailsDTO
  */
-export interface ValidationErrorDetails {
+export interface ValidationErrorDetailsDTO {
     /**
      * 
      * @type {string}
-     * @memberof ValidationErrorDetails
+     * @memberof ValidationErrorDetailsDTO
      */
     path: string;
     /**
      * 
      * @type {string}
-     * @memberof ValidationErrorDetails
+     * @memberof ValidationErrorDetailsDTO
      */
     message: string;
     /**
      * 
      * @type {string}
-     * @memberof ValidationErrorDetails
+     * @memberof ValidationErrorDetailsDTO
      */
     code: string;
 }
 
 /**
- * Check if a given object implements the ValidationErrorDetails interface.
+ * Check if a given object implements the ValidationErrorDetailsDTO interface.
  */
-export function instanceOfValidationErrorDetails(value: object): boolean {
+export function instanceOfValidationErrorDetailsDTO(value: object): boolean {
     if (!('path' in value)) return false;
     if (!('message' in value)) return false;
     if (!('code' in value)) return false;
     return true;
 }
 
-export function ValidationErrorDetailsFromJSON(json: any): ValidationErrorDetails {
-    return ValidationErrorDetailsFromJSONTyped(json, false);
+export function ValidationErrorDetailsDTOFromJSON(json: any): ValidationErrorDetailsDTO {
+    return ValidationErrorDetailsDTOFromJSONTyped(json, false);
 }
 
-export function ValidationErrorDetailsFromJSONTyped(json: any, ignoreDiscriminator: boolean): ValidationErrorDetails {
+export function ValidationErrorDetailsDTOFromJSONTyped(json: any, ignoreDiscriminator: boolean): ValidationErrorDetailsDTO {
     if (json == null) {
         return json;
     }
@@ -65,7 +65,7 @@ export function ValidationErrorDetailsFromJSONTyped(json: any, ignoreDiscriminat
     };
 }
 
-export function ValidationErrorDetailsToJSON(value?: ValidationErrorDetails | null): any {
+export function ValidationErrorDetailsDTOToJSON(value?: ValidationErrorDetailsDTO | null): any {
     if (value == null) {
         return value;
     }

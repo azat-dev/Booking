@@ -16,66 +16,66 @@ import { mapValues } from '../runtime';
 /**
  * 
  * @export
- * @interface GenerateUploadUserPhotoUrlRequest
+ * @interface GenerateUploadUserPhotoUrlRequestBody
  */
-export interface GenerateUploadUserPhotoUrlRequest {
+export interface GenerateUploadUserPhotoUrlRequestBody {
     /**
      * 
      * @type {string}
-     * @memberof GenerateUploadUserPhotoUrlRequest
+     * @memberof GenerateUploadUserPhotoUrlRequestBody
      */
-    idempotentOperationId?: string;
+    operationId?: string;
     /**
      * 
      * @type {string}
-     * @memberof GenerateUploadUserPhotoUrlRequest
+     * @memberof GenerateUploadUserPhotoUrlRequestBody
      */
     fileName?: string;
     /**
      * 
      * @type {string}
-     * @memberof GenerateUploadUserPhotoUrlRequest
+     * @memberof GenerateUploadUserPhotoUrlRequestBody
      */
     fileExtension?: string;
     /**
      * 
      * @type {number}
-     * @memberof GenerateUploadUserPhotoUrlRequest
+     * @memberof GenerateUploadUserPhotoUrlRequestBody
      */
     fileSize?: number;
 }
 
 /**
- * Check if a given object implements the GenerateUploadUserPhotoUrlRequest interface.
+ * Check if a given object implements the GenerateUploadUserPhotoUrlRequestBody interface.
  */
-export function instanceOfGenerateUploadUserPhotoUrlRequest(value: object): boolean {
+export function instanceOfGenerateUploadUserPhotoUrlRequestBody(value: object): boolean {
     return true;
 }
 
-export function GenerateUploadUserPhotoUrlRequestFromJSON(json: any): GenerateUploadUserPhotoUrlRequest {
-    return GenerateUploadUserPhotoUrlRequestFromJSONTyped(json, false);
+export function GenerateUploadUserPhotoUrlRequestBodyFromJSON(json: any): GenerateUploadUserPhotoUrlRequestBody {
+    return GenerateUploadUserPhotoUrlRequestBodyFromJSONTyped(json, false);
 }
 
-export function GenerateUploadUserPhotoUrlRequestFromJSONTyped(json: any, ignoreDiscriminator: boolean): GenerateUploadUserPhotoUrlRequest {
+export function GenerateUploadUserPhotoUrlRequestBodyFromJSONTyped(json: any, ignoreDiscriminator: boolean): GenerateUploadUserPhotoUrlRequestBody {
     if (json == null) {
         return json;
     }
     return {
         
-        'idempotentOperationId': json['idempotentOperationId'] == null ? undefined : json['idempotentOperationId'],
+        'operationId': json['operationId'] == null ? undefined : json['operationId'],
         'fileName': json['fileName'] == null ? undefined : json['fileName'],
         'fileExtension': json['fileExtension'] == null ? undefined : json['fileExtension'],
         'fileSize': json['fileSize'] == null ? undefined : json['fileSize'],
     };
 }
 
-export function GenerateUploadUserPhotoUrlRequestToJSON(value?: GenerateUploadUserPhotoUrlRequest | null): any {
+export function GenerateUploadUserPhotoUrlRequestBodyToJSON(value?: GenerateUploadUserPhotoUrlRequestBody | null): any {
     if (value == null) {
         return value;
     }
     return {
         
-        'idempotentOperationId': value['idempotentOperationId'],
+        'operationId': value['operationId'],
         'fileName': value['fileName'],
         'fileExtension': value['fileExtension'],
         'fileSize': value['fileSize'],

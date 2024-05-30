@@ -16,37 +16,37 @@ import { mapValues } from '../runtime';
 /**
  * 
  * @export
- * @interface AuthenticateByEmailRequest
+ * @interface LoginByEmailRequestBody
  */
-export interface AuthenticateByEmailRequest {
+export interface LoginByEmailRequestBody {
     /**
      * 
      * @type {string}
-     * @memberof AuthenticateByEmailRequest
+     * @memberof LoginByEmailRequestBody
      */
     email: string;
     /**
      * 
      * @type {string}
-     * @memberof AuthenticateByEmailRequest
+     * @memberof LoginByEmailRequestBody
      */
     password: string;
 }
 
 /**
- * Check if a given object implements the AuthenticateByEmailRequest interface.
+ * Check if a given object implements the LoginByEmailRequestBody interface.
  */
-export function instanceOfAuthenticateByEmailRequest(value: object): boolean {
+export function instanceOfLoginByEmailRequestBody(value: object): boolean {
     if (!('email' in value)) return false;
     if (!('password' in value)) return false;
     return true;
 }
 
-export function AuthenticateByEmailRequestFromJSON(json: any): AuthenticateByEmailRequest {
-    return AuthenticateByEmailRequestFromJSONTyped(json, false);
+export function LoginByEmailRequestBodyFromJSON(json: any): LoginByEmailRequestBody {
+    return LoginByEmailRequestBodyFromJSONTyped(json, false);
 }
 
-export function AuthenticateByEmailRequestFromJSONTyped(json: any, ignoreDiscriminator: boolean): AuthenticateByEmailRequest {
+export function LoginByEmailRequestBodyFromJSONTyped(json: any, ignoreDiscriminator: boolean): LoginByEmailRequestBody {
     if (json == null) {
         return json;
     }
@@ -57,7 +57,7 @@ export function AuthenticateByEmailRequestFromJSONTyped(json: any, ignoreDiscrim
     };
 }
 
-export function AuthenticateByEmailRequestToJSON(value?: AuthenticateByEmailRequest | null): any {
+export function LoginByEmailRequestBodyToJSON(value?: LoginByEmailRequestBody | null): any {
     if (value == null) {
         return value;
     }
