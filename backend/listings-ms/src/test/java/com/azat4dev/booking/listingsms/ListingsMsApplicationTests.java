@@ -75,6 +75,29 @@ class ListingsMsApplicationTests implements PostgresTests {
         });
     }
 
+    @Test
+    void test_getOwnListings() throws UserId.WrongFormatException {
+
+        // Given
+        final var currentUserId = UserId.checkAndMakeFrom(UUID.randomUUID().toString());
+        final var currentUserListing1 = givenExistingListing(currentUserId);
+        final var currentUserListing2 = givenExistingListing(currentUserId);
+
+        final var currentUserAccessToken = generateAccessToken.execute(currentUserId);
+
+        final var anotherUserId = UserId.checkAndMakeFrom(UUID.randomUUID().toString());
+        final var anotherUserListing = givenExistingListing(anotherUserId);
+
+        // When
+        final var ownListings = apiClient(currentUserAccessToken, QueriesPrivateApi.class)
+            .getOwnListings();
+
+        // Then
+        assertThat(ownListings).hasSize(2);
+        assertThat(ownListings).extracting("id")
+            .contains(currentUserListing1.id, currentUserListing2.id);
+    }
+
     ExistingListing givenExistingListing(UserId userId) {
         // Given
         final var accessToken = generateAccessToken.execute(userId);

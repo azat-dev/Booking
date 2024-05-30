@@ -1,6 +1,7 @@
 package com.azat4dev.booking.listingsms.generated.server.api;
 
 import com.azat4dev.booking.listingsms.generated.server.model.GetListingPrivateDetailsResponse;
+import com.azat4dev.booking.listingsms.generated.server.model.ListingPrivateDetailsDTO;
 import java.util.UUID;
 
 
@@ -26,7 +27,7 @@ import java.util.Map;
 import java.util.Optional;
 import jakarta.annotation.Generated;
 
-@Generated(value = "org.openapitools.codegen.languages.SpringCodegen", date = "2024-05-30T20:48:06.837109+03:00[Europe/Moscow]")
+@Generated(value = "org.openapitools.codegen.languages.SpringCodegen", date = "2024-05-30T22:29:40.500087+03:00[Europe/Moscow]")
 @Controller
 @RequestMapping("${openapi.listings.base-path:}")
 public class QueriesPrivateApiController implements QueriesPrivateApi {

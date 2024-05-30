@@ -30,7 +30,7 @@ import com.fasterxml.jackson.annotation.JsonTypeName;
   ErrorDTO.JSON_PROPERTY_CODE,
   ErrorDTO.JSON_PROPERTY_MESSAGE
 })
-@javax.annotation.Generated(value = "org.openapitools.codegen.languages.JavaClientCodegen", date = "2024-05-30T20:48:06.463009+03:00[Europe/Moscow]")
+@javax.annotation.Generated(value = "org.openapitools.codegen.languages.JavaClientCodegen", date = "2024-05-30T22:29:40.238241+03:00[Europe/Moscow]")
 public class ErrorDTO {
   public static final String JSON_PROPERTY_CODE = "code";
   private String code;

@@ -1,10 +1,12 @@
 package com.azat4dev.booking.listingsms.queries.domain.entities;
 
 import com.azat4dev.booking.listingsms.commands.domain.values.ListingId;
+import com.azat4dev.booking.listingsms.commands.domain.values.OwnerId;
 import com.azat4dev.booking.listingsms.queries.domain.interfaces.PrivateListingsReadRepository;
 import com.azat4dev.booking.shared.domain.core.UserId;
 import lombok.AllArgsConstructor;
 
+import java.util.List;
 import java.util.Optional;
 
 @AllArgsConstructor
@@ -31,5 +33,11 @@ public final class UserListingsImpl implements UserListings {
         }
 
         return foundListing;
+    }
+
+    @Override
+    public List<ListingPrivateDetails> listAll() {
+
+        return readRepository.findAllByOwnerId(OwnerId.fromUserId(userId));
     }
 }

@@ -6,6 +6,7 @@
 package com.azat4dev.booking.listingsms.generated.server.api;
 
 import com.azat4dev.booking.listingsms.generated.server.model.GetListingPrivateDetailsResponse;
+import com.azat4dev.booking.listingsms.generated.server.model.ListingPrivateDetailsDTO;
 import java.util.UUID;
 import io.swagger.v3.oas.annotations.ExternalDocumentation;
 import io.swagger.v3.oas.annotations.Operation;
@@ -30,7 +31,7 @@ import java.util.Map;
 import java.util.Optional;
 import jakarta.annotation.Generated;
 
-@Generated(value = "org.openapitools.codegen.languages.SpringCodegen", date = "2024-05-30T20:48:06.837109+03:00[Europe/Moscow]")
+@Generated(value = "org.openapitools.codegen.languages.SpringCodegen", date = "2024-05-30T22:29:40.500087+03:00[Europe/Moscow]")
 @Validated
 @Tag(name = "queriesPrivate", description = "the queriesPrivate API")
 public interface QueriesPrivateApi {
@@ -71,6 +72,38 @@ public interface QueriesPrivateApi {
         @Parameter(name = "listingId", description = "Listing ID", required = true, in = ParameterIn.PATH) @PathVariable("listingId") UUID listingId
     ) {
         return getDelegate().getListingPrivateDetails(listingId);
+    }
+
+
+    /**
+     * GET /api/private/users/currrent/listings : List own listings
+     *
+     * @return Private details of listing (status code 200)
+     *         or Forbidden (status code 403)
+     */
+    @Operation(
+        operationId = "getOwnListings",
+        summary = "List own listings",
+        tags = { "queriesPrivate" },
+        responses = {
+            @ApiResponse(responseCode = "200", description = "Private details of listing", content = {
+                @Content(mediaType = "application/json", array = @ArraySchema(schema = @Schema(implementation = ListingPrivateDetailsDTO.class)))
+            }),
+            @ApiResponse(responseCode = "403", description = "Forbidden")
+        },
+        security = {
+            @SecurityRequirement(name = "BearerAuth")
+        }
+    )
+    @RequestMapping(
+        method = RequestMethod.GET,
+        value = "/api/private/users/currrent/listings",
+        produces = { "application/json" }
+    )
+    default ResponseEntity<List<ListingPrivateDetailsDTO>> getOwnListings(
+        
+    ) {
+        return getDelegate().getOwnListings();
     }
 
 }

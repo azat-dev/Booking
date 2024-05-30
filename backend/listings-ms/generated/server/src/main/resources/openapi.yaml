@@ -35,6 +35,26 @@ paths:
       x-accepts: application/json
       x-tags:
       - tag: queriesPrivate
+  /api/private/users/currrent/listings:
+    get:
+      operationId: getOwnListings
+      responses:
+        "200":
+          content:
+            application/json:
+              schema:
+                items:
+                  $ref: '#/components/schemas/ListingPrivateDetailsDTO'
+                type: array
+          description: Private details of listing
+        "403":
+          description: Forbidden
+      summary: List own listings
+      tags:
+      - queriesPrivate
+      x-accepts: application/json
+      x-tags:
+      - tag: queriesPrivate
   /api/private/listings:
     post:
       operationId: addListing

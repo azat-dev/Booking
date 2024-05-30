@@ -1,6 +1,7 @@
 package com.azat4dev.booking.listingsms.generated.server.api;
 
 import com.azat4dev.booking.listingsms.generated.server.model.GetListingPrivateDetailsResponse;
+import com.azat4dev.booking.listingsms.generated.server.model.ListingPrivateDetailsDTO;
 import java.util.UUID;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
@@ -17,7 +18,7 @@ import jakarta.annotation.Generated;
  * A delegate to be called by the {@link QueriesPrivateApiController}}.
  * Implement this interface with a {@link org.springframework.stereotype.Service} annotated class.
  */
-@Generated(value = "org.openapitools.codegen.languages.SpringCodegen", date = "2024-05-30T20:48:06.837109+03:00[Europe/Moscow]")
+@Generated(value = "org.openapitools.codegen.languages.SpringCodegen", date = "2024-05-30T22:29:40.500087+03:00[Europe/Moscow]")
 public interface QueriesPrivateApiDelegate {
 
     default Optional<NativeWebRequest> getRequest() {
@@ -38,6 +39,27 @@ public interface QueriesPrivateApiDelegate {
             for (MediaType mediaType: MediaType.parseMediaTypes(request.getHeader("Accept"))) {
                 if (mediaType.isCompatibleWith(MediaType.valueOf("application/json"))) {
                     String exampleString = "{ \"listing\" : { \"description\" : \"description\", \"id\" : \"046b6c7f-0b8a-43b9-b35d-6489e6daee91\", \"title\" : \"title\" } }";
+                    ApiUtil.setExampleResponse(request, "application/json", exampleString);
+                    break;
+                }
+            }
+        });
+        return new ResponseEntity<>(HttpStatus.NOT_IMPLEMENTED);
+
+    }
+
+    /**
+     * GET /api/private/users/currrent/listings : List own listings
+     *
+     * @return Private details of listing (status code 200)
+     *         or Forbidden (status code 403)
+     * @see QueriesPrivateApi#getOwnListings
+     */
+    default ResponseEntity<List<ListingPrivateDetailsDTO>> getOwnListings() {
+        getRequest().ifPresent(request -> {
+            for (MediaType mediaType: MediaType.parseMediaTypes(request.getHeader("Accept"))) {
+                if (mediaType.isCompatibleWith(MediaType.valueOf("application/json"))) {
+                    String exampleString = "[ { \"description\" : \"description\", \"id\" : \"046b6c7f-0b8a-43b9-b35d-6489e6daee91\", \"title\" : \"title\" }, { \"description\" : \"description\", \"id\" : \"046b6c7f-0b8a-43b9-b35d-6489e6daee91\", \"title\" : \"title\" } ]";
                     ApiUtil.setExampleResponse(request, "application/json", exampleString);
                     break;
                 }

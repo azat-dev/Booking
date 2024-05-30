@@ -24,7 +24,7 @@ import com.azat4dev.booking.listingsms.generated.client.base.auth.ApiKeyAuth;
 import com.azat4dev.booking.listingsms.generated.client.base.ApiResponseDecoder;
 
 
-@javax.annotation.Generated(value = "org.openapitools.codegen.languages.JavaClientCodegen", date = "2024-05-30T20:48:06.463009+03:00[Europe/Moscow]")
+@javax.annotation.Generated(value = "org.openapitools.codegen.languages.JavaClientCodegen", date = "2024-05-30T22:29:40.238241+03:00[Europe/Moscow]")
 public class ApiClient {
   private static final Logger log = Logger.getLogger(ApiClient.class.getName());
 

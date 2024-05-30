@@ -34,7 +34,7 @@ paths:
     get:
       tags:
         - queriesPrivate
-      operationId: listOwnListings
+      operationId: getOwnListings
       summary: List own listings
       responses:
         "200":

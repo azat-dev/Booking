@@ -1,5 +1,6 @@
 package com.azat4dev.booking.listingsms.commands.domain.values;
 
+import com.azat4dev.booking.shared.domain.core.UserId;
 import lombok.EqualsAndHashCode;
 import lombok.Getter;
 
@@ -25,5 +26,9 @@ public final class OwnerId {
 
     public String toString() {
         return value.toString();
+    }
+
+    public static OwnerId fromUserId(UserId userId) {
+        return new OwnerId(userId.value());
     }
 }

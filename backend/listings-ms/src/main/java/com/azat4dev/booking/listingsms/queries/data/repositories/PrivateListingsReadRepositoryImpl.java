@@ -7,6 +7,7 @@ import com.azat4dev.booking.listingsms.queries.domain.entities.ListingPrivateDet
 import com.azat4dev.booking.listingsms.queries.domain.interfaces.PrivateListingsReadRepository;
 import lombok.AllArgsConstructor;
 
+import java.util.List;
 import java.util.Optional;
 import java.util.function.Function;
 
@@ -20,6 +21,14 @@ public final class PrivateListingsReadRepositoryImpl implements PrivateListingsR
     public Optional<ListingPrivateDetails> findById(ListingId id) {
         return dao.findById(id.getValue())
             .map(mapper);
+    }
+
+    @Override
+    public List<ListingPrivateDetails> findAllByOwnerId(OwnerId ownerId) {
+        return dao.findAllByOwnerId(ownerId.getValue())
+            .stream()
+            .map(mapper)
+            .toList();
     }
 
     public static class MapRecordToPrivateListingDetails implements Function<ListingRecord, ListingPrivateDetails> {

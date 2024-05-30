@@ -2,17 +2,20 @@ package com.azat4dev.booking.listingsms.queries.presentation.api.resources;
 
 import com.azat4dev.booking.listingsms.generated.server.api.QueriesPrivateApiDelegate;
 import com.azat4dev.booking.listingsms.generated.server.model.GetListingPrivateDetailsResponse;
+import com.azat4dev.booking.listingsms.generated.server.model.ListingPrivateDetailsDTO;
 import com.azat4dev.booking.listingsms.queries.application.commands.GetListingPrivateDetails;
+import com.azat4dev.booking.listingsms.queries.application.commands.GetOwnListings;
 import com.azat4dev.booking.listingsms.queries.application.handlers.GetListingPrivateDetailsHandler;
+import com.azat4dev.booking.listingsms.queries.application.handlers.GetOwnListingsHandler;
 import com.azat4dev.booking.listingsms.queries.presentation.api.mappers.MapListingPrivateDetailsToDTO;
 import com.azat4dev.booking.shared.application.ControllerException;
 import com.azat4dev.booking.shared.presentation.CurrentAuthenticatedUserIdProvider;
 import lombok.AllArgsConstructor;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Component;
 
+import java.util.List;
 import java.util.UUID;
 
 @Component
@@ -22,8 +25,8 @@ public class PrivateListingsApi implements QueriesPrivateApiDelegate {
     private final CurrentAuthenticatedUserIdProvider currentUserId;
     private final MapListingPrivateDetailsToDTO mapToDTO;
 
-    @Autowired
-    GetListingPrivateDetailsHandler getListingPrivateDetailsHandler;
+    private final GetListingPrivateDetailsHandler getListingPrivateDetailsHandler;
+    private final GetOwnListingsHandler getOwnListingsHandler;
 
     @Override
     public ResponseEntity<GetListingPrivateDetailsResponse> getListingPrivateDetails(UUID listingId) {
@@ -46,6 +49,26 @@ public class PrivateListingsApi implements QueriesPrivateApiDelegate {
             return ResponseEntity.ok(responseData);
         } catch (GetListingPrivateDetailsHandler.ListingNotFoundException e) {
             throw new RuntimeException(e);
+        }
+    }
+
+    @Override
+    public ResponseEntity<List<ListingPrivateDetailsDTO>> getOwnListings() {
+
+        final var userId = currentUserId.get()
+            .orElseThrow(() -> new ControllerException(HttpStatus.FORBIDDEN, "User not authenticated"));
+
+        final var command = new GetOwnListings(userId);
+
+        try {
+
+            final var listings = getOwnListingsHandler.handle(command)
+                .stream().map(mapToDTO::map).toList();
+
+            return ResponseEntity.ok(listings);
+
+        } catch (GetOwnListingsHandler.Exception.Forbidden e) {
+            throw new ControllerException(HttpStatus.FORBIDDEN, e);
         }
     }
 }

@@ -8,6 +8,9 @@ paths:
   /api/private/users/currrent/listings/{listingId}:
     $ref: "queries/private/paths.yaml#/paths/~1listings~1{listingId}"
 
+  /api/private/users/currrent/listings:
+    $ref: "queries/private/paths.yaml#/paths/~1listings"
+
   /api/private/listings:
     $ref: "commands/modification/paths.yaml#/paths/~1listings"
 

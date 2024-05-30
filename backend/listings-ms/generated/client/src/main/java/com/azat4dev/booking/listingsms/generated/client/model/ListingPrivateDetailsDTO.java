@@ -32,7 +32,7 @@ import com.fasterxml.jackson.annotation.JsonTypeName;
   ListingPrivateDetailsDTO.JSON_PROPERTY_TITLE,
   ListingPrivateDetailsDTO.JSON_PROPERTY_DESCRIPTION
 })
-@javax.annotation.Generated(value = "org.openapitools.codegen.languages.JavaClientCodegen", date = "2024-05-30T20:48:06.463009+03:00[Europe/Moscow]")
+@javax.annotation.Generated(value = "org.openapitools.codegen.languages.JavaClientCodegen", date = "2024-05-30T22:29:40.238241+03:00[Europe/Moscow]")
 public class ListingPrivateDetailsDTO {
   public static final String JSON_PROPERTY_ID = "id";
   private UUID id;
