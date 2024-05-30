@@ -1,0 +1,42 @@
+ErrorDTO:
+  type: object
+  required:
+    - code
+    - message
+  properties:
+    code:
+      type: string
+    message:
+      type: string
+ErrorsDTO:
+  type: array
+  items:
+    $ref: "#/ErrorDTO"
+
+ValidationErrorDTO:
+  type: object
+  required:
+    - type
+    - errors
+  properties:
+    type:
+      type: string
+      default: validationError
+    errors:
+      type: array
+      items:
+        $ref: "#/ValidationErrorDetailsDTO"
+
+ValidationErrorDetailsDTO:
+  type: object
+  required:
+    - path
+    - message
+    - code
+  properties:
+    path:
+      type: string
+    message:
+      type: string
+    code:
+      type: string

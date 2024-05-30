@@ -1,0 +1,32 @@
+openapi: 3.0.3
+info:
+  title: Title
+  description: Title
+  version: 1.0.0
+servers:
+  - url: 'https'
+paths:
+  /listings/{listingId}:
+    get:
+      tags:
+        - queriesPrivate
+      operationId: getListingPrivateDetails
+      summary: Get private details for listing
+      parameters:
+        - name: listingId
+          in: path
+          required: true
+          description: Listing ID
+          schema:
+            $ref: "../../common/models/ListingIdDTO.yaml"
+      responses:
+        "200":
+          description: Private details of listing
+          content:
+            application/json:
+              schema:
+                "$ref": "models.yaml#/components/schemas/GetListingPrivateDetailsResponse"
+        "401":
+          description: Not valid Token
+        "404":
+          description: Not found

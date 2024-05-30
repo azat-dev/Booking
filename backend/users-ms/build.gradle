@@ -100,12 +100,6 @@ sourceSets {
             srcDirs += "$rootDir/generated/server/src/main/java"
         }
     }
-
-//    test {
-//        java {
-//            srcDirs += "$rootDir/generated/client/src/main/java"
-//        }
-//    }
 }
 
 task buildServerApi(type: GenerateTask) {

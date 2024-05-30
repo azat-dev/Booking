@@ -1,0 +1,38 @@
+openapi: 3.0.3
+info:
+  title: Title
+  description: Title
+  version: 1.0.0
+paths:
+  \:
+components:
+  schemas:
+    ListingPrivateDetails:
+      type: object
+      required:
+        - id
+        - title
+      properties:
+        id:
+          $ref: "../../common/models/ListingIdDTO.yaml"
+        title:
+          type: string
+        description:
+          type: string
+
+    GetPhotoUploadUrlForListingResponse:
+      type: object
+      required:
+        - url
+      properties:
+        url:
+          type: string
+          format: uri
+
+    GetListingPrivateDetailsResponse:
+      type: object
+      required:
+        - listing
+      properties:
+        listing:
+          $ref: "#/components/schemas/ListingPrivateDetails"

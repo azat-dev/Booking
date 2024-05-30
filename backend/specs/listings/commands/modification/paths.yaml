@@ -1,0 +1,39 @@
+openapi: 3.0.3
+info:
+  title: Listings Commands API
+  description: Listings Commands API
+  version: 1.0.0
+paths:
+  /listings:
+    post:
+      tags:
+        - commandsModifications
+      summary: Add a new listing
+      operationId: addListing
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "models.yaml#/components/schemas/AddListingRequestBody"
+      responses:
+        "200":
+          description: Listing added successfully
+          content:
+            application/json:
+              schema:
+                "$ref": "models.yaml#/components/schemas/AddListingResponse"
+        "401":
+          description: Not valid Token
+          content:
+            application/json:
+              schema:
+                oneOf:
+                  - $ref: "../../../common/errors.yaml#/ValidationErrorDTO"
+                  - $ref: "../../../common/errors.yaml#/ErrorDTO"
+        "404":
+          description: Not found
+          content:
+            application/json:
+              schema:
+                $ref: "../../../common/errors.yaml#/ErrorDTO"

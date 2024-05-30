@@ -1,11 +1,11 @@
 package com.azat4dev.booking.users.users_commands.presentation.api.rest.authentication.resources;
 
 import com.azat4dev.booking.shared.application.ControllerException;
+import com.azat4dev.booking.shared.presentation.CurrentAuthenticatedUserIdProvider;
 import com.azat4dev.booking.users.users_commands.application.commands.photo.GenerateUserPhotoUploadUrl;
 import com.azat4dev.booking.users.users_commands.application.commands.photo.UpdateUserPhoto;
 import com.azat4dev.booking.users.users_commands.application.handlers.photo.GenerateUserPhotoUploadUrlHandler;
 import com.azat4dev.booking.users.users_commands.application.handlers.photo.UpdateUserPhotoHandler;
-import com.azat4dev.booking.users.users_queries.presentation.api.utils.CurrentAuthenticatedUserIdProvider;
 import com.azat4dev.booking.usersms.generated.server.api.CommandsUpdateUserPhotoApiDelegate;
 import com.azat4dev.booking.usersms.generated.server.model.*;
 import org.springframework.beans.factory.annotation.Autowired;

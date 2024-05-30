@@ -1,0 +1,28 @@
+openapi: 3.0.3
+info:
+  title: Models
+  description: Models
+  version: 1.0.0
+paths:
+  /:
+components:
+  schemas:
+    AddListingRequestBody:
+      type: object
+      required:
+        - operationId
+        - title
+      properties:
+        operationId:
+          $ref: "../../../common/models/OperationIdDTO.yaml"
+        title:
+          type: string
+          maxLength: 1000
+
+    AddListingResponse:
+      type: object
+      required:
+        - listingId
+      properties:
+        listingId:
+          $ref: "../../common/models/ListingIdDTO.yaml"

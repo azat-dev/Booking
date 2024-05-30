@@ -8,19 +8,16 @@ servers:
 security:
 - BearerAuth: []
 paths:
-  /api/private/listings/{listingId}:
+  /api/private/users/currrent/listings/{listingId}:
     get:
       operationId: getListingPrivateDetails
       parameters:
       - description: Listing ID
-        explode: false
         in: path
         name: listingId
         required: true
         schema:
-          format: uuid
-          type: string
-        style: simple
+          $ref: '#/components/schemas/ListingIdDTO'
       responses:
         "200":
           content:
@@ -34,10 +31,10 @@ paths:
           description: Not found
       summary: Get private details for listing
       tags:
-      - queries
+      - queriesPrivate
       x-accepts: application/json
       x-tags:
-      - tag: queries
+      - tag: queriesPrivate
   /api/private/listings:
     post:
       operationId: addListing
@@ -55,65 +52,29 @@ paths:
                 $ref: '#/components/schemas/AddListingResponse'
           description: Listing added successfully
         "401":
-          description: Not valid Token
-        "404":
-          description: Not found
-      summary: Add a new listing
-      tags:
-      - commands
-      x-content-type: application/json
-      x-accepts: application/json
-      x-tags:
-      - tag: commands
-  /api/private/listings/{listingId}/get-photo-upload-url:
-    post:
-      operationId: getPhotoUploadUrl
-      parameters:
-      - description: Listing ID
-        explode: false
-        in: path
-        name: listingId
-        required: true
-        schema:
-          format: uuid
-          type: string
-        style: simple
-      requestBody:
-        content:
-          application/json:
-            schema:
-              $ref: '#/components/schemas/AddListingRequestBody'
-        required: true
-      responses:
-        "200":
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/GetPhotoUploadUrlForListingResponse'
-          description: Listing added successfully
-        "401":
+                $ref: '#/components/schemas/addListing_401_response'
           description: Not valid Token
         "404":
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorDTO'
           description: Not found
-      summary: Get upload URL for listing photo
+      summary: Add a new listing
       tags:
-      - commands
+      - commandsModifications
       x-content-type: application/json
       x-accepts: application/json
       x-tags:
-      - tag: commands
+      - tag: commandsModifications
 components:
   schemas:
-    GetPhotoUploadUrlForListingResponse:
-      example:
-        url: https://openapi-generator.tech
-      properties:
-        url:
-          format: uri
-          type: string
-      required:
-      - url
-      type: object
+    ListingIdDTO:
+      format: uuid
+      type: string
     GetListingPrivateDetailsResponse:
       example:
         listing:
@@ -152,6 +113,7 @@ components:
           format: uuid
           type: string
         title:
+          maxLength: 1000
           type: string
       required:
       - operationId
@@ -167,61 +129,20 @@ components:
       required:
       - listingId
       type: object
-    LocationDetails:
-      properties:
-        country:
-          type: string
-        city:
-          type: string
-      required:
-      - city
-      - country
-      type: object
-    ListingDetails:
-      properties:
-        id:
-          format: uuid
-          type: string
-        type:
-          format: uuid
-          type: string
-        title:
-          type: string
-        description:
-          type: string
-        photos:
-          items:
-            format: uri
-            type: string
-          type: array
-        location:
-          $ref: '#/components/schemas/LocationDetails'
-        hostId:
-          format: uuid
-          type: string
-      required:
-      - description
-      - hostId
-      - id
-      - location
-      - photos
-      - title
-      - type
-      type: object
-    ValidationError:
+    ValidationErrorDTO:
       properties:
         type:
           default: validationError
           type: string
         errors:
           items:
-            $ref: '#/components/schemas/ValidationErrorDetails'
+            $ref: '#/components/schemas/ValidationErrorDetailsDTO'
           type: array
       required:
       - errors
       - type
       type: object
-    ValidationErrorDetails:
+    ValidationErrorDetailsDTO:
       properties:
         path:
           type: string
@@ -234,7 +155,7 @@ components:
       - message
       - path
       type: object
-    Error:
+    ErrorDTO:
       properties:
         code:
           type: string
@@ -244,10 +165,14 @@ components:
       - code
       - message
       type: object
-    Errors:
-      items:
-        $ref: '#/components/schemas/Error'
-      type: array
+    OperationIdDTO:
+      format: uuid
+      type: string
+    addListing_401_response:
+      oneOf:
+      - $ref: '#/components/schemas/ValidationErrorDTO'
+      - $ref: '#/components/schemas/ErrorDTO'
+      x-one-of-name: AddListing401Response
   securitySchemes:
     BearerAuth:
       bearerFormat: JWT

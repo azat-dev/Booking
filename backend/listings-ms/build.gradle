@@ -46,6 +46,7 @@ dependencies {
     testImplementation "org.testcontainers:postgresql:1.19.8"
 
     implementation project(":shared")
+    implementation project(path: ':apiclient')
 
     implementation 'org.openapitools:jackson-databind-nullable:0.2.6'
     implementation 'org.springframework.data:spring-data-commons'
@@ -80,13 +81,8 @@ sourceSets {
             srcDirs += "$rootDir/generated/server/src/main/java"
         }
     }
-
-    test {
-        java {
-            srcDirs += "$rootDir/generated/client/src/main/java"
-        }
-    }
 }
+
 
 task buildServerApi(type: GenerateTask) {
     generatorName.set("spring")
@@ -102,7 +98,7 @@ task buildServerApi(type: GenerateTask) {
             useOptional: "true",
             openApiNullable: "false",
             interfaceOnly: "false",
-            additionalModelTypeAnnotations: "@lombok.Builder(toBuilder = true)\n@lombok.RequiredArgsConstructor\n@lombok.AllArgsConstructor\n@com.fasterxml.jackson.annotation.JsonIgnoreProperties(ignoreUnknown=true)",
+            additionalModelTypeAnnotations: "@lombok.Builder(toBuilder = true)\n@lombok.AllArgsConstructor\n@com.fasterxml.jackson.annotation.JsonIgnoreProperties(ignoreUnknown=true)",
             generatedConstructorWithRequiredArgs: "false",
             useTags: "true",
 
@@ -117,8 +113,8 @@ task buildServerApi(type: GenerateTask) {
 }
 
 task buildApiClient(type: GenerateTask) {
-    generatorName.set("spring")
-    library.set("spring-cloud")
+    generatorName.set("java")
+    library.set("feign")
     inputSpec.set("$rootDir/../specs/listings/openapi.yaml")
     outputDir.set("$rootDir/generated/client")
     invokerPackage.set("com.azat4dev.booking.listingsms.generated.client.base")
@@ -128,17 +124,9 @@ task buildApiClient(type: GenerateTask) {
     ignoreFileOverride.set(".openapi-generator-ignore")
     configOptions.set([
             useOptional: "true",
-            openApiNullable: "false",
-            interfaceOnly: "false",
-            additionalModelTypeAnnotations: "@lombok.Builder(toBuilder = true)\n@lombok.RequiredArgsConstructor\n@lombok.AllArgsConstructor",
-            generatedConstructorWithRequiredArgs: "false",
+            generateConstructorWithAllArgs: "true",
+            generateBuilders: "true",
             useTags: "true",
-            useFeignClient: "true",
-            useFeignClientUrl: "true",
-
-            useSpringBoot3: "true",
-            dateLibrary: "java8-localdatetime",
-            generateConstructorWithAllArgs: "false"
     ])
 }
 

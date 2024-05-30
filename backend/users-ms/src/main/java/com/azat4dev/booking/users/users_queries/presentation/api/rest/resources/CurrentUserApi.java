@@ -1,9 +1,9 @@
 package com.azat4dev.booking.users.users_queries.presentation.api.rest.resources;
 
 import com.azat4dev.booking.shared.application.ControllerException;
+import com.azat4dev.booking.shared.presentation.CurrentAuthenticatedUserIdProvider;
 import com.azat4dev.booking.users.users_queries.domain.services.UsersQueryService;
 import com.azat4dev.booking.users.users_queries.presentation.api.rest.resources.mappers.MapPersonalUserInfoToDTO;
-import com.azat4dev.booking.users.users_queries.presentation.api.utils.CurrentAuthenticatedUserIdProvider;
 import com.azat4dev.booking.usersms.generated.server.api.QueriesCurrentUserApiDelegate;
 import com.azat4dev.booking.usersms.generated.server.model.PersonalUserInfoDTO;
 import lombok.AllArgsConstructor;

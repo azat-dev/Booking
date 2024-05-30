@@ -1,16 +1,13 @@
 package com.azat4dev.booking.listingsms;
 
-import com.azat4dev.booking.listingsms.generated.client.api.CommandsApiClient;
-import com.azat4dev.booking.listingsms.generated.client.api.QueriesApi;
+import com.azat4dev.booking.listingsms.generated.client.api.CommandsModificationsApi;
+import com.azat4dev.booking.listingsms.generated.client.base.ApiClient;
 import com.azat4dev.booking.listingsms.generated.client.model.AddListingRequestBody;
 import com.azat4dev.booking.listingsms.helpers.PostgresTests;
 import com.github.javafaker.Faker;
 import org.junit.jupiter.api.Test;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.cloud.openfeign.EnableFeignClients;
-import org.springframework.test.context.DynamicPropertyRegistry;
-import org.springframework.test.context.DynamicPropertySource;
 
 import java.util.UUID;
 
@@ -21,18 +18,6 @@ import static org.assertj.core.api.Assertions.assertThat;
 class ListingsMsApplicationTests implements PostgresTests {
 
     private final static Faker faker = Faker.instance();
-
-    @Autowired
-    CommandsApiClient commandsApiClient;
-
-    @Autowired
-    QueriesApi queriesApiClient;
-
-    @DynamicPropertySource
-    protected static void feignProperties(DynamicPropertyRegistry registry) {
-        registry.add("commands.url", () -> "http://localhost:${local.server.port}");
-        registry.add("queries.url", () -> "http://localhost:${local.server.port}");
-    }
 
     @Test
     void contextLoads() {
@@ -50,16 +35,31 @@ class ListingsMsApplicationTests implements PostgresTests {
         final var requestAddListing = anyRequestAddListing();
 
         // When
-        final var response = commandsApiClient.addListing(requestAddListing);
+        final var body = anonymousClient(CommandsModificationsApi.class)
+            .addListing(requestAddListing);
 
         // Then
-        final var body = response.getBody();
         assertThat(body.getListingId()).isNotNull();
 
-        final var detailsResponse = queriesApiClient.getListingPrivateDetails(body.getListingId());
+        final var detailsResponse = anony.getListingPrivateDetails(body.getListingId());
         final var details = detailsResponse.getBody();
 
         assertThat(details).isNotNull();
         assertThat(details.getListing().getId()).isEqualTo(body.getListingId());
+    }
+
+    // Helpers
+
+    private <T extends ApiClient.Api> T anonymousClient(Class<T> apiClass) {
+        final var api = new ApiClient();
+        api.setBasePath("http://localhost:" + port);
+        return api.buildClient(apiClass);
+    }
+
+    private <T extends ApiClient.Api> T apiClient(String accessToken, Class<T> apiClass) {
+        final var api = new ApiClient("BearerAuth");
+        api.setBearerToken(accessToken);
+        api.setBasePath("http://localhost:" + port);
+        return api.buildClient(apiClass);
     }
 }

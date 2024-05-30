@@ -18,11 +18,10 @@ import jakarta.annotation.Generated;
  * GetListingPrivateDetailsResponse
  */
 @lombok.Builder(toBuilder = true)
-@lombok.RequiredArgsConstructor
 @lombok.AllArgsConstructor
 @com.fasterxml.jackson.annotation.JsonIgnoreProperties(ignoreUnknown=true)
 
-@Generated(value = "org.openapitools.codegen.languages.SpringCodegen", date = "2024-05-28T23:07:12.290925+03:00[Europe/Moscow]")
+@Generated(value = "org.openapitools.codegen.languages.SpringCodegen", date = "2024-05-30T14:24:06.893700+03:00[Europe/Moscow]")
 public class GetListingPrivateDetailsResponse {
 
   private ListingPrivateDetails listing;
