@@ -4,6 +4,7 @@ import com.azat4dev.booking.shared.application.ControllerException;
 import com.azat4dev.booking.users.users_commands.domain.UserHelpers;
 import com.azat4dev.booking.users.users_queries.domain.services.UsersQueryService;
 import com.azat4dev.booking.users.users_queries.presentation.api.rest.resources.CurrentUserApi;
+import com.azat4dev.booking.users.users_queries.presentation.api.rest.resources.mappers.MapPersonalUserInfoToDTOImpl;
 import com.azat4dev.booking.users.users_queries.presentation.api.utils.CurrentAuthenticatedUserIdProvider;
 import com.azat4dev.booking.usersms.generated.server.api.QueriesCurrentUserApiDelegate;
 import org.junit.jupiter.api.Test;
@@ -27,7 +28,8 @@ public class UsersQueriesControllerTests {
         return new SUT(
             new CurrentUserApi(
                 currentUserId,
-                usersQueryService
+                usersQueryService,
+                new MapPersonalUserInfoToDTOImpl()
             ),
             currentUserId,
             usersQueryService
