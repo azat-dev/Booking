@@ -5,7 +5,9 @@
  */
 package com.azat4dev.booking.usersms.generated.server.api;
 
+import com.azat4dev.booking.usersms.generated.server.model.CompleteResetPassword200Response;
 import com.azat4dev.booking.usersms.generated.server.model.CompleteResetPasswordRequestBody;
+import com.azat4dev.booking.usersms.generated.server.model.ResetPasswordByEmail200Response;
 import com.azat4dev.booking.usersms.generated.server.model.ResetPasswordByEmailRequestBody;
 import com.azat4dev.booking.usersms.generated.server.model.VerifyEmail400Response;
 import io.swagger.v3.oas.annotations.ExternalDocumentation;
@@ -31,7 +33,7 @@ import java.util.Map;
 import java.util.Optional;
 import jakarta.annotation.Generated;
 
-@Generated(value = "org.openapitools.codegen.languages.SpringCodegen", date = "2024-05-30T01:15:09.334912+03:00[Europe/Moscow]", comments = "Generator version: 7.6.0")
+@Generated(value = "org.openapitools.codegen.languages.SpringCodegen", date = "2024-05-30T09:25:21.695569+03:00[Europe/Moscow]", comments = "Generator version: 7.6.0")
 @Validated
 @Tag(name = "commandsResetPassword", description = "the commandsResetPassword API")
 public interface CommandsResetPasswordApi {
@@ -53,7 +55,7 @@ public interface CommandsResetPasswordApi {
         tags = { "commandsResetPassword" },
         responses = {
             @ApiResponse(responseCode = "200", description = "Set new password", content = {
-                @Content(mediaType = "application/json", schema = @Schema(implementation = String.class))
+                @Content(mediaType = "application/json", schema = @Schema(implementation = CompleteResetPassword200Response.class))
             }),
             @ApiResponse(responseCode = "403", description = "Token is not valid", content = {
                 @Content(mediaType = "application/json", schema = @Schema(implementation = VerifyEmail400Response.class))
@@ -67,7 +69,7 @@ public interface CommandsResetPasswordApi {
         consumes = { "application/json" }
     )
     
-    default ResponseEntity<String> completeResetPassword(
+    default ResponseEntity<CompleteResetPassword200Response> completeResetPassword(
         @Parameter(name = "CompleteResetPasswordRequestBody", description = "JSON payload", required = true) @Valid @RequestBody CompleteResetPasswordRequestBody completeResetPasswordRequestBody
     ) {
         return getDelegate().completeResetPassword(completeResetPasswordRequestBody);
@@ -88,7 +90,7 @@ public interface CommandsResetPasswordApi {
         tags = { "commandsResetPassword" },
         responses = {
             @ApiResponse(responseCode = "200", description = "Sent email with reset password instructions", content = {
-                @Content(mediaType = "application/json", schema = @Schema(implementation = String.class))
+                @Content(mediaType = "application/json", schema = @Schema(implementation = ResetPasswordByEmail200Response.class))
             }),
             @ApiResponse(responseCode = "401", description = "Not valid email", content = {
                 @Content(mediaType = "application/json", schema = @Schema(implementation = VerifyEmail400Response.class))
@@ -105,7 +107,7 @@ public interface CommandsResetPasswordApi {
         consumes = { "application/json" }
     )
     
-    default ResponseEntity<String> resetPasswordByEmail(
+    default ResponseEntity<ResetPasswordByEmail200Response> resetPasswordByEmail(
         @Parameter(name = "ResetPasswordByEmailRequestBody", description = "JSON payload", required = true) @Valid @RequestBody ResetPasswordByEmailRequestBody resetPasswordByEmailRequestBody
     ) {
         return getDelegate().resetPasswordByEmail(resetPasswordByEmailRequestBody);

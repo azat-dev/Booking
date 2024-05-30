@@ -21,6 +21,7 @@ src/main/java/com/azat4dev/booking/usersms/generated/server/api/QueriesCurrentUs
 src/main/java/com/azat4dev/booking/usersms/generated/server/api/QueriesCurrentUserApiController.java
 src/main/java/com/azat4dev/booking/usersms/generated/server/api/QueriesCurrentUserApiDelegate.java
 src/main/java/com/azat4dev/booking/usersms/generated/server/base/RFC3339DateFormat.java
+src/main/java/com/azat4dev/booking/usersms/generated/server/model/CompleteResetPassword200Response.java
 src/main/java/com/azat4dev/booking/usersms/generated/server/model/CompleteResetPasswordRequestBody.java
 src/main/java/com/azat4dev/booking/usersms/generated/server/model/EmailVerificationStatusDTO.java
 src/main/java/com/azat4dev/booking/usersms/generated/server/model/ErrorDTO.java
@@ -31,10 +32,12 @@ src/main/java/com/azat4dev/booking/usersms/generated/server/model/LoginByEmailRe
 src/main/java/com/azat4dev/booking/usersms/generated/server/model/LoginByEmailResponseBody.java
 src/main/java/com/azat4dev/booking/usersms/generated/server/model/PersonalUserInfoDTO.java
 src/main/java/com/azat4dev/booking/usersms/generated/server/model/PhotoPathDTO.java
+src/main/java/com/azat4dev/booking/usersms/generated/server/model/ResetPasswordByEmail200Response.java
 src/main/java/com/azat4dev/booking/usersms/generated/server/model/ResetPasswordByEmailRequestBody.java
 src/main/java/com/azat4dev/booking/usersms/generated/server/model/SignUpByEmailRequestBody.java
 src/main/java/com/azat4dev/booking/usersms/generated/server/model/SignUpByEmailResponseBody.java
 src/main/java/com/azat4dev/booking/usersms/generated/server/model/TokensPairDTO.java
+src/main/java/com/azat4dev/booking/usersms/generated/server/model/UpdateUserPhoto200Response.java
 src/main/java/com/azat4dev/booking/usersms/generated/server/model/UpdateUserPhotoRequestBody.java
 src/main/java/com/azat4dev/booking/usersms/generated/server/model/UploadedFileDataDTO.java
 src/main/java/com/azat4dev/booking/usersms/generated/server/model/UserWithSameEmailAlreadyExistsErrorDTO.java

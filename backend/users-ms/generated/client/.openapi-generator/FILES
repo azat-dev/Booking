@@ -33,6 +33,7 @@ src/main/java/com/azat4dev/booking/usersms/generated/client/base/auth/ApiKeyAuth
 src/main/java/com/azat4dev/booking/usersms/generated/client/base/auth/HttpBasicAuth.java
 src/main/java/com/azat4dev/booking/usersms/generated/client/base/auth/HttpBearerAuth.java
 src/main/java/com/azat4dev/booking/usersms/generated/client/model/ApiResponse.java
+src/main/java/com/azat4dev/booking/usersms/generated/client/model/CompleteResetPassword200Response.java
 src/main/java/com/azat4dev/booking/usersms/generated/client/model/CompleteResetPasswordRequestBody.java
 src/main/java/com/azat4dev/booking/usersms/generated/client/model/EmailVerificationStatusDTO.java
 src/main/java/com/azat4dev/booking/usersms/generated/client/model/ErrorDTO.java
@@ -43,10 +44,12 @@ src/main/java/com/azat4dev/booking/usersms/generated/client/model/LoginByEmailRe
 src/main/java/com/azat4dev/booking/usersms/generated/client/model/LoginByEmailResponseBody.java
 src/main/java/com/azat4dev/booking/usersms/generated/client/model/PersonalUserInfoDTO.java
 src/main/java/com/azat4dev/booking/usersms/generated/client/model/PhotoPathDTO.java
+src/main/java/com/azat4dev/booking/usersms/generated/client/model/ResetPasswordByEmail200Response.java
 src/main/java/com/azat4dev/booking/usersms/generated/client/model/ResetPasswordByEmailRequestBody.java
 src/main/java/com/azat4dev/booking/usersms/generated/client/model/SignUpByEmailRequestBody.java
 src/main/java/com/azat4dev/booking/usersms/generated/client/model/SignUpByEmailResponseBody.java
 src/main/java/com/azat4dev/booking/usersms/generated/client/model/TokensPairDTO.java
+src/main/java/com/azat4dev/booking/usersms/generated/client/model/UpdateUserPhoto200Response.java
 src/main/java/com/azat4dev/booking/usersms/generated/client/model/UpdateUserPhotoRequestBody.java
 src/main/java/com/azat4dev/booking/usersms/generated/client/model/UploadedFileDataDTO.java
 src/main/java/com/azat4dev/booking/usersms/generated/client/model/UserWithSameEmailAlreadyExistsErrorDTO.java
@@ -60,6 +63,7 @@ src/test/java/com/azat4dev/booking/usersms/generated/client/api/CommandsResetPas
 src/test/java/com/azat4dev/booking/usersms/generated/client/api/CommandsSignUpApiTest.java
 src/test/java/com/azat4dev/booking/usersms/generated/client/api/CommandsUpdateUserPhotoApiTest.java
 src/test/java/com/azat4dev/booking/usersms/generated/client/api/QueriesCurrentUserApiTest.java
+src/test/java/com/azat4dev/booking/usersms/generated/client/model/CompleteResetPassword200ResponseTest.java
 src/test/java/com/azat4dev/booking/usersms/generated/client/model/CompleteResetPasswordRequestBodyTest.java
 src/test/java/com/azat4dev/booking/usersms/generated/client/model/EmailVerificationStatusDTOTest.java
 src/test/java/com/azat4dev/booking/usersms/generated/client/model/ErrorDTOTest.java
@@ -70,10 +74,12 @@ src/test/java/com/azat4dev/booking/usersms/generated/client/model/LoginByEmailRe
 src/test/java/com/azat4dev/booking/usersms/generated/client/model/LoginByEmailResponseBodyTest.java
 src/test/java/com/azat4dev/booking/usersms/generated/client/model/PersonalUserInfoDTOTest.java
 src/test/java/com/azat4dev/booking/usersms/generated/client/model/PhotoPathDTOTest.java
+src/test/java/com/azat4dev/booking/usersms/generated/client/model/ResetPasswordByEmail200ResponseTest.java
 src/test/java/com/azat4dev/booking/usersms/generated/client/model/ResetPasswordByEmailRequestBodyTest.java
 src/test/java/com/azat4dev/booking/usersms/generated/client/model/SignUpByEmailRequestBodyTest.java
 src/test/java/com/azat4dev/booking/usersms/generated/client/model/SignUpByEmailResponseBodyTest.java
 src/test/java/com/azat4dev/booking/usersms/generated/client/model/TokensPairDTOTest.java
+src/test/java/com/azat4dev/booking/usersms/generated/client/model/UpdateUserPhoto200ResponseTest.java
 src/test/java/com/azat4dev/booking/usersms/generated/client/model/UpdateUserPhotoRequestBodyTest.java
 src/test/java/com/azat4dev/booking/usersms/generated/client/model/UploadedFileDataDTOTest.java
 src/test/java/com/azat4dev/booking/usersms/generated/client/model/UserWithSameEmailAlreadyExistsErrorDTOTest.java

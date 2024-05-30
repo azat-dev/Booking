@@ -7,10 +7,7 @@ import com.azat4dev.booking.users.users_commands.application.handlers.photo.Gene
 import com.azat4dev.booking.users.users_commands.application.handlers.photo.UpdateUserPhotoHandler;
 import com.azat4dev.booking.users.users_queries.presentation.api.utils.CurrentAuthenticatedUserIdProvider;
 import com.azat4dev.booking.usersms.generated.server.api.CommandsUpdateUserPhotoApiDelegate;
-import com.azat4dev.booking.usersms.generated.server.model.GenerateUploadUserPhotoUrlRequestBody;
-import com.azat4dev.booking.usersms.generated.server.model.GenerateUploadUserPhotoUrlResponseBody;
-import com.azat4dev.booking.usersms.generated.server.model.UpdateUserPhotoRequestBody;
-import com.azat4dev.booking.usersms.generated.server.model.UploadedFileDataDTO;
+import com.azat4dev.booking.usersms.generated.server.model.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -59,7 +56,7 @@ public class UpdateUserPhotoApi implements CommandsUpdateUserPhotoApiDelegate {
     }
 
     @Override
-    public ResponseEntity<String> updateUserPhoto(UpdateUserPhotoRequestBody requestBody) {
+    public ResponseEntity<UpdateUserPhoto200Response> updateUserPhoto(UpdateUserPhotoRequestBody requestBody) {
 
         final var userId = getCurrentUserId.get().orElseThrow(() -> new ResponseStatusException(HttpStatus.UNAUTHORIZED, "Unauthorized"));
 
@@ -74,7 +71,7 @@ public class UpdateUserPhotoApi implements CommandsUpdateUserPhotoApiDelegate {
 
         try {
             updateUserPhoto.handle(command);
-            return ResponseEntity.ok("OK");
+            return ResponseEntity.ok(UpdateUserPhoto200Response.builder().build());
         } catch (UpdateUserPhotoHandler.Exception.FailedToAttachPhoto e) {
             throw new ResponseStatusException(HttpStatus.INTERNAL_SERVER_ERROR, e.getMessage());
         }

@@ -4,7 +4,9 @@ import com.azat4dev.booking.usersms.generated.client.base.ApiClient;
 import com.azat4dev.booking.usersms.generated.client.base.EncodingUtils;
 import com.azat4dev.booking.usersms.generated.client.model.ApiResponse;
 
+import com.azat4dev.booking.usersms.generated.client.model.CompleteResetPassword200Response;
 import com.azat4dev.booking.usersms.generated.client.model.CompleteResetPasswordRequestBody;
+import com.azat4dev.booking.usersms.generated.client.model.ResetPasswordByEmail200Response;
 import com.azat4dev.booking.usersms.generated.client.model.ResetPasswordByEmailRequestBody;
 import com.azat4dev.booking.usersms.generated.client.model.VerifyEmail400Response;
 
@@ -14,7 +16,7 @@ import java.util.List;
 import java.util.Map;
 import feign.*;
 
-@javax.annotation.Generated(value = "org.openapitools.codegen.languages.JavaClientCodegen", date = "2024-05-30T01:15:08.126842+03:00[Europe/Moscow]", comments = "Generator version: 7.6.0")
+@javax.annotation.Generated(value = "org.openapitools.codegen.languages.JavaClientCodegen", date = "2024-05-30T09:25:21.113148+03:00[Europe/Moscow]", comments = "Generator version: 7.6.0")
 public interface CommandsResetPasswordApi extends ApiClient.Api {
 
 
@@ -22,14 +24,14 @@ public interface CommandsResetPasswordApi extends ApiClient.Api {
    * Reset password by email
    * 
    * @param completeResetPasswordRequestBody JSON payload (required)
-   * @return String
+   * @return CompleteResetPassword200Response
    */
   @RequestLine("POST /api/public/password/set-new")
   @Headers({
     "Content-Type: application/json",
     "Accept: application/json",
   })
-  String completeResetPassword(CompleteResetPasswordRequestBody completeResetPasswordRequestBody);
+  CompleteResetPassword200Response completeResetPassword(CompleteResetPasswordRequestBody completeResetPasswordRequestBody);
 
   /**
    * Reset password by email
@@ -43,7 +45,7 @@ public interface CommandsResetPasswordApi extends ApiClient.Api {
     "Content-Type: application/json",
     "Accept: application/json",
   })
-  ApiResponse<String> completeResetPasswordWithHttpInfo(CompleteResetPasswordRequestBody completeResetPasswordRequestBody);
+  ApiResponse<CompleteResetPassword200Response> completeResetPasswordWithHttpInfo(CompleteResetPasswordRequestBody completeResetPasswordRequestBody);
 
 
 
@@ -51,14 +53,14 @@ public interface CommandsResetPasswordApi extends ApiClient.Api {
    * Reset password by email
    * 
    * @param resetPasswordByEmailRequestBody JSON payload (required)
-   * @return String
+   * @return ResetPasswordByEmail200Response
    */
   @RequestLine("POST /api/public/password/reset")
   @Headers({
     "Content-Type: application/json",
     "Accept: application/json",
   })
-  String resetPasswordByEmail(ResetPasswordByEmailRequestBody resetPasswordByEmailRequestBody);
+  ResetPasswordByEmail200Response resetPasswordByEmail(ResetPasswordByEmailRequestBody resetPasswordByEmailRequestBody);
 
   /**
    * Reset password by email
@@ -72,7 +74,7 @@ public interface CommandsResetPasswordApi extends ApiClient.Api {
     "Content-Type: application/json",
     "Accept: application/json",
   })
-  ApiResponse<String> resetPasswordByEmailWithHttpInfo(ResetPasswordByEmailRequestBody resetPasswordByEmailRequestBody);
+  ApiResponse<ResetPasswordByEmail200Response> resetPasswordByEmailWithHttpInfo(ResetPasswordByEmailRequestBody resetPasswordByEmailRequestBody);
 
 
 }

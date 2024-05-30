@@ -2,6 +2,7 @@ package com.azat4dev.booking.usersms.generated.server.api;
 
 import com.azat4dev.booking.usersms.generated.server.model.GenerateUploadUserPhotoUrlRequestBody;
 import com.azat4dev.booking.usersms.generated.server.model.GenerateUploadUserPhotoUrlResponseBody;
+import com.azat4dev.booking.usersms.generated.server.model.UpdateUserPhoto200Response;
 import com.azat4dev.booking.usersms.generated.server.model.UpdateUserPhotoRequestBody;
 
 
@@ -27,7 +28,7 @@ import java.util.Map;
 import java.util.Optional;
 import jakarta.annotation.Generated;
 
-@Generated(value = "org.openapitools.codegen.languages.SpringCodegen", date = "2024-05-30T01:15:09.334912+03:00[Europe/Moscow]", comments = "Generator version: 7.6.0")
+@Generated(value = "org.openapitools.codegen.languages.SpringCodegen", date = "2024-05-30T09:25:21.695569+03:00[Europe/Moscow]", comments = "Generator version: 7.6.0")
 @Controller
 @RequestMapping("${openapi.users.base-path:}")
 public class CommandsUpdateUserPhotoApiController implements CommandsUpdateUserPhotoApi {

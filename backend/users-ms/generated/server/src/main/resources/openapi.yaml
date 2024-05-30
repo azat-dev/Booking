@@ -12,7 +12,7 @@ paths:
     get:
       operationId: verifyEmail
       parameters:
-      - in: path
+      - in: query
         name: token
         required: true
         schema:
@@ -128,8 +128,7 @@ paths:
           content:
             application/json:
               schema:
-                default: Sent email with reset password instructions
-                type: string
+                $ref: "#/components/schemas/resetPasswordByEmail_200_response"
           description: Sent email with reset password instructions
         "401":
           content:
@@ -167,8 +166,7 @@ paths:
           content:
             application/json:
               schema:
-                default: Set new password
-                type: string
+                $ref: "#/components/schemas/completeResetPassword_200_response"
           description: Set new password
         "403":
           content:
@@ -197,7 +195,7 @@ paths:
       responses:
         "200":
           content:
-            '*/*':
+            application/json:
               schema:
                 $ref: "#/components/schemas/GenerateUploadUserPhotoUrlResponseBody"
           description: OK
@@ -206,7 +204,7 @@ paths:
       - commandsUpdateUserPhoto
       x-content-type: application/json
       x-accepts:
-      - '*/*'
+      - application/json
       x-tags:
       - tag: commandsUpdateUserPhoto
   /api/with-auth/users/current/photo/update:
@@ -221,17 +219,16 @@ paths:
       responses:
         "200":
           content:
-            '*/*':
+            application/json:
               schema:
-                default: Photo updated
-                type: string
+                $ref: "#/components/schemas/updateUserPhoto_200_response"
           description: Photo updated
       summary: Attach uploaded photo to the user
       tags:
       - commandsUpdateUserPhoto
       x-content-type: application/json
       x-accepts:
-      - '*/*'
+      - application/json
       x-tags:
       - tag: commandsUpdateUserPhoto
   /api/with-auth/users/current:
@@ -583,6 +580,30 @@ components:
       - $ref: "#/components/schemas/ValidationErrorDTO"
       - $ref: "#/components/schemas/ErrorDTO"
       x-one-of-name: VerifyEmail400Response
+    resetPasswordByEmail_200_response:
+      example:
+        message: Sent email with reset password instructions
+      properties:
+        message:
+          default: Sent email with reset password instructions
+          type: string
+      type: object
+    completeResetPassword_200_response:
+      example:
+        message: Set new password
+      properties:
+        message:
+          default: Set new password
+          type: string
+      type: object
+    updateUserPhoto_200_response:
+      example:
+        message: Photo updated
+      properties:
+        message:
+          default: Photo updated
+          type: string
+      type: object
   securitySchemes:
     BearerAuth:
       bearerFormat: JWT

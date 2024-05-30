@@ -1,6 +1,8 @@
 package com.azat4dev.booking.usersms.generated.server.api;
 
+import com.azat4dev.booking.usersms.generated.server.model.CompleteResetPassword200Response;
 import com.azat4dev.booking.usersms.generated.server.model.CompleteResetPasswordRequestBody;
+import com.azat4dev.booking.usersms.generated.server.model.ResetPasswordByEmail200Response;
 import com.azat4dev.booking.usersms.generated.server.model.ResetPasswordByEmailRequestBody;
 import com.azat4dev.booking.usersms.generated.server.model.VerifyEmail400Response;
 import org.springframework.http.HttpStatus;
@@ -20,7 +22,7 @@ import jakarta.annotation.Generated;
  * A delegate to be called by the {@link CommandsResetPasswordApiController}}.
  * Implement this interface with a {@link org.springframework.stereotype.Service} annotated class.
  */
-@Generated(value = "org.openapitools.codegen.languages.SpringCodegen", date = "2024-05-30T01:15:09.334912+03:00[Europe/Moscow]", comments = "Generator version: 7.6.0")
+@Generated(value = "org.openapitools.codegen.languages.SpringCodegen", date = "2024-05-30T09:25:21.695569+03:00[Europe/Moscow]", comments = "Generator version: 7.6.0")
 public interface CommandsResetPasswordApiDelegate {
 
     default Optional<NativeWebRequest> getRequest() {
@@ -35,9 +37,14 @@ public interface CommandsResetPasswordApiDelegate {
      *         or Token is not valid (status code 403)
      * @see CommandsResetPasswordApi#completeResetPassword
      */
-    default ResponseEntity<String> completeResetPassword(CompleteResetPasswordRequestBody completeResetPasswordRequestBody) {
+    default ResponseEntity<CompleteResetPassword200Response> completeResetPassword(CompleteResetPasswordRequestBody completeResetPasswordRequestBody) {
         getRequest().ifPresent(request -> {
             for (MediaType mediaType: MediaType.parseMediaTypes(request.getHeader("Accept"))) {
+                if (mediaType.isCompatibleWith(MediaType.valueOf("application/json"))) {
+                    String exampleString = "{ \"message\" : \"Set new password\" }";
+                    ApiUtil.setExampleResponse(request, "application/json", exampleString);
+                    break;
+                }
                 if (mediaType.isCompatibleWith(MediaType.valueOf("application/json"))) {
                     String exampleString = "{ \"type\" : \"validationError\", \"errors\" : [ { \"path\" : \"path\", \"code\" : \"code\", \"message\" : \"message\" }, { \"path\" : \"path\", \"code\" : \"code\", \"message\" : \"message\" } ] }";
                     ApiUtil.setExampleResponse(request, "application/json", exampleString);
@@ -58,9 +65,14 @@ public interface CommandsResetPasswordApiDelegate {
      *         or Email not found (status code 404)
      * @see CommandsResetPasswordApi#resetPasswordByEmail
      */
-    default ResponseEntity<String> resetPasswordByEmail(ResetPasswordByEmailRequestBody resetPasswordByEmailRequestBody) {
+    default ResponseEntity<ResetPasswordByEmail200Response> resetPasswordByEmail(ResetPasswordByEmailRequestBody resetPasswordByEmailRequestBody) {
         getRequest().ifPresent(request -> {
             for (MediaType mediaType: MediaType.parseMediaTypes(request.getHeader("Accept"))) {
+                if (mediaType.isCompatibleWith(MediaType.valueOf("application/json"))) {
+                    String exampleString = "{ \"message\" : \"Sent email with reset password instructions\" }";
+                    ApiUtil.setExampleResponse(request, "application/json", exampleString);
+                    break;
+                }
                 if (mediaType.isCompatibleWith(MediaType.valueOf("application/json"))) {
                     String exampleString = "{ \"type\" : \"validationError\", \"errors\" : [ { \"path\" : \"path\", \"code\" : \"code\", \"message\" : \"message\" }, { \"path\" : \"path\", \"code\" : \"code\", \"message\" : \"message\" } ] }";
                     ApiUtil.setExampleResponse(request, "application/json", exampleString);

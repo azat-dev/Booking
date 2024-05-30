@@ -3,6 +3,7 @@ package com.azat4dev.booking.usersms.generated.client.api;
 import com.azat4dev.booking.usersms.generated.client.base.ApiClient;
 import com.azat4dev.booking.usersms.generated.client.model.GenerateUploadUserPhotoUrlRequestBody;
 import com.azat4dev.booking.usersms.generated.client.model.GenerateUploadUserPhotoUrlResponseBody;
+import com.azat4dev.booking.usersms.generated.client.model.UpdateUserPhoto200Response;
 import com.azat4dev.booking.usersms.generated.client.model.UpdateUserPhotoRequestBody;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.BeforeEach;
@@ -49,7 +50,7 @@ class CommandsUpdateUserPhotoApiTest {
     @Test
     void updateUserPhotoTest() {
         UpdateUserPhotoRequestBody updateUserPhotoRequestBody = null;
-        // String response = api.updateUserPhoto(updateUserPhotoRequestBody);
+        // UpdateUserPhoto200Response response = api.updateUserPhoto(updateUserPhotoRequestBody);
 
         // TODO: test validations
     }

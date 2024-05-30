@@ -24,21 +24,21 @@ import com.fasterxml.jackson.annotation.JsonPropertyOrder;
 import com.fasterxml.jackson.annotation.JsonTypeName;
 
 /**
- * VerifyEmail200Response
+ * ResetPasswordByEmail200Response
  */
 @JsonPropertyOrder({
-  VerifyEmail200Response.JSON_PROPERTY_MESSAGE
+  ResetPasswordByEmail200Response.JSON_PROPERTY_MESSAGE
 })
-@JsonTypeName("verifyEmail_200_response")
+@JsonTypeName("resetPasswordByEmail_200_response")
 @javax.annotation.Generated(value = "org.openapitools.codegen.languages.JavaClientCodegen", date = "2024-05-30T09:25:21.113148+03:00[Europe/Moscow]", comments = "Generator version: 7.6.0")
-public class VerifyEmail200Response {
+public class ResetPasswordByEmail200Response {
   public static final String JSON_PROPERTY_MESSAGE = "message";
-  private String message = "Email verified";
+  private String message = "Sent email with reset password instructions";
 
-  public VerifyEmail200Response() {
+  public ResetPasswordByEmail200Response() {
   }
 
-  public VerifyEmail200Response message(String message) {
+  public ResetPasswordByEmail200Response message(String message) {
     
     this.message = message;
     return this;
@@ -72,8 +72,8 @@ public class VerifyEmail200Response {
     if (o == null || getClass() != o.getClass()) {
       return false;
     }
-    VerifyEmail200Response verifyEmail200Response = (VerifyEmail200Response) o;
-    return Objects.equals(this.message, verifyEmail200Response.message);
+    ResetPasswordByEmail200Response resetPasswordByEmail200Response = (ResetPasswordByEmail200Response) o;
+    return Objects.equals(this.message, resetPasswordByEmail200Response.message);
   }
 
   @Override
@@ -84,7 +84,7 @@ public class VerifyEmail200Response {
   @Override
   public String toString() {
     StringBuilder sb = new StringBuilder();
-    sb.append("class VerifyEmail200Response {\n");
+    sb.append("class ResetPasswordByEmail200Response {\n");
     sb.append("    message: ").append(toIndentedString(message)).append("\n");
     sb.append("}");
     return sb.toString();

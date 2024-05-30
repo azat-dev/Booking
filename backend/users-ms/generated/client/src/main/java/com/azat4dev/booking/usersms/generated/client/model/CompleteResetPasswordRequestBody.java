@@ -32,7 +32,7 @@ import com.fasterxml.jackson.annotation.JsonTypeName;
   CompleteResetPasswordRequestBody.JSON_PROPERTY_NEW_PASSWORD,
   CompleteResetPasswordRequestBody.JSON_PROPERTY_RESET_PASSWORD_TOKEN
 })
-@javax.annotation.Generated(value = "org.openapitools.codegen.languages.JavaClientCodegen", date = "2024-05-30T01:15:08.126842+03:00[Europe/Moscow]", comments = "Generator version: 7.6.0")
+@javax.annotation.Generated(value = "org.openapitools.codegen.languages.JavaClientCodegen", date = "2024-05-30T09:25:21.113148+03:00[Europe/Moscow]", comments = "Generator version: 7.6.0")
 public class CompleteResetPasswordRequestBody {
   public static final String JSON_PROPERTY_OPERATION_ID = "operationId";
   private UUID operationId;

@@ -2,6 +2,7 @@ package com.azat4dev.booking.usersms.generated.server.api;
 
 import com.azat4dev.booking.usersms.generated.server.model.GenerateUploadUserPhotoUrlRequestBody;
 import com.azat4dev.booking.usersms.generated.server.model.GenerateUploadUserPhotoUrlResponseBody;
+import com.azat4dev.booking.usersms.generated.server.model.UpdateUserPhoto200Response;
 import com.azat4dev.booking.usersms.generated.server.model.UpdateUserPhotoRequestBody;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
@@ -20,7 +21,7 @@ import jakarta.annotation.Generated;
  * A delegate to be called by the {@link CommandsUpdateUserPhotoApiController}}.
  * Implement this interface with a {@link org.springframework.stereotype.Service} annotated class.
  */
-@Generated(value = "org.openapitools.codegen.languages.SpringCodegen", date = "2024-05-30T01:15:09.334912+03:00[Europe/Moscow]", comments = "Generator version: 7.6.0")
+@Generated(value = "org.openapitools.codegen.languages.SpringCodegen", date = "2024-05-30T09:25:21.695569+03:00[Europe/Moscow]", comments = "Generator version: 7.6.0")
 public interface CommandsUpdateUserPhotoApiDelegate {
 
     default Optional<NativeWebRequest> getRequest() {
@@ -37,9 +38,9 @@ public interface CommandsUpdateUserPhotoApiDelegate {
     default ResponseEntity<GenerateUploadUserPhotoUrlResponseBody> generateUploadUserPhotoUrl(GenerateUploadUserPhotoUrlRequestBody generateUploadUserPhotoUrlRequestBody) {
         getRequest().ifPresent(request -> {
             for (MediaType mediaType: MediaType.parseMediaTypes(request.getHeader("Accept"))) {
-                if (mediaType.isCompatibleWith(MediaType.valueOf("*/*"))) {
+                if (mediaType.isCompatibleWith(MediaType.valueOf("application/json"))) {
                     String exampleString = "{ \"objectPath\" : { \"bucketName\" : \"bucketName\", \"objectName\" : \"objectName\", \"url\" : \"url\" }, \"formData\" : { \"key\" : \"formData\" } }";
-                    ApiUtil.setExampleResponse(request, "*/*", exampleString);
+                    ApiUtil.setExampleResponse(request, "application/json", exampleString);
                     break;
                 }
             }
@@ -55,7 +56,16 @@ public interface CommandsUpdateUserPhotoApiDelegate {
      * @return Photo updated (status code 200)
      * @see CommandsUpdateUserPhotoApi#updateUserPhoto
      */
-    default ResponseEntity<String> updateUserPhoto(UpdateUserPhotoRequestBody updateUserPhotoRequestBody) {
+    default ResponseEntity<UpdateUserPhoto200Response> updateUserPhoto(UpdateUserPhotoRequestBody updateUserPhotoRequestBody) {
+        getRequest().ifPresent(request -> {
+            for (MediaType mediaType: MediaType.parseMediaTypes(request.getHeader("Accept"))) {
+                if (mediaType.isCompatibleWith(MediaType.valueOf("application/json"))) {
+                    String exampleString = "{ \"message\" : \"Photo updated\" }";
+                    ApiUtil.setExampleResponse(request, "application/json", exampleString);
+                    break;
+                }
+            }
+        });
         return new ResponseEntity<>(HttpStatus.NOT_IMPLEMENTED);
 
     }

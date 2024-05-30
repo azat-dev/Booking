@@ -7,6 +7,7 @@ package com.azat4dev.booking.usersms.generated.server.api;
 
 import com.azat4dev.booking.usersms.generated.server.model.GenerateUploadUserPhotoUrlRequestBody;
 import com.azat4dev.booking.usersms.generated.server.model.GenerateUploadUserPhotoUrlResponseBody;
+import com.azat4dev.booking.usersms.generated.server.model.UpdateUserPhoto200Response;
 import com.azat4dev.booking.usersms.generated.server.model.UpdateUserPhotoRequestBody;
 import io.swagger.v3.oas.annotations.ExternalDocumentation;
 import io.swagger.v3.oas.annotations.Operation;
@@ -31,7 +32,7 @@ import java.util.Map;
 import java.util.Optional;
 import jakarta.annotation.Generated;
 
-@Generated(value = "org.openapitools.codegen.languages.SpringCodegen", date = "2024-05-30T01:15:09.334912+03:00[Europe/Moscow]", comments = "Generator version: 7.6.0")
+@Generated(value = "org.openapitools.codegen.languages.SpringCodegen", date = "2024-05-30T09:25:21.695569+03:00[Europe/Moscow]", comments = "Generator version: 7.6.0")
 @Validated
 @Tag(name = "commandsUpdateUserPhoto", description = "the commandsUpdateUserPhoto API")
 public interface CommandsUpdateUserPhotoApi {
@@ -52,7 +53,7 @@ public interface CommandsUpdateUserPhotoApi {
         tags = { "commandsUpdateUserPhoto" },
         responses = {
             @ApiResponse(responseCode = "200", description = "OK", content = {
-                @Content(mediaType = "*/*", schema = @Schema(implementation = GenerateUploadUserPhotoUrlResponseBody.class))
+                @Content(mediaType = "application/json", schema = @Schema(implementation = GenerateUploadUserPhotoUrlResponseBody.class))
             })
         },
         security = {
@@ -62,7 +63,7 @@ public interface CommandsUpdateUserPhotoApi {
     @RequestMapping(
         method = RequestMethod.POST,
         value = "/api/with-auth/users/current/photo/get-upload-url",
-        produces = { "*/*" },
+        produces = { "application/json" },
         consumes = { "application/json" }
     )
     
@@ -85,7 +86,7 @@ public interface CommandsUpdateUserPhotoApi {
         tags = { "commandsUpdateUserPhoto" },
         responses = {
             @ApiResponse(responseCode = "200", description = "Photo updated", content = {
-                @Content(mediaType = "*/*", schema = @Schema(implementation = String.class))
+                @Content(mediaType = "application/json", schema = @Schema(implementation = UpdateUserPhoto200Response.class))
             })
         },
         security = {
@@ -95,11 +96,11 @@ public interface CommandsUpdateUserPhotoApi {
     @RequestMapping(
         method = RequestMethod.POST,
         value = "/api/with-auth/users/current/photo/update",
-        produces = { "*/*" },
+        produces = { "application/json" },
         consumes = { "application/json" }
     )
     
-    default ResponseEntity<String> updateUserPhoto(
+    default ResponseEntity<UpdateUserPhoto200Response> updateUserPhoto(
         @Parameter(name = "UpdateUserPhotoRequestBody", description = "", required = true) @Valid @RequestBody UpdateUserPhotoRequestBody updateUserPhotoRequestBody
     ) {
         return getDelegate().updateUserPhoto(updateUserPhotoRequestBody);

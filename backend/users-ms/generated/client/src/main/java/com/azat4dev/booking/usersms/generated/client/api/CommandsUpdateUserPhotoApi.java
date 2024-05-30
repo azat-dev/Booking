@@ -6,6 +6,7 @@ import com.azat4dev.booking.usersms.generated.client.model.ApiResponse;
 
 import com.azat4dev.booking.usersms.generated.client.model.GenerateUploadUserPhotoUrlRequestBody;
 import com.azat4dev.booking.usersms.generated.client.model.GenerateUploadUserPhotoUrlResponseBody;
+import com.azat4dev.booking.usersms.generated.client.model.UpdateUserPhoto200Response;
 import com.azat4dev.booking.usersms.generated.client.model.UpdateUserPhotoRequestBody;
 
 import java.util.ArrayList;
@@ -14,7 +15,7 @@ import java.util.List;
 import java.util.Map;
 import feign.*;
 
-@javax.annotation.Generated(value = "org.openapitools.codegen.languages.JavaClientCodegen", date = "2024-05-30T01:15:08.126842+03:00[Europe/Moscow]", comments = "Generator version: 7.6.0")
+@javax.annotation.Generated(value = "org.openapitools.codegen.languages.JavaClientCodegen", date = "2024-05-30T09:25:21.113148+03:00[Europe/Moscow]", comments = "Generator version: 7.6.0")
 public interface CommandsUpdateUserPhotoApi extends ApiClient.Api {
 
 
@@ -27,7 +28,7 @@ public interface CommandsUpdateUserPhotoApi extends ApiClient.Api {
   @RequestLine("POST /api/with-auth/users/current/photo/get-upload-url")
   @Headers({
     "Content-Type: application/json",
-    "Accept: */*",
+    "Accept: application/json",
   })
   GenerateUploadUserPhotoUrlResponseBody generateUploadUserPhotoUrl(GenerateUploadUserPhotoUrlRequestBody generateUploadUserPhotoUrlRequestBody);
 
@@ -41,7 +42,7 @@ public interface CommandsUpdateUserPhotoApi extends ApiClient.Api {
   @RequestLine("POST /api/with-auth/users/current/photo/get-upload-url")
   @Headers({
     "Content-Type: application/json",
-    "Accept: */*",
+    "Accept: application/json",
   })
   ApiResponse<GenerateUploadUserPhotoUrlResponseBody> generateUploadUserPhotoUrlWithHttpInfo(GenerateUploadUserPhotoUrlRequestBody generateUploadUserPhotoUrlRequestBody);
 
@@ -51,14 +52,14 @@ public interface CommandsUpdateUserPhotoApi extends ApiClient.Api {
    * Attach uploaded photo to the user
    * 
    * @param updateUserPhotoRequestBody  (required)
-   * @return String
+   * @return UpdateUserPhoto200Response
    */
   @RequestLine("POST /api/with-auth/users/current/photo/update")
   @Headers({
     "Content-Type: application/json",
-    "Accept: */*",
+    "Accept: application/json",
   })
-  String updateUserPhoto(UpdateUserPhotoRequestBody updateUserPhotoRequestBody);
+  UpdateUserPhoto200Response updateUserPhoto(UpdateUserPhotoRequestBody updateUserPhotoRequestBody);
 
   /**
    * Attach uploaded photo to the user
@@ -70,9 +71,9 @@ public interface CommandsUpdateUserPhotoApi extends ApiClient.Api {
   @RequestLine("POST /api/with-auth/users/current/photo/update")
   @Headers({
     "Content-Type: application/json",
-    "Accept: */*",
+    "Accept: application/json",
   })
-  ApiResponse<String> updateUserPhotoWithHttpInfo(UpdateUserPhotoRequestBody updateUserPhotoRequestBody);
+  ApiResponse<UpdateUserPhoto200Response> updateUserPhotoWithHttpInfo(UpdateUserPhotoRequestBody updateUserPhotoRequestBody);
 
 
 }

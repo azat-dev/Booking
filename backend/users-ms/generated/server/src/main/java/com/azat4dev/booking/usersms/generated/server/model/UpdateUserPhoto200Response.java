@@ -4,6 +4,7 @@ import java.net.URI;
 import java.util.Objects;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.annotation.JsonCreator;
+import com.fasterxml.jackson.annotation.JsonTypeName;
 import java.time.OffsetDateTime;
 import jakarta.validation.Valid;
 import jakarta.validation.constraints.*;
@@ -14,44 +15,19 @@ import java.util.*;
 import jakarta.annotation.Generated;
 
 /**
- * UserWithSameEmailAlreadyExistsErrorDTO
+ * UpdateUserPhoto200Response
  */
 @lombok.Builder(toBuilder = true)
 @lombok.AllArgsConstructor
 @com.fasterxml.jackson.annotation.JsonIgnoreProperties(ignoreUnknown=true)
 
+@JsonTypeName("updateUserPhoto_200_response")
 @Generated(value = "org.openapitools.codegen.languages.SpringCodegen", date = "2024-05-30T09:25:21.695569+03:00[Europe/Moscow]", comments = "Generator version: 7.6.0")
-public class UserWithSameEmailAlreadyExistsErrorDTO {
+public class UpdateUserPhoto200Response {
 
-  private String code = "UserWithSameEmailAlreadyExists";
+  private String message = "Photo updated";
 
-  private String message;
-
-  public UserWithSameEmailAlreadyExistsErrorDTO() {
-    super();
-  }
-
-  public UserWithSameEmailAlreadyExistsErrorDTO code(String code) {
-    this.code = code;
-    return this;
-  }
-
-  /**
-   * Get code
-   * @return code
-  */
-  @NotNull 
-  @Schema(name = "code", requiredMode = Schema.RequiredMode.REQUIRED)
-  @JsonProperty("code")
-  public String getCode() {
-    return code;
-  }
-
-  public void setCode(String code) {
-    this.code = code;
-  }
-
-  public UserWithSameEmailAlreadyExistsErrorDTO message(String message) {
+  public UpdateUserPhoto200Response message(String message) {
     this.message = message;
     return this;
   }
@@ -60,8 +36,8 @@ public class UserWithSameEmailAlreadyExistsErrorDTO {
    * Get message
    * @return message
   */
-  @NotNull 
-  @Schema(name = "message", requiredMode = Schema.RequiredMode.REQUIRED)
+  
+  @Schema(name = "message", requiredMode = Schema.RequiredMode.NOT_REQUIRED)
   @JsonProperty("message")
   public String getMessage() {
     return message;
@@ -79,21 +55,19 @@ public class UserWithSameEmailAlreadyExistsErrorDTO {
     if (o == null || getClass() != o.getClass()) {
       return false;
     }
-    UserWithSameEmailAlreadyExistsErrorDTO userWithSameEmailAlreadyExistsErrorDTO = (UserWithSameEmailAlreadyExistsErrorDTO) o;
-    return Objects.equals(this.code, userWithSameEmailAlreadyExistsErrorDTO.code) &&
-        Objects.equals(this.message, userWithSameEmailAlreadyExistsErrorDTO.message);
+    UpdateUserPhoto200Response updateUserPhoto200Response = (UpdateUserPhoto200Response) o;
+    return Objects.equals(this.message, updateUserPhoto200Response.message);
   }
 
   @Override
   public int hashCode() {
-    return Objects.hash(code, message);
+    return Objects.hash(message);
   }
 
   @Override
   public String toString() {
     StringBuilder sb = new StringBuilder();
-    sb.append("class UserWithSameEmailAlreadyExistsErrorDTO {\n");
-    sb.append("    code: ").append(toIndentedString(code)).append("\n");
+    sb.append("class UpdateUserPhoto200Response {\n");
     sb.append("    message: ").append(toIndentedString(message)).append("\n");
     sb.append("}");
     return sb.toString();

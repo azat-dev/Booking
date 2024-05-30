@@ -11,7 +11,7 @@ paths:
       summary: Send email for verification
       parameters:
         - name: token
-          in: path
+          in: query
           required: true
           schema:
             type: string

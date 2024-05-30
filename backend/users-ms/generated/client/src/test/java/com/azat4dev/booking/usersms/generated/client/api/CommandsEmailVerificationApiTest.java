@@ -39,5 +39,21 @@ class CommandsEmailVerificationApiTest {
         // TODO: test validations
     }
 
+    /**
+     * Send email for verification
+     *
+     * 
+     *
+     * This tests the overload of the method that uses a Map for query parameters instead of
+     * listing them out individually.
+     */
+    @Test
+    void verifyEmailTestQueryMap() {
+        CommandsEmailVerificationApi.VerifyEmailQueryParams queryParams = new CommandsEmailVerificationApi.VerifyEmailQueryParams()
+            .token(null);
+        // VerifyEmail200Response response = api.verifyEmail(queryParams);
+
+    // TODO: test validations
+    }
     
 }

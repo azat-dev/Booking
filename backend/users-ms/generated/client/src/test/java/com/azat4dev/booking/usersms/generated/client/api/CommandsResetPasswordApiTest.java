@@ -1,7 +1,9 @@
 package com.azat4dev.booking.usersms.generated.client.api;
 
 import com.azat4dev.booking.usersms.generated.client.base.ApiClient;
+import com.azat4dev.booking.usersms.generated.client.model.CompleteResetPassword200Response;
 import com.azat4dev.booking.usersms.generated.client.model.CompleteResetPasswordRequestBody;
+import com.azat4dev.booking.usersms.generated.client.model.ResetPasswordByEmail200Response;
 import com.azat4dev.booking.usersms.generated.client.model.ResetPasswordByEmailRequestBody;
 import com.azat4dev.booking.usersms.generated.client.model.VerifyEmail400Response;
 import org.junit.jupiter.api.Test;
@@ -35,7 +37,7 @@ class CommandsResetPasswordApiTest {
     @Test
     void completeResetPasswordTest() {
         CompleteResetPasswordRequestBody completeResetPasswordRequestBody = null;
-        // String response = api.completeResetPassword(completeResetPasswordRequestBody);
+        // CompleteResetPassword200Response response = api.completeResetPassword(completeResetPasswordRequestBody);
 
         // TODO: test validations
     }
@@ -49,7 +51,7 @@ class CommandsResetPasswordApiTest {
     @Test
     void resetPasswordByEmailTest() {
         ResetPasswordByEmailRequestBody resetPasswordByEmailRequestBody = null;
-        // String response = api.resetPasswordByEmail(resetPasswordByEmailRequestBody);
+        // ResetPasswordByEmail200Response response = api.resetPasswordByEmail(resetPasswordByEmailRequestBody);
 
         // TODO: test validations
     }
