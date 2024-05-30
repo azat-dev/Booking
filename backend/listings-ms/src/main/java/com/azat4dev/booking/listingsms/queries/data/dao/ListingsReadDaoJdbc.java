@@ -1,5 +1,6 @@
 package com.azat4dev.booking.listingsms.queries.data.dao;
 
+import com.azat4dev.booking.listingsms.commands.domain.values.OwnerId;
 import lombok.AllArgsConstructor;
 import org.springframework.dao.EmptyResultDataAccessException;
 import org.springframework.jdbc.core.RowMapper;
@@ -7,6 +8,7 @@ import org.springframework.jdbc.core.namedparam.NamedParameterJdbcTemplate;
 
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 import java.util.UUID;
@@ -29,6 +31,11 @@ public final class ListingsReadDaoJdbc implements ListingsReadDao {
         } catch (EmptyResultDataAccessException e) {
             return Optional.empty();
         }
+    }
+
+    @Override
+    public List<ListingRecord> findAllByOwnerId(UUID ownerId) {
+        return List.of();
     }
 
     private static final class Mapper implements RowMapper<ListingRecord> {

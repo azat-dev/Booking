@@ -30,3 +30,20 @@ paths:
           description: Not valid Token
         "404":
           description: Not found
+  /listings:
+    get:
+      tags:
+        - queriesPrivate
+      operationId: listOwnListings
+      summary: List own listings
+      responses:
+        "200":
+          description: Private details of listing
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  "$ref": "models.yaml#/components/schemas/ListingPrivateDetailsDTO"
+        "403":
+          description: Forbidden

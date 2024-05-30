@@ -68,4 +68,19 @@ public class ListingsReadDaoJdbcTests {
 
         assertThat(foundListing).isEqualTo(expectedListing);
     }
+
+    @Test
+    @Sql("/db/drop-schema.sql")
+    @Sql("/db/schema.sql")
+    @Sql("/db/data.sql")
+    void test_findAllByOwnerId_givenExistingOwnerId_thenReturnAllRecords() {
+        // Given
+        final var ownerId = UUID.fromString("00000000-0000-0000-0000-000000000010");
+
+        // When
+        final var foundListings = dao.findAllByOwnerId(ownerId);
+
+        // Then
+        assertThat(foundListings.size()).isEqualTo(2);
+    }
 }
