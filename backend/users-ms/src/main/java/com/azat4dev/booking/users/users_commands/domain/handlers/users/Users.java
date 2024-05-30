@@ -11,7 +11,7 @@ import java.util.Optional;
 
 public interface Users {
 
-    void createNew(NewUserData newUserData) throws Exception.UserWithSameEmailAlreadyExists;
+    void createNew(NewUserData newUserData) throws Exception.UserWithSameEmailAlreadyExists, User.Exception;
 
     void addVerifiedEmail(UserId userId, EmailAddress email) throws Exception.UserNotFound, Exception.EmailNotFound;
 

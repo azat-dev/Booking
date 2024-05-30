@@ -13,6 +13,7 @@ import com.azat4dev.booking.users.users_commands.domain.handlers.users.UsersImpl
 import com.azat4dev.booking.users.users_commands.domain.interfaces.repositories.UnitOfWork;
 import com.azat4dev.booking.users.users_commands.domain.interfaces.repositories.UnitOfWorkFactory;
 import com.azat4dev.booking.users.users_commands.domain.interfaces.repositories.UsersRepository;
+import lombok.AllArgsConstructor;
 import org.junit.jupiter.api.Test;
 
 import java.time.LocalDateTime;
@@ -26,23 +27,41 @@ import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.times;
 
 
+@AllArgsConstructor
+class MockUnitOfWork implements UnitOfWork {
+
+    private final UsersRepository usersRepository;
+    private final OutboxEventsRepository outboxEventsRepository;
+
+    @Override
+    public OutboxEventsRepository getOutboxEventsRepository() {
+        return outboxEventsRepository;
+    }
+
+    @Override
+    public UsersRepository getUsersRepository() {
+        return usersRepository;
+    }
+
+    @Override
+    public <T> T doOrFail(Action<T> action) throws Exception {
+        return action.run();
+    }
+}
+
 public class UsersImplTests {
 
     SUT createSUT() {
 
-        UsersRepository usersRepository = mock(UsersRepository.class);
+        final var usersRepository = mock(UsersRepository.class);
+        final var outboxEventsRepository = mock(OutboxEventsRepository.class);
 
-        final var unitOfWork = mock(UnitOfWork.class);
+        final var unitOfWork = new MockUnitOfWork(usersRepository, outboxEventsRepository);
+
         final var unitOfWorkFactory = mock(UnitOfWorkFactory.class);
         given(unitOfWorkFactory.make()).willReturn(unitOfWork);
 
-        final var outboxEventsRepository = mock(OutboxEventsRepository.class);
-
         final var markOutboxNeedsSynchronization = mock(UsersImpl.MarkOutboxNeedsSynchronization.class);
-
-        given(unitOfWork.getUsersRepository()).willReturn(usersRepository);
-        given(unitOfWork.getOutboxEventsRepository()).willReturn(outboxEventsRepository);
-
         final var timeProvider = mock(TimeProvider.class);
 
         return new SUT(
@@ -82,7 +101,7 @@ public class UsersImplTests {
     }
 
     @Test
-    void test_createNew_givenValidNewUserData_thenCreateNewAndProduceEvent() {
+    void test_createNew_givenValidNewUserData_thenCreateNewAndProduceEvent() throws Exception {
 
         // Given
         final var currentTime = anyDateTime();
@@ -127,15 +146,12 @@ public class UsersImplTests {
                 assertArg(assertUserCreatedEvent)
             );
 
-        then(sut.unitOfWork).should(times(1))
-            .save();
-
         then(sut.markOutboxNeedsSynchronization).should(times(1))
             .execute();
     }
 
     @Test
-    void test_createNew_givenValidCommandAndUserExists_thenRollBackAndThrowException() {
+    void test_createNew_givenValidCommandAndUserExists_thenRollBackAndThrowException() throws Exception {
         // Given
         final var currentTime = anyDateTime();
         final var sut = createSUT();
@@ -148,13 +164,13 @@ public class UsersImplTests {
             .willReturn(currentTime);
 
         // When
-        assertThrows(Users.Exception.UserWithSameEmailAlreadyExists.class, () -> {
+        final var exception = assertThrows(Users.Exception.UserWithSameEmailAlreadyExists.class, () -> {
             sut.users.createNew(newUserData);
         });
 
         // Then
-        then(sut.unitOfWork).should(times(1))
-            .rollback();
+        assertThat(exception).isNotNull();
+        assertThat(exception).isInstanceOf(Users.Exception.UserWithSameEmailAlreadyExists.class);
     }
 
     @Test
@@ -185,9 +201,6 @@ public class UsersImplTests {
 
         then(sut.outboxEventsRepository).should(times(1))
             .publish(expectedEvent);
-
-        then(sut.unitOfWork).should(times(1))
-            .save();
     }
 
     record SUT(

@@ -19,7 +19,7 @@ public interface UsersRepository {
 
     // Exceptions
 
-    abstract class Exception extends RuntimeException {
+    static abstract class Exception extends RuntimeException {
 
         protected Exception(String message) {
             super(message);

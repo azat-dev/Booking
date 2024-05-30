@@ -25,47 +25,47 @@ public final class UsersImpl implements Users {
     private final UnitOfWorkFactory unitOfWorkFactory;
 
     @Override
-    public void createNew(NewUserData newUserData) throws Exception.UserWithSameEmailAlreadyExists {
+    public void createNew(NewUserData newUserData) throws Exception.UserWithSameEmailAlreadyExists, User.Exception {
 
         final var userId = newUserData.userId();
         final var currentDate = timeProvider.currentTime();
 
+        final var user = User.checkAndMake(
+            userId,
+            currentDate,
+            currentDate,
+            newUserData.email(),
+            newUserData.fullName(),
+            newUserData.encodedPassword(),
+            Optional.empty()
+        );
+
         final var unitOfWork = unitOfWorkFactory.make();
 
         try {
+            unitOfWork.doOrFail(() -> {
 
-            final var usersRepository = unitOfWork.getUsersRepository();
-            final var outboxEventsRepository = unitOfWork.getOutboxEventsRepository();
+                final var usersRepository = unitOfWork.getUsersRepository();
+                final var outboxEventsRepository = unitOfWork.getOutboxEventsRepository();
 
-            final var user = User.checkAndMake(
-                userId,
-                currentDate,
-                currentDate,
-                newUserData.email(),
-                newUserData.fullName(),
-                newUserData.encodedPassword(),
-                Optional.empty()
-            );
+                usersRepository.addNew(user);
 
-            usersRepository.addNew(user);
+                outboxEventsRepository.publish(
+                    new UserCreated(
+                        currentDate,
+                        userId,
+                        newUserData.fullName(),
+                        newUserData.email(),
+                        EmailVerificationStatus.NOT_VERIFIED
+                    )
+                );
 
-            outboxEventsRepository.publish(
-                new UserCreated(
-                    currentDate,
-                    userId,
-                    newUserData.fullName(),
-                    newUserData.email(),
-                    EmailVerificationStatus.NOT_VERIFIED
-                )
-            );
-
-            unitOfWork.save();
+                return null;
+            });
 
         } catch (UsersRepository.Exception.UserWithSameEmailAlreadyExists e) {
-            unitOfWork.rollback();
             throw new Exception.UserWithSameEmailAlreadyExists();
         } catch (Throwable e) {
-            unitOfWork.rollback();
             throw new RuntimeException(e);
         }
 
@@ -79,28 +79,30 @@ public final class UsersImpl implements Users {
 
         try {
 
-            final var usersRepository = unitOfWork.getUsersRepository();
-            final var outboxEventsRepository = unitOfWork.getOutboxEventsRepository();
+            unitOfWork.doOrFail(() -> {
+                final var usersRepository = unitOfWork.getUsersRepository();
+                final var outboxEventsRepository = unitOfWork.getOutboxEventsRepository();
 
-            final var user = usersRepository.findById(userId)
-                .orElseThrow(Exception.UserNotFound::new);
+                final var user = usersRepository.findById(userId)
+                    .orElseThrow(Exception.UserNotFound::new);
 
-            user.verifyEmail(email);
-            usersRepository.update(user);
+                user.verifyEmail(email);
+                usersRepository.update(user);
 
-            outboxEventsRepository.publish(new UserVerifiedEmail(userId, email));
+                outboxEventsRepository.publish(new UserVerifiedEmail(userId, email));
 
-            unitOfWork.save();
+                return null;
+            });
 
-        } catch (UsersRepository.Exception.UserNotFound e) {
-            unitOfWork.rollback();
-            throw new Exception.UserNotFound();
-        } catch (User.Exception.VerifiedEmailDoesntExist e) {
-            unitOfWork.rollback();
-            throw new Exception.EmailNotFound();
-        } catch (Throwable e) {
-            unitOfWork.rollback();
-            throw new RuntimeException(e);
+        } catch (java.lang.Exception e) {
+            switch (e) {
+                case UsersRepository.Exception.UserNotFound inst:
+                    throw new Exception.UserNotFound();
+                case User.Exception.VerifiedEmailDoesntExist inst:
+                    throw new Exception.EmailNotFound();
+                default:
+                    throw new RuntimeException(e);
+            }
         }
 
         markOutboxNeedsSynchronization.execute();
@@ -112,16 +114,13 @@ public final class UsersImpl implements Users {
         final var unitOfWork = unitOfWorkFactory.make();
 
         try {
-            final var usersRepository = unitOfWork.getUsersRepository();
-            final var foundUser = usersRepository.findByEmail(email);
-            unitOfWork.save();
-
-            return foundUser;
-        } catch (Throwable e) {
-            unitOfWork.rollback();
+            return unitOfWork.doOrFail(() -> {
+                final var usersRepository = unitOfWork.getUsersRepository();
+                return usersRepository.findByEmail(email);
+            });
+        } catch (java.lang.Exception e) {
+            throw new RuntimeException(e);
         }
-
-        return Optional.empty();
     }
 
     @Override
@@ -130,29 +129,30 @@ public final class UsersImpl implements Users {
         final var unitOfWork = unitOfWorkFactory.make();
 
         try {
-            final var usersRepository = unitOfWork.getUsersRepository();
+            unitOfWork.doOrFail(() -> {
+                final var usersRepository = unitOfWork.getUsersRepository();
 
-            final var user = usersRepository.findById(userId)
-                .orElseThrow(Exception.UserNotFound::new);
+                final var user = usersRepository.findById(userId)
+                    .orElseThrow(Exception.UserNotFound::new);
 
-            final var prevPhoto = user.getPhoto();
+                final var prevPhoto = user.getPhoto();
 
-            user.setPhoto(newPhotoPath);
-            usersRepository.update(user);
+                user.setPhoto(newPhotoPath);
+                usersRepository.update(user);
 
-            final var outboxRepository = unitOfWork.getOutboxEventsRepository();
+                final var outboxRepository = unitOfWork.getOutboxEventsRepository();
 
-            final var event = new UpdatedUserPhoto(
-                userId,
-                newPhotoPath,
-                prevPhoto
-            );
+                final var event = new UpdatedUserPhoto(
+                    userId,
+                    newPhotoPath,
+                    prevPhoto
+                );
 
-            outboxRepository.publish(event);
-            unitOfWork.save();
+                outboxRepository.publish(event);
+                return null;
+            });
 
         } catch (Throwable e) {
-            unitOfWork.rollback();
             throw new Exception.FailedToUpdateUser();
         }
 

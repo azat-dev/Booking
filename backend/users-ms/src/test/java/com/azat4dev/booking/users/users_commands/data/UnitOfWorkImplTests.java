@@ -22,9 +22,10 @@ import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Import;
 import org.springframework.test.context.jdbc.Sql;
-import org.springframework.transaction.PlatformTransactionManager;
+import org.springframework.transaction.support.TransactionTemplate;
 
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 
 
 @Import({DataConfig.class, DaoConfig.class})
@@ -39,7 +40,7 @@ public class UnitOfWorkImplTests {
     OutboxEventsRepository outboxEventsRepository;
 
     @Autowired
-    PlatformTransactionManager platformTransactionManager;
+    TransactionTemplate transactionTemplate;
 
     @MockBean
     JwtDataEncoder jwtDataEncoder;
@@ -47,7 +48,7 @@ public class UnitOfWorkImplTests {
     UnitOfWork createSUT() {
 
         return new UnitOfWorkImpl(
-            platformTransactionManager,
+            transactionTemplate,
             outboxEventsRepository,
             usersRepository
         );
@@ -56,17 +57,21 @@ public class UnitOfWorkImplTests {
     @Test
     @Sql("/db/drop-schema.sql")
     @Sql("/db/schema.sql")
-    void test_rollback_givenWriteOperation_thenRollbackAllWrites() {
+    void test_doOrFail_givenWriteOperation_thenRollbackAllWrites() {
         // Given
 
         var sut = createSUT();
         final var newUser = UserHelpers.anyUser();
 
         final var usersRepository = sut.getUsersRepository();
-        usersRepository.addNew(newUser);
 
         // When
-        sut.rollback();
+        assertThrows(RuntimeException.class, () -> {
+            sut.doOrFail(() -> {
+                usersRepository.addNew(UserHelpers.anyUser());
+                throw new RuntimeException("Rollback");
+            });
+        });
 
         // Then
         final var sut2 = createSUT();
@@ -77,16 +82,18 @@ public class UnitOfWorkImplTests {
     @Test
     @Sql(scripts = {"/db/drop-schema.sql"})
     @Sql(scripts = {"/db/schema.sql"})
-    void test_save_givenWriteOperation_thenPerformWriteToDb() {
+    void test_doOrFail_givenWriteOperation_thenPerformWriteToDb() throws Exception {
         // Given
         var sut = createSUT();
         final var newUser = UserHelpers.anyUser();
 
         final var usersRepository = sut.getUsersRepository();
-        usersRepository.addNew(newUser);
 
         // When
-        sut.save();
+        sut.doOrFail(() -> {
+            usersRepository.addNew(newUser);
+            return null;
+        });
 
         // Then
         assertThat(usersRepository.findById(newUser.getId())).isNotEmpty();

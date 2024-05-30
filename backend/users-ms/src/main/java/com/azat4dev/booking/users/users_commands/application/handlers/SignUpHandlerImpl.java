@@ -5,6 +5,7 @@ import com.azat4dev.booking.shared.domain.core.UserId;
 import com.azat4dev.booking.shared.domain.core.UserIdFactory;
 import com.azat4dev.booking.users.users_commands.application.commands.SignUp;
 import com.azat4dev.booking.users.users_commands.domain.core.commands.NewUserData;
+import com.azat4dev.booking.users.users_commands.domain.core.entities.User;
 import com.azat4dev.booking.users.users_commands.domain.core.values.email.EmailAddress;
 import com.azat4dev.booking.users.users_commands.domain.core.values.password.Password;
 import com.azat4dev.booking.users.users_commands.domain.core.values.user.FirstName;
@@ -56,6 +57,8 @@ public final class SignUpHandlerImpl implements SignUpHandler {
             throw new SignUpHandler.Exception.UserWithSameEmailAlreadyExists();
         } catch (FullName.Exception e) {
             throw ValidationException.withPath("fullName", e);
+        } catch (User.Exception e) {
+            throw new RuntimeException(e);
         }
     }
 }

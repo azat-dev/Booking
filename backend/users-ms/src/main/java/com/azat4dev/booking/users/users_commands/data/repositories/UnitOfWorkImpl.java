@@ -3,61 +3,22 @@ package com.azat4dev.booking.users.users_commands.data.repositories;
 import com.azat4dev.booking.shared.data.repositories.outbox.OutboxEventsRepository;
 import com.azat4dev.booking.users.users_commands.domain.interfaces.repositories.UnitOfWork;
 import com.azat4dev.booking.users.users_commands.domain.interfaces.repositories.UsersRepository;
-import org.springframework.transaction.PlatformTransactionManager;
-import org.springframework.transaction.TransactionStatus;
+import lombok.AllArgsConstructor;
+import lombok.RequiredArgsConstructor;
 import org.springframework.transaction.support.DefaultTransactionDefinition;
+import org.springframework.transaction.support.TransactionTemplate;
 
-import java.util.Optional;
+import java.lang.reflect.UndeclaredThrowableException;
 
 
+@RequiredArgsConstructor
 public class UnitOfWorkImpl extends DefaultTransactionDefinition implements UnitOfWork {
 
+    private final TransactionTemplate transactionTemplate;
     private final OutboxEventsRepository outboxEventsRepository;
     private final UsersRepository usersRepository;
-    private final PlatformTransactionManager transactionManager;
     private Status status = Status.INITIAL;
-    private Optional<TransactionStatus> transactionStatus;
 
-
-    public UnitOfWorkImpl(
-        PlatformTransactionManager transactionManager,
-        OutboxEventsRepository outboxEventsRepository,
-        UsersRepository usersRepository
-    ) {
-
-        this.setIsolationLevel(ISOLATION_READ_COMMITTED);
-        this.transactionManager = transactionManager;
-        this.outboxEventsRepository = outboxEventsRepository;
-        this.usersRepository = usersRepository;
-        this.transactionStatus = Optional.of(this.transactionManager.getTransaction(this));
-    }
-
-    @Override
-    public void save() {
-
-        if (this.status != Status.INITIAL || this.transactionStatus.isEmpty()) {
-            throw new RuntimeException("Cannot save a transaction that is not in the initial state");
-        }
-
-        final var s = this.transactionStatus.get();
-
-        this.transactionManager.commit(s);
-        this.status = Status.COMMITTED;
-        this.transactionStatus = Optional.empty();
-    }
-
-    @Override
-    public void rollback() {
-
-        if (this.status != Status.INITIAL || this.transactionStatus.isEmpty()) {
-            throw new RuntimeException("Cannot rollback a transaction that is not in the initial state");
-        }
-
-        transactionManager.rollback(this.transactionStatus.get());
-
-        this.status = Status.ROLLED_BACK;
-        this.transactionStatus = Optional.empty();
-    }
 
     @Override
     public OutboxEventsRepository getOutboxEventsRepository() {
@@ -67,6 +28,37 @@ public class UnitOfWorkImpl extends DefaultTransactionDefinition implements Unit
     @Override
     public UsersRepository getUsersRepository() {
         return this.usersRepository;
+    }
+
+    @Override
+    public <T> T doOrFail(Action<T> action) throws Exception {
+        if (status != Status.INITIAL) {
+            throw new IllegalStateException("UnitOfWork already committed or rolled back");
+        }
+
+        try {
+            final var result = transactionTemplate.execute(status -> {
+                try {
+                    return action.run();
+                } catch (Exception e) {
+                    throw new UndeclaredThrowableException(e);
+                }
+            });
+
+            this.status = Status.COMMITTED;
+            return result;
+
+        } catch (UndeclaredThrowableException e) {
+            this.status = Status.ROLLED_BACK;
+            if (e.getUndeclaredThrowable() instanceof Exception) {
+                throw (Exception) e.getUndeclaredThrowable();
+            }
+            throw e;
+        } catch (Throwable e) {
+            this.status = Status.ROLLED_BACK;
+            throw e;
+        }
+
     }
 
     enum Status {

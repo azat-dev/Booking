@@ -22,7 +22,7 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.jdbc.core.namedparam.NamedParameterJdbcTemplate;
-import org.springframework.transaction.PlatformTransactionManager;
+import org.springframework.transaction.support.TransactionTemplate;
 
 @Configuration
 public class DataConfig {
@@ -83,7 +83,7 @@ public class DataConfig {
 
     @Bean
     UnitOfWorkFactory unitOfWorkFactory(
-        PlatformTransactionManager transactionManager,
+        TransactionTemplate transactionTemplate,
         OutboxEventsRepository outboxEventsRepository,
         UsersRepository usersRepository
     ) {
@@ -92,7 +92,7 @@ public class DataConfig {
             @Override
             public UnitOfWork make() {
                 return new UnitOfWorkImpl(
-                    transactionManager,
+                    transactionTemplate,
                     outboxEventsRepository,
                     usersRepository
                 );
