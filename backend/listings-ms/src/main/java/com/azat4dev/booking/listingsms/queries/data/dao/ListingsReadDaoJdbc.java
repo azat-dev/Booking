@@ -1,6 +1,5 @@
 package com.azat4dev.booking.listingsms.queries.data.dao;
 
-import com.azat4dev.booking.listingsms.commands.domain.values.OwnerId;
 import lombok.AllArgsConstructor;
 import org.springframework.dao.EmptyResultDataAccessException;
 import org.springframework.jdbc.core.RowMapper;
