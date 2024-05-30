@@ -13,7 +13,7 @@
 
 package com.azat4dev.booking.listingsms.generated.client.model;
 
-import com.azat4dev.booking.listingsms.generated.client.model.ListingPrivateDetails;
+import com.azat4dev.booking.listingsms.generated.client.model.ListingPrivateDetailsDTO;
 import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.annotation.JsonCreator;

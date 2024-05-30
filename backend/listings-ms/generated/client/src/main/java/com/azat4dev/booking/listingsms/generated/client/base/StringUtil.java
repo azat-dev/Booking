@@ -16,7 +16,7 @@ package com.azat4dev.booking.listingsms.generated.client.base;
 import java.util.Collection;
 import java.util.Iterator;
 
-@javax.annotation.Generated(value = "org.openapitools.codegen.languages.JavaClientCodegen", date = "2024-05-30T14:24:06.651425+03:00[Europe/Moscow]")
+@javax.annotation.Generated(value = "org.openapitools.codegen.languages.JavaClientCodegen", date = "2024-05-30T20:48:06.463009+03:00[Europe/Moscow]")
 public class StringUtil {
   /**
    * Check if the given array contains the given value (with case-insensitive comparison).

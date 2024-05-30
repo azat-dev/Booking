@@ -14,7 +14,7 @@ src/main/java/com/azat4dev/booking/listingsms/generated/server/model/AddListingR
 src/main/java/com/azat4dev/booking/listingsms/generated/server/model/AddListingResponse.java
 src/main/java/com/azat4dev/booking/listingsms/generated/server/model/ErrorDTO.java
 src/main/java/com/azat4dev/booking/listingsms/generated/server/model/GetListingPrivateDetailsResponse.java
-src/main/java/com/azat4dev/booking/listingsms/generated/server/model/ListingPrivateDetails.java
+src/main/java/com/azat4dev/booking/listingsms/generated/server/model/ListingPrivateDetailsDTO.java
 src/main/java/com/azat4dev/booking/listingsms/generated/server/model/ValidationErrorDTO.java
 src/main/java/com/azat4dev/booking/listingsms/generated/server/model/ValidationErrorDetailsDTO.java
 src/main/java/org/openapitools/configuration/HomeController.java

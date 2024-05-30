@@ -2,7 +2,7 @@ package com.azat4dev.booking.listingsms.generated.server.model;
 
 import java.net.URI;
 import java.util.Objects;
-import com.azat4dev.booking.listingsms.generated.server.model.ListingPrivateDetails;
+import com.azat4dev.booking.listingsms.generated.server.model.ListingPrivateDetailsDTO;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.annotation.JsonCreator;
 import java.time.OffsetDateTime;
@@ -21,12 +21,12 @@ import jakarta.annotation.Generated;
 @lombok.AllArgsConstructor
 @com.fasterxml.jackson.annotation.JsonIgnoreProperties(ignoreUnknown=true)
 
-@Generated(value = "org.openapitools.codegen.languages.SpringCodegen", date = "2024-05-30T14:24:06.893700+03:00[Europe/Moscow]")
+@Generated(value = "org.openapitools.codegen.languages.SpringCodegen", date = "2024-05-30T20:48:06.837109+03:00[Europe/Moscow]")
 public class GetListingPrivateDetailsResponse {
 
-  private ListingPrivateDetails listing;
+  private ListingPrivateDetailsDTO listing;
 
-  public GetListingPrivateDetailsResponse listing(ListingPrivateDetails listing) {
+  public GetListingPrivateDetailsResponse listing(ListingPrivateDetailsDTO listing) {
     this.listing = listing;
     return this;
   }
@@ -38,11 +38,11 @@ public class GetListingPrivateDetailsResponse {
   @NotNull @Valid 
   @Schema(name = "listing", requiredMode = Schema.RequiredMode.REQUIRED)
   @JsonProperty("listing")
-  public ListingPrivateDetails getListing() {
+  public ListingPrivateDetailsDTO getListing() {
     return listing;
   }
 
-  public void setListing(ListingPrivateDetails listing) {
+  public void setListing(ListingPrivateDetailsDTO listing) {
     this.listing = listing;
   }
 

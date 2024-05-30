@@ -15,14 +15,14 @@ import java.util.*;
 import jakarta.annotation.Generated;
 
 /**
- * ListingPrivateDetails
+ * ListingPrivateDetailsDTO
  */
 @lombok.Builder(toBuilder = true)
 @lombok.AllArgsConstructor
 @com.fasterxml.jackson.annotation.JsonIgnoreProperties(ignoreUnknown=true)
 
-@Generated(value = "org.openapitools.codegen.languages.SpringCodegen", date = "2024-05-30T14:24:06.893700+03:00[Europe/Moscow]")
-public class ListingPrivateDetails {
+@Generated(value = "org.openapitools.codegen.languages.SpringCodegen", date = "2024-05-30T20:48:06.837109+03:00[Europe/Moscow]")
+public class ListingPrivateDetailsDTO {
 
   private UUID id;
 
@@ -30,7 +30,7 @@ public class ListingPrivateDetails {
 
   private String description;
 
-  public ListingPrivateDetails id(UUID id) {
+  public ListingPrivateDetailsDTO id(UUID id) {
     this.id = id;
     return this;
   }
@@ -50,7 +50,7 @@ public class ListingPrivateDetails {
     this.id = id;
   }
 
-  public ListingPrivateDetails title(String title) {
+  public ListingPrivateDetailsDTO title(String title) {
     this.title = title;
     return this;
   }
@@ -70,7 +70,7 @@ public class ListingPrivateDetails {
     this.title = title;
   }
 
-  public ListingPrivateDetails description(String description) {
+  public ListingPrivateDetailsDTO description(String description) {
     this.description = description;
     return this;
   }
@@ -98,10 +98,10 @@ public class ListingPrivateDetails {
     if (o == null || getClass() != o.getClass()) {
       return false;
     }
-    ListingPrivateDetails listingPrivateDetails = (ListingPrivateDetails) o;
-    return Objects.equals(this.id, listingPrivateDetails.id) &&
-        Objects.equals(this.title, listingPrivateDetails.title) &&
-        Objects.equals(this.description, listingPrivateDetails.description);
+    ListingPrivateDetailsDTO listingPrivateDetailsDTO = (ListingPrivateDetailsDTO) o;
+    return Objects.equals(this.id, listingPrivateDetailsDTO.id) &&
+        Objects.equals(this.title, listingPrivateDetailsDTO.title) &&
+        Objects.equals(this.description, listingPrivateDetailsDTO.description);
   }
 
   @Override
@@ -112,7 +112,7 @@ public class ListingPrivateDetails {
   @Override
   public String toString() {
     StringBuilder sb = new StringBuilder();
-    sb.append("class ListingPrivateDetails {\n");
+    sb.append("class ListingPrivateDetailsDTO {\n");
     sb.append("    id: ").append(toIndentedString(id)).append("\n");
     sb.append("    title: ").append(toIndentedString(title)).append("\n");
     sb.append("    description: ").append(toIndentedString(description)).append("\n");

@@ -23,17 +23,17 @@ import org.junit.jupiter.api.Test;
 
 
 /**
- * Model tests for ListingPrivateDetails
+ * Model tests for ListingPrivateDetailsDTO
  */
-class ListingPrivateDetailsTest {
-    private final ListingPrivateDetails model = new ListingPrivateDetails();
+class ListingPrivateDetailsDTOTest {
+    private final ListingPrivateDetailsDTO model = new ListingPrivateDetailsDTO();
 
     /**
-     * Model tests for ListingPrivateDetails
+     * Model tests for ListingPrivateDetailsDTO
      */
     @Test
-    void testListingPrivateDetails() {
-        // TODO: test ListingPrivateDetails
+    void testListingPrivateDetailsDTO() {
+        // TODO: test ListingPrivateDetailsDTO
     }
 
     /**

@@ -34,7 +34,7 @@ src/main/java/com/azat4dev/booking/listingsms/generated/client/model/AddListingR
 src/main/java/com/azat4dev/booking/listingsms/generated/client/model/ApiResponse.java
 src/main/java/com/azat4dev/booking/listingsms/generated/client/model/ErrorDTO.java
 src/main/java/com/azat4dev/booking/listingsms/generated/client/model/GetListingPrivateDetailsResponse.java
-src/main/java/com/azat4dev/booking/listingsms/generated/client/model/ListingPrivateDetails.java
+src/main/java/com/azat4dev/booking/listingsms/generated/client/model/ListingPrivateDetailsDTO.java
 src/main/java/com/azat4dev/booking/listingsms/generated/client/model/ValidationErrorDTO.java
 src/main/java/com/azat4dev/booking/listingsms/generated/client/model/ValidationErrorDetailsDTO.java
 src/test/java/com/azat4dev/booking/listingsms/generated/client/api/CommandsModificationsApiTest.java
@@ -44,6 +44,6 @@ src/test/java/com/azat4dev/booking/listingsms/generated/client/model/AddListingR
 src/test/java/com/azat4dev/booking/listingsms/generated/client/model/AddListingResponseTest.java
 src/test/java/com/azat4dev/booking/listingsms/generated/client/model/ErrorDTOTest.java
 src/test/java/com/azat4dev/booking/listingsms/generated/client/model/GetListingPrivateDetailsResponseTest.java
-src/test/java/com/azat4dev/booking/listingsms/generated/client/model/ListingPrivateDetailsTest.java
+src/test/java/com/azat4dev/booking/listingsms/generated/client/model/ListingPrivateDetailsDTOTest.java
 src/test/java/com/azat4dev/booking/listingsms/generated/client/model/ValidationErrorDTOTest.java
 src/test/java/com/azat4dev/booking/listingsms/generated/client/model/ValidationErrorDetailsDTOTest.java

@@ -15,7 +15,7 @@ package com.azat4dev.booking.listingsms.generated.client.model;
 
 import java.util.Objects;
 import java.util.Arrays;
-import com.azat4dev.booking.listingsms.generated.client.model.ListingPrivateDetails;
+import com.azat4dev.booking.listingsms.generated.client.model.ListingPrivateDetailsDTO;
 import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.annotation.JsonCreator;
@@ -30,15 +30,15 @@ import com.fasterxml.jackson.annotation.JsonTypeName;
 @JsonPropertyOrder({
   GetListingPrivateDetailsResponse.JSON_PROPERTY_LISTING
 })
-@javax.annotation.Generated(value = "org.openapitools.codegen.languages.JavaClientCodegen", date = "2024-05-30T14:24:06.651425+03:00[Europe/Moscow]")
+@javax.annotation.Generated(value = "org.openapitools.codegen.languages.JavaClientCodegen", date = "2024-05-30T20:48:06.463009+03:00[Europe/Moscow]")
 public class GetListingPrivateDetailsResponse {
   public static final String JSON_PROPERTY_LISTING = "listing";
-  private ListingPrivateDetails listing;
+  private ListingPrivateDetailsDTO listing;
 
   public GetListingPrivateDetailsResponse() {
   }
 
-  public GetListingPrivateDetailsResponse listing(ListingPrivateDetails listing) {
+  public GetListingPrivateDetailsResponse listing(ListingPrivateDetailsDTO listing) {
     
     this.listing = listing;
     return this;
@@ -52,14 +52,14 @@ public class GetListingPrivateDetailsResponse {
   @JsonProperty(JSON_PROPERTY_LISTING)
   @JsonInclude(value = JsonInclude.Include.ALWAYS)
 
-  public ListingPrivateDetails getListing() {
+  public ListingPrivateDetailsDTO getListing() {
     return listing;
   }
 
 
   @JsonProperty(JSON_PROPERTY_LISTING)
   @JsonInclude(value = JsonInclude.Include.ALWAYS)
-  public void setListing(ListingPrivateDetails listing) {
+  public void setListing(ListingPrivateDetailsDTO listing) {
     this.listing = listing;
   }
 
