@@ -48,6 +48,7 @@ public class ListingsReadDaoJdbcTests {
     void test_findById_givenValidId_thenReturnRecord() {
         // Given
         final var listingId = UUID.fromString("00000000-0000-0000-0000-000000000001");
+        final var ownerId = UUID.fromString("00000000-0000-0000-0000-000000000010");
 
         // When
         final var foundListing = dao.findById(listingId).orElseThrow();
@@ -59,6 +60,7 @@ public class ListingsReadDaoJdbcTests {
                 .withNano(1),
             LocalDateTime.of(2024, 5, 8, 12, 0, 0)
                 .withNano(2),
+            ownerId,
             "listing1",
             "DRAFT",
             Optional.of("description1")

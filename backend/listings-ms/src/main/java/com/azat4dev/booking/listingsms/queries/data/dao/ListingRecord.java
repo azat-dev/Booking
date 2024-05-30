@@ -8,6 +8,7 @@ public record ListingRecord(
     UUID id,
     LocalDateTime createdAt,
     LocalDateTime updatedAt,
+    UUID ownerId,
     String title,
     String status,
     Optional<String> description

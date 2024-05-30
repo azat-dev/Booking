@@ -10,6 +10,7 @@ import com.github.javafaker.Faker;
 import com.nimbusds.jose.jwk.JWKSet;
 import com.nimbusds.jose.jwk.RSAKey;
 import com.nimbusds.jose.jwk.source.ImmutableJWKSet;
+import feign.FeignException;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
@@ -17,7 +18,6 @@ import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.context.TestConfiguration;
 import org.springframework.boot.test.web.server.LocalServerPort;
 import org.springframework.context.annotation.Bean;
-import org.springframework.http.HttpStatus;
 import org.springframework.security.converter.RsaKeyConverters;
 import org.springframework.security.oauth2.jwt.JwtClaimsSet;
 import org.springframework.security.oauth2.jwt.JwtEncoder;
@@ -32,6 +32,7 @@ import java.time.Instant;
 import java.util.UUID;
 
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 
 @SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
 class ListingsMsApplicationTests implements PostgresTests {
@@ -68,12 +69,10 @@ class ListingsMsApplicationTests implements PostgresTests {
         final var anotherUserListing = givenExistingListing(anotherUserId);
 
         // When
-        final var statusCode = apiClient(currentUserAccessToken, QueriesPrivateApi.class)
-            .getListingPrivateDetailsWithHttpInfo(anotherUserListing.id)
-            .getStatusCode();
-
-        // Then
-        assertThat(statusCode).isEqualTo(HttpStatus.FORBIDDEN.value());
+        assertThrows(FeignException.Forbidden.class, () -> {
+            apiClient(currentUserAccessToken, QueriesPrivateApi.class)
+                .getListingPrivateDetails(anotherUserListing.id);
+        });
     }
 
     ExistingListing givenExistingListing(UserId userId) {

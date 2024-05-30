@@ -41,6 +41,7 @@ public final class ListingsReadDaoJdbc implements ListingsReadDao {
                     .withNano(rs.getInt("created_at_nano")),
                 rs.getTimestamp("updated_at").toLocalDateTime()
                     .withNano(rs.getInt("updated_at_nano")),
+                UUID.fromString(rs.getString("owner_id")),
                 rs.getString("title"),
                 rs.getString("status"),
                 Optional.ofNullable(rs.getString("description"))

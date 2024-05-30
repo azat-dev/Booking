@@ -7,7 +7,7 @@ paths:
   \:
 components:
   schemas:
-    ListingPrivateDetails:
+    ListingPrivateDetailsDTO:
       type: object
       required:
         - id
@@ -35,4 +35,4 @@ components:
         - listing
       properties:
         listing:
-          $ref: "#/components/schemas/ListingPrivateDetails"
+          $ref: "#/components/schemas/ListingPrivateDetailsDTO"

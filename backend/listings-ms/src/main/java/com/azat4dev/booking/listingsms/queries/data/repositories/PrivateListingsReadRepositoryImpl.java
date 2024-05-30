@@ -1,12 +1,9 @@
 package com.azat4dev.booking.listingsms.queries.data.repositories;
 
-import com.azat4dev.booking.listingsms.commands.domain.values.ListingDescription;
-import com.azat4dev.booking.listingsms.commands.domain.values.ListingId;
-import com.azat4dev.booking.listingsms.commands.domain.values.ListingStatus;
-import com.azat4dev.booking.listingsms.commands.domain.values.ListingTitle;
+import com.azat4dev.booking.listingsms.commands.domain.values.*;
 import com.azat4dev.booking.listingsms.queries.data.dao.ListingRecord;
 import com.azat4dev.booking.listingsms.queries.data.dao.ListingsReadDao;
-import com.azat4dev.booking.listingsms.queries.domain.entities.PrivateListingDetails;
+import com.azat4dev.booking.listingsms.queries.domain.entities.ListingPrivateDetails;
 import com.azat4dev.booking.listingsms.queries.domain.interfaces.PrivateListingsReadRepository;
 import lombok.AllArgsConstructor;
 
@@ -20,16 +17,17 @@ public final class PrivateListingsReadRepositoryImpl implements PrivateListingsR
     private final MapRecordToPrivateListingDetails mapper = new MapRecordToPrivateListingDetails();
 
     @Override
-    public Optional<PrivateListingDetails> findById(ListingId id) {
+    public Optional<ListingPrivateDetails> findById(ListingId id) {
         return dao.findById(id.getValue())
             .map(mapper);
     }
 
-    public static class MapRecordToPrivateListingDetails implements Function<ListingRecord, PrivateListingDetails> {
+    public static class MapRecordToPrivateListingDetails implements Function<ListingRecord, ListingPrivateDetails> {
         @Override
-        public PrivateListingDetails apply(ListingRecord record) {
-            return new PrivateListingDetails(
+        public ListingPrivateDetails apply(ListingRecord record) {
+            return new ListingPrivateDetails(
                 ListingId.dangerouslyMakeFrom(record.id().toString()),
+                OwnerId.checkAndMakeFrom(record.ownerId().toString()),
                 ListingTitle.dangerouslyMakeFrom(record.title()),
                 ListingStatus.valueOf(record.status()),
                 record.description().map(ListingDescription::dangerouslyMakeFrom)
