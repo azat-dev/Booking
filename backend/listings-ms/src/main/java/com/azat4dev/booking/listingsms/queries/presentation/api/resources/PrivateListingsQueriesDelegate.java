@@ -1,7 +1,7 @@
 package com.azat4dev.booking.listingsms.queries.presentation.api.resources;
 
 import com.azat4dev.booking.listingsms.commands.domain.values.ListingDescription;
-import com.azat4dev.booking.listingsms.generated.server.api.QueriesApiDelegate;
+import com.azat4dev.booking.listingsms.generated.server.api.QueriesPrivateApiDelegate;
 import com.azat4dev.booking.listingsms.generated.server.model.GetListingPrivateDetailsResponse;
 import com.azat4dev.booking.listingsms.generated.server.model.ListingPrivateDetails;
 import com.azat4dev.booking.listingsms.queries.application.commands.GetListingPrivateDetails;
@@ -14,7 +14,7 @@ import org.springframework.stereotype.Component;
 import java.util.UUID;
 
 @Component
-public class PrivateListingsQueriesDelegate implements QueriesApiDelegate {
+public class PrivateListingsQueriesDelegate implements QueriesPrivateApiDelegate {
 
     @Autowired
     GetListingPrivateDetailsHandler getListingPrivateDetailsHandler;

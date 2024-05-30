@@ -2,37 +2,38 @@ package com.azat4dev.booking.listingsms.commands.api.resources;
 
 import com.azat4dev.booking.listingsms.commands.application.handlers.AddNewListingHandler;
 import com.azat4dev.booking.listingsms.commands.domain.commands.AddNewListing;
-import com.azat4dev.booking.listingsms.generated.server.api.CommandsApiDelegate;
+import com.azat4dev.booking.listingsms.generated.server.api.CommandsModificationsApiDelegate;
 import com.azat4dev.booking.listingsms.generated.server.model.AddListingRequestBody;
 import com.azat4dev.booking.listingsms.generated.server.model.AddListingResponse;
-import com.azat4dev.booking.listingsms.generated.server.model.GetPhotoUploadUrlForListingResponse;
-import org.springframework.beans.factory.annotation.Autowired;
+import com.azat4dev.booking.shared.application.ControllerException;
+import com.azat4dev.booking.shared.presentation.CurrentAuthenticatedUserIdProvider;
+import lombok.AllArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Component;
 
-import java.util.UUID;
-
 @Component
-public class ListingsApiDelegate implements CommandsApiDelegate {
+@AllArgsConstructor
+public class ListingsApiDelegate implements CommandsModificationsApiDelegate {
 
-    @Autowired
-    AddNewListingHandler addNewListingHandler;
+    private final CurrentAuthenticatedUserIdProvider currentUserId;
+    private final AddNewListingHandler addNewListingHandler;
 
     @Override
     public ResponseEntity<AddListingResponse> addListing(AddListingRequestBody body) {
 
+        final var userId = currentUserId.get()
+            .orElseThrow(() -> new ControllerException(
+                org.springframework.http.HttpStatus.UNAUTHORIZED,
+                "User not authenticated"
+            ));
+
         final var command = new AddNewListing(
             body.getOperationId().toString(),
-            UUID.randomUUID().toString(),
+            userId.value().toString(),
             body.getTitle()
         );
 
         final var listingId = addNewListingHandler.handle(command);
         return ResponseEntity.ok(new AddListingResponse(listingId.getValue()));
-    }
-
-    @Override
-    public ResponseEntity<GetPhotoUploadUrlForListingResponse> getPhotoUploadUrl(UUID listingId, AddListingRequestBody addListingRequestBody) {
-        return CommandsApiDelegate.super.getPhotoUploadUrl(listingId, addListingRequestBody);
     }
 }
