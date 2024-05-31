@@ -1,4 +1,4 @@
-package com.azat4dev.booking.listingsms.commands.data.dao.listings.mapper;
+package com.azat4dev.booking.listingsms.commands.data.repositories.mappers;
 
 import com.azat4dev.booking.listingsms.commands.data.dao.listings.ListingPhotoData;
 import com.azat4dev.booking.listingsms.commands.domain.entities.Listing;

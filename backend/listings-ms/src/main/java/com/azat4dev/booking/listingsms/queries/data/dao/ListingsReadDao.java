@@ -1,6 +1,6 @@
 package com.azat4dev.booking.listingsms.queries.data.dao;
 
-import com.azat4dev.booking.listingsms.commands.domain.values.OwnerId;
+import org.jooq.generated.tables.records.ListingsRecord;
 
 import java.util.List;
 import java.util.Optional;
@@ -8,7 +8,7 @@ import java.util.UUID;
 
 public interface ListingsReadDao {
 
-    Optional<ListingRecord> findById(UUID listingId);
+    Optional<ListingsRecord> findById(UUID listingId);
 
-    List<ListingRecord> findAllByOwnerId(UUID ownerId);
+    List<ListingsRecord> findAllByOwnerId(UUID ownerId);
 }

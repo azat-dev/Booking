@@ -2,27 +2,27 @@ package com.azat4dev.booking.listingsms.queries.data.dao;
 
 import com.azat4dev.booking.listingsms.queries.application.config.data.DaoConfig;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import org.jooq.JSON;
+import org.jooq.generated.tables.records.ListingsRecord;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.jdbc.AutoConfigureTestDatabase;
-import org.springframework.boot.test.autoconfigure.jdbc.JdbcTest;
+import org.springframework.boot.test.autoconfigure.jooq.JooqTest;
 import org.springframework.boot.test.context.TestConfiguration;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Import;
 import org.springframework.test.context.jdbc.Sql;
 
 import java.time.LocalDateTime;
-import java.util.List;
-import java.util.Optional;
 import java.util.UUID;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
 @Import(DaoConfig.class)
 @Sql("/db/schema.sql")
-@JdbcTest(properties = {"spring.datasource.url=jdbc:tc:postgresql:15-alpine:///"})
+@JooqTest(properties = {"spring.datasource.url=jdbc:tc:postgresql:15-alpine:///"})
 @AutoConfigureTestDatabase(replace = AutoConfigureTestDatabase.Replace.NONE)
-public class ListingsReadDaoJdbcTests {
+public class ListingsReadDaoJooqTests {
 
     @Autowired
     ListingsReadDao dao;
@@ -58,23 +58,27 @@ public class ListingsReadDaoJdbcTests {
         final var foundListing = dao.findById(listingId).orElseThrow();
 
         // Then
-        final var expectedListing = new ListingRecord(
+        final var expectedListing = new ListingsRecord(
             listingId,
-            LocalDateTime.of(2024, 5, 8, 12, 0, 0)
-                .withNano(1),
-            LocalDateTime.of(2024, 5, 8, 12, 0, 0)
-                .withNano(2),
+            LocalDateTime.of(2024, 5, 8, 12, 0, 0),
+            1,
+            LocalDateTime.of(2024, 5, 8, 12, 0, 0),
+            2,
             ownerId,
             "listing1",
+            "description1",
             "DRAFT",
-            Optional.of("description1"),
-            new ListingRecord.GuestsCapacity(1, 2, 3),
-            Optional.of("APARTMENT"),
-            Optional.of("PRIVATE_ROOM"),
-            Optional.of(new ListingRecord.Address("country1", "city1", "street1")),
-            List.of(
-                new ListingRecord.Photo("photo1", "bucket1", "object1")
-            )
+            JSON.json("""
+                [{"id": "photo1", "bucketName": "bucket1", "objectName": "object1"}]
+                """.trim()),
+            1,
+            2,
+            3,
+            "APARTMENT",
+            "PRIVATE_ROOM",
+            "street1",
+            "city1",
+            "country1"
         );
 
         assertThat(foundListing).isEqualTo(expectedListing);

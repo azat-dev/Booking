@@ -1,7 +1,7 @@
 package com.azat4dev.booking.listingsms.data.dao;
 
 import com.azat4dev.booking.listingsms.commands.application.config.data.ListingsDaoConfig;
-import com.azat4dev.booking.listingsms.commands.data.dao.listings.ListingsDaoNew;
+import com.azat4dev.booking.listingsms.commands.data.dao.listings.ListingsDao;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.github.javafaker.Faker;
 import org.jooq.JSON;
@@ -26,7 +26,7 @@ import static org.assertj.core.api.Assertions.assertThat;
 public class ListingsDaoTests {
 
     @Autowired
-    ListingsDaoNew dao;
+    ListingsDao dao;
 
     ListingsRecord anyListingData() {
 
@@ -66,7 +66,7 @@ public class ListingsDaoTests {
     @Test
     @Sql(scripts = {"/db/drop-schema.sql"})
     @Sql(scripts = {"/db/schema.sql"})
-    void test_addNew() throws ListingsDaoNew.Exception.ListingAlreadyExists {
+    void test_addNew() throws ListingsDao.Exception.ListingAlreadyExists {
         // Given
         final var newListing = anyListingData();
         final var listingId = newListing.getId();
@@ -85,7 +85,7 @@ public class ListingsDaoTests {
     @Test
     @Sql(scripts = {"/db/drop-schema.sql"})
     @Sql(scripts = {"/db/schema.sql"})
-    void test_findById_givenExistingId_thenReturnListing() throws ListingsDaoNew.Exception.ListingAlreadyExists {
+    void test_findById_givenExistingId_thenReturnListing() throws ListingsDao.Exception.ListingAlreadyExists {
         // Given
         final var listing1 = anyListingData();
         final var listing2 = anyListingData();

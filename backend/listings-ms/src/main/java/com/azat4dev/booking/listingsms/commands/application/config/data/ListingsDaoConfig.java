@@ -1,7 +1,7 @@
 package com.azat4dev.booking.listingsms.commands.application.config.data;
 
-import com.azat4dev.booking.listingsms.commands.data.dao.listings.ListingsDaoNew;
-import com.azat4dev.booking.listingsms.commands.data.dao.listings.ListingsDaoNewImpl;
+import com.azat4dev.booking.listingsms.commands.data.dao.listings.ListingsDao;
+import com.azat4dev.booking.listingsms.commands.data.dao.listings.ListingsDaoImpl;
 import org.jooq.DSLContext;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -10,9 +10,9 @@ import org.springframework.context.annotation.Configuration;
 public class ListingsDaoConfig {
 
     @Bean
-    ListingsDaoNew listingsDao(
+    ListingsDao listingsDao(
         DSLContext dslContext
     ) {
-        return new ListingsDaoNewImpl(dslContext);
+        return new ListingsDaoImpl(dslContext);
     }
 }

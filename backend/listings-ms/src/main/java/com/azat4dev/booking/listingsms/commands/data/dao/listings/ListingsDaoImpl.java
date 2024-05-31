@@ -11,7 +11,7 @@ import static org.jooq.generated.Tables.LISTINGS;
 
 
 @AllArgsConstructor
-public class ListingsDaoNewImpl implements ListingsDaoNew {
+public class ListingsDaoImpl implements ListingsDao {
 
     private final DSLContext context;
 

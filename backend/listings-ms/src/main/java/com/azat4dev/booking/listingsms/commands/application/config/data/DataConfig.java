@@ -1,8 +1,8 @@
 package com.azat4dev.booking.listingsms.commands.application.config.data;
 
-import com.azat4dev.booking.listingsms.commands.data.dao.listings.ListingsDaoNew;
-import com.azat4dev.booking.listingsms.commands.data.dao.listings.mapper.MapListingToRecord;
-import com.azat4dev.booking.listingsms.commands.data.dao.listings.mapper.MapListingToRecordImpl;
+import com.azat4dev.booking.listingsms.commands.data.dao.listings.ListingsDao;
+import com.azat4dev.booking.listingsms.commands.data.repositories.mappers.MapListingToRecord;
+import com.azat4dev.booking.listingsms.commands.data.repositories.mappers.MapListingToRecordImpl;
 import com.azat4dev.booking.listingsms.commands.data.repositories.ListingsRepositoryImpl;
 import com.azat4dev.booking.listingsms.commands.data.repositories.UnitOfWorkImpl;
 import com.azat4dev.booking.listingsms.commands.data.repositories.mappers.MapRecordToListing;
@@ -70,7 +70,7 @@ public class DataConfig {
 
     @Bean
     ListingsRepository listingsRepository(
-        ListingsDaoNew listingsDao,
+        ListingsDao listingsDao,
         TimeProvider timeProvider,
         MapListingToRecord mapListingToRecord,
         MapRecordToListing mapRecordToListing

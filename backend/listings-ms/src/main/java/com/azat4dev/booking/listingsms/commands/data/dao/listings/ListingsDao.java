@@ -6,7 +6,7 @@ import org.jooq.generated.tables.records.ListingsRecord;
 import java.util.Optional;
 import java.util.UUID;
 
-public interface ListingsDaoNew {
+public interface ListingsDao {
 
     void addNew(ListingsRecord listing) throws Exception.ListingAlreadyExists;
 

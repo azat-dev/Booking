@@ -1,7 +1,7 @@
 package com.azat4dev.booking.listingsms.commands.data.repositories;
 
-import com.azat4dev.booking.listingsms.commands.data.dao.listings.ListingsDaoNew;
-import com.azat4dev.booking.listingsms.commands.data.dao.listings.mapper.MapListingToRecord;
+import com.azat4dev.booking.listingsms.commands.data.dao.listings.ListingsDao;
+import com.azat4dev.booking.listingsms.commands.data.repositories.mappers.MapListingToRecord;
 import com.azat4dev.booking.listingsms.commands.data.repositories.mappers.MapRecordToListing;
 import com.azat4dev.booking.listingsms.commands.domain.entities.Listing;
 import com.azat4dev.booking.listingsms.commands.domain.interfaces.repositories.ListingsRepository;
@@ -14,7 +14,7 @@ import java.util.Optional;
 @AllArgsConstructor
 public final class ListingsRepositoryImpl implements ListingsRepository {
 
-    private final ListingsDaoNew dao;
+    private final ListingsDao dao;
     private final TimeProvider timeProvider;
     private final MapListingToRecord mapListingToRecord;
     private final MapRecordToListing mapRecordToListing;
@@ -26,7 +26,7 @@ public final class ListingsRepositoryImpl implements ListingsRepository {
 
         try {
             dao.addNew(data);
-        } catch (ListingsDaoNew.Exception.ListingAlreadyExists e) {
+        } catch (ListingsDao.Exception.ListingAlreadyExists e) {
             throw new RuntimeException(e);
         }
     }
