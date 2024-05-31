@@ -38,7 +38,7 @@ import com.fasterxml.jackson.annotation.JsonTypeName;
   AddListing401Response.JSON_PROPERTY_MESSAGE
 })
 @JsonTypeName("addListing_401_response")
-@javax.annotation.Generated(value = "org.openapitools.codegen.languages.JavaClientCodegen", date = "2024-05-31T01:10:18.754538+03:00[Europe/Moscow]")
+@javax.annotation.Generated(value = "org.openapitools.codegen.languages.JavaClientCodegen", date = "2024-06-01T00:08:22.906873+03:00[Europe/Moscow]")
 public class AddListing401Response {
   public static final String JSON_PROPERTY_TYPE = "type";
   private String type = "validationError";

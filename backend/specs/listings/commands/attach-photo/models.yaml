@@ -6,4 +6,82 @@ info:
 servers:
   - url: 'https'
 paths:
+  \:
+components:
+  schemas:
+
+    AddListingPhotoRequestBody:
+      type: "object"
+      required:
+        - operationId
+        - uploadedFile
+      properties:
+        operationId:
+          $ref: "../../../common/models/OperationIdDTO.yaml"
+        uploadedFile:
+          $ref: "#/components/schemas/UploadedFileDataDTO"
+
+    AddListingPhotoResponseBody:
+      type: "object"
+      required:
+        - operationId
+        - listingPhotoId
+      properties:
+        operationId:
+          $ref: "../../../common/models/OperationIdDTO.yaml"
+        listingPhotoId:
+          $ref: "../../common/models/ListingPhotoIdDTO.yaml"
+
+
+    DeleteListingPhotoRequestBody:
+      type: "object"
+      required:
+        - operationId
+        - photoId
+      properties:
+        operationId:
+          $ref: "../../../common/models/OperationIdDTO.yaml"
+        uploadedFile:
+          $ref: "#/components/schemas/UploadedFileDataDTO"
+
+    UploadedFileDataDTO:
+      type: "object"
+      required:
+        - url
+        - bucketName
+        - objectName
+      properties:
+        url:
+          type: "string"
+        bucketName:
+          type: "string"
+        objectName:
+          type: "string"
+
+    GenerateUploadListingPhotoUrlRequestBody:
+      type: "object"
+      properties:
+        operationId:
+          $ref: "../../../common/models/OperationIdDTO.yaml"
+        fileName:
+          type: "string"
+        fileExtension:
+          type: "string"
+          maxLength: 10
+        fileSize:
+          type: "integer"
+          format: "unsignedInt32"
+
+    GenerateUploadListingPhotoUrlResponseBody:
+      type: "object"
+      required:
+        - objectPath
+        - formData
+      properties:
+        objectPath:
+          $ref: "#/components/schemas/UploadedFileDataDTO"
+        formData:
+          type: "object"
+          additionalProperties:
+            type: "string"
   

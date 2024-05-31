@@ -19,14 +19,14 @@ import com.fasterxml.jackson.annotation.JsonValue;
  * Gets or Sets RoomTypeDTO
  */
 
-@Generated(value = "org.openapitools.codegen.languages.SpringCodegen", date = "2024-05-31T01:10:19.057492+03:00[Europe/Moscow]")
+@Generated(value = "org.openapitools.codegen.languages.SpringCodegen", date = "2024-06-01T00:08:26.456416+03:00[Europe/Moscow]")
 public enum RoomTypeDTO {
   
-  ENTIREPLACE("ENTIREPLACE"),
+  ENTIRE_PLACE("ENTIRE_PLACE"),
   
-  PRIVATEROOM("PRIVATEROOM"),
+  PRIVATE_ROOM("PRIVATE_ROOM"),
   
-  SHAREDROOM("SHAREDROOM");
+  SHARED_ROOM("SHARED_ROOM");
 
   private String value;
 

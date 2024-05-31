@@ -30,7 +30,7 @@ import com.fasterxml.jackson.annotation.JsonTypeName;
 @JsonPropertyOrder({
   GetListingPrivateDetailsResponse.JSON_PROPERTY_LISTING
 })
-@javax.annotation.Generated(value = "org.openapitools.codegen.languages.JavaClientCodegen", date = "2024-05-31T01:10:18.754538+03:00[Europe/Moscow]")
+@javax.annotation.Generated(value = "org.openapitools.codegen.languages.JavaClientCodegen", date = "2024-06-01T00:08:22.906873+03:00[Europe/Moscow]")
 public class GetListingPrivateDetailsResponse {
   public static final String JSON_PROPERTY_LISTING = "listing";
   private ListingPrivateDetailsDTO listing;

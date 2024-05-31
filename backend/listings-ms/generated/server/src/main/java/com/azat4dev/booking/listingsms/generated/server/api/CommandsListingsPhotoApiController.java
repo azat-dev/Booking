@@ -1,7 +1,9 @@
 package com.azat4dev.booking.listingsms.generated.server.api;
 
-import com.azat4dev.booking.listingsms.generated.server.model.GetListingPrivateDetailsResponse;
-import com.azat4dev.booking.listingsms.generated.server.model.ListingPrivateDetailsDTO;
+import com.azat4dev.booking.listingsms.generated.server.model.AddListingPhotoRequestBody;
+import com.azat4dev.booking.listingsms.generated.server.model.AddListingPhotoResponseBody;
+import com.azat4dev.booking.listingsms.generated.server.model.GenerateUploadListingPhotoUrlRequestBody;
+import com.azat4dev.booking.listingsms.generated.server.model.GenerateUploadListingPhotoUrlResponseBody;
 import java.util.UUID;
 
 
@@ -30,16 +32,16 @@ import jakarta.annotation.Generated;
 @Generated(value = "org.openapitools.codegen.languages.SpringCodegen", date = "2024-06-01T00:08:26.456416+03:00[Europe/Moscow]")
 @Controller
 @RequestMapping("${openapi.listings.base-path:}")
-public class QueriesPrivateApiController implements QueriesPrivateApi {
+public class CommandsListingsPhotoApiController implements CommandsListingsPhotoApi {
 
-    private final QueriesPrivateApiDelegate delegate;
+    private final CommandsListingsPhotoApiDelegate delegate;
 
-    public QueriesPrivateApiController(@Autowired(required = false) QueriesPrivateApiDelegate delegate) {
-        this.delegate = Optional.ofNullable(delegate).orElse(new QueriesPrivateApiDelegate() {});
+    public CommandsListingsPhotoApiController(@Autowired(required = false) CommandsListingsPhotoApiDelegate delegate) {
+        this.delegate = Optional.ofNullable(delegate).orElse(new CommandsListingsPhotoApiDelegate() {});
     }
 
     @Override
-    public QueriesPrivateApiDelegate getDelegate() {
+    public CommandsListingsPhotoApiDelegate getDelegate() {
         return delegate;
     }
 

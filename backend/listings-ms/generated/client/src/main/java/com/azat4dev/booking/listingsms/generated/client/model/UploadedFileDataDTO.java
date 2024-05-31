@@ -24,102 +24,102 @@ import com.fasterxml.jackson.annotation.JsonPropertyOrder;
 import com.fasterxml.jackson.annotation.JsonTypeName;
 
 /**
- * ValidationErrorDetailsDTO
+ * UploadedFileDataDTO
  */
 @JsonPropertyOrder({
-  ValidationErrorDetailsDTO.JSON_PROPERTY_PATH,
-  ValidationErrorDetailsDTO.JSON_PROPERTY_MESSAGE,
-  ValidationErrorDetailsDTO.JSON_PROPERTY_CODE
+  UploadedFileDataDTO.JSON_PROPERTY_URL,
+  UploadedFileDataDTO.JSON_PROPERTY_BUCKET_NAME,
+  UploadedFileDataDTO.JSON_PROPERTY_OBJECT_NAME
 })
 @javax.annotation.Generated(value = "org.openapitools.codegen.languages.JavaClientCodegen", date = "2024-06-01T00:08:22.906873+03:00[Europe/Moscow]")
-public class ValidationErrorDetailsDTO {
-  public static final String JSON_PROPERTY_PATH = "path";
-  private String path;
+public class UploadedFileDataDTO {
+  public static final String JSON_PROPERTY_URL = "url";
+  private String url;
 
-  public static final String JSON_PROPERTY_MESSAGE = "message";
-  private String message;
+  public static final String JSON_PROPERTY_BUCKET_NAME = "bucketName";
+  private String bucketName;
 
-  public static final String JSON_PROPERTY_CODE = "code";
-  private String code;
+  public static final String JSON_PROPERTY_OBJECT_NAME = "objectName";
+  private String objectName;
 
-  public ValidationErrorDetailsDTO() {
+  public UploadedFileDataDTO() {
   }
 
-  public ValidationErrorDetailsDTO path(String path) {
+  public UploadedFileDataDTO url(String url) {
     
-    this.path = path;
+    this.url = url;
     return this;
   }
 
    /**
-   * Get path
-   * @return path
+   * Get url
+   * @return url
   **/
   @javax.annotation.Nonnull
-  @JsonProperty(JSON_PROPERTY_PATH)
+  @JsonProperty(JSON_PROPERTY_URL)
   @JsonInclude(value = JsonInclude.Include.ALWAYS)
 
-  public String getPath() {
-    return path;
+  public String getUrl() {
+    return url;
   }
 
 
-  @JsonProperty(JSON_PROPERTY_PATH)
+  @JsonProperty(JSON_PROPERTY_URL)
   @JsonInclude(value = JsonInclude.Include.ALWAYS)
-  public void setPath(String path) {
-    this.path = path;
+  public void setUrl(String url) {
+    this.url = url;
   }
 
 
-  public ValidationErrorDetailsDTO message(String message) {
+  public UploadedFileDataDTO bucketName(String bucketName) {
     
-    this.message = message;
+    this.bucketName = bucketName;
     return this;
   }
 
    /**
-   * Get message
-   * @return message
+   * Get bucketName
+   * @return bucketName
   **/
   @javax.annotation.Nonnull
-  @JsonProperty(JSON_PROPERTY_MESSAGE)
+  @JsonProperty(JSON_PROPERTY_BUCKET_NAME)
   @JsonInclude(value = JsonInclude.Include.ALWAYS)
 
-  public String getMessage() {
-    return message;
+  public String getBucketName() {
+    return bucketName;
   }
 
 
-  @JsonProperty(JSON_PROPERTY_MESSAGE)
+  @JsonProperty(JSON_PROPERTY_BUCKET_NAME)
   @JsonInclude(value = JsonInclude.Include.ALWAYS)
-  public void setMessage(String message) {
-    this.message = message;
+  public void setBucketName(String bucketName) {
+    this.bucketName = bucketName;
   }
 
 
-  public ValidationErrorDetailsDTO code(String code) {
+  public UploadedFileDataDTO objectName(String objectName) {
     
-    this.code = code;
+    this.objectName = objectName;
     return this;
   }
 
    /**
-   * Get code
-   * @return code
+   * Get objectName
+   * @return objectName
   **/
   @javax.annotation.Nonnull
-  @JsonProperty(JSON_PROPERTY_CODE)
+  @JsonProperty(JSON_PROPERTY_OBJECT_NAME)
   @JsonInclude(value = JsonInclude.Include.ALWAYS)
 
-  public String getCode() {
-    return code;
+  public String getObjectName() {
+    return objectName;
   }
 
 
-  @JsonProperty(JSON_PROPERTY_CODE)
+  @JsonProperty(JSON_PROPERTY_OBJECT_NAME)
   @JsonInclude(value = JsonInclude.Include.ALWAYS)
-  public void setCode(String code) {
-    this.code = code;
+  public void setObjectName(String objectName) {
+    this.objectName = objectName;
   }
 
   @Override
@@ -130,24 +130,24 @@ public class ValidationErrorDetailsDTO {
     if (o == null || getClass() != o.getClass()) {
       return false;
     }
-    ValidationErrorDetailsDTO validationErrorDetailsDTO = (ValidationErrorDetailsDTO) o;
-    return Objects.equals(this.path, validationErrorDetailsDTO.path) &&
-        Objects.equals(this.message, validationErrorDetailsDTO.message) &&
-        Objects.equals(this.code, validationErrorDetailsDTO.code);
+    UploadedFileDataDTO uploadedFileDataDTO = (UploadedFileDataDTO) o;
+    return Objects.equals(this.url, uploadedFileDataDTO.url) &&
+        Objects.equals(this.bucketName, uploadedFileDataDTO.bucketName) &&
+        Objects.equals(this.objectName, uploadedFileDataDTO.objectName);
   }
 
   @Override
   public int hashCode() {
-    return Objects.hash(path, message, code);
+    return Objects.hash(url, bucketName, objectName);
   }
 
   @Override
   public String toString() {
     StringBuilder sb = new StringBuilder();
-    sb.append("class ValidationErrorDetailsDTO {\n");
-    sb.append("    path: ").append(toIndentedString(path)).append("\n");
-    sb.append("    message: ").append(toIndentedString(message)).append("\n");
-    sb.append("    code: ").append(toIndentedString(code)).append("\n");
+    sb.append("class UploadedFileDataDTO {\n");
+    sb.append("    url: ").append(toIndentedString(url)).append("\n");
+    sb.append("    bucketName: ").append(toIndentedString(bucketName)).append("\n");
+    sb.append("    objectName: ").append(toIndentedString(objectName)).append("\n");
     sb.append("}");
     return sb.toString();
   }

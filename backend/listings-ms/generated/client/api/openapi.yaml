@@ -84,6 +84,93 @@ paths:
       - commandsModifications
       x-content-type: application/json
       x-accepts: application/json
+  /api/private/listings/{listingId}/photos/get-upload-url:
+    post:
+      operationId: generateUploadListingPhotoUrl
+      parameters:
+      - description: Listing Id
+        in: path
+        name: listingId
+        required: true
+        schema:
+          $ref: '#/components/schemas/ListingIdDTO'
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/GenerateUploadListingPhotoUrlRequestBody'
+        required: true
+      responses:
+        "200":
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/GenerateUploadListingPhotoUrlResponseBody'
+          description: OK
+      summary: Generate upload form for listing photo
+      tags:
+      - commandsListingsPhoto
+      x-content-type: application/json
+      x-accepts: application/json
+  /api/private/listings/{listingId}/photos/add:
+    post:
+      operationId: addPhotoToListing
+      parameters:
+      - description: Listing Id
+        in: path
+        name: listingId
+        required: true
+        schema:
+          $ref: '#/components/schemas/ListingIdDTO'
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/AddListingPhotoRequestBody'
+        required: true
+      responses:
+        "200":
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/AddListingPhotoResponseBody'
+          description: Photo attached
+        "403":
+          description: User is not authorized
+      summary: Add photo to a listing
+      tags:
+      - commandsListingsPhoto
+      x-content-type: application/json
+      x-accepts: application/json
+  /api/private/listings/{listingId}/photos/{photoId}:
+    delete:
+      operationId: deletePhoto
+      parameters:
+      - description: Listing Id
+        in: path
+        name: listingId
+        required: true
+        schema:
+          $ref: '#/components/schemas/ListingIdDTO'
+      - description: Listing Id
+        in: path
+        name: photoId
+        required: true
+        schema:
+          $ref: '#/components/schemas/ListingPhotoIdDTO'
+      responses:
+        "204":
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/AddListingPhotoResponseBody'
+          description: Photo attached
+        "403":
+          description: User is not authorized
+      summary: Delete photo from a listing
+      tags:
+      - commandsListingsPhoto
+      x-accepts: application/json
 components:
   schemas:
     ListingIdDTO:
@@ -216,6 +303,96 @@ components:
       - code
       - message
       type: object
+    GenerateUploadListingPhotoUrlRequestBody:
+      example:
+        fileName: fileName
+        fileSize: 0
+        fileExtension: fileExtension
+        operationId: 046b6c7f-0b8a-43b9-b35d-6489e6daee91
+      properties:
+        operationId:
+          format: uuid
+          type: string
+        fileName:
+          type: string
+        fileExtension:
+          maxLength: 10
+          type: string
+        fileSize:
+          format: unsignedInt32
+          type: integer
+      type: object
+    GenerateUploadListingPhotoUrlResponseBody:
+      example:
+        objectPath:
+          bucketName: bucketName
+          objectName: objectName
+          url: url
+        formData:
+          key: formData
+      properties:
+        objectPath:
+          $ref: '#/components/schemas/UploadedFileDataDTO'
+        formData:
+          additionalProperties:
+            type: string
+          type: object
+      required:
+      - formData
+      - objectPath
+      type: object
+    UploadedFileDataDTO:
+      example:
+        bucketName: bucketName
+        objectName: objectName
+        url: url
+      properties:
+        url:
+          type: string
+        bucketName:
+          type: string
+        objectName:
+          type: string
+      required:
+      - bucketName
+      - objectName
+      - url
+      type: object
+    AddListingPhotoRequestBody:
+      example:
+        operationId: 046b6c7f-0b8a-43b9-b35d-6489e6daee91
+        uploadedFile:
+          bucketName: bucketName
+          objectName: objectName
+          url: url
+      properties:
+        operationId:
+          format: uuid
+          type: string
+        uploadedFile:
+          $ref: '#/components/schemas/UploadedFileDataDTO'
+      required:
+      - operationId
+      - uploadedFile
+      type: object
+    AddListingPhotoResponseBody:
+      example:
+        listingPhotoId: 046b6c7f-0b8a-43b9-b35d-6489e6daee91
+        operationId: 046b6c7f-0b8a-43b9-b35d-6489e6daee91
+      properties:
+        operationId:
+          format: uuid
+          type: string
+        listingPhotoId:
+          format: uuid
+          type: string
+      required:
+      - listingPhotoId
+      - operationId
+      type: object
+    ListingPhotoIdDTO:
+      format: uuid
+      type: string
     ListingStatusDTO:
       enum:
       - PUBLISHED
@@ -263,9 +440,9 @@ components:
       type: string
     RoomTypeDTO:
       enum:
-      - ENTIREPLACE
-      - PRIVATEROOM
-      - SHAREDROOM
+      - ENTIRE_PLACE
+      - PRIVATE_ROOM
+      - SHARED_ROOM
       type: string
     AddressDTO:
       example:

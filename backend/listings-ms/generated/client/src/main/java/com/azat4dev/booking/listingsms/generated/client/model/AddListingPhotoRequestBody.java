@@ -15,92 +15,83 @@ package com.azat4dev.booking.listingsms.generated.client.model;
 
 import java.util.Objects;
 import java.util.Arrays;
-import com.azat4dev.booking.listingsms.generated.client.model.ValidationErrorDetailsDTO;
+import com.azat4dev.booking.listingsms.generated.client.model.UploadedFileDataDTO;
 import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.annotation.JsonCreator;
 import com.fasterxml.jackson.annotation.JsonTypeName;
 import com.fasterxml.jackson.annotation.JsonValue;
-import java.util.ArrayList;
-import java.util.List;
+import java.util.UUID;
 import com.fasterxml.jackson.annotation.JsonPropertyOrder;
 import com.fasterxml.jackson.annotation.JsonTypeName;
 
 /**
- * ValidationErrorDTO
+ * AddListingPhotoRequestBody
  */
 @JsonPropertyOrder({
-  ValidationErrorDTO.JSON_PROPERTY_TYPE,
-  ValidationErrorDTO.JSON_PROPERTY_ERRORS
+  AddListingPhotoRequestBody.JSON_PROPERTY_OPERATION_ID,
+  AddListingPhotoRequestBody.JSON_PROPERTY_UPLOADED_FILE
 })
 @javax.annotation.Generated(value = "org.openapitools.codegen.languages.JavaClientCodegen", date = "2024-06-01T00:08:22.906873+03:00[Europe/Moscow]")
-public class ValidationErrorDTO {
-  public static final String JSON_PROPERTY_TYPE = "type";
-  private String type = "validationError";
+public class AddListingPhotoRequestBody {
+  public static final String JSON_PROPERTY_OPERATION_ID = "operationId";
+  private UUID operationId;
 
-  public static final String JSON_PROPERTY_ERRORS = "errors";
-  private List<ValidationErrorDetailsDTO> errors = new ArrayList<>();
+  public static final String JSON_PROPERTY_UPLOADED_FILE = "uploadedFile";
+  private UploadedFileDataDTO uploadedFile;
 
-  public ValidationErrorDTO() {
+  public AddListingPhotoRequestBody() {
   }
 
-  public ValidationErrorDTO type(String type) {
+  public AddListingPhotoRequestBody operationId(UUID operationId) {
     
-    this.type = type;
+    this.operationId = operationId;
     return this;
   }
 
    /**
-   * Get type
-   * @return type
+   * Get operationId
+   * @return operationId
   **/
   @javax.annotation.Nonnull
-  @JsonProperty(JSON_PROPERTY_TYPE)
+  @JsonProperty(JSON_PROPERTY_OPERATION_ID)
   @JsonInclude(value = JsonInclude.Include.ALWAYS)
 
-  public String getType() {
-    return type;
+  public UUID getOperationId() {
+    return operationId;
   }
 
 
-  @JsonProperty(JSON_PROPERTY_TYPE)
+  @JsonProperty(JSON_PROPERTY_OPERATION_ID)
   @JsonInclude(value = JsonInclude.Include.ALWAYS)
-  public void setType(String type) {
-    this.type = type;
+  public void setOperationId(UUID operationId) {
+    this.operationId = operationId;
   }
 
 
-  public ValidationErrorDTO errors(List<ValidationErrorDetailsDTO> errors) {
+  public AddListingPhotoRequestBody uploadedFile(UploadedFileDataDTO uploadedFile) {
     
-    this.errors = errors;
-    return this;
-  }
-
-  public ValidationErrorDTO addErrorsItem(ValidationErrorDetailsDTO errorsItem) {
-    if (this.errors == null) {
-      this.errors = new ArrayList<>();
-    }
-    this.errors.add(errorsItem);
+    this.uploadedFile = uploadedFile;
     return this;
   }
 
    /**
-   * Get errors
-   * @return errors
+   * Get uploadedFile
+   * @return uploadedFile
   **/
   @javax.annotation.Nonnull
-  @JsonProperty(JSON_PROPERTY_ERRORS)
+  @JsonProperty(JSON_PROPERTY_UPLOADED_FILE)
   @JsonInclude(value = JsonInclude.Include.ALWAYS)
 
-  public List<ValidationErrorDetailsDTO> getErrors() {
-    return errors;
+  public UploadedFileDataDTO getUploadedFile() {
+    return uploadedFile;
   }
 
 
-  @JsonProperty(JSON_PROPERTY_ERRORS)
+  @JsonProperty(JSON_PROPERTY_UPLOADED_FILE)
   @JsonInclude(value = JsonInclude.Include.ALWAYS)
-  public void setErrors(List<ValidationErrorDetailsDTO> errors) {
-    this.errors = errors;
+  public void setUploadedFile(UploadedFileDataDTO uploadedFile) {
+    this.uploadedFile = uploadedFile;
   }
 
   @Override
@@ -111,22 +102,22 @@ public class ValidationErrorDTO {
     if (o == null || getClass() != o.getClass()) {
       return false;
     }
-    ValidationErrorDTO validationErrorDTO = (ValidationErrorDTO) o;
-    return Objects.equals(this.type, validationErrorDTO.type) &&
-        Objects.equals(this.errors, validationErrorDTO.errors);
+    AddListingPhotoRequestBody addListingPhotoRequestBody = (AddListingPhotoRequestBody) o;
+    return Objects.equals(this.operationId, addListingPhotoRequestBody.operationId) &&
+        Objects.equals(this.uploadedFile, addListingPhotoRequestBody.uploadedFile);
   }
 
   @Override
   public int hashCode() {
-    return Objects.hash(type, errors);
+    return Objects.hash(operationId, uploadedFile);
   }
 
   @Override
   public String toString() {
     StringBuilder sb = new StringBuilder();
-    sb.append("class ValidationErrorDTO {\n");
-    sb.append("    type: ").append(toIndentedString(type)).append("\n");
-    sb.append("    errors: ").append(toIndentedString(errors)).append("\n");
+    sb.append("class AddListingPhotoRequestBody {\n");
+    sb.append("    operationId: ").append(toIndentedString(operationId)).append("\n");
+    sb.append("    uploadedFile: ").append(toIndentedString(uploadedFile)).append("\n");
     sb.append("}");
     return sb.toString();
   }

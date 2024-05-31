@@ -14,6 +14,17 @@ paths:
   /api/private/listings:
     $ref: "commands/modification/paths.yaml#/paths/~1listings"
 
+#  Photos API
+
+  /api/private/listings/{listingId}/photos/get-upload-url:
+    $ref: "commands/attach-photo/paths.yaml#/paths/~1listings~1{listingId}~1photos~1get-upload-url"
+
+  /api/private/listings/{listingId}/photos/add:
+    $ref: "commands/attach-photo/paths.yaml#/paths/~1listings~1{listingId}~1photos~1add"
+
+  /api/private/listings/{listingId}/photos/{photoId}:
+    $ref: "commands/attach-photo/paths.yaml#/paths/~1listings~1{listingId}~1photos~1{photoId}"
+
 components:
   securitySchemes:
     BearerAuth:

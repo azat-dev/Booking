@@ -15,20 +15,20 @@ import java.util.*;
 import jakarta.annotation.Generated;
 
 /**
- * AddListingRequestBody
+ * AddListingPhotoResponseBody
  */
 @lombok.Builder(toBuilder = true)
 @lombok.AllArgsConstructor
 @com.fasterxml.jackson.annotation.JsonIgnoreProperties(ignoreUnknown=true)
 
 @Generated(value = "org.openapitools.codegen.languages.SpringCodegen", date = "2024-06-01T00:08:26.456416+03:00[Europe/Moscow]")
-public class AddListingRequestBody {
+public class AddListingPhotoResponseBody {
 
   private UUID operationId;
 
-  private String title;
+  private UUID listingPhotoId;
 
-  public AddListingRequestBody operationId(UUID operationId) {
+  public AddListingPhotoResponseBody operationId(UUID operationId) {
     this.operationId = operationId;
     return this;
   }
@@ -48,24 +48,24 @@ public class AddListingRequestBody {
     this.operationId = operationId;
   }
 
-  public AddListingRequestBody title(String title) {
-    this.title = title;
+  public AddListingPhotoResponseBody listingPhotoId(UUID listingPhotoId) {
+    this.listingPhotoId = listingPhotoId;
     return this;
   }
 
   /**
-   * Get title
-   * @return title
+   * Get listingPhotoId
+   * @return listingPhotoId
   */
-  @NotNull @Size(max = 1000) 
-  @Schema(name = "title", requiredMode = Schema.RequiredMode.REQUIRED)
-  @JsonProperty("title")
-  public String getTitle() {
-    return title;
+  @NotNull @Valid 
+  @Schema(name = "listingPhotoId", requiredMode = Schema.RequiredMode.REQUIRED)
+  @JsonProperty("listingPhotoId")
+  public UUID getListingPhotoId() {
+    return listingPhotoId;
   }
 
-  public void setTitle(String title) {
-    this.title = title;
+  public void setListingPhotoId(UUID listingPhotoId) {
+    this.listingPhotoId = listingPhotoId;
   }
 
   @Override
@@ -76,22 +76,22 @@ public class AddListingRequestBody {
     if (o == null || getClass() != o.getClass()) {
       return false;
     }
-    AddListingRequestBody addListingRequestBody = (AddListingRequestBody) o;
-    return Objects.equals(this.operationId, addListingRequestBody.operationId) &&
-        Objects.equals(this.title, addListingRequestBody.title);
+    AddListingPhotoResponseBody addListingPhotoResponseBody = (AddListingPhotoResponseBody) o;
+    return Objects.equals(this.operationId, addListingPhotoResponseBody.operationId) &&
+        Objects.equals(this.listingPhotoId, addListingPhotoResponseBody.listingPhotoId);
   }
 
   @Override
   public int hashCode() {
-    return Objects.hash(operationId, title);
+    return Objects.hash(operationId, listingPhotoId);
   }
 
   @Override
   public String toString() {
     StringBuilder sb = new StringBuilder();
-    sb.append("class AddListingRequestBody {\n");
+    sb.append("class AddListingPhotoResponseBody {\n");
     sb.append("    operationId: ").append(toIndentedString(operationId)).append("\n");
-    sb.append("    title: ").append(toIndentedString(title)).append("\n");
+    sb.append("    listingPhotoId: ").append(toIndentedString(listingPhotoId)).append("\n");
     sb.append("}");
     return sb.toString();
   }

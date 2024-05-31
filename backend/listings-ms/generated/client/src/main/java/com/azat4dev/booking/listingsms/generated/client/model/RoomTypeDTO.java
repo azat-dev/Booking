@@ -26,11 +26,11 @@ import com.fasterxml.jackson.annotation.JsonValue;
  */
 public enum RoomTypeDTO {
   
-  ENTIREPLACE("ENTIREPLACE"),
+  ENTIRE_PLACE("ENTIRE_PLACE"),
   
-  PRIVATEROOM("PRIVATEROOM"),
+  PRIVATE_ROOM("PRIVATE_ROOM"),
   
-  SHAREDROOM("SHAREDROOM");
+  SHARED_ROOM("SHARED_ROOM");
 
   private String value;
 

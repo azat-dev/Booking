@@ -1,9 +1,92 @@
 openapi: 3.0.3
 info:
-  title: Title
-  description: Title
+  title: Listings Photo API
+  description: Listings Photo API
   version: 1.0.0
 servers:
   - url: 'https'
 paths:
-  
+  /listings/{listingId}/photos/get-upload-url:
+    post:
+      tags:
+        - commandsListingsPhoto
+      operationId: generateUploadListingPhotoUrl
+      summary: Generate upload form for listing photo
+      parameters:
+        - name: listingId
+          in: path
+          description: Listing Id
+          required: true
+          schema:
+            $ref: "../../common/models/ListingIdDTO.yaml"
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: "models.yaml#/components/schemas/GenerateUploadListingPhotoUrlRequestBody"
+        required: true
+      responses:
+        "200":
+          description: "OK"
+          content:
+            'application/json':
+              schema:
+                $ref: "models.yaml#/components/schemas/GenerateUploadListingPhotoUrlResponseBody"
+
+  /listings/{listingId}/photos/add:
+    post:
+      tags:
+        - commandsListingsPhoto
+      operationId: addPhotoToListing
+      summary: Add photo to a listing
+      parameters:
+        - name: listingId
+          in: path
+          description: Listing Id
+          required: true
+          schema:
+            $ref: "../../common/models/ListingIdDTO.yaml"
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "models.yaml#/components/schemas/AddListingPhotoRequestBody"
+      responses:
+        "200":
+          description: Photo attached
+          content:
+            application/json:
+              schema:
+                $ref: "models.yaml#/components/schemas/AddListingPhotoResponseBody"
+        "403":
+          description: User is not authorized
+
+  /listings/{listingId}/photos/{photoId}:
+    delete:
+      tags:
+        - commandsListingsPhoto
+      operationId: deletePhoto
+      summary: Delete photo from a listing
+      parameters:
+        - name: listingId
+          in: path
+          description: Listing Id
+          required: true
+          schema:
+            $ref: "../../common/models/ListingIdDTO.yaml"
+        - name: photoId
+          in: path
+          description: Listing Id
+          required: true
+          schema:
+            $ref: "../../common/models/ListingPhotoIdDTO.yaml"
+      responses:
+        "204":
+          description: Photo attached
+          content:
+            application/json:
+              schema:
+                $ref: "models.yaml#/components/schemas/AddListingPhotoResponseBody"
+        "403":
+          description: User is not authorized

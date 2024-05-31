@@ -2,6 +2,7 @@ package com.azat4dev.booking.listingsms.generated.server.model;
 
 import java.net.URI;
 import java.util.Objects;
+import com.azat4dev.booking.listingsms.generated.server.model.UploadedFileDataDTO;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.annotation.JsonCreator;
 import java.util.UUID;
@@ -15,20 +16,20 @@ import java.util.*;
 import jakarta.annotation.Generated;
 
 /**
- * AddListingRequestBody
+ * AddListingPhotoRequestBody
  */
 @lombok.Builder(toBuilder = true)
 @lombok.AllArgsConstructor
 @com.fasterxml.jackson.annotation.JsonIgnoreProperties(ignoreUnknown=true)
 
 @Generated(value = "org.openapitools.codegen.languages.SpringCodegen", date = "2024-06-01T00:08:26.456416+03:00[Europe/Moscow]")
-public class AddListingRequestBody {
+public class AddListingPhotoRequestBody {
 
   private UUID operationId;
 
-  private String title;
+  private UploadedFileDataDTO uploadedFile;
 
-  public AddListingRequestBody operationId(UUID operationId) {
+  public AddListingPhotoRequestBody operationId(UUID operationId) {
     this.operationId = operationId;
     return this;
   }
@@ -48,24 +49,24 @@ public class AddListingRequestBody {
     this.operationId = operationId;
   }
 
-  public AddListingRequestBody title(String title) {
-    this.title = title;
+  public AddListingPhotoRequestBody uploadedFile(UploadedFileDataDTO uploadedFile) {
+    this.uploadedFile = uploadedFile;
     return this;
   }
 
   /**
-   * Get title
-   * @return title
+   * Get uploadedFile
+   * @return uploadedFile
   */
-  @NotNull @Size(max = 1000) 
-  @Schema(name = "title", requiredMode = Schema.RequiredMode.REQUIRED)
-  @JsonProperty("title")
-  public String getTitle() {
-    return title;
+  @NotNull @Valid 
+  @Schema(name = "uploadedFile", requiredMode = Schema.RequiredMode.REQUIRED)
+  @JsonProperty("uploadedFile")
+  public UploadedFileDataDTO getUploadedFile() {
+    return uploadedFile;
   }
 
-  public void setTitle(String title) {
-    this.title = title;
+  public void setUploadedFile(UploadedFileDataDTO uploadedFile) {
+    this.uploadedFile = uploadedFile;
   }
 
   @Override
@@ -76,22 +77,22 @@ public class AddListingRequestBody {
     if (o == null || getClass() != o.getClass()) {
       return false;
     }
-    AddListingRequestBody addListingRequestBody = (AddListingRequestBody) o;
-    return Objects.equals(this.operationId, addListingRequestBody.operationId) &&
-        Objects.equals(this.title, addListingRequestBody.title);
+    AddListingPhotoRequestBody addListingPhotoRequestBody = (AddListingPhotoRequestBody) o;
+    return Objects.equals(this.operationId, addListingPhotoRequestBody.operationId) &&
+        Objects.equals(this.uploadedFile, addListingPhotoRequestBody.uploadedFile);
   }
 
   @Override
   public int hashCode() {
-    return Objects.hash(operationId, title);
+    return Objects.hash(operationId, uploadedFile);
   }
 
   @Override
   public String toString() {
     StringBuilder sb = new StringBuilder();
-    sb.append("class AddListingRequestBody {\n");
+    sb.append("class AddListingPhotoRequestBody {\n");
     sb.append("    operationId: ").append(toIndentedString(operationId)).append("\n");
-    sb.append("    title: ").append(toIndentedString(title)).append("\n");
+    sb.append("    uploadedFile: ").append(toIndentedString(uploadedFile)).append("\n");
     sb.append("}");
     return sb.toString();
   }

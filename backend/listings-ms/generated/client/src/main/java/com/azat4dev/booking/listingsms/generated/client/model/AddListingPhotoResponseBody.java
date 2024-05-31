@@ -15,92 +15,82 @@ package com.azat4dev.booking.listingsms.generated.client.model;
 
 import java.util.Objects;
 import java.util.Arrays;
-import com.azat4dev.booking.listingsms.generated.client.model.ValidationErrorDetailsDTO;
 import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.annotation.JsonCreator;
 import com.fasterxml.jackson.annotation.JsonTypeName;
 import com.fasterxml.jackson.annotation.JsonValue;
-import java.util.ArrayList;
-import java.util.List;
+import java.util.UUID;
 import com.fasterxml.jackson.annotation.JsonPropertyOrder;
 import com.fasterxml.jackson.annotation.JsonTypeName;
 
 /**
- * ValidationErrorDTO
+ * AddListingPhotoResponseBody
  */
 @JsonPropertyOrder({
-  ValidationErrorDTO.JSON_PROPERTY_TYPE,
-  ValidationErrorDTO.JSON_PROPERTY_ERRORS
+  AddListingPhotoResponseBody.JSON_PROPERTY_OPERATION_ID,
+  AddListingPhotoResponseBody.JSON_PROPERTY_LISTING_PHOTO_ID
 })
 @javax.annotation.Generated(value = "org.openapitools.codegen.languages.JavaClientCodegen", date = "2024-06-01T00:08:22.906873+03:00[Europe/Moscow]")
-public class ValidationErrorDTO {
-  public static final String JSON_PROPERTY_TYPE = "type";
-  private String type = "validationError";
+public class AddListingPhotoResponseBody {
+  public static final String JSON_PROPERTY_OPERATION_ID = "operationId";
+  private UUID operationId;
 
-  public static final String JSON_PROPERTY_ERRORS = "errors";
-  private List<ValidationErrorDetailsDTO> errors = new ArrayList<>();
+  public static final String JSON_PROPERTY_LISTING_PHOTO_ID = "listingPhotoId";
+  private UUID listingPhotoId;
 
-  public ValidationErrorDTO() {
+  public AddListingPhotoResponseBody() {
   }
 
-  public ValidationErrorDTO type(String type) {
+  public AddListingPhotoResponseBody operationId(UUID operationId) {
     
-    this.type = type;
+    this.operationId = operationId;
     return this;
   }
 
    /**
-   * Get type
-   * @return type
+   * Get operationId
+   * @return operationId
   **/
   @javax.annotation.Nonnull
-  @JsonProperty(JSON_PROPERTY_TYPE)
+  @JsonProperty(JSON_PROPERTY_OPERATION_ID)
   @JsonInclude(value = JsonInclude.Include.ALWAYS)
 
-  public String getType() {
-    return type;
+  public UUID getOperationId() {
+    return operationId;
   }
 
 
-  @JsonProperty(JSON_PROPERTY_TYPE)
+  @JsonProperty(JSON_PROPERTY_OPERATION_ID)
   @JsonInclude(value = JsonInclude.Include.ALWAYS)
-  public void setType(String type) {
-    this.type = type;
+  public void setOperationId(UUID operationId) {
+    this.operationId = operationId;
   }
 
 
-  public ValidationErrorDTO errors(List<ValidationErrorDetailsDTO> errors) {
+  public AddListingPhotoResponseBody listingPhotoId(UUID listingPhotoId) {
     
-    this.errors = errors;
-    return this;
-  }
-
-  public ValidationErrorDTO addErrorsItem(ValidationErrorDetailsDTO errorsItem) {
-    if (this.errors == null) {
-      this.errors = new ArrayList<>();
-    }
-    this.errors.add(errorsItem);
+    this.listingPhotoId = listingPhotoId;
     return this;
   }
 
    /**
-   * Get errors
-   * @return errors
+   * Get listingPhotoId
+   * @return listingPhotoId
   **/
   @javax.annotation.Nonnull
-  @JsonProperty(JSON_PROPERTY_ERRORS)
+  @JsonProperty(JSON_PROPERTY_LISTING_PHOTO_ID)
   @JsonInclude(value = JsonInclude.Include.ALWAYS)
 
-  public List<ValidationErrorDetailsDTO> getErrors() {
-    return errors;
+  public UUID getListingPhotoId() {
+    return listingPhotoId;
   }
 
 
-  @JsonProperty(JSON_PROPERTY_ERRORS)
+  @JsonProperty(JSON_PROPERTY_LISTING_PHOTO_ID)
   @JsonInclude(value = JsonInclude.Include.ALWAYS)
-  public void setErrors(List<ValidationErrorDetailsDTO> errors) {
-    this.errors = errors;
+  public void setListingPhotoId(UUID listingPhotoId) {
+    this.listingPhotoId = listingPhotoId;
   }
 
   @Override
@@ -111,22 +101,22 @@ public class ValidationErrorDTO {
     if (o == null || getClass() != o.getClass()) {
       return false;
     }
-    ValidationErrorDTO validationErrorDTO = (ValidationErrorDTO) o;
-    return Objects.equals(this.type, validationErrorDTO.type) &&
-        Objects.equals(this.errors, validationErrorDTO.errors);
+    AddListingPhotoResponseBody addListingPhotoResponseBody = (AddListingPhotoResponseBody) o;
+    return Objects.equals(this.operationId, addListingPhotoResponseBody.operationId) &&
+        Objects.equals(this.listingPhotoId, addListingPhotoResponseBody.listingPhotoId);
   }
 
   @Override
   public int hashCode() {
-    return Objects.hash(type, errors);
+    return Objects.hash(operationId, listingPhotoId);
   }
 
   @Override
   public String toString() {
     StringBuilder sb = new StringBuilder();
-    sb.append("class ValidationErrorDTO {\n");
-    sb.append("    type: ").append(toIndentedString(type)).append("\n");
-    sb.append("    errors: ").append(toIndentedString(errors)).append("\n");
+    sb.append("class AddListingPhotoResponseBody {\n");
+    sb.append("    operationId: ").append(toIndentedString(operationId)).append("\n");
+    sb.append("    listingPhotoId: ").append(toIndentedString(listingPhotoId)).append("\n");
     sb.append("}");
     return sb.toString();
   }
