@@ -1,14 +1,18 @@
 package com.azat4dev.booking.listingsms.queries.data.dao;
 
 import com.azat4dev.booking.listingsms.queries.application.config.data.DaoConfig;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.jdbc.AutoConfigureTestDatabase;
 import org.springframework.boot.test.autoconfigure.jdbc.JdbcTest;
+import org.springframework.boot.test.context.TestConfiguration;
+import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Import;
 import org.springframework.test.context.jdbc.Sql;
 
 import java.time.LocalDateTime;
+import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
 
@@ -63,7 +67,14 @@ public class ListingsReadDaoJdbcTests {
             ownerId,
             "listing1",
             "DRAFT",
-            Optional.of("description1")
+            Optional.of("description1"),
+            new ListingRecord.GuestsCapacity(1, 2, 3),
+            Optional.of("APARTMENT"),
+            Optional.of("PRIVATE_ROOM"),
+            Optional.of(new ListingRecord.Address("country1", "city1", "street1")),
+            List.of(
+                new ListingRecord.Photo("photo1", "bucket1", "object1")
+            )
         );
 
         assertThat(foundListing).isEqualTo(expectedListing);
@@ -82,5 +93,14 @@ public class ListingsReadDaoJdbcTests {
 
         // Then
         assertThat(foundListings.size()).isEqualTo(2);
+    }
+
+    @TestConfiguration
+    static class TestConfig {
+
+        @Bean
+        ObjectMapper objectMapper() {
+            return new ObjectMapper();
+        }
     }
 }

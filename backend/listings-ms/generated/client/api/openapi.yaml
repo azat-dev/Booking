@@ -1,0 +1,303 @@
+openapi: 3.0.0
+info:
+  description: Describes the API of Listings service
+  title: Listings API
+  version: 1.0.0
+servers:
+- url: /
+security:
+- BearerAuth: []
+paths:
+  /api/private/users/currrent/listings/{listingId}:
+    get:
+      operationId: getListingPrivateDetails
+      parameters:
+      - description: Listing ID
+        in: path
+        name: listingId
+        required: true
+        schema:
+          $ref: '#/components/schemas/ListingIdDTO'
+      responses:
+        "200":
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/GetListingPrivateDetailsResponse'
+          description: Private details of listing
+        "401":
+          description: Not valid Token
+        "404":
+          description: Not found
+      summary: Get private details for listing
+      tags:
+      - queriesPrivate
+      x-accepts: application/json
+  /api/private/users/currrent/listings:
+    get:
+      operationId: getOwnListings
+      responses:
+        "200":
+          content:
+            application/json:
+              schema:
+                items:
+                  $ref: '#/components/schemas/ListingPrivateDetailsDTO'
+                type: array
+          description: Private details of listing
+        "403":
+          description: Forbidden
+      summary: List own listings
+      tags:
+      - queriesPrivate
+      x-accepts: application/json
+  /api/private/listings:
+    post:
+      operationId: addListing
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/AddListingRequestBody'
+        required: true
+      responses:
+        "200":
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/AddListingResponse'
+          description: Listing added successfully
+        "401":
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/addListing_401_response'
+          description: Not valid Token
+        "404":
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorDTO'
+          description: Not found
+      summary: Add a new listing
+      tags:
+      - commandsModifications
+      x-content-type: application/json
+      x-accepts: application/json
+components:
+  schemas:
+    ListingIdDTO:
+      format: uuid
+      type: string
+    GetListingPrivateDetailsResponse:
+      example:
+        listing:
+          guestCapacity:
+            infants: 0
+            children: 3
+            adults: 2
+          address:
+            country: USA
+            city: San Francisco
+            street: 123 Main St
+          propertyType: null
+          description: description
+          location: "{}"
+          id: 046b6c7f-0b8a-43b9-b35d-6489e6daee91
+          title: title
+          roomType: null
+          status: null
+      properties:
+        listing:
+          $ref: '#/components/schemas/ListingPrivateDetailsDTO'
+      required:
+      - listing
+      type: object
+    ListingPrivateDetailsDTO:
+      example:
+        guestCapacity:
+          infants: 0
+          children: 3
+          adults: 2
+        address:
+          country: USA
+          city: San Francisco
+          street: 123 Main St
+        propertyType: null
+        description: description
+        location: "{}"
+        id: 046b6c7f-0b8a-43b9-b35d-6489e6daee91
+        title: title
+        roomType: null
+        status: null
+      properties:
+        id:
+          format: uuid
+          type: string
+        title:
+          type: string
+        status:
+          $ref: '#/components/schemas/ListingStatusDTO'
+        description:
+          type: string
+        guestCapacity:
+          $ref: '#/components/schemas/GuestsCapacityDTO'
+        propertyType:
+          $ref: '#/components/schemas/PropertyTypeDTO'
+        roomType:
+          $ref: '#/components/schemas/RoomTypeDTO'
+        address:
+          $ref: '#/components/schemas/AddressDTO'
+        location:
+          type: object
+      required:
+      - id
+      - status
+      - title
+      type: object
+    AddListingRequestBody:
+      example:
+        operationId: 046b6c7f-0b8a-43b9-b35d-6489e6daee91
+        title: title
+      properties:
+        operationId:
+          format: uuid
+          type: string
+        title:
+          maxLength: 1000
+          type: string
+      required:
+      - operationId
+      - title
+      type: object
+    AddListingResponse:
+      example:
+        listingId: 046b6c7f-0b8a-43b9-b35d-6489e6daee91
+      properties:
+        listingId:
+          format: uuid
+          type: string
+      required:
+      - listingId
+      type: object
+    ValidationErrorDTO:
+      properties:
+        type:
+          default: validationError
+          type: string
+        errors:
+          items:
+            $ref: '#/components/schemas/ValidationErrorDetailsDTO'
+          type: array
+      required:
+      - errors
+      - type
+      type: object
+    ValidationErrorDetailsDTO:
+      properties:
+        path:
+          type: string
+        message:
+          type: string
+        code:
+          type: string
+      required:
+      - code
+      - message
+      - path
+      type: object
+    ErrorDTO:
+      properties:
+        code:
+          type: string
+        message:
+          type: string
+      required:
+      - code
+      - message
+      type: object
+    ListingStatusDTO:
+      enum:
+      - PUBLISHED
+      - DRAFT
+      type: string
+    GuestsCapacityDTO:
+      example:
+        infants: 0
+        children: 3
+        adults: 2
+      properties:
+        adults:
+          maximum: 16
+          minimum: 1
+          type: integer
+        children:
+          maximum: 5
+          minimum: 0
+          type: integer
+        infants:
+          maximum: 5
+          minimum: 0
+          type: integer
+      required:
+      - adults
+      - children
+      - infants
+      type: object
+    PropertyTypeDTO:
+      enum:
+      - APARTMENT
+      - HOUSE
+      - VILLA
+      - CABIN
+      - COTTAGE
+      - CHALET
+      - BUNGALOW
+      - TOWNHOUSE
+      - GUESTHOUSE
+      - LOFT
+      - HOSTEL
+      - BOAT
+      - BEDANDBREAKFAST
+      - OTHER
+      type: string
+    RoomTypeDTO:
+      enum:
+      - ENTIREPLACE
+      - PRIVATEROOM
+      - SHAREDROOM
+      type: string
+    AddressDTO:
+      example:
+        country: USA
+        city: San Francisco
+        street: 123 Main St
+      properties:
+        street:
+          example: 123 Main St
+          maxLength: 255
+          type: string
+        city:
+          example: San Francisco
+          maxLength: 255
+          type: string
+        country:
+          example: USA
+          maxLength: 255
+          type: string
+      type: object
+    LocationDTO:
+      type: object
+    OperationIdDTO:
+      format: uuid
+      type: string
+    addListing_401_response:
+      oneOf:
+      - $ref: '#/components/schemas/ValidationErrorDTO'
+      - $ref: '#/components/schemas/ErrorDTO'
+  securitySchemes:
+    BearerAuth:
+      bearerFormat: JWT
+      scheme: bearer
+      type: http
+

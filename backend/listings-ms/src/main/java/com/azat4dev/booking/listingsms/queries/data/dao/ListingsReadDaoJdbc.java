@@ -1,5 +1,6 @@
 package com.azat4dev.booking.listingsms.queries.data.dao;
 
+import com.fasterxml.jackson.databind.ObjectMapper;
 import lombok.AllArgsConstructor;
 import org.springframework.dao.EmptyResultDataAccessException;
 import org.springframework.jdbc.core.RowMapper;
@@ -16,7 +17,14 @@ import java.util.UUID;
 public final class ListingsReadDaoJdbc implements ListingsReadDao {
 
     private final NamedParameterJdbcTemplate jdbcTemplate;
-    private final Mapper rowMapper = new Mapper();
+    private final ObjectMapper objectMapper;
+    private final Mapper rowMapper;
+
+    public ListingsReadDaoJdbc(NamedParameterJdbcTemplate jdbcTemplate, ObjectMapper objectMapper) {
+        this.jdbcTemplate = jdbcTemplate;
+        this.objectMapper = objectMapper;
+        this.rowMapper = new Mapper(objectMapper);
+    }
 
     @Override
     public Optional<ListingRecord> findById(UUID listingId) {
@@ -42,7 +50,43 @@ public final class ListingsReadDaoJdbc implements ListingsReadDao {
         );
     }
 
+    @AllArgsConstructor
     private static final class Mapper implements RowMapper<ListingRecord> {
+
+        private final ObjectMapper objectMapper;
+
+        private Optional<ListingRecord.Address> mapAddress(ResultSet rs) throws SQLException {
+            final var country = rs.getString("address_country");
+            if (country == null) {
+                return Optional.empty();
+            }
+            return Optional.of(new ListingRecord.Address(
+                country,
+                rs.getString("address_city"),
+                rs.getString("address_street")
+            ));
+        }
+
+        private ListingRecord.GuestsCapacity mapGuestsCapacity(ResultSet rs) throws SQLException {
+            return new ListingRecord.GuestsCapacity(
+                rs.getInt("guests_capacity_adults"),
+                rs.getInt("guests_capacity_children"),
+                rs.getInt("guests_capacity_infants")
+            );
+        }
+
+        private List<ListingRecord.Photo> mapPhotos(ResultSet rs) throws SQLException {
+            final var rawPhotos = rs.getString("photos");
+            if (rawPhotos == null) {
+                return List.of();
+            }
+
+            try {
+                return List.of(objectMapper.readValue(rawPhotos, ListingRecord.Photo[].class));
+            } catch (Exception e) {
+                throw new RuntimeException(e);
+            }
+        }
 
         @Override
         public ListingRecord mapRow(ResultSet rs, int rowNum) throws SQLException {
@@ -55,7 +99,12 @@ public final class ListingsReadDaoJdbc implements ListingsReadDao {
                 UUID.fromString(rs.getString("owner_id")),
                 rs.getString("title"),
                 rs.getString("status"),
-                Optional.ofNullable(rs.getString("description"))
+                Optional.ofNullable(rs.getString("description")),
+                mapGuestsCapacity(rs),
+                Optional.ofNullable(rs.getString("property_type")),
+                Optional.ofNullable(rs.getString("room_type")),
+                mapAddress(rs),
+                mapPhotos(rs)
             );
         }
     }
