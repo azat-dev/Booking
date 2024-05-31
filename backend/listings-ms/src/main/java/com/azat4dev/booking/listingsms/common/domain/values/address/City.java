@@ -1,4 +1,4 @@
-package com.azat4dev.booking.listingsms.queries.domain.values.address;
+package com.azat4dev.booking.listingsms.common.domain.values.address;
 
 import com.azat4dev.booking.shared.domain.DomainException;
 import com.azat4dev.booking.shared.utils.Assert;
@@ -10,13 +10,13 @@ import lombok.Getter;
 @AllArgsConstructor(access = AccessLevel.PRIVATE)
 @Getter
 @EqualsAndHashCode
-public class Country {
+public class City {
 
     public static final int MAX_LENGTH = 255;
 
     private final String value;
 
-    public static Country checkAndMakeFrom(String value) throws Exception.NotBlank, Exception.NotEmpty, Exception.TooLong {
+    public static City checkAndMakeFrom(String value) throws Exception.NotBlank, Exception.NotEmpty, Exception.TooLong {
 
         final var cleanedValue = value.trim();
 
@@ -24,11 +24,11 @@ public class Country {
         Assert.string(cleanedValue, Exception.NotEmpty::new).minLength(1);
         Assert.string(cleanedValue, () -> new Exception.TooLong(cleanedValue)).maxLength(MAX_LENGTH);
 
-        return new Country(cleanedValue);
+        return new City(cleanedValue);
     }
 
-    public static Country dangerouslyMakeFrom(String value) {
-        return new Country(value);
+    public static City dangerouslyMakeFrom(String value) {
+        return new City(value);
     }
 
     // Exceptions

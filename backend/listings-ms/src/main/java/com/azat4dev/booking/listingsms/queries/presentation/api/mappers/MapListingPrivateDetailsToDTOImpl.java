@@ -3,8 +3,8 @@ package com.azat4dev.booking.listingsms.queries.presentation.api.mappers;
 import com.azat4dev.booking.listingsms.commands.domain.values.ListingDescription;
 import com.azat4dev.booking.listingsms.generated.server.model.*;
 import com.azat4dev.booking.listingsms.queries.domain.entities.ListingPrivateDetails;
-import com.azat4dev.booking.listingsms.queries.domain.values.GuestsCapacity;
-import com.azat4dev.booking.listingsms.queries.domain.values.address.ListingAddress;
+import com.azat4dev.booking.listingsms.common.domain.values.GuestsCapacity;
+import com.azat4dev.booking.listingsms.common.domain.values.address.ListingAddress;
 
 public final class MapListingPrivateDetailsToDTOImpl implements MapListingPrivateDetailsToDTO {
 

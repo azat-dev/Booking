@@ -1,6 +1,10 @@
 package com.azat4dev.booking.listingsms.commands.domain.entities;
 
 import com.azat4dev.booking.listingsms.commands.domain.values.*;
+import com.azat4dev.booking.listingsms.common.domain.values.GuestsCapacity;
+import com.azat4dev.booking.listingsms.common.domain.values.PropertyType;
+import com.azat4dev.booking.listingsms.common.domain.values.RoomType;
+import com.azat4dev.booking.listingsms.common.domain.values.address.ListingAddress;
 import com.azat4dev.booking.shared.domain.DomainException;
 import lombok.AccessLevel;
 import lombok.AllArgsConstructor;
@@ -8,7 +12,6 @@ import lombok.EqualsAndHashCode;
 import lombok.Getter;
 
 import java.time.LocalDateTime;
-import java.util.LinkedList;
 import java.util.List;
 import java.util.Optional;
 
@@ -20,13 +23,17 @@ public class Listing {
     public static final int MINIMUM_NUMBER_OF_PHOTOS = 5;
 
     private final ListingId id;
-    private ListingStatus status;
     private final LocalDateTime createdAt;
     private final LocalDateTime updatedAt;
     private final OwnerId ownerId;
     private final ListingTitle title;
-    private Optional<List<ListingPhoto>> photos;
+    private ListingStatus status;
     private Optional<ListingDescription> description;
+    private Optional<PropertyType> propertyType;
+    private Optional<RoomType> roomType;
+    private GuestsCapacity guestsCapacity;
+    private Optional<ListingAddress> address;
+    private List<ListingPhoto> photos;
 
     public static Listing makeNewDraft(
         ListingId id,
@@ -37,13 +44,17 @@ public class Listing {
 
         return new Listing(
             id,
-            ListingStatus.DRAFT,
             createdAt,
             createdAt,
             ownerId,
             title,
+            ListingStatus.DRAFT,
             Optional.empty(),
-            Optional.empty()
+            Optional.empty(),
+            Optional.empty(),
+            GuestsCapacity.DEFAULT,
+            Optional.empty(),
+            List.of()
         );
     }
 
@@ -54,19 +65,27 @@ public class Listing {
         LocalDateTime updatedAt,
         OwnerId ownerId,
         ListingTitle title,
-        Optional<List<ListingPhoto>> photos,
-        Optional<ListingDescription> description
+        Optional<ListingDescription> description,
+        Optional<PropertyType> propertyType,
+        Optional<RoomType> roomType,
+        Optional<ListingAddress> address,
+        GuestsCapacity guestsCapacity,
+        List<ListingPhoto> photos
     ) {
 
         return new Listing(
             id,
-            status,
             createdAt,
             updatedAt,
             ownerId,
             title,
-            photos,
-            description
+            status,
+            description,
+            propertyType,
+            roomType,
+            guestsCapacity,
+            address,
+            photos
         );
     }
 
@@ -78,7 +97,7 @@ public class Listing {
 
         this.description.orElseThrow(Exception.DescriptionIsRequired::new);
 
-        if (this.photos.isPresent() && this.photos.get().size() < MINIMUM_NUMBER_OF_PHOTOS) {
+        if (this.photos.size() < MINIMUM_NUMBER_OF_PHOTOS) {
             throw new Exception.MinimumNumberOfPhotos();
         }
     }

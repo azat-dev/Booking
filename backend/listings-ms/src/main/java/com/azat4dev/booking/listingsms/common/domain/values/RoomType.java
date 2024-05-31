@@ -1,4 +1,4 @@
-package com.azat4dev.booking.listingsms.queries.domain.values;
+package com.azat4dev.booking.listingsms.common.domain.values;
 
 public enum RoomType {
 

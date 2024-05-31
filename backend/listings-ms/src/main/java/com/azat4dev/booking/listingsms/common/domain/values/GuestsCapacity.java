@@ -1,4 +1,4 @@
-package com.azat4dev.booking.listingsms.queries.domain.values;
+package com.azat4dev.booking.listingsms.common.domain.values;
 
 import com.azat4dev.booking.shared.domain.DomainException;
 import lombok.AccessLevel;
@@ -10,6 +10,9 @@ import lombok.Getter;
 @EqualsAndHashCode
 @Getter
 public final class GuestsCapacity {
+
+    public static final GuestsCapacity DEFAULT = new GuestsCapacity(1, 0, 0);
+
     private final int adults;
     private final int children;
     private final int infants;

@@ -3,8 +3,10 @@ package com.azat4dev.booking.shared.domain.values;
 import com.azat4dev.booking.shared.domain.DomainException;
 import com.azat4dev.booking.shared.utils.Assert;
 import lombok.EqualsAndHashCode;
+import lombok.Getter;
 
 @EqualsAndHashCode
+@Getter
 public class MediaObjectName {
 
     private static final String PATTERN = "[a-zA-Z0-9-_\\.]*";

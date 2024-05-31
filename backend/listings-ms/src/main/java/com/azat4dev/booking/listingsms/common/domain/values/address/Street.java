@@ -1,4 +1,4 @@
-package com.azat4dev.booking.listingsms.queries.domain.values.address;
+package com.azat4dev.booking.listingsms.common.domain.values.address;
 
 import com.azat4dev.booking.shared.domain.DomainException;
 import com.azat4dev.booking.shared.utils.Assert;
