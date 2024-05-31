@@ -1,4 +1,4 @@
-package com.azat4dev.booking.users.users_queries.domain.values;
+package com.azat4dev.booking.shared.domain.values;
 
 import com.azat4dev.booking.shared.domain.DomainException;
 import lombok.EqualsAndHashCode;

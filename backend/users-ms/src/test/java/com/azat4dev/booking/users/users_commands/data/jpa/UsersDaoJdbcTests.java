@@ -1,14 +1,13 @@
 package com.azat4dev.booking.users.users_commands.data.jpa;
 
 
-import com.azat4dev.booking.PostgresTests;
 import com.azat4dev.booking.users.users_commands.application.config.data.DaoConfig;
 import com.azat4dev.booking.users.users_commands.data.entities.UserData;
 import com.azat4dev.booking.users.users_commands.data.repositories.dao.UsersDao;
 import com.azat4dev.booking.users.users_commands.domain.UserHelpers;
 import com.azat4dev.booking.users.users_commands.domain.core.values.user.EmailVerificationStatus;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import org.junit.jupiter.api.*;
+import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.jdbc.AutoConfigureTestDatabase;
 import org.springframework.boot.test.autoconfigure.jdbc.JdbcTest;

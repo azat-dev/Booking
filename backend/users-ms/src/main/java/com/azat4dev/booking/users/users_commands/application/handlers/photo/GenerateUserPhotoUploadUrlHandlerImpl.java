@@ -1,7 +1,7 @@
 package com.azat4dev.booking.users.users_commands.application.handlers.photo;
 
 import com.azat4dev.booking.shared.application.ValidationException;
-import com.azat4dev.booking.shared.domain.core.UserId;
+import com.azat4dev.booking.shared.domain.values.user.UserId;
 import com.azat4dev.booking.users.users_commands.application.commands.photo.GenerateUserPhotoUploadUrl;
 import com.azat4dev.booking.users.users_commands.domain.core.events.GeneratedUserPhotoUploadUrl;
 import com.azat4dev.booking.users.users_commands.domain.core.values.IdempotentOperationId;

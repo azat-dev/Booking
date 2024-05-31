@@ -18,6 +18,6 @@ public interface JwtDataDecoder {
 
     // Exceptions
 
-    public static final class InvalidTokenException extends RuntimeException {
+    final class InvalidTokenException extends RuntimeException {
     }
 }

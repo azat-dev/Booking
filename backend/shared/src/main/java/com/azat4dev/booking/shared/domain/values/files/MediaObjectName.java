@@ -1,4 +1,4 @@
-package com.azat4dev.booking.shared.domain.values;
+package com.azat4dev.booking.shared.domain.values.files;
 
 import com.azat4dev.booking.shared.domain.DomainException;
 import com.azat4dev.booking.shared.utils.Assert;

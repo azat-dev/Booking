@@ -1,7 +1,7 @@
 package com.azat4dev.booking.users.users_commands.data.repositories;
 
 import com.azat4dev.booking.shared.domain.DomainException;
-import com.azat4dev.booking.shared.domain.core.UserId;
+import com.azat4dev.booking.shared.domain.values.user.UserId;
 import com.azat4dev.booking.users.users_commands.data.repositories.dao.UsersDao;
 import com.azat4dev.booking.users.users_commands.domain.core.entities.User;
 import com.azat4dev.booking.users.users_commands.domain.core.values.email.EmailAddress;

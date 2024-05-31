@@ -1,14 +1,14 @@
 package com.azat4dev.booking.users.users_commands.domain.handlers.users.photo;
 
-import com.azat4dev.booking.shared.domain.core.UserId;
 import com.azat4dev.booking.shared.domain.event.DomainEventsBus;
+import com.azat4dev.booking.shared.domain.interfaces.files.MediaObject;
+import com.azat4dev.booking.shared.domain.interfaces.files.MediaObjectsBucket;
+import com.azat4dev.booking.shared.domain.values.files.UploadedFileData;
+import com.azat4dev.booking.shared.domain.values.user.UserId;
 import com.azat4dev.booking.users.users_commands.domain.core.entities.UserPhotoPath;
 import com.azat4dev.booking.users.users_commands.domain.core.events.FailedUpdateUserPhoto;
 import com.azat4dev.booking.users.users_commands.domain.core.values.IdempotentOperationId;
-import com.azat4dev.booking.users.users_commands.domain.core.values.files.UploadedFileData;
 import com.azat4dev.booking.users.users_commands.domain.handlers.users.Users;
-import com.azat4dev.booking.users.users_commands.domain.interfaces.repositories.MediaObject;
-import com.azat4dev.booking.users.users_commands.domain.interfaces.repositories.MediaObjectsBucket;
 import lombok.RequiredArgsConstructor;
 
 

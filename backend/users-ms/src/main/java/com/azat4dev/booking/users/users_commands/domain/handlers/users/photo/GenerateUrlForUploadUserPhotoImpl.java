@@ -1,13 +1,13 @@
 package com.azat4dev.booking.users.users_commands.domain.handlers.users.photo;
 
 import com.azat4dev.booking.shared.application.ValidationException;
-import com.azat4dev.booking.shared.domain.core.UserId;
+import com.azat4dev.booking.shared.domain.interfaces.files.MediaObjectsBucket;
+import com.azat4dev.booking.shared.domain.values.user.UserId;
 import com.azat4dev.booking.shared.domain.event.DomainEventsBus;
 import com.azat4dev.booking.users.users_commands.domain.core.events.FailedGenerateUserPhotoUploadUrl;
 import com.azat4dev.booking.users.users_commands.domain.core.events.GeneratedUserPhotoUploadUrl;
 import com.azat4dev.booking.users.users_commands.domain.core.values.IdempotentOperationId;
 import com.azat4dev.booking.users.users_commands.domain.core.values.user.PhotoFileExtension;
-import com.azat4dev.booking.users.users_commands.domain.interfaces.repositories.MediaObjectsBucket;
 import lombok.RequiredArgsConstructor;
 
 import java.util.Optional;

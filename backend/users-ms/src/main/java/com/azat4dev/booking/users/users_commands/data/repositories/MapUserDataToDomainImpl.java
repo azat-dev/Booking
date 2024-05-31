@@ -8,7 +8,7 @@ import com.azat4dev.booking.users.users_commands.domain.core.values.user.LastNam
 import com.azat4dev.booking.users.users_commands.domain.core.entities.User;
 import com.azat4dev.booking.users.users_commands.domain.core.values.password.EncodedPassword;
 import com.azat4dev.booking.users.users_commands.domain.core.values.email.EmailAddress;
-import com.azat4dev.booking.shared.domain.core.UserId;
+import com.azat4dev.booking.shared.domain.values.user.UserId;
 
 public class MapUserDataToDomainImpl implements MapUserDataToDomain {
 

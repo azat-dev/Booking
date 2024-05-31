@@ -30,7 +30,7 @@ public enum EmailVerificationStatusDTO {
   
   NOT_VERIFIED("NOT_VERIFIED");
 
-  private String value;
+  private final String value;
 
   EmailVerificationStatusDTO(String value) {
     this.value = value;

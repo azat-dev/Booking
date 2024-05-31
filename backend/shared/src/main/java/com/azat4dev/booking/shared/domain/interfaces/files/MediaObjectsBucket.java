@@ -1,6 +1,7 @@
-package com.azat4dev.booking.users.users_commands.domain.interfaces.repositories;
+package com.azat4dev.booking.shared.domain.interfaces.files;
 
-import com.azat4dev.booking.users.users_commands.domain.core.values.files.UploadFileFormData;
+import com.azat4dev.booking.shared.domain.values.files.MediaObjectName;
+import com.azat4dev.booking.shared.domain.values.files.UploadFileFormData;
 
 import java.net.URL;
 import java.util.Optional;

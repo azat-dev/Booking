@@ -1,6 +1,6 @@
 package com.azat4dev.booking.users.users_commands.application.config;
 
-import com.azat4dev.booking.shared.domain.core.UserIdFactory;
+import com.azat4dev.booking.shared.domain.values.user.UserIdFactory;
 import com.azat4dev.booking.users.users_commands.application.handlers.LoginByEmailHandler;
 import com.azat4dev.booking.users.users_commands.application.handlers.LoginByEmailHandlerImpl;
 import com.azat4dev.booking.users.users_commands.application.handlers.SignUpHandler;

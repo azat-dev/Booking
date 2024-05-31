@@ -1,8 +1,8 @@
 package com.azat4dev.booking.users.users_commands.data.repositories.dto;
 
+import com.azat4dev.booking.shared.domain.values.files.BucketName;
+import com.azat4dev.booking.shared.domain.values.files.MediaObjectName;
 import com.azat4dev.booking.users.users_commands.domain.core.entities.UserPhotoPath;
-import com.azat4dev.booking.users.users_commands.domain.interfaces.repositories.BucketName;
-import com.azat4dev.booking.users.users_commands.domain.interfaces.repositories.MediaObjectName;
 
 public record UserPhotoPathDTO(
     String bucketName,
@@ -17,9 +17,10 @@ public record UserPhotoPathDTO(
     }
 
     public UserPhotoPath toDomain() {
-        return new UserPhotoPath(
+        UserPhotoPath userPhotoPath = new UserPhotoPath(
             BucketName.makeWithoutChecks(bucketName),
             MediaObjectName.dangerouslyMake(objectName)
         );
+        return userPhotoPath;
     }
 }

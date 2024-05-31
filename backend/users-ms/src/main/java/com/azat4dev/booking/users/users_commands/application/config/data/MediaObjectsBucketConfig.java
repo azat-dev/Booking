@@ -1,9 +1,10 @@
 package com.azat4dev.booking.users.users_commands.application.config.data;
 
-import com.azat4dev.booking.users.users_commands.data.repositories.MinioMediaObjectsBucket;
-import com.azat4dev.booking.users.users_commands.domain.interfaces.repositories.BucketName;
-import com.azat4dev.booking.users.users_commands.domain.interfaces.repositories.MediaObjectsBucket;
-import com.azat4dev.booking.users.users_queries.domain.values.BaseUrl;
+
+import com.azat4dev.booking.shared.data.repositories.files.MinioMediaObjectsBucket;
+import com.azat4dev.booking.shared.domain.interfaces.files.MediaObjectsBucket;
+import com.azat4dev.booking.shared.domain.values.BaseUrl;
+import com.azat4dev.booking.shared.domain.values.files.BucketName;
 import io.minio.MinioClient;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.beans.factory.annotation.Value;

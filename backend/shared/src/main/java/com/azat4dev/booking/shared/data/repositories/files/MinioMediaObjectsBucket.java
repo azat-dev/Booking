@@ -1,8 +1,12 @@
-package com.azat4dev.booking.users.users_commands.data.repositories;
+package com.azat4dev.booking.shared.data.repositories.files;
 
-import com.azat4dev.booking.users.users_commands.domain.core.values.files.UploadFileFormData;
-import com.azat4dev.booking.users.users_commands.domain.interfaces.repositories.*;
-import com.azat4dev.booking.users.users_queries.domain.values.BaseUrl;
+import com.azat4dev.booking.shared.domain.interfaces.files.FileKey;
+import com.azat4dev.booking.shared.domain.interfaces.files.MediaObject;
+import com.azat4dev.booking.shared.domain.interfaces.files.MediaObjectsBucket;
+import com.azat4dev.booking.shared.domain.values.BaseUrl;
+import com.azat4dev.booking.shared.domain.values.files.BucketName;
+import com.azat4dev.booking.shared.domain.values.files.MediaObjectName;
+import com.azat4dev.booking.shared.domain.values.files.UploadFileFormData;
 import io.minio.*;
 import io.minio.http.Method;
 import lombok.RequiredArgsConstructor;

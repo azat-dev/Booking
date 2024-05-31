@@ -1,7 +1,7 @@
 package com.azat4dev.booking.users.users_commands.domain.core.values.user;
 
 import com.azat4dev.booking.shared.domain.DomainException;
-import com.azat4dev.booking.users.users_commands.domain.core.values.files.FileExtension;
+import com.azat4dev.booking.shared.domain.values.files.FileExtension;
 import lombok.EqualsAndHashCode;
 
 import java.util.Arrays;

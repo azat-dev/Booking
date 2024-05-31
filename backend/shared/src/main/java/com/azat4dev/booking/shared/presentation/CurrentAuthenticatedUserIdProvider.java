@@ -1,6 +1,6 @@
 package com.azat4dev.booking.shared.presentation;
 
-import com.azat4dev.booking.shared.domain.core.UserId;
+import com.azat4dev.booking.shared.domain.values.user.UserId;
 
 import java.util.Optional;
 

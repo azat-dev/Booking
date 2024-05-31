@@ -1,4 +1,4 @@
-package com.azat4dev.booking.users.users_commands.domain.core.values.files;
+package com.azat4dev.booking.shared.domain.values.files;
 
 import com.azat4dev.booking.shared.domain.DomainException;
 import com.azat4dev.booking.shared.utils.Assert;
@@ -27,7 +27,7 @@ public class FileExtension {
         return new FileExtension(value);
     }
 
-    public static FileExtension checkAndMakeFrom(String value) throws FileExtension.Exception {
+    public static FileExtension checkAndMakeFrom(String value) throws Exception {
         final var cleanedValue = value.trim().toLowerCase();
 
         Assert.notNull(cleanedValue, EmptyFileExtensionException::new);

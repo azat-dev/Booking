@@ -1,14 +1,7 @@
 package com.azat4dev.booking.users.users_commands.data.jpa;
 
 //import io.zonky.test.db.AutoConfigureEmbeddedDatabase;
-import org.springframework.boot.autoconfigure.ImportAutoConfiguration;
-import org.springframework.boot.autoconfigure.SpringBootApplication;
-import org.springframework.boot.test.autoconfigure.jdbc.JdbcTest;
-import org.springframework.context.annotation.ComponentScan;
-import org.springframework.core.annotation.AliasFor;
-import org.springframework.core.env.Environment;
 
-import java.lang.annotation.*;
 //
 //@Documented
 //@Inherited

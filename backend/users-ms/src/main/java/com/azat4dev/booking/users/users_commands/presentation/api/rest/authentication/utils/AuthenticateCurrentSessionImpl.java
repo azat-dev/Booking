@@ -1,6 +1,6 @@
 package com.azat4dev.booking.users.users_commands.presentation.api.rest.authentication.utils;
 
-import com.azat4dev.booking.shared.domain.core.UserId;
+import com.azat4dev.booking.shared.domain.values.user.UserId;
 import com.azat4dev.booking.users.common.presentation.security.services.jwt.JwtService;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;

@@ -1,6 +1,6 @@
 package com.azat4dev.booking.users.users_commands.domain.handlers.password.reset.utils;
 
-import com.azat4dev.booking.shared.domain.core.UserId;
+import com.azat4dev.booking.shared.domain.values.user.UserId;
 import com.azat4dev.booking.shared.utils.TimeProvider;
 import com.azat4dev.booking.users.users_commands.domain.core.values.password.reset.TokenForPasswordReset;
 import lombok.RequiredArgsConstructor;

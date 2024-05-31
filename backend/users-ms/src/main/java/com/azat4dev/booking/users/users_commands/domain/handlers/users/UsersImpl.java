@@ -1,7 +1,7 @@
 package com.azat4dev.booking.users.users_commands.domain.handlers.users;
 
 
-import com.azat4dev.booking.shared.domain.core.UserId;
+import com.azat4dev.booking.shared.domain.values.user.UserId;
 import com.azat4dev.booking.shared.utils.TimeProvider;
 import com.azat4dev.booking.users.users_commands.domain.core.commands.NewUserData;
 import com.azat4dev.booking.users.users_commands.domain.core.entities.User;

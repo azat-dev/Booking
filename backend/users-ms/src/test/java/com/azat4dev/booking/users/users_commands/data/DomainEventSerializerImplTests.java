@@ -2,6 +2,10 @@ package com.azat4dev.booking.users.users_commands.data;
 
 import com.azat4dev.booking.shared.data.DomainEventSerializer;
 import com.azat4dev.booking.shared.data.DomainEventSerializerImpl;
+import com.azat4dev.booking.shared.domain.values.files.BucketName;
+import com.azat4dev.booking.shared.domain.values.files.MediaObjectName;
+import com.azat4dev.booking.shared.domain.values.files.UploadFileFormData;
+import com.azat4dev.booking.shared.domain.values.files.UploadedFileData;
 import com.azat4dev.booking.users.users_commands.data.repositories.dto.DomainEventDTO;
 import com.azat4dev.booking.users.users_commands.domain.core.commands.CompleteEmailVerification;
 import com.azat4dev.booking.users.users_commands.domain.core.commands.CompletePasswordReset;
@@ -10,14 +14,10 @@ import com.azat4dev.booking.users.users_commands.domain.core.entities.UserPhotoP
 import com.azat4dev.booking.users.users_commands.domain.core.events.*;
 import com.azat4dev.booking.users.users_commands.domain.core.values.IdempotentOperationId;
 import com.azat4dev.booking.users.users_commands.domain.core.values.email.verification.EmailVerificationToken;
-import com.azat4dev.booking.users.users_commands.domain.core.values.files.UploadFileFormData;
-import com.azat4dev.booking.users.users_commands.domain.core.values.files.UploadedFileData;
 import com.azat4dev.booking.users.users_commands.domain.core.values.password.EncodedPassword;
 import com.azat4dev.booking.users.users_commands.domain.core.values.password.reset.TokenForPasswordReset;
 import com.azat4dev.booking.users.users_commands.domain.core.values.user.EmailVerificationStatus;
 import com.azat4dev.booking.users.users_commands.domain.core.values.user.PhotoFileExtension;
-import com.azat4dev.booking.users.users_commands.domain.interfaces.repositories.BucketName;
-import com.azat4dev.booking.users.users_commands.domain.interfaces.repositories.MediaObjectName;
 import org.junit.jupiter.api.Test;
 
 import java.net.MalformedURLException;

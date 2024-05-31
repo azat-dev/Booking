@@ -1,9 +1,9 @@
 package com.azat4dev.booking.users.users_queries.application.config;
 
+import com.azat4dev.booking.shared.domain.values.BaseUrl;
 import com.azat4dev.booking.users.users_queries.data.dao.UsersReadDao;
 import com.azat4dev.booking.users.users_queries.data.repositories.MapToUserPhotoImpl;
 import com.azat4dev.booking.users.users_queries.domain.interfaces.repositories.*;
-import com.azat4dev.booking.users.users_queries.domain.values.BaseUrl;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;

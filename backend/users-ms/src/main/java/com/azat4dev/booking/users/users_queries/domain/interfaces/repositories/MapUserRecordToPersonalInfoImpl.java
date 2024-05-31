@@ -1,6 +1,6 @@
 package com.azat4dev.booking.users.users_queries.domain.interfaces.repositories;
 
-import com.azat4dev.booking.shared.domain.core.UserId;
+import com.azat4dev.booking.shared.domain.values.user.UserId;
 import com.azat4dev.booking.users.users_commands.domain.core.values.user.FirstName;
 import com.azat4dev.booking.users.users_commands.domain.core.values.user.FullName;
 import com.azat4dev.booking.users.users_commands.domain.core.values.user.LastName;

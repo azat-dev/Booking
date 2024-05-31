@@ -1,11 +1,11 @@
 package com.azat4dev.booking.users.users_commands.data.repositories.dto;
 
 import com.azat4dev.booking.shared.data.DomainEventPayloadDTO;
-import com.azat4dev.booking.shared.domain.core.UserId;
+import com.azat4dev.booking.shared.domain.values.files.BucketName;
+import com.azat4dev.booking.shared.domain.values.files.MediaObjectName;
+import com.azat4dev.booking.shared.domain.values.user.UserId;
 import com.azat4dev.booking.users.users_commands.domain.core.events.GeneratedUserPhotoUploadUrl;
-import com.azat4dev.booking.users.users_commands.domain.core.values.files.UploadFileFormData;
-import com.azat4dev.booking.users.users_commands.domain.interfaces.repositories.BucketName;
-import com.azat4dev.booking.users.users_commands.domain.interfaces.repositories.MediaObjectName;
+import com.azat4dev.booking.shared.domain.values.files.UploadFileFormData;
 
 import java.net.MalformedURLException;
 import java.net.URI;

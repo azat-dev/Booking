@@ -6,7 +6,7 @@ public record SignUp(
     String password
 ) {
 
-    public static record FullName (
+    public record FullName (
         String firstName,
         String lastName
     ) {
