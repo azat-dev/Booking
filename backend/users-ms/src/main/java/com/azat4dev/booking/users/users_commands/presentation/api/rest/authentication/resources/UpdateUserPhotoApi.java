@@ -47,7 +47,7 @@ public class UpdateUserPhotoApi implements CommandsUpdateUserPhotoApiDelegate {
                     .bucketName(result.formData().bucketName().toString())
                     .objectName(result.formData().objectName().toString())
                     .build(),
-                result.formData().value())
+                result.formData().formData())
             );
 
         } catch (GenerateUserPhotoUploadUrlHandler.Exception.FailedGenerateUserPhotoUploadUrl e) {

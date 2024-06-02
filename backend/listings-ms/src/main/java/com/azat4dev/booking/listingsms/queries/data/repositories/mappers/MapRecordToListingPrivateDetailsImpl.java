@@ -1,7 +1,6 @@
 package com.azat4dev.booking.listingsms.queries.data.repositories.mappers;
 
 import com.azat4dev.booking.listingsms.commands.data.dao.listings.ListingPhotoData;
-import com.azat4dev.booking.listingsms.commands.domain.entities.Listing;
 import com.azat4dev.booking.listingsms.commands.domain.values.*;
 import com.azat4dev.booking.listingsms.common.domain.values.GuestsCapacity;
 import com.azat4dev.booking.listingsms.common.domain.values.PropertyType;
@@ -11,14 +10,13 @@ import com.azat4dev.booking.listingsms.common.domain.values.address.Country;
 import com.azat4dev.booking.listingsms.common.domain.values.address.ListingAddress;
 import com.azat4dev.booking.listingsms.common.domain.values.address.Street;
 import com.azat4dev.booking.listingsms.queries.domain.entities.ListingPrivateDetails;
-import com.azat4dev.booking.shared.domain.values.BucketName;
-import com.azat4dev.booking.shared.domain.values.MediaObjectName;
+import com.azat4dev.booking.shared.domain.values.files.BucketName;
+import com.azat4dev.booking.shared.domain.values.files.MediaObjectName;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import lombok.AllArgsConstructor;
 import org.jooq.generated.tables.records.ListingsRecord;
 
-import java.time.LocalDateTime;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Optional;

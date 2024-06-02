@@ -1,8 +1,8 @@
 package com.azat4dev.booking.users.users_commands.application.handlers.password;
 
 import com.azat4dev.booking.shared.application.ValidationException;
+import com.azat4dev.booking.shared.domain.values.IdempotentOperationId;
 import com.azat4dev.booking.users.users_commands.application.commands.password.ResetPasswordByEmail;
-import com.azat4dev.booking.users.users_commands.domain.core.values.IdempotentOperationId;
 import com.azat4dev.booking.users.users_commands.domain.core.values.email.EmailAddress;
 import com.azat4dev.booking.users.users_commands.domain.handlers.password.reset.SendResetPasswordEmail;
 import lombok.RequiredArgsConstructor;

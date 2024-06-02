@@ -2,6 +2,7 @@ import org.openapitools.generator.gradle.plugin.tasks.GenerateTask
 
 plugins {
     id 'java'
+    id("com.google.protobuf") version "0.8.17"
     id 'org.springframework.boot' version '3.2.5'
     id 'io.spring.dependency-management' version '1.1.4'
     id 'org.openapi.generator' version '7.6.0'
@@ -20,47 +21,48 @@ repositories {
 
 dependencies {
 
-    implementation project(":shared")
+    implementation project(path: ':shared')
+    testImplementation project(path: ':apiclient')
 
+    // Spring Boot
     implementation 'org.springframework.boot:spring-boot-starter-oauth2-resource-server'
     implementation 'org.springframework.boot:spring-boot-starter-security'
     implementation 'org.springframework.boot:spring-boot-starter-web'
     implementation 'org.springframework.boot:spring-boot-starter-jdbc'
     implementation 'org.springframework.boot:spring-boot-starter-actuator'
-    implementation 'org.springframework.kafka:spring-kafka'
-    implementation 'io.minio:minio:8.5.10'
-
-    testImplementation 'org.springframework.kafka:spring-kafka-test'
-    testImplementation 'org.springframework.boot:spring-boot-starter-actuator'
-
-    implementation 'com.sun.mail:jakarta.mail:2.0.1'
     implementation 'org.springframework.boot:spring-boot-starter-mail'
 
-    implementation project(path: ':shared')
-    implementation project(path: ':apiclient')
-
-    compileOnly 'org.projectlombok:lombok:1.18.30'
-
-    annotationProcessor 'org.projectlombok:lombok:1.18.30'
-
-    implementation 'commons-validator:commons-validator:1.8.0'
+    testImplementation 'org.springframework.boot:spring-boot-starter-actuator'
     testImplementation 'org.springframework.boot:spring-boot-starter-test'
     testImplementation 'org.springframework.security:spring-security-test'
-    testImplementation 'org.springframework.boot:spring-boot-starter-actuator'
+
+    // Minio
+    implementation 'io.minio:minio:8.5.10'
+
+    // Kafka
+    testImplementation 'org.springframework.kafka:spring-kafka-test'
+    implementation 'org.springframework.kafka:spring-kafka'
+
+    // Lombok
+    compileOnly 'org.projectlombok:lombok:1.18.30'
+    annotationProcessor 'org.projectlombok:lombok:1.18.30'
+    testCompileOnly 'org.projectlombok:lombok'
+    testAnnotationProcessor 'org.projectlombok:lombok'
+
+    // Postgres
+    implementation 'org.postgresql:postgresql'
+    testImplementation 'org.postgresql:postgresql'
+
+    implementation 'com.sun.mail:jakarta.mail:2.0.1'
+
+    implementation 'commons-validator:commons-validator:1.8.0'
 
     implementation 'io.jsonwebtoken:jjwt-api:0.12.3'
     runtimeOnly 'io.jsonwebtoken:jjwt-impl:0.12.3'
     runtimeOnly 'io.jsonwebtoken:jjwt-jackson:0.12.3'
 
     implementation 'org.hibernate.validator:hibernate-validator'
-    implementation 'org.postgresql:postgresql'
-    testImplementation 'org.postgresql:postgresql'
 
-    testCompileOnly 'org.projectlombok:lombok:1.18.30'
-    testAnnotationProcessor 'org.projectlombok:lombok:1.18.30'
-
-    testCompileOnly 'org.projectlombok:lombok'
-    testAnnotationProcessor 'org.projectlombok:lombok'
     testImplementation "org.junit.jupiter:junit-jupiter:5.8.1"
     testImplementation "org.testcontainers:testcontainers:1.19.8"
     testImplementation "org.testcontainers:junit-jupiter:1.19.8"
@@ -98,16 +100,17 @@ if (hasProperty('buildScan')) {
 sourceSets {
     main {
         java {
-            srcDirs += "$rootDir/generated/server/src/main/java"
+            srcDirs += "$buildDir/generated/server/src/main/java"
+            srcDirs += "$buildDir/generated/events/src/main/java"
         }
     }
 }
 
-task buildServerApi(type: GenerateTask) {
+task generateServerApi(type: GenerateTask) {
     generatorName.set("spring")
     library.set("spring-boot")
     inputSpec.set("$rootDir/../specs/users/openapi.yaml")
-    outputDir.set("$rootDir/generated/server")
+    outputDir.set("$buildDir/generated/server")
     invokerPackage.set("com.azat4dev.booking.usersms.generated.server.base")
     apiPackage.set("com.azat4dev.booking.usersms.generated.server.api")
     modelPackage.set("com.azat4dev.booking.usersms.generated.server.model")
@@ -131,11 +134,11 @@ task buildServerApi(type: GenerateTask) {
     ])
 }
 
-task buildApiClient(type: GenerateTask) {
+task generateApiClient(type: GenerateTask) {
     generatorName.set("java")
     library.set("feign")
     inputSpec.set("$rootDir/../specs/users/openapi.yaml")
-    outputDir.set("$rootDir/generated/client")
+    outputDir.set("$buildDir/generated/client")
     invokerPackage.set("com.azat4dev.booking.usersms.generated.client.base")
     apiPackage.set("com.azat4dev.booking.usersms.generated.client.api")
     modelPackage.set("com.azat4dev.booking.usersms.generated.client.model")
@@ -149,4 +152,34 @@ task buildApiClient(type: GenerateTask) {
     ])
 }
 
-task codegen(dependsOn: ['buildApiClient', 'buildServerApi'])
+task generateDomainEventsDTO(type: GenerateTask) {
+    generatorName.set("spring")
+    library.set("spring-boot")
+    inputSpec.set("$rootDir/../specs/events/users/openapi.yaml")
+    outputDir.set("$buildDir/generated/events")
+    modelPackage.set("com.azat4dev.booking.generated.events.dto")
+    ignoreFileOverride.set(".openapi-generator-ignore")
+    templateDir.set("$rootDir/../specs/custom_templates/spring")
+
+    modelNameSuffix.set("DTO")
+    configOptions.set([
+            useOptional: "true",
+            openApiNullable: "false",
+            interfaceOnly: "true",
+            additionalModelTypeAnnotations: "@lombok.Builder(toBuilder = true)\n@lombok.AllArgsConstructor\n@com.fasterxml.jackson.annotation.JsonIgnoreProperties(ignoreUnknown=true)",
+            generatedConstructorWithRequiredArgs: "false",
+            useTags: "true",
+            generateSupportingFiles: "false",
+
+            dateLibrary: "java8-localdatetime",
+            generateConstructorWithAllArgs: "false",
+            serializationLibrary: "jackson",
+            generateBuilders: "false",
+            useSpringController: "false",
+            generateApis: "false",
+            useJakartaEe: "true"
+    ])
+}
+
+
+task generateCodeFromOpenApiSpecs(dependsOn: ['generateApiClient', 'generateServerApi', 'generateDomainEventsDTO'])

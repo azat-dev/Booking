@@ -1,9 +1,9 @@
 package com.azat4dev.booking.users.users_commands.domain.handlers.users.photo;
 
 import com.azat4dev.booking.shared.domain.DomainException;
-import com.azat4dev.booking.shared.domain.values.user.UserId;
+import com.azat4dev.booking.shared.domain.values.IdempotentOperationId;
 import com.azat4dev.booking.shared.domain.values.files.UploadedFileData;
-import com.azat4dev.booking.users.users_commands.domain.core.values.IdempotentOperationId;
+import com.azat4dev.booking.shared.domain.values.user.UserId;
 
 
 public interface SetNewPhotoForUser {

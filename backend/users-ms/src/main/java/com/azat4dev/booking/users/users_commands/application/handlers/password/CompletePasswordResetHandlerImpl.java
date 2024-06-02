@@ -1,8 +1,8 @@
 package com.azat4dev.booking.users.users_commands.application.handlers.password;
 
 import com.azat4dev.booking.shared.application.ValidationException;
+import com.azat4dev.booking.shared.domain.values.IdempotentOperationId;
 import com.azat4dev.booking.users.users_commands.application.commands.password.CompletePasswordReset;
-import com.azat4dev.booking.users.users_commands.domain.core.values.IdempotentOperationId;
 import com.azat4dev.booking.users.users_commands.domain.core.values.password.Password;
 import com.azat4dev.booking.users.users_commands.domain.core.values.password.reset.TokenForPasswordReset;
 import com.azat4dev.booking.users.users_commands.domain.handlers.password.reset.SetNewPasswordByToken;

@@ -1,7 +1,7 @@
 package com.azat4dev.booking.listingsms.queries.domain.entities;
 
 import com.azat4dev.booking.listingsms.queries.domain.interfaces.PrivateListingsReadRepository;
-import com.azat4dev.booking.shared.domain.core.UserId;
+import com.azat4dev.booking.shared.domain.values.user.UserId;
 import lombok.AllArgsConstructor;
 
 @AllArgsConstructor

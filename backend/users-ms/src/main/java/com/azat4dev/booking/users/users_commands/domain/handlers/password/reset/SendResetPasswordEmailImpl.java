@@ -1,9 +1,9 @@
 package com.azat4dev.booking.users.users_commands.domain.handlers.password.reset;
 
 import com.azat4dev.booking.shared.domain.event.DomainEventsBus;
+import com.azat4dev.booking.shared.domain.values.IdempotentOperationId;
 import com.azat4dev.booking.users.users_commands.domain.core.events.FailedToSendVerificationEmail;
 import com.azat4dev.booking.users.users_commands.domain.core.events.SentEmailForPasswordReset;
-import com.azat4dev.booking.users.users_commands.domain.core.values.IdempotentOperationId;
 import com.azat4dev.booking.users.users_commands.domain.core.values.email.EmailAddress;
 import com.azat4dev.booking.users.users_commands.domain.handlers.password.reset.utils.BuildResetPasswordEmail;
 import com.azat4dev.booking.users.users_commands.domain.interfaces.repositories.UsersRepository;

@@ -1,11 +1,11 @@
 package com.azat4dev.booking.users.users_commands.application.handlers.photo;
 
 import com.azat4dev.booking.shared.application.ValidationException;
+import com.azat4dev.booking.shared.domain.values.IdempotentOperationId;
 import com.azat4dev.booking.shared.domain.values.files.BucketName;
 import com.azat4dev.booking.shared.domain.values.files.MediaObjectName;
-import com.azat4dev.booking.users.users_commands.application.commands.photo.UpdateUserPhoto;
-import com.azat4dev.booking.users.users_commands.domain.core.values.IdempotentOperationId;
 import com.azat4dev.booking.shared.domain.values.files.UploadedFileData;
+import com.azat4dev.booking.users.users_commands.application.commands.photo.UpdateUserPhoto;
 import com.azat4dev.booking.users.users_commands.domain.handlers.users.photo.SetNewPhotoForUser;
 import lombok.AllArgsConstructor;
 

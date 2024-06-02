@@ -1,9 +1,9 @@
 package com.azat4dev.booking.users.users_commands.domain.handlers;
 
 import com.azat4dev.booking.shared.domain.event.DomainEventsBus;
+import com.azat4dev.booking.shared.domain.values.IdempotentOperationId;
 import com.azat4dev.booking.users.users_commands.application.handlers.password.ResetPasswordByEmailHandler;
 import com.azat4dev.booking.users.users_commands.domain.core.events.SentEmailForPasswordReset;
-import com.azat4dev.booking.users.users_commands.domain.core.values.IdempotentOperationId;
 import com.azat4dev.booking.users.users_commands.domain.core.values.email.EmailBody;
 import com.azat4dev.booking.users.users_commands.domain.handlers.password.reset.SendResetPasswordEmail;
 import com.azat4dev.booking.users.users_commands.domain.handlers.password.reset.SendResetPasswordEmailImpl;

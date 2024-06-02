@@ -1,9 +1,9 @@
 package com.azat4dev.booking.users.common.presentation.security.services;
 
-import com.azat4dev.booking.users.common.presentation.security.entities.UserPrincipal;
-import com.azat4dev.booking.users.users_commands.domain.core.values.email.EmailAddress;
 import com.azat4dev.booking.shared.domain.values.user.UserId;
+import com.azat4dev.booking.users.common.presentation.security.entities.UserPrincipal;
 import com.azat4dev.booking.users.common.presentation.security.services.jwt.UserIdNotFoundException;
+import com.azat4dev.booking.users.users_commands.domain.core.values.email.EmailAddress;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 

@@ -1,10 +1,10 @@
 package com.azat4dev.booking.users.users_commands.domain.handlers.password.reset;
 
 import com.azat4dev.booking.shared.domain.event.DomainEventsBus;
+import com.azat4dev.booking.shared.domain.values.IdempotentOperationId;
 import com.azat4dev.booking.users.users_commands.domain.core.entities.User;
 import com.azat4dev.booking.users.users_commands.domain.core.events.FailedToCompleteResetPassword;
 import com.azat4dev.booking.users.users_commands.domain.core.events.UserDidResetPassword;
-import com.azat4dev.booking.users.users_commands.domain.core.values.IdempotentOperationId;
 import com.azat4dev.booking.users.users_commands.domain.core.values.password.EncodedPassword;
 import com.azat4dev.booking.users.users_commands.domain.core.values.password.reset.TokenForPasswordReset;
 import com.azat4dev.booking.users.users_commands.domain.handlers.password.reset.utils.ValidateTokenForPasswordResetAndGetUserId;

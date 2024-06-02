@@ -18,7 +18,7 @@ CREATE TABLE IF NOT EXISTS listings
     updated_at               TIMESTAMP    NOT NULL,
     updated_at_nano          INTEGER      NOT NULL,
     owner_id                 UUID         NOT NULL,
-    title                    VARCHAR(255) NOT NULL UNIQUE,
+    title                    VARCHAR(255) NOT NULL,
     description              TEXT         NULL,
     status                   VARCHAR(50)  NOT NULL,
     photos                   JSON         NULL,

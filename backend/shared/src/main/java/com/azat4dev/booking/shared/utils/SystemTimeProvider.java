@@ -6,6 +6,6 @@ public final class SystemTimeProvider implements TimeProvider {
 
     @Override
     public LocalDateTime currentTime() {
-        return LocalDateTime.now();
+        return LocalDateTime.now().withNano(0);
     }
 }

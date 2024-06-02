@@ -2,13 +2,13 @@ package com.azat4dev.booking.users.users_commands.domain.handlers.user;
 
 import com.azat4dev.booking.shared.domain.event.DomainEventsBus;
 import com.azat4dev.booking.shared.domain.interfaces.files.MediaObjectsBucket;
+import com.azat4dev.booking.shared.domain.values.IdempotentOperationId;
 import com.azat4dev.booking.shared.domain.values.files.BucketName;
 import com.azat4dev.booking.shared.domain.values.files.MediaObjectName;
+import com.azat4dev.booking.shared.domain.values.files.PhotoFileExtension;
 import com.azat4dev.booking.shared.domain.values.files.UploadFileFormData;
 import com.azat4dev.booking.users.users_commands.domain.UserHelpers;
 import com.azat4dev.booking.users.users_commands.domain.core.commands.GenerateUserPhotoUploadUrl;
-import com.azat4dev.booking.users.users_commands.domain.core.values.IdempotentOperationId;
-import com.azat4dev.booking.users.users_commands.domain.core.values.user.PhotoFileExtension;
 import com.azat4dev.booking.users.users_commands.domain.handlers.users.photo.GenerateUrlForUploadUserPhoto;
 import com.azat4dev.booking.users.users_commands.domain.handlers.users.photo.GenerateUrlForUploadUserPhotoImpl;
 import com.azat4dev.booking.users.users_commands.domain.handlers.users.photo.GenerateUserPhotoObjectName;

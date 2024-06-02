@@ -1,23 +1,14 @@
 package com.azat4dev.booking.users.users_commands.data;
 
 import com.azat4dev.booking.shared.data.DomainEventSerializer;
-import com.azat4dev.booking.shared.data.DomainEventSerializerImpl;
-import com.azat4dev.booking.shared.domain.values.files.BucketName;
-import com.azat4dev.booking.shared.domain.values.files.MediaObjectName;
-import com.azat4dev.booking.shared.domain.values.files.UploadFileFormData;
-import com.azat4dev.booking.shared.domain.values.files.UploadedFileData;
-import com.azat4dev.booking.users.users_commands.data.repositories.dto.DomainEventDTO;
-import com.azat4dev.booking.users.users_commands.domain.core.commands.CompleteEmailVerification;
-import com.azat4dev.booking.users.users_commands.domain.core.commands.CompletePasswordReset;
+import com.azat4dev.booking.shared.domain.values.IdempotentOperationId;
+import com.azat4dev.booking.shared.domain.values.files.*;
+import com.azat4dev.booking.users.users_commands.data.repositories.DomainEventsSerializerImpl;
 import com.azat4dev.booking.users.users_commands.domain.core.commands.SendVerificationEmail;
 import com.azat4dev.booking.users.users_commands.domain.core.entities.UserPhotoPath;
 import com.azat4dev.booking.users.users_commands.domain.core.events.*;
-import com.azat4dev.booking.users.users_commands.domain.core.values.IdempotentOperationId;
-import com.azat4dev.booking.users.users_commands.domain.core.values.email.verification.EmailVerificationToken;
-import com.azat4dev.booking.users.users_commands.domain.core.values.password.EncodedPassword;
-import com.azat4dev.booking.users.users_commands.domain.core.values.password.reset.TokenForPasswordReset;
 import com.azat4dev.booking.users.users_commands.domain.core.values.user.EmailVerificationStatus;
-import com.azat4dev.booking.users.users_commands.domain.core.values.user.PhotoFileExtension;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import org.junit.jupiter.api.Test;
 
 import java.net.MalformedURLException;
@@ -36,10 +27,8 @@ import static org.assertj.core.api.Assertions.assertThat;
 public class DomainEventSerializerImplTests {
 
     DomainEventSerializer createSUT() {
-        return new DomainEventSerializerImpl(
-            DomainEventDTO::makeFrom,
-            DomainEventDTO.class
-        );
+        final var objectMapper = new ObjectMapper();
+        return new DomainEventsSerializerImpl(objectMapper);
     }
 
     IdempotentOperationId anyIdempotentOperationId() throws IdempotentOperationId.Exception {
@@ -49,10 +38,12 @@ public class DomainEventSerializerImplTests {
     @Test
     void test_serialize() throws MalformedURLException, PhotoFileExtension.InvalidPhotoFileExtensionException, IdempotentOperationId.Exception, BucketName.Exception, MediaObjectName.InvalidMediaObjectNameException {
 
+        final var now = LocalDateTime.now().withNano(0);
+
         final var events = List.of(
             eventsFactory.issue(
                 new UserCreated(
-                    LocalDateTime.now(),
+                    now,
                     anyValidUserId(),
                     anyFullName(),
                     anyValidEmail(),
@@ -87,20 +78,8 @@ public class DomainEventSerializerImplTests {
                 )
             ),
             eventsFactory.issue(
-                new CompleteEmailVerification(
-                    new EmailVerificationToken("token")
-                )
-            ),
-            eventsFactory.issue(
                 new UserDidResetPassword(
                     anyValidUserId()
-                )
-            ),
-            eventsFactory.issue(
-                new CompletePasswordReset(
-                    anyIdempotentOperationId(),
-                    new EncodedPassword("password"),
-                    TokenForPasswordReset.dangerouslyMakeFrom("passwordResetToken")
                 )
             ),
             eventsFactory.issue(

@@ -7,6 +7,6 @@ public record UploadFileFormData(
     URL url,
     BucketName bucketName,
     MediaObjectName objectName,
-    Map<String, String> value
+    Map<String, String> formData
 ) {
 }

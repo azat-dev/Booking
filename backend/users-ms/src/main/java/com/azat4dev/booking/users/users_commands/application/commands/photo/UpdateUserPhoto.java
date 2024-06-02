@@ -1,7 +1,7 @@
 package com.azat4dev.booking.users.users_commands.application.commands.photo;
 
-import com.azat4dev.booking.shared.domain.values.user.UserId;
 import com.azat4dev.booking.shared.domain.event.Command;
+import com.azat4dev.booking.shared.domain.values.user.UserId;
 
 public record UpdateUserPhoto(
     UserId userId,

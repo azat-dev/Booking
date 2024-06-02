@@ -1,0 +1,15 @@
+{{>additionalOneOfTypeAnnotations}}
+{{#withXml}}
+{{>xmlAnnotation}}
+{{/withXml}}
+{{#discriminator}}
+{{>typeInfoAnnotation}}
+{{/discriminator}}
+{{>generatedAnnotation}}
+public interface {{classname}}{{#vendorExtensions.x-implements}}{{#-first}} extends {{{.}}}{{/-first}}{{^-first}}, {{{.}}}{{/-first}}{{/vendorExtensions.x-implements}} {
+    {{#discriminator}}
+    default {{propertyType}} {{propertyGetter}}() {
+        return this.getClass().getAnnotation(JsonTypeName.class).value();
+    }
+    {{/discriminator}}
+}

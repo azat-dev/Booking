@@ -2,12 +2,12 @@ package com.azat4dev.booking.users.users_commands.api;
 
 
 import com.azat4dev.booking.shared.application.ControllerException;
+import com.azat4dev.booking.shared.domain.values.IdempotentOperationId;
 import com.azat4dev.booking.users.users_commands.application.commands.password.CompletePasswordReset;
 import com.azat4dev.booking.users.users_commands.application.commands.password.ResetPasswordByEmail;
 import com.azat4dev.booking.users.users_commands.application.handlers.password.CompletePasswordResetHandler;
 import com.azat4dev.booking.users.users_commands.application.handlers.password.ResetPasswordByEmailHandler;
 import com.azat4dev.booking.users.users_commands.domain.UserHelpers;
-import com.azat4dev.booking.users.users_commands.domain.core.values.IdempotentOperationId;
 import com.azat4dev.booking.users.users_commands.domain.core.values.password.reset.TokenForPasswordReset;
 import com.azat4dev.booking.users.users_commands.presentation.api.rest.authentication.resources.ResetPasswordApi;
 import com.azat4dev.booking.usersms.generated.server.model.CompleteResetPasswordRequestBody;

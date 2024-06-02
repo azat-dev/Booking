@@ -1,5 +1,6 @@
 package com.azat4dev.booking.users.common.presentation.security.services;
 
+import com.azat4dev.booking.shared.utils.SystemTimeProvider;
 import com.azat4dev.booking.shared.utils.TimeProvider;
 import com.azat4dev.booking.users.common.presentation.security.services.jwt.JwtDataDecoder;
 import com.azat4dev.booking.users.common.presentation.security.services.jwt.JwtDataEncoder;
@@ -22,10 +23,12 @@ import static org.mockito.Mockito.times;
 class JwtServiceTests {
 
     SUT createSUT() {
+
+        final var timeProvider = new SystemTimeProvider();
         final var dateTimeProvider = mock(TimeProvider.class);
 
         given(dateTimeProvider.currentTime())
-            .willReturn(LocalDateTime.now());
+            .willReturn(timeProvider.currentTime());
 
         final var encoder = mock(JwtDataEncoder.class);
         final var decoder = mock(JwtDataDecoder.class);

@@ -1,6 +1,6 @@
 package com.azat4dev.booking.users.users_commands.application.config.data;
 
-import com.azat4dev.booking.users.users_commands.domain.core.commands.CompleteEmailVerification;
+import com.azat4dev.booking.users.users_commands.application.commands.email.verification.CompleteEmailVerification;
 import com.azat4dev.booking.users.users_commands.domain.core.commands.SendVerificationEmail;
 import com.azat4dev.booking.users.users_commands.domain.core.events.*;
 import lombok.RequiredArgsConstructor;

@@ -2,6 +2,7 @@ package com.azat4dev.booking.users.users_commands.application.config.data;
 
 import com.azat4dev.booking.shared.data.DomainEventSerializer;
 import com.azat4dev.booking.shared.data.DomainEventSerializerImpl;
+import com.azat4dev.booking.users.users_commands.data.repositories.DomainEventsSerializerImpl;
 import com.azat4dev.booking.shared.data.dao.outbox.OutboxEventsDao;
 import com.azat4dev.booking.shared.data.dao.outbox.OutboxEventsDaoJdbc;
 import com.azat4dev.booking.shared.data.repositories.outbox.OutboxEventsRepository;
@@ -12,12 +13,12 @@ import com.azat4dev.booking.shared.utils.TimeProvider;
 import com.azat4dev.booking.users.common.presentation.security.services.jwt.JwtDataEncoder;
 import com.azat4dev.booking.users.users_commands.data.repositories.*;
 import com.azat4dev.booking.users.users_commands.data.repositories.dao.UsersDao;
-import com.azat4dev.booking.users.users_commands.data.repositories.dto.DomainEventDTO;
 import com.azat4dev.booking.users.users_commands.domain.handlers.password.reset.utils.ProvideResetPasswordToken;
 import com.azat4dev.booking.users.users_commands.domain.handlers.password.reset.utils.ProvideResetPasswordTokenImpl;
 import com.azat4dev.booking.users.users_commands.domain.interfaces.repositories.UnitOfWork;
 import com.azat4dev.booking.users.users_commands.domain.interfaces.repositories.UnitOfWorkFactory;
 import com.azat4dev.booking.users.users_commands.domain.interfaces.repositories.UsersRepository;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -56,11 +57,8 @@ public class DataConfig {
     }
 
     @Bean
-    DomainEventSerializer domainEventSerializer() {
-        return new DomainEventSerializerImpl(
-            DomainEventDTO::makeFrom,
-            DomainEventDTO.class
-        );
+    DomainEventSerializer domainEventSerializer(ObjectMapper objectMapper) {
+        return new DomainEventsSerializerImpl(objectMapper);
     }
 
     @Bean

@@ -26,6 +26,5 @@ public class Keys {
     // -------------------------------------------------------------------------
 
     public static final UniqueKey<ListingsRecord> LISTINGS_PKEY = Internal.createUniqueKey(Listings.LISTINGS, DSL.name("listings_pkey"), new TableField[] { Listings.LISTINGS.ID }, true);
-    public static final UniqueKey<ListingsRecord> LISTINGS_TITLE_KEY = Internal.createUniqueKey(Listings.LISTINGS, DSL.name("listings_title_key"), new TableField[] { Listings.LISTINGS.TITLE }, true);
     public static final UniqueKey<OutboxEventsRecord> OUTBOX_EVENTS_PKEY = Internal.createUniqueKey(OutboxEvents.OUTBOX_EVENTS, DSL.name("outbox_events_pkey"), new TableField[] { OutboxEvents.OUTBOX_EVENTS.EVENT_ID, OutboxEvents.OUTBOX_EVENTS.EVENT_TYPE }, true);
 }

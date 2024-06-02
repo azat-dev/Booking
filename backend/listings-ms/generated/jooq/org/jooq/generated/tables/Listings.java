@@ -7,9 +7,7 @@ package org.jooq.generated.tables;
 import jakarta.annotation.Nullable;
 
 import java.time.LocalDateTime;
-import java.util.Arrays;
 import java.util.Collection;
-import java.util.List;
 import java.util.UUID;
 
 import org.jooq.Condition;
@@ -183,11 +181,6 @@ public class Listings extends TableImpl<ListingsRecord> {
     @Override
     public UniqueKey<ListingsRecord> getPrimaryKey() {
         return Keys.LISTINGS_PKEY;
-    }
-
-    @Override
-    public List<UniqueKey<ListingsRecord>> getUniqueKeys() {
-        return Arrays.asList(Keys.LISTINGS_TITLE_KEY);
     }
 
     @Override

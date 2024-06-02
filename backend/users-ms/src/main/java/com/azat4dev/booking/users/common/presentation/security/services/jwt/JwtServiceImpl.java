@@ -1,7 +1,7 @@
 package com.azat4dev.booking.users.common.presentation.security.services.jwt;
 
-import com.azat4dev.booking.shared.utils.TimeProvider;
 import com.azat4dev.booking.shared.domain.values.user.UserId;
+import com.azat4dev.booking.shared.utils.TimeProvider;
 import lombok.RequiredArgsConstructor;
 
 import java.time.temporal.ChronoUnit;
