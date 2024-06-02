@@ -1,7 +1,8 @@
 package com.azat4dev.booking.shared.data.bus;
 
 import com.azat4dev.booking.shared.data.serializers.DomainEventSerializer;
-import com.azat4dev.booking.shared.domain.event.*;
+import com.azat4dev.booking.shared.domain.events.*;
+import com.azat4dev.booking.shared.domain.interfaces.bus.DomainEventsBus;
 import com.azat4dev.booking.shared.utils.TimeProvider;
 import lombok.RequiredArgsConstructor;
 import org.apache.kafka.clients.consumer.ConsumerRecord;

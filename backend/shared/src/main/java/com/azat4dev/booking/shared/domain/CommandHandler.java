@@ -1,7 +1,7 @@
 package com.azat4dev.booking.shared.domain;
 
-import com.azat4dev.booking.shared.domain.event.Command;
-import com.azat4dev.booking.shared.domain.event.EventId;
+import com.azat4dev.booking.shared.domain.events.Command;
+import com.azat4dev.booking.shared.domain.events.EventId;
 
 import java.time.LocalDateTime;
 

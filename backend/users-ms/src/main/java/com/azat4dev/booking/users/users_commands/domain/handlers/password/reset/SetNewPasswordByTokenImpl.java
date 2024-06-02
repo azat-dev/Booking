@@ -1,6 +1,6 @@
 package com.azat4dev.booking.users.users_commands.domain.handlers.password.reset;
 
-import com.azat4dev.booking.shared.domain.event.DomainEventsBus;
+import com.azat4dev.booking.shared.domain.interfaces.bus.DomainEventsBus;
 import com.azat4dev.booking.shared.domain.values.IdempotentOperationId;
 import com.azat4dev.booking.users.users_commands.domain.core.entities.User;
 import com.azat4dev.booking.users.users_commands.domain.core.events.FailedToCompleteResetPassword;

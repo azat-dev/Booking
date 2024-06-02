@@ -1,9 +1,9 @@
 package com.azat4dev.booking.common.domain;
 
 import com.azat4dev.booking.shared.domain.Policy;
-import com.azat4dev.booking.shared.domain.event.DomainEvent;
-import com.azat4dev.booking.shared.domain.event.DomainEventPayload;
-import com.azat4dev.booking.shared.domain.event.DomainEventsBus;
+import com.azat4dev.booking.shared.domain.events.DomainEvent;
+import com.azat4dev.booking.shared.domain.events.DomainEventPayload;
+import com.azat4dev.booking.shared.domain.interfaces.bus.DomainEventsBus;
 import jakarta.annotation.PostConstruct;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;

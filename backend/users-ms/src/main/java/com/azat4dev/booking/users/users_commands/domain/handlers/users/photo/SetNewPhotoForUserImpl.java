@@ -1,6 +1,6 @@
 package com.azat4dev.booking.users.users_commands.domain.handlers.users.photo;
 
-import com.azat4dev.booking.shared.domain.event.DomainEventsBus;
+import com.azat4dev.booking.shared.domain.interfaces.bus.DomainEventsBus;
 import com.azat4dev.booking.shared.domain.interfaces.files.MediaObject;
 import com.azat4dev.booking.shared.domain.interfaces.files.MediaObjectsBucket;
 import com.azat4dev.booking.shared.domain.values.IdempotentOperationId;

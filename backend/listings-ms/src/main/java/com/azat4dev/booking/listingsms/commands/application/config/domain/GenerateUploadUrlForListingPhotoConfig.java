@@ -4,7 +4,7 @@ import com.azat4dev.booking.listingsms.commands.domain.handers.GenerateObjectNam
 import com.azat4dev.booking.listingsms.commands.domain.handers.GenerateObjectNameForListingPhotoImpl;
 import com.azat4dev.booking.listingsms.commands.domain.handers.GenerateUrlForUploadListingPhoto;
 import com.azat4dev.booking.listingsms.commands.domain.handers.GenerateUrlForUploadListingPhotoImpl;
-import com.azat4dev.booking.shared.domain.event.DomainEventsBus;
+import com.azat4dev.booking.shared.domain.interfaces.bus.DomainEventsBus;
 import com.azat4dev.booking.shared.domain.interfaces.files.MediaObjectsBucket;
 import com.azat4dev.booking.shared.utils.TimeProvider;
 import org.springframework.beans.factory.annotation.Qualifier;

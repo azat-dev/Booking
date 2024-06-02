@@ -1,6 +1,6 @@
 package com.azat4dev.booking.users.users_commands.application.config.domain;
 
-import com.azat4dev.booking.shared.domain.event.DomainEventsBus;
+import com.azat4dev.booking.shared.domain.interfaces.bus.DomainEventsBus;
 import com.azat4dev.booking.shared.domain.interfaces.files.MediaObjectsBucket;
 import com.azat4dev.booking.shared.utils.TimeProvider;
 import com.azat4dev.booking.users.users_commands.domain.handlers.users.Users;

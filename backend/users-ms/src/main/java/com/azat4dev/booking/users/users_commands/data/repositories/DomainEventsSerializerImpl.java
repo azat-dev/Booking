@@ -2,9 +2,9 @@ package com.azat4dev.booking.users.users_commands.data.repositories;
 
 import com.azat4dev.booking.generated.events.dto.*;
 import com.azat4dev.booking.shared.data.serializers.DomainEventSerializer;
-import com.azat4dev.booking.shared.domain.event.DomainEvent;
-import com.azat4dev.booking.shared.domain.event.DomainEventPayload;
-import com.azat4dev.booking.shared.domain.event.EventId;
+import com.azat4dev.booking.shared.domain.events.DomainEvent;
+import com.azat4dev.booking.shared.domain.events.DomainEventPayload;
+import com.azat4dev.booking.shared.domain.events.EventId;
 import com.azat4dev.booking.shared.domain.values.IdempotentOperationId;
 import com.azat4dev.booking.shared.domain.values.files.*;
 import com.azat4dev.booking.shared.domain.values.user.UserId;

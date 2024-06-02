@@ -1,4 +1,4 @@
-package com.azat4dev.booking.shared.domain.event;
+package com.azat4dev.booking.shared.domain.events;
 
 import java.util.UUID;
 

@@ -2,7 +2,8 @@ package com.azat4dev.booking.users.users_commands.application.config.domain;
 
 import com.azat4dev.booking.common.domain.AutoConnectCommandHandlersToBus;
 import com.azat4dev.booking.shared.data.repositories.outbox.OutboxEventsRepository;
-import com.azat4dev.booking.shared.domain.event.*;
+import com.azat4dev.booking.shared.domain.events.*;
+import com.azat4dev.booking.shared.domain.interfaces.bus.DomainEventsBus;
 import com.azat4dev.booking.shared.domain.values.user.UserIdFactory;
 import com.azat4dev.booking.shared.domain.values.user.UserIdFactoryImpl;
 import com.azat4dev.booking.shared.utils.TimeProvider;

@@ -1,9 +1,9 @@
 package com.azat4dev.booking.users.users_commands.domain.producers;
 
 import com.azat4dev.booking.shared.data.repositories.outbox.OutboxEventsRepository;
-import com.azat4dev.booking.shared.domain.event.DomainEvent;
-import com.azat4dev.booking.shared.domain.event.DomainEventsBus;
-import com.azat4dev.booking.shared.domain.event.EventId;
+import com.azat4dev.booking.shared.domain.events.DomainEvent;
+import com.azat4dev.booking.shared.domain.interfaces.bus.DomainEventsBus;
+import com.azat4dev.booking.shared.domain.events.EventId;
 import lombok.RequiredArgsConstructor;
 
 import java.util.List;

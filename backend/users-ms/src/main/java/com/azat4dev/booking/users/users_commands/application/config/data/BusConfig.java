@@ -2,8 +2,8 @@ package com.azat4dev.booking.users.users_commands.application.config.data;
 
 import com.azat4dev.booking.shared.data.bus.KafkaDomainEventsBus;
 import com.azat4dev.booking.shared.data.serializers.DomainEventSerializer;
-import com.azat4dev.booking.shared.domain.event.DomainEventsBus;
-import com.azat4dev.booking.shared.domain.event.EventIdGenerator;
+import com.azat4dev.booking.shared.domain.interfaces.bus.DomainEventsBus;
+import com.azat4dev.booking.shared.domain.events.EventIdGenerator;
 import com.azat4dev.booking.shared.utils.TimeProvider;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;

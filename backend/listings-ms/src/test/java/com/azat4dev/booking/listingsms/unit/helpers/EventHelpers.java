@@ -1,9 +1,9 @@
 package com.azat4dev.booking.listingsms.unit.helpers;
 
-import com.azat4dev.booking.shared.domain.event.DomainEventsFactory;
-import com.azat4dev.booking.shared.domain.event.DomainEventsFactoryImpl;
-import com.azat4dev.booking.shared.domain.event.EventId;
-import com.azat4dev.booking.shared.domain.event.RandomEventIdGenerator;
+import com.azat4dev.booking.shared.domain.events.DomainEventsFactory;
+import com.azat4dev.booking.shared.domain.events.DomainEventsFactoryImpl;
+import com.azat4dev.booking.shared.domain.events.EventId;
+import com.azat4dev.booking.shared.domain.events.RandomEventIdGenerator;
 import com.azat4dev.booking.shared.utils.SystemTimeProvider;
 
 public class EventHelpers {

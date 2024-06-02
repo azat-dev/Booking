@@ -1,9 +1,9 @@
 package com.azat4dev.booking.users.users_commands.domain.policies;
 
-import com.azat4dev.booking.shared.domain.event.DomainEvent;
-import com.azat4dev.booking.shared.domain.event.DomainEventsBus;
-import com.azat4dev.booking.shared.domain.event.EventId;
-import com.azat4dev.booking.shared.domain.event.RandomEventIdGenerator;
+import com.azat4dev.booking.shared.domain.events.DomainEvent;
+import com.azat4dev.booking.shared.domain.interfaces.bus.DomainEventsBus;
+import com.azat4dev.booking.shared.domain.events.EventId;
+import com.azat4dev.booking.shared.domain.events.RandomEventIdGenerator;
 import com.azat4dev.booking.users.users_commands.domain.UserHelpers;
 import com.azat4dev.booking.users.users_commands.domain.core.commands.SendVerificationEmail;
 import com.azat4dev.booking.users.users_commands.domain.core.events.UserCreated;

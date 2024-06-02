@@ -5,10 +5,10 @@ import com.azat4dev.booking.listingsms.commands.domain.entities.ListingsCatalogI
 import com.azat4dev.booking.listingsms.commands.domain.interfaces.repositories.UnitOfWorkFactory;
 import com.azat4dev.booking.listingsms.commands.domain.values.MakeNewListingId;
 import com.azat4dev.booking.listingsms.commands.domain.values.MakeNewListingIdImpl;
-import com.azat4dev.booking.shared.domain.event.DomainEventsFactory;
-import com.azat4dev.booking.shared.domain.event.DomainEventsFactoryImpl;
-import com.azat4dev.booking.shared.domain.event.EventIdGenerator;
-import com.azat4dev.booking.shared.domain.event.RandomEventIdGenerator;
+import com.azat4dev.booking.shared.domain.events.DomainEventsFactory;
+import com.azat4dev.booking.shared.domain.events.DomainEventsFactoryImpl;
+import com.azat4dev.booking.shared.domain.events.EventIdGenerator;
+import com.azat4dev.booking.shared.domain.events.RandomEventIdGenerator;
 import com.azat4dev.booking.shared.utils.TimeProvider;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;

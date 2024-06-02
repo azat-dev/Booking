@@ -5,7 +5,7 @@ import com.azat4dev.booking.shared.data.dao.outbox.OutboxEventsDaoJdbc;
 import com.azat4dev.booking.shared.data.repositories.outbox.OutboxEventsRepository;
 import com.azat4dev.booking.shared.data.repositories.outbox.OutboxEventsRepositoryImpl;
 import com.azat4dev.booking.shared.data.serializers.DomainEventSerializer;
-import com.azat4dev.booking.shared.domain.event.DomainEventsFactory;
+import com.azat4dev.booking.shared.domain.events.DomainEventsFactory;
 import com.azat4dev.booking.shared.utils.SystemTimeProvider;
 import com.azat4dev.booking.shared.utils.TimeProvider;
 import com.azat4dev.booking.users.common.presentation.security.services.jwt.JwtDataEncoder;

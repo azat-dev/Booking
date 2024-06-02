@@ -1,8 +1,8 @@
 package com.azat4dev.booking.users.users_commands.domain.policies;
 
 import com.azat4dev.booking.shared.domain.Policy;
-import com.azat4dev.booking.shared.domain.event.DomainEvent;
-import com.azat4dev.booking.shared.domain.event.DomainEventsBus;
+import com.azat4dev.booking.shared.domain.events.DomainEvent;
+import com.azat4dev.booking.shared.domain.interfaces.bus.DomainEventsBus;
 import com.azat4dev.booking.users.users_commands.domain.core.commands.SendVerificationEmail;
 import com.azat4dev.booking.users.users_commands.domain.core.events.UserCreated;
 import com.azat4dev.booking.users.users_commands.domain.core.values.user.EmailVerificationStatus;

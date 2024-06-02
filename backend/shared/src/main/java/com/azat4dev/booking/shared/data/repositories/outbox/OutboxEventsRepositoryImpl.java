@@ -3,10 +3,10 @@ package com.azat4dev.booking.shared.data.repositories.outbox;
 import com.azat4dev.booking.shared.data.serializers.DomainEventSerializer;
 import com.azat4dev.booking.shared.data.dao.outbox.OutboxEventData;
 import com.azat4dev.booking.shared.data.dao.outbox.OutboxEventsDao;
-import com.azat4dev.booking.shared.domain.event.DomainEvent;
-import com.azat4dev.booking.shared.domain.event.DomainEventPayload;
-import com.azat4dev.booking.shared.domain.event.DomainEventsFactory;
-import com.azat4dev.booking.shared.domain.event.EventId;
+import com.azat4dev.booking.shared.domain.events.DomainEvent;
+import com.azat4dev.booking.shared.domain.events.DomainEventPayload;
+import com.azat4dev.booking.shared.domain.events.DomainEventsFactory;
+import com.azat4dev.booking.shared.domain.events.EventId;
 import lombok.AllArgsConstructor;
 
 import java.util.List;

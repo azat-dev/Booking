@@ -4,7 +4,7 @@ import com.azat4dev.booking.listingsms.commands.domain.events.FailedGenerateUrlF
 import com.azat4dev.booking.listingsms.commands.domain.events.GeneratedUrlForUploadListingPhoto;
 import com.azat4dev.booking.listingsms.commands.domain.values.ListingId;
 import com.azat4dev.booking.shared.application.ValidationException;
-import com.azat4dev.booking.shared.domain.event.DomainEventsBus;
+import com.azat4dev.booking.shared.domain.interfaces.bus.DomainEventsBus;
 import com.azat4dev.booking.shared.domain.interfaces.files.MediaObjectsBucket;
 import com.azat4dev.booking.shared.domain.values.IdempotentOperationId;
 import com.azat4dev.booking.shared.domain.values.files.PhotoFileExtension;

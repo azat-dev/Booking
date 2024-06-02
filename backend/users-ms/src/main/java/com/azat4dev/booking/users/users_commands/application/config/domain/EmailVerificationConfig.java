@@ -1,7 +1,7 @@
 package com.azat4dev.booking.users.users_commands.application.config.domain;
 
 import com.azat4dev.booking.common.domain.annotations.CommandHandlerBean;
-import com.azat4dev.booking.shared.domain.event.DomainEventsBus;
+import com.azat4dev.booking.shared.domain.interfaces.bus.DomainEventsBus;
 import com.azat4dev.booking.shared.utils.TimeProvider;
 import com.azat4dev.booking.users.common.presentation.security.services.jwt.JwtDataEncoder;
 import com.azat4dev.booking.users.users_commands.domain.core.values.email.EmailAddress;

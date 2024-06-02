@@ -10,9 +10,9 @@ import com.azat4dev.booking.listingsms.generated.events.dto.ListingsDomainEventD
 import com.azat4dev.booking.listingsms.generated.events.dto.ListingsDomainEventPayloadDTO;
 import com.azat4dev.booking.listingsms.generated.events.dto.NewListingAddedDTO;
 import com.azat4dev.booking.shared.data.serializers.DomainEventSerializer;
-import com.azat4dev.booking.shared.domain.event.DomainEvent;
-import com.azat4dev.booking.shared.domain.event.DomainEventPayload;
-import com.azat4dev.booking.shared.domain.event.EventId;
+import com.azat4dev.booking.shared.domain.events.DomainEvent;
+import com.azat4dev.booking.shared.domain.events.DomainEventPayload;
+import com.azat4dev.booking.shared.domain.events.EventId;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import lombok.AllArgsConstructor;
