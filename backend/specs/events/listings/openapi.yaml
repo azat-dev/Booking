@@ -74,6 +74,62 @@ components:
         title:
           type: string
 
+    GeneratedUrlForUploadListingPhoto:
+      type: object
+      required:
+        - userId
+        - listingId
+        - formData
+      properties:
+        operationId:
+          $ref: "../common/models/OperationId.yaml"
+        userId:
+          $ref: "#/components/schemas/UserId"
+        listingId:
+          $ref: "#/components/schemas/ListingId"
+        formData:
+          type: string
+
+    UploadFileFormData:
+      type: object
+      required:
+        - url
+        - bucketName
+        - objectName
+        - fields
+      properties:
+        url:
+          type: string
+          format: uri
+        bucketName:
+          type: string
+        objectName:
+          type: string
+        fields:
+          type: object
+          additionalProperties:
+            type: string
+
+    FailedGenerateUrlForUploadListingPhoto:
+      type: object
+      required:
+        - operationId
+        - userId
+        - listingId
+        - fileExtension
+        - fileSize
+      properties:
+        operationId:
+          $ref: "../common/models/OperationId.yaml"
+        userId:
+          $ref: "#/components/schemas/UserId"
+        listingId:
+          $ref: "#/components/schemas/ListingId"
+        fileExtension:
+          type: string
+        fileSize:
+          type: integer
+
     ListingId:
       type: string
       format: uuid
