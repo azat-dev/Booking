@@ -7,6 +7,7 @@ import com.azat4dev.booking.listingsms.generated.client.api.CommandsModification
 import com.azat4dev.booking.listingsms.generated.client.api.QueriesPrivateApi;
 import com.azat4dev.booking.listingsms.generated.client.base.ApiClient;
 import com.azat4dev.booking.listingsms.generated.client.model.AddListingRequestBody;
+import com.azat4dev.booking.listingsms.helpers.KafkaTests;
 import com.azat4dev.booking.listingsms.helpers.MinioTests;
 import com.azat4dev.booking.listingsms.helpers.PostgresTests;
 import com.azat4dev.booking.shared.domain.values.user.UserId;
@@ -29,7 +30,7 @@ import static org.junit.jupiter.api.Assertions.assertThrows;
 
 @ContextConfiguration(classes = {AccessTokenConfig.class})
 @SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
-class ListingE2ETests implements PostgresTests, MinioTests {
+class ListingE2ETests implements PostgresTests, MinioTests, KafkaTests {
 
     @MockBean(name = "listingsPhotoClient")
     MinioClient minioClient;

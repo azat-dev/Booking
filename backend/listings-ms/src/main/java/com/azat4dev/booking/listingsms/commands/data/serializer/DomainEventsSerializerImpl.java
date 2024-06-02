@@ -1,22 +1,29 @@
 package com.azat4dev.booking.listingsms.commands.data.serializer;
 
+import com.azat4dev.booking.listingsms.commands.domain.events.FailedGenerateUrlForUploadListingPhoto;
 import com.azat4dev.booking.listingsms.commands.domain.events.FailedToAddNewListing;
+import com.azat4dev.booking.listingsms.commands.domain.events.GeneratedUrlForUploadListingPhoto;
 import com.azat4dev.booking.listingsms.commands.domain.events.NewListingAdded;
 import com.azat4dev.booking.listingsms.commands.domain.values.ListingId;
 import com.azat4dev.booking.listingsms.commands.domain.values.ListingTitle;
 import com.azat4dev.booking.listingsms.commands.domain.values.OwnerId;
-import com.azat4dev.booking.listingsms.generated.events.dto.FailedToAddNewListingDTO;
-import com.azat4dev.booking.listingsms.generated.events.dto.ListingsDomainEventDTO;
-import com.azat4dev.booking.listingsms.generated.events.dto.ListingsDomainEventPayloadDTO;
-import com.azat4dev.booking.listingsms.generated.events.dto.NewListingAddedDTO;
+import com.azat4dev.booking.listingsms.generated.events.dto.*;
 import com.azat4dev.booking.shared.data.serializers.DomainEventSerializer;
 import com.azat4dev.booking.shared.domain.events.DomainEvent;
 import com.azat4dev.booking.shared.domain.events.DomainEventPayload;
 import com.azat4dev.booking.shared.domain.events.EventId;
+import com.azat4dev.booking.shared.domain.values.IdempotentOperationId;
+import com.azat4dev.booking.shared.domain.values.files.BucketName;
+import com.azat4dev.booking.shared.domain.values.files.MediaObjectName;
+import com.azat4dev.booking.shared.domain.values.files.PhotoFileExtension;
+import com.azat4dev.booking.shared.domain.values.files.UploadFileFormData;
+import com.azat4dev.booking.shared.domain.values.user.UserId;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import lombok.AllArgsConstructor;
 
+import java.net.MalformedURLException;
+import java.net.URISyntaxException;
 import java.time.Instant;
 import java.time.LocalDateTime;
 import java.time.ZoneOffset;
@@ -43,6 +50,19 @@ public final class DomainEventsSerializerImpl implements DomainEventSerializer {
         }
     }
 
+    private UploadFileFormDataDTO toDTO(UploadFileFormData formData) {
+        try {
+            return UploadFileFormDataDTO.builder()
+                .url(formData.url().toURI())
+                .bucketName(formData.bucketName().toString())
+                .objectName(formData.objectName().toString())
+                .fields(formData.formData())
+                .build();
+        } catch (URISyntaxException e) {
+            throw new RuntimeException(e);
+        }
+    }
+
     private ListingsDomainEventPayloadDTO toDTO(DomainEventPayload payload) {
 
         return switch (payload) {
@@ -58,7 +78,22 @@ public final class DomainEventsSerializerImpl implements DomainEventSerializer {
                 .title(p.title().getValue())
                 .build();
 
-            default -> throw new RuntimeException("Serialization. Unknown payload type: " + payload.getClass().getName());
+            case GeneratedUrlForUploadListingPhoto p -> GeneratedUrlForUploadListingPhotoDTO.builder()
+                .userId(p.userId().value())
+                .listingId(p.listingId().getValue())
+                .formData(toDTO(p.formData()))
+                .build();
+
+            case FailedGenerateUrlForUploadListingPhoto p -> FailedGenerateUrlForUploadListingPhotoDTO.builder()
+                .operationId(p.operationId().value())
+                .userId(p.userId().value())
+                .listingId(p.listingId().getValue())
+                .fileExtension(p.fileExtension().toString())
+                .fileSize(p.fileSize())
+                .build();
+
+            default ->
+                throw new RuntimeException("Serialization. Unknown payload type: " + payload.getClass().getName());
         };
     }
 
@@ -86,6 +121,19 @@ public final class DomainEventsSerializerImpl implements DomainEventSerializer {
         }
     }
 
+    private UploadFileFormData toDomain(UploadFileFormDataDTO formData) {
+        try {
+            return new UploadFileFormData(
+                formData.getUrl().toURL(),
+                BucketName.makeWithoutChecks(formData.getBucketName()),
+                MediaObjectName.dangerouslyMake(formData.getObjectName()),
+                formData.getFields()
+            );
+        } catch (MalformedURLException e) {
+            throw new RuntimeException(e);
+        }
+    }
+
     private DomainEventPayload toDomain(ListingsDomainEventPayloadDTO payload) {
 
         return switch (payload) {
@@ -101,7 +149,22 @@ public final class DomainEventsSerializerImpl implements DomainEventSerializer {
                 ListingTitle.dangerouslyMakeFrom(p.getTitle())
             );
 
-            default -> throw new RuntimeException("Deserialization. Unknown payload type: " + payload.getClass().getName());
+            case GeneratedUrlForUploadListingPhotoDTO p -> new GeneratedUrlForUploadListingPhoto(
+                UserId.dangerouslyMakeFrom(p.getUserId().toString()),
+                ListingId.dangerouslyMakeFrom(p.getListingId().toString()),
+                toDomain(p.getFormData())
+            );
+
+            case FailedGenerateUrlForUploadListingPhotoDTO p -> new FailedGenerateUrlForUploadListingPhoto(
+                IdempotentOperationId.dangerouslyMakeFrom(p.getOperationId()),
+                UserId.dangerouslyMakeFrom(p.getUserId().toString()),
+                ListingId.dangerouslyMakeFrom(p.getListingId().toString()),
+                PhotoFileExtension.dangerouslyMakeFrom(p.getFileExtension()),
+                p.getFileSize()
+            );
+
+            default ->
+                throw new RuntimeException("Deserialization. Unknown payload type: " + payload.getClass().getName());
         };
     }
 }

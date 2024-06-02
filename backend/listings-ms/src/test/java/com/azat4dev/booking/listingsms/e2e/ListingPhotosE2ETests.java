@@ -8,6 +8,7 @@ import com.azat4dev.booking.listingsms.generated.client.api.CommandsModification
 import com.azat4dev.booking.listingsms.generated.client.base.ApiClient;
 import com.azat4dev.booking.listingsms.generated.client.model.AddListingRequestBody;
 import com.azat4dev.booking.listingsms.generated.client.model.GenerateUploadListingPhotoUrlRequestBody;
+import com.azat4dev.booking.listingsms.helpers.KafkaTests;
 import com.azat4dev.booking.listingsms.helpers.MinioTests;
 import com.azat4dev.booking.listingsms.helpers.PostgresTests;
 import com.azat4dev.booking.shared.domain.values.user.UserId;
@@ -27,7 +28,7 @@ import static org.assertj.core.api.Assertions.assertThat;
 
 @ContextConfiguration(classes = {AccessTokenConfig.class})
 @SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
-class ListingPhotosE2ETests implements PostgresTests, MinioTests {
+class ListingPhotosE2ETests implements PostgresTests, MinioTests, KafkaTests {
 
     @MockBean(name = "listingsPhotoClient")
     MinioClient minioClient;
@@ -43,7 +44,7 @@ class ListingPhotosE2ETests implements PostgresTests, MinioTests {
     }
 
     @Test
-    void test_addListing() {
+    void test_addGenerateUploadUrl() {
         // Given
         final var userId = USER1;
         final var listingId = givenExistingListing(userId);

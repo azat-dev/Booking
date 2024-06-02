@@ -44,6 +44,9 @@ components:
         - $ref: "#/components/schemas/NewListingAdded"
         - $ref: "#/components/schemas/FailedToAddNewListing"
 
+        - $ref: "#/components/schemas/GeneratedUrlForUploadListingPhoto"
+        - $ref: "#/components/schemas/FailedGenerateUrlForUploadListingPhoto"
+
     NewListingAdded:
       type: object
       required:
@@ -88,7 +91,7 @@ components:
         listingId:
           $ref: "#/components/schemas/ListingId"
         formData:
-          type: string
+          $ref: "#/components/schemas/UploadFileFormData"
 
     UploadFileFormData:
       type: object
