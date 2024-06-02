@@ -14,4 +14,3 @@ public record FailedGenerateUrlForUploadListingPhoto(
     int fileSize
 ) implements DomainEventPayload {
 }
-£

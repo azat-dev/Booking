@@ -26,7 +26,7 @@ plugins {
     id("org.jetbrains.kotlin.jvm") version "2.0.0"
     id("org.springframework.boot") version "3.2.5"
     id("io.spring.dependency-management") version "1.1.4"
-    id("org.openapi.generator") version "6.6.0"
+    id("org.openapi.generator") version "7.6.0"
 }
 
 group = "com.azat4dev.booking"
@@ -41,57 +41,74 @@ repositories {
 }
 
 dependencies {
+
+    implementation(project(":shared"))
+    implementation(project(":apiclient"))
+
+    // Spring
     implementation("org.springframework.boot:spring-boot-starter-oauth2-resource-server")
     implementation("org.springframework.boot:spring-boot-starter-web")
     implementation("org.springframework.kafka:spring-kafka")
     implementation("org.springframework.boot:spring-boot-starter-security")
     implementation("org.springframework.boot:spring-boot-starter-jdbc")
-    implementation("io.minio:minio:8.5.10")
-
-    testImplementation("io.minio:minio:8.5.10")
-    compileOnly("org.projectlombok:lombok")
-    annotationProcessor("org.projectlombok:lombok")
-    runtimeOnly("org.postgresql:postgresql")
-    annotationProcessor("org.projectlombok:lombok")
     testImplementation("org.springframework.boot:spring-boot-starter-test")
-    testImplementation("org.springframework.kafka:spring-kafka-test")
-    testRuntimeOnly("org.junit.platform:junit-platform-launcher")
-    implementation("org.springframework.boot:spring-boot-starter-actuator")
     testImplementation("org.springframework.boot:spring-boot-starter-actuator")
-
     testImplementation("org.springframework.security:spring-security-test")
+
+    // Minio
+    implementation("io.minio:minio:8.5.10")
+    testImplementation("io.minio:minio:8.5.10")
+    testImplementation("org.testcontainers:minio:1.19.8")
+
+    // Lombok
+    compileOnly("org.projectlombok:lombok:1.18.30")
+    annotationProcessor("org.projectlombok:lombok:1.18.30")
     testCompileOnly("org.projectlombok:lombok")
     testAnnotationProcessor("org.projectlombok:lombok")
+
+    // Database
+    runtimeOnly("org.postgresql:postgresql")
+    testRuntimeOnly("org.junit.platform:junit-platform-launcher")
+    implementation("org.springframework.boot:spring-boot-starter-actuator")
+    testImplementation("org.testcontainers:postgresql:1.19.8")
+
+
+    // Kafka
+    testImplementation("org.springframework.kafka:spring-kafka-test")
     testImplementation("org.junit.jupiter:junit-jupiter:5.8.1")
     testImplementation("org.testcontainers:testcontainers:1.19.8")
     testImplementation("org.testcontainers:junit-jupiter:1.19.8")
-    testImplementation("org.testcontainers:postgresql:1.19.8")
-    testImplementation("org.testcontainers:minio:1.19.8")
 
-    implementation(project(":shared"))
-    implementation(project(":apiclient"))
-
-    implementation("org.openapitools:jackson-databind-nullable:0.2.6")
     implementation("org.springframework.data:spring-data-commons")
     implementation("org.springframework.boot:spring-boot-starter-validation")
     implementation("com.fasterxml.jackson.dataformat:jackson-dataformat-yaml")
     implementation("com.fasterxml.jackson.datatype:jackson-datatype-jsr310")
     implementation("com.fasterxml.jackson.core:jackson-databind")
+
+    // OpenAPI Generator
     implementation("io.swagger.core.v3:swagger-annotations:2.2.21")
+    implementation("org.openapitools:jackson-databind-nullable:0.2.6")
     implementation("io.swagger.core.v3:swagger-models:2.2.21")
-
-    testImplementation("org.springframework.cloud:spring-cloud-starter-openfeign:4.1.1")
-
-    testImplementation("com.github.javafaker:javafaker:1.0.2") {
-        exclude(group = "org.yaml", module = "snakeyaml")
-    }
 
     // JOOQ Dependencies
     implementation("org.jooq:jooq:3.19.9")
     implementation("org.jooq:jooq-meta:3.19.9")
     implementation("org.jooq:jooq-codegen:3.19.9")
+
+    testImplementation("org.springframework.cloud:spring-cloud-starter-openfeign:4.1.1")
+
+    // Java Faker
+    testImplementation("com.github.javafaker:javafaker:1.0.2") {
+        exclude(group = "org.yaml", module = "snakeyaml")
+    }
 }
 
+if (hasProperty("buildScan")) {
+    extensions.findByName("buildScan")?.withGroovyBuilder {
+        setProperty("termsOfServiceUrl", "https://gradle.com/terms-of-service")
+        setProperty("termsOfServiceAgree", "yes")
+    }
+}
 tasks.named<Test>("test") {
     useJUnitPlatform()
 }
@@ -99,7 +116,12 @@ tasks.named<Test>("test") {
 sourceSets {
     named("main") {
         java {
-            srcDirs("src/main/java", "$rootDir/generated/server/src/main/java", "$rootDir/generated/jooq")
+            srcDirs(
+                "src/main/java",
+                "$buildDir/generated/server/src/main/java",
+                "$buildDir/generated/events/src/main/java",
+                "$buildDir/generated/jooq"
+            )
         }
     }
 }
@@ -107,11 +129,11 @@ sourceSets {
 
 // Generate JOOQ classes
 
-tasks.register<GenerateTask>("buildServerApi") {
+tasks.register<GenerateTask>("generateServerApi") {
     generatorName.set("spring")
     library.set("spring-boot")
     inputSpec.set("$rootDir/../specs/listings/openapi.yaml")
-    outputDir.set("$rootDir/generated/server")
+    outputDir.set("$buildDir/generated/server")
     invokerPackage.set("com.azat4dev.booking.listingsms.generated.server.base")
     apiPackage.set("com.azat4dev.booking.listingsms.generated.server.api")
     modelPackage.set("com.azat4dev.booking.listingsms.generated.server.model")
@@ -136,11 +158,11 @@ tasks.register<GenerateTask>("buildServerApi") {
     )
 }
 
-tasks.register<GenerateTask>("buildApiClient") {
+tasks.register<GenerateTask>("generateApiClient") {
     generatorName.set("java")
     library.set("feign")
     inputSpec.set("$rootDir/../specs/listings/openapi.yaml")
-    outputDir.set("$rootDir/generated/client")
+    outputDir.set("$buildDir/generated/client")
     invokerPackage.set("com.azat4dev.booking.listingsms.generated.client.base")
     apiPackage.set("com.azat4dev.booking.listingsms.generated.client.api")
     modelPackage.set("com.azat4dev.booking.listingsms.generated.client.model")
@@ -156,14 +178,48 @@ tasks.register<GenerateTask>("buildApiClient") {
     )
 }
 
-tasks.register("codegen") {
-    dependsOn("buildApiClient", "buildServerApi")
+tasks.register<GenerateTask>("generateDomainEventsDTO") {
+    generatorName.set("spring")
+    library.set("spring-boot")
+    inputSpec.set("$rootDir/../specs/events/listings/openapi.yaml")
+    outputDir.set("$buildDir/generated/events")
+    modelPackage.set("com.azat4dev.booking.listingsms.generated.events.dto")
+    ignoreFileOverride.set(".openapi-generator-ignore")
+    templateDir.set("$rootDir/../specs/custom_templates/spring")
+    modelNameSuffix.set("DTO")
+    configOptions.set(
+        mapOf(
+            "useOptional" to "true",
+            "openApiNullable" to "false",
+            "interfaceOnly" to "true",
+
+            "additionalModelTypeAnnotations" to "@lombok.Builder(toBuilder = true)\n@lombok.AllArgsConstructor\n@com.fasterxml.jackson.annotation.JsonIgnoreProperties(ignoreUnknown=true)",
+            "generatedConstructorWithRequiredArgs" to "false",
+            "generateSupportingFiles" to "false",
+            "useTags" to "true",
+            "generateSupportingFiles" to "false",
+
+            "delegatePattern" to "true",
+
+            "dateLibrary" to "java8-localdatetime",
+            "generateConstructorWithAllArgs" to "false",
+
+            "serializationLibrary" to "jackson",
+            "generateBuilders" to "false",
+            "useSpringController" to "false",
+            "useJakartaEe" to "true"
+        )
+    )
+}
+
+tasks.register("generateCodeFromOpenApiSpecs") {
+    dependsOn("generateApiClient", "generateServerApi", "generateDomainEventsDTO")
 }
 
 // JOOQ Codegen
 
 tasks.withType<KotlinCompile> {
-    dependsOn("jooqCodegen")
+    dependsOn("generateJooqClasses")
     compilerOptions {
         freeCompilerArgs.add("-Xjsr305=strict")
         jvmTarget.set(JvmTarget.JVM_21)
@@ -174,7 +230,7 @@ kotlin {
     jvmToolchain(21)
 }
 
-tasks.register("jooqCodegen") {
+tasks.register("generateJooqClasses") {
     doLast {
         val schemaPath = "$rootDir/src/main/resources/db/schema.sql"
 
@@ -199,7 +255,7 @@ tasks.register("jooqCodegen") {
                     .withTarget(
                         Target()
                             .withPackageName("org.jooq.generated")
-                            .withDirectory("${rootDir}/generated/jooq")
+                            .withDirectory("${buildDir}/generated/jooq")
                     )
                     .withGenerate(
                         Generate()

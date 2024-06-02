@@ -1,0 +1,86 @@
+openapi: 3.0.3
+info:
+  title: Listings Microservice Domain Events API
+  version: 1.0.0
+paths:
+  /do_nothing:
+    get:
+      summary: Does nothing
+      responses:
+        '200':
+          description: OK
+          content:
+            text/plain:
+              schema:
+                type: string
+components:
+  schemas:
+    ListingsDomainEvent:
+      type: object
+      required:
+        - domain
+        - eventId
+        - occurredAt
+        - eventType
+        - payload
+      properties:
+        domain:
+          type: string
+          enum:
+            - LISTINGS
+          default: LISTINGS
+        eventId:
+          type: string
+        occurredAt:
+          type: integer
+          format: int64
+        payload:
+          $ref: '#/components/schemas/ListingsDomainEventPayload'
+
+    ListingsDomainEventPayload:
+      discriminator:
+        propertyName: type
+      oneOf:
+        - $ref: "#/components/schemas/NewListingAdded"
+        - $ref: "#/components/schemas/FailedToAddNewListing"
+
+    NewListingAdded:
+      type: object
+      required:
+        - ownerId
+        - listingId
+        - title
+      properties:
+        operationId:
+          $ref: "../common/models/OperationId.yaml"
+        ownerId:
+          $ref: "#/components/schemas/OwnerId"
+        listingId:
+          $ref: "#/components/schemas/ListingId"
+        title:
+          type: string
+
+    FailedToAddNewListing:
+      type: object
+      required:
+        - ownerId
+        - listingId
+        - title
+      properties:
+        ownerId:
+          $ref: "#/components/schemas/OwnerId"
+        listingId:
+          $ref: "#/components/schemas/ListingId"
+        title:
+          type: string
+
+    ListingId:
+      type: string
+      format: uuid
+
+    UserId:
+      type: string
+      format: uuid
+
+    OwnerId:
+      $ref: "#/components/schemas/UserId"

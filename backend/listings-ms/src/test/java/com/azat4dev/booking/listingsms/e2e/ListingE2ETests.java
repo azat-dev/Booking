@@ -49,7 +49,7 @@ class ListingE2ETests implements PostgresTests, MinioTests {
     }
 
     @Test
-    void test_addListing_getListing() throws UserId.WrongFormatException {
+    void test_addListing_getListing() {
         // Given
         final var userId = USER1;
 
@@ -93,7 +93,7 @@ class ListingE2ETests implements PostgresTests, MinioTests {
     }
 
     @Test
-    void test_getOwnListings() throws UserId.WrongFormatException {
+    void test_getOwnListings() {
 
         // Given
         final var currentUserListing1 = givenExistingListing(USER1);

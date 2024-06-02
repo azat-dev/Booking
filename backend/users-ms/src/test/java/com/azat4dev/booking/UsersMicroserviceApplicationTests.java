@@ -39,7 +39,6 @@ class UsersMicroserviceApplicationTests implements KafkaTests, PostgresTests {
     @LocalServerPort
     private int port;
 
-
     @BeforeAll
     static void beforeAll() {
         postgres.start();

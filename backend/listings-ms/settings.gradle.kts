@@ -15,4 +15,4 @@ include(":shared")
 project(":shared").projectDir = File("../shared")
 
 include(":apiclient")
-project(":apiclient").projectDir = File("./generated/client")
+project(":apiclient").projectDir = File("./build/generated/client")

@@ -22,7 +22,7 @@ public class GenerateUploadUrlForListingPhotoConfig {
 
     @Bean
     public GenerateUrlForUploadListingPhoto generateUrlForUploadListingPhoto(
-        @Value("${app.objects_storage.bucket.listing-photo.upload-url.expires-in-seconds}")
+        @Value("${app.objects_storage.bucket.listings-photo.upload-url.expires-in-seconds}")
         int expireInSeconds,
         @Qualifier("listingsPhotoBucket")
         MediaObjectsBucket userPhotoBucket,

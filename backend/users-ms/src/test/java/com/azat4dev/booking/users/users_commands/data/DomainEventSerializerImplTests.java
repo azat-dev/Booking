@@ -1,6 +1,6 @@
 package com.azat4dev.booking.users.users_commands.data;
 
-import com.azat4dev.booking.shared.data.DomainEventSerializer;
+import com.azat4dev.booking.shared.data.serializers.DomainEventSerializer;
 import com.azat4dev.booking.shared.domain.values.IdempotentOperationId;
 import com.azat4dev.booking.shared.domain.values.files.*;
 import com.azat4dev.booking.users.users_commands.data.repositories.DomainEventsSerializerImpl;
@@ -125,6 +125,13 @@ public class DomainEventSerializerImplTests {
                         BucketName.checkAndMake("bucketName"),
                         MediaObjectName.checkAndMakeFrom("objectName")
                     )
+                )
+            ),
+
+            eventsFactory.issue(
+                new SentEmailForPasswordReset(
+                    anyValidUserId(),
+                    anyValidEmail()
                 )
             )
         );

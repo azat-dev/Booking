@@ -8,7 +8,6 @@ import com.azat4dev.booking.users.common.presentation.security.services.jwt.JwtS
 import com.azat4dev.booking.users.common.presentation.security.services.jwt.JwtServiceImpl;
 import org.junit.jupiter.api.Test;
 
-import java.time.LocalDateTime;
 import java.util.Map;
 
 import static com.azat4dev.booking.users.users_commands.domain.UserHelpers.anyValidUserId;

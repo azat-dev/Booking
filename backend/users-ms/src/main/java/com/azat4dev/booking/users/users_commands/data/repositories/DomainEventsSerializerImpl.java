@@ -1,7 +1,7 @@
 package com.azat4dev.booking.users.users_commands.data.repositories;
 
 import com.azat4dev.booking.generated.events.dto.*;
-import com.azat4dev.booking.shared.data.DomainEventSerializer;
+import com.azat4dev.booking.shared.data.serializers.DomainEventSerializer;
 import com.azat4dev.booking.shared.domain.event.DomainEvent;
 import com.azat4dev.booking.shared.domain.event.DomainEventPayload;
 import com.azat4dev.booking.shared.domain.event.EventId;
@@ -189,6 +189,13 @@ public final class DomainEventsSerializerImpl implements DomainEventSerializer {
             );
         }
 
+        if (dto instanceof SentEmailForPasswordResetDTO inst) {
+            return new SentEmailForPasswordReset(
+                UserId.dangerouslyMakeFrom(inst.getUserId()),
+                EmailAddress.dangerMakeWithoutChecks(inst.getEmail())
+            );
+        }
+
         throw new RuntimeException("Deserialization. Unknown event type: " + dto);
     }
 
@@ -284,9 +291,13 @@ public final class DomainEventsSerializerImpl implements DomainEventSerializer {
                 .uploadedFileData(toDTO(inst.uploadedFileData()))
                 .build();
 
+            case SentEmailForPasswordReset inst -> SentEmailForPasswordResetDTO.builder()
+                .userId(inst.userId().toString())
+                .email(inst.email().getValue())
+                .build();
+
             default -> throw new RuntimeException("Serialization. Unknown event type: " + payload);
         };
-
     }
 
     private UploadedFileDataDTO toDTO(UploadedFileData dm) {

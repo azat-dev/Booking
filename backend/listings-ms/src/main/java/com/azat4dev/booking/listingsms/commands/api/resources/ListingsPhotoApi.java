@@ -48,7 +48,7 @@ public final class ListingsPhotoApi implements CommandsListingsPhotoApiDelegate 
                     .bucketName(result.formData().bucketName().getValue())
                     .objectName(result.formData().objectName().getValue())
                     .build(),
-                result.formData().value()
+                result.formData().formData()
             ));
 
         } catch (GetUrlForUploadListingPhotoHandler.Exception.FailedGenerate e) {

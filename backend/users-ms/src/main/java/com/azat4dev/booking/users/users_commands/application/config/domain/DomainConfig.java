@@ -1,13 +1,11 @@
 package com.azat4dev.booking.users.users_commands.application.config.domain;
 
 import com.azat4dev.booking.common.domain.AutoConnectCommandHandlersToBus;
-import com.azat4dev.booking.shared.data.DomainEventSerializer;
 import com.azat4dev.booking.shared.data.repositories.outbox.OutboxEventsRepository;
 import com.azat4dev.booking.shared.domain.event.*;
 import com.azat4dev.booking.shared.domain.values.user.UserIdFactory;
 import com.azat4dev.booking.shared.domain.values.user.UserIdFactoryImpl;
 import com.azat4dev.booking.shared.utils.TimeProvider;
-import com.azat4dev.booking.users.users_commands.data.KafkaDomainEventsBus;
 import com.azat4dev.booking.users.users_commands.domain.handlers.users.Users;
 import com.azat4dev.booking.users.users_commands.domain.handlers.users.UsersImpl;
 import com.azat4dev.booking.users.users_commands.domain.interfaces.repositories.UnitOfWorkFactory;
@@ -17,10 +15,6 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
-import org.springframework.kafka.core.KafkaTemplate;
-import org.springframework.kafka.listener.ConcurrentMessageListenerContainer;
-
-import java.util.function.Function;
 
 
 @AutoConnectCommandHandlersToBus
@@ -57,23 +51,6 @@ public class DomainConfig {
             timeProvider,
             outboxEventsPublisher::publishEvents,
             unitOfWorkFactory
-        );
-    }
-
-    @Bean
-    public DomainEventsBus domainEventsBus(
-        KafkaTemplate<String, String> kafkaTemplate,
-        DomainEventSerializer domainEventSerializer,
-        Function<String, ConcurrentMessageListenerContainer<String, String>> containerFactory,
-        TimeProvider timeProvider,
-        EventIdGenerator eventIdGenerator
-    ) {
-        return new KafkaDomainEventsBus(
-            kafkaTemplate,
-            domainEventSerializer,
-            containerFactory,
-            timeProvider,
-            eventIdGenerator
         );
     }
 

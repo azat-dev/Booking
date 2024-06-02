@@ -53,6 +53,11 @@ dependencies {
     implementation 'org.postgresql:postgresql'
     testImplementation 'org.postgresql:postgresql'
 
+    // OpenAPI
+    implementation 'org.openapitools:jackson-databind-nullable:0.2.6'
+    implementation 'io.swagger.core.v3:swagger-annotations:2.2.21'
+    implementation 'io.swagger.core.v3:swagger-models:2.2.21'
+
     implementation 'com.sun.mail:jakarta.mail:2.0.1'
 
     implementation 'commons-validator:commons-validator:1.8.0'
@@ -76,14 +81,12 @@ dependencies {
     testImplementation 'org.testcontainers:postgresql'
     testImplementation 'org.jsoup:jsoup:1.14.3'
 
-    implementation 'org.openapitools:jackson-databind-nullable:0.2.6'
     implementation 'org.springframework.data:spring-data-commons'
     implementation 'org.springframework.boot:spring-boot-starter-validation'
     implementation 'com.fasterxml.jackson.dataformat:jackson-dataformat-yaml'
     implementation 'com.fasterxml.jackson.datatype:jackson-datatype-jsr310'
     implementation 'com.fasterxml.jackson.core:jackson-databind'
-    implementation 'io.swagger.core.v3:swagger-annotations:2.2.21'
-    implementation 'io.swagger.core.v3:swagger-models:2.2.21'
+
 }
 
 tasks.named('test') {
@@ -160,7 +163,6 @@ task generateDomainEventsDTO(type: GenerateTask) {
     modelPackage.set("com.azat4dev.booking.generated.events.dto")
     ignoreFileOverride.set(".openapi-generator-ignore")
     templateDir.set("$rootDir/../specs/custom_templates/spring")
-
     modelNameSuffix.set("DTO")
     configOptions.set([
             useOptional: "true",
@@ -173,10 +175,10 @@ task generateDomainEventsDTO(type: GenerateTask) {
 
             dateLibrary: "java8-localdatetime",
             generateConstructorWithAllArgs: "false",
+
             serializationLibrary: "jackson",
             generateBuilders: "false",
             useSpringController: "false",
-            generateApis: "false",
             useJakartaEe: "true"
     ])
 }

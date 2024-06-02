@@ -1,6 +1,6 @@
 package com.azat4dev.booking.shared.data.repositories.outbox;
 
-import com.azat4dev.booking.shared.data.DomainEventSerializer;
+import com.azat4dev.booking.shared.data.serializers.DomainEventSerializer;
 import com.azat4dev.booking.shared.data.dao.outbox.OutboxEventData;
 import com.azat4dev.booking.shared.data.dao.outbox.OutboxEventsDao;
 import com.azat4dev.booking.shared.domain.event.DomainEvent;

@@ -1,8 +1,7 @@
-package com.azat4dev.booking.users.users_commands.application.config.data;
+package com.azat4dev.booking.listingsms.config.data;
 
-import com.azat4dev.booking.users.users_commands.application.commands.email.verification.CompleteEmailVerification;
-import com.azat4dev.booking.users.users_commands.domain.core.commands.SendVerificationEmail;
-import com.azat4dev.booking.users.users_commands.domain.core.events.*;
+import com.azat4dev.booking.listingsms.commands.domain.events.FailedToAddNewListing;
+import com.azat4dev.booking.listingsms.commands.domain.events.NewListingAdded;
 import lombok.RequiredArgsConstructor;
 import org.apache.kafka.clients.admin.NewTopic;
 import org.apache.kafka.clients.producer.ProducerConfig;
@@ -54,20 +53,8 @@ public class KafkaConfig {
     KafkaAdmin.NewTopics newTopicList() {
 
         final List<Class<?>> events = List.of(
-            UserCreated.class,
-
-            SendVerificationEmail.class,
-            VerificationEmailSent.class,
-            FailedToSendVerificationEmail.class,
-            UserVerifiedEmail.class,
-            CompleteEmailVerification.class,
-
-            SentEmailForPasswordReset.class,
-            UserDidResetPassword.class,
-            FailedToCompleteResetPassword.class,
-
-            UpdatedUserPhoto.class,
-            FailedUpdateUserPhoto.class
+            NewListingAdded.class,
+            FailedToAddNewListing.class
         );
 
         final var topics = events.stream().map(

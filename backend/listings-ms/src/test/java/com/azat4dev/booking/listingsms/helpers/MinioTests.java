@@ -7,8 +7,6 @@ import org.testcontainers.containers.wait.strategy.ShellStrategy;
 import org.testcontainers.junit.jupiter.Container;
 import org.testcontainers.junit.jupiter.Testcontainers;
 
-import java.io.IOException;
-
 @Testcontainers
 public interface MinioTests {
 

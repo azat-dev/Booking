@@ -5,7 +5,6 @@ import com.azat4dev.booking.listingsms.e2e.helpers.ApiHelpers;
 import com.azat4dev.booking.listingsms.e2e.helpers.GenerateAccessToken;
 import com.azat4dev.booking.listingsms.generated.client.api.CommandsListingsPhotoApi;
 import com.azat4dev.booking.listingsms.generated.client.api.CommandsModificationsApi;
-import com.azat4dev.booking.listingsms.generated.client.api.QueriesPrivateApi;
 import com.azat4dev.booking.listingsms.generated.client.base.ApiClient;
 import com.azat4dev.booking.listingsms.generated.client.model.AddListingRequestBody;
 import com.azat4dev.booking.listingsms.generated.client.model.GenerateUploadListingPhotoUrlRequestBody;
@@ -13,7 +12,6 @@ import com.azat4dev.booking.listingsms.helpers.MinioTests;
 import com.azat4dev.booking.listingsms.helpers.PostgresTests;
 import com.azat4dev.booking.shared.domain.values.user.UserId;
 import com.github.javafaker.Faker;
-import feign.FeignException;
 import io.minio.MinioClient;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -26,7 +24,6 @@ import java.util.UUID;
 
 import static com.azat4dev.booking.listingsms.e2e.helpers.UsersHelpers.USER1;
 import static org.assertj.core.api.Assertions.assertThat;
-import static org.junit.jupiter.api.Assertions.assertThrows;
 
 @ContextConfiguration(classes = {AccessTokenConfig.class})
 @SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
@@ -46,7 +43,7 @@ class ListingPhotosE2ETests implements PostgresTests, MinioTests {
     }
 
     @Test
-    void test_addListing() throws UserId.WrongFormatException {
+    void test_addListing() {
         // Given
         final var userId = USER1;
         final var listingId = givenExistingListing(userId);
