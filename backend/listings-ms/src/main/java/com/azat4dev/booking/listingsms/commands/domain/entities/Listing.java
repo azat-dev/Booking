@@ -13,6 +13,8 @@ import lombok.EqualsAndHashCode;
 import lombok.Getter;
 
 import java.time.LocalDateTime;
+import java.util.Collections;
+import java.util.LinkedList;
 import java.util.List;
 import java.util.Optional;
 
@@ -192,7 +194,10 @@ public class Listing {
             throw new Exception.MaxPhotosReached();
         }
 
-        this.photos.add(photo);
+        final var newPhotos = new LinkedList<>(this.photos);
+        newPhotos.add(photo);
+
+        this.photos = Collections.unmodifiableList(newPhotos);
     }
 
     // Exceptions

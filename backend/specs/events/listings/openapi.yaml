@@ -133,6 +133,31 @@ components:
         fileSize:
           type: integer
 
+    AddedNewPhotoToListing:
+      type: object
+      required:
+        - listingId
+        - photo
+      properties:
+        listingId:
+          $ref: "#/components/schemas/ListingId"
+        photo:
+          $ref: "#/components/schemas/ListingPhoto"
+
+    ListingPhoto:
+      type: object
+      required:
+        - id
+        - bucketName
+        - objectName
+      properties:
+        id:
+          type: string
+        bucketName:
+          type: string
+        objectName:
+          type: string
+
     ListingId:
       type: string
       format: uuid

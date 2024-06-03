@@ -58,6 +58,8 @@ public final class AddNewPhotoToListingHandlerImpl implements AddNewPhotoToListi
             throw ValidationException.withPath("uploadedFileData.objectName", e);
         } catch (BucketName.Exception e) {
             throw ValidationException.withPath("uploadedFileData.bucketName", e);
+        } catch (ListingsCatalog.Exception.ListingNotFound e) {
+            throw new Exception.ListingNotFound(command.listingId());
         }
     }
 }

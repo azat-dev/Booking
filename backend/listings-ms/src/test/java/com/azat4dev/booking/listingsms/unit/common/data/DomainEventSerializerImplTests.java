@@ -1,10 +1,8 @@
 package com.azat4dev.booking.listingsms.unit.common.data;
 
 import com.azat4dev.booking.listingsms.commands.data.serializer.DomainEventsSerializerImpl;
-import com.azat4dev.booking.listingsms.commands.domain.events.FailedGenerateUrlForUploadListingPhoto;
-import com.azat4dev.booking.listingsms.commands.domain.events.FailedToAddNewListing;
-import com.azat4dev.booking.listingsms.commands.domain.events.GeneratedUrlForUploadListingPhoto;
-import com.azat4dev.booking.listingsms.commands.domain.events.NewListingAdded;
+import com.azat4dev.booking.listingsms.commands.domain.events.*;
+import com.azat4dev.booking.listingsms.commands.domain.values.ListingPhoto;
 import com.azat4dev.booking.listingsms.commands.domain.values.ListingTitle;
 import com.azat4dev.booking.shared.data.serializers.DomainEventSerializer;
 import com.azat4dev.booking.shared.domain.values.IdempotentOperationId;
@@ -75,6 +73,17 @@ public class DomainEventSerializerImplTests {
                     anyListingId(),
                     PhotoFileExtension.checkAndMakeFrom("jpg"),
                     100
+                )
+            ),
+
+            eventsFactory.issue(
+                new AddedNewPhotoToListing(
+                    anyListingId(),
+                    new ListingPhoto(
+                        "photoId",
+                        BucketName.checkAndMake("bucket"),
+                        MediaObjectName.checkAndMakeFrom("object")
+                    )
                 )
             )
         );

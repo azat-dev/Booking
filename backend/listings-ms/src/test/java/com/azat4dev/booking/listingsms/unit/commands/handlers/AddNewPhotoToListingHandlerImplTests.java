@@ -92,7 +92,7 @@ public class AddNewPhotoToListingHandlerImplTests {
     }
 
     @Test
-    void test_handle_givenExistingListing_thenAdd() throws Listing.Exception.MaxPhotosReached, AddNewPhotoToListingHandler.Exception.AccessForbidden, AddNewPhotoToListingHandler.Exception.PhotoAlreadyExists, AddNewPhotoToListingHandler.Exception.MaxPhotosReached, AddNewPhotoToListingHandler.Exception.ListingNotFound, AddNewPhotoToListingHandler.Exception.PhotoNotFound {
+    void test_handle_givenExistingListing_thenAdd() throws Listing.Exception.MaxPhotosReached, AddNewPhotoToListingHandler.Exception.AccessForbidden, AddNewPhotoToListingHandler.Exception.PhotoAlreadyExists, AddNewPhotoToListingHandler.Exception.MaxPhotosReached, AddNewPhotoToListingHandler.Exception.ListingNotFound, AddNewPhotoToListingHandler.Exception.PhotoNotFound, ListingsCatalog.Exception.ListingNotFound {
 
         // Given
         var sut = createSUT();
