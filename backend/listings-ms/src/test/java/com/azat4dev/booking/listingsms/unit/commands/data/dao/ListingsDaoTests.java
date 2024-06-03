@@ -19,6 +19,7 @@ import java.time.LocalDateTime;
 import java.util.UUID;
 
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 
 @Import({ListingsDaoConfig.class})
 @JooqTest(properties = {"spring.datasource.url=jdbc:tc:postgresql:15-alpine:///"})
@@ -91,7 +92,6 @@ public class ListingsDaoTests {
         final var listing2 = anyListingData();
         final var listing3 = anyListingData();
 
-
         dao.addNew(listing1);
         dao.addNew(listing2);
         dao.addNew(listing3);
@@ -105,6 +105,55 @@ public class ListingsDaoTests {
         assertThat(foundListing.get().getTitle()).isEqualTo(listing2.getTitle());
         assertThat(foundListing.get().getStatus()).isEqualTo(listing2.getStatus());
         assertThat(foundListing.get().getDescription()).isEqualTo(listing2.getDescription());
+    }
+
+    @Test
+    @Sql(scripts = {"/db/drop-schema.sql"})
+    @Sql(scripts = {"/db/schema.sql"})
+    void test_update_givenListingExists_thanUpdate() throws ListingsDao.Exception.ListingAlreadyExists, ListingsDao.Exception.ListingNotFound {
+        // Given
+        final var listing1 = anyListingData();
+        final var listing2 = anyListingData();
+        final var listing3 = anyListingData();
+
+        dao.addNew(listing1);
+        dao.addNew(listing2);
+        dao.addNew(listing3);
+
+        final var updatedListing1 = anyListingData();
+        updatedListing1.setId(listing1.getId());
+
+        // When
+        dao.update(updatedListing1);
+
+        // Then
+        final var foundListing = dao.findById(listing1.getId()).orElseThrow();
+        assertThat(foundListing).isEqualTo(updatedListing1);
+    }
+
+    @Test
+    @Sql(scripts = {"/db/drop-schema.sql"})
+    @Sql(scripts = {"/db/schema.sql"})
+    void test_update_givenListingDoesntExist_thanThrowException() throws ListingsDao.Exception.ListingAlreadyExists {
+        // Given
+        final var listing1 = anyListingData();
+        final var listing2 = anyListingData();
+        final var listing3 = anyListingData();
+
+        dao.addNew(listing1);
+        dao.addNew(listing2);
+        dao.addNew(listing3);
+
+        final var updatedListing1 = anyListingData();
+        updatedListing1.setId(listing1.getId());
+
+        // When
+        assertThrows(ListingsDao.Exception.ListingNotFound.class, () -> {
+            dao.update(updatedListing1);
+        });
+
+        // Then
+        // Throws exception
     }
 
     @TestConfiguration

@@ -1,11 +1,11 @@
 package com.azat4dev.booking.listingsms.commands.api.resources;
 
+import com.azat4dev.booking.listingsms.commands.application.commands.AddNewPhotoToListing;
 import com.azat4dev.booking.listingsms.commands.application.commands.GetUrlForUploadListingPhoto;
-import com.azat4dev.booking.listingsms.commands.application.handlers.GetUrlForUploadListingPhotoHandler;
+import com.azat4dev.booking.listingsms.commands.application.handlers.photo.AddNewPhotoToListingHandler;
+import com.azat4dev.booking.listingsms.commands.application.handlers.photo.GetUrlForUploadListingPhotoHandler;
 import com.azat4dev.booking.listingsms.generated.server.api.CommandsListingsPhotoApiDelegate;
-import com.azat4dev.booking.listingsms.generated.server.model.GenerateUploadListingPhotoUrlRequestBody;
-import com.azat4dev.booking.listingsms.generated.server.model.GenerateUploadListingPhotoUrlResponseBody;
-import com.azat4dev.booking.listingsms.generated.server.model.UploadedFileDataDTO;
+import com.azat4dev.booking.listingsms.generated.server.model.*;
 import com.azat4dev.booking.shared.application.ControllerException;
 import com.azat4dev.booking.shared.presentation.CurrentAuthenticatedUserIdProvider;
 import lombok.AllArgsConstructor;
@@ -20,6 +20,7 @@ import java.util.UUID;
 public final class ListingsPhotoApi implements CommandsListingsPhotoApiDelegate {
 
     private final GetUrlForUploadListingPhotoHandler getUrlForUploadListingPhotoHandler;
+    private final AddNewPhotoToListingHandler addNewPhotoToListingHandler;
     private final CurrentAuthenticatedUserIdProvider currentUserId;
 
     @Override
@@ -53,6 +54,42 @@ public final class ListingsPhotoApi implements CommandsListingsPhotoApiDelegate 
 
         } catch (GetUrlForUploadListingPhotoHandler.Exception.FailedGenerate e) {
             throw ControllerException.createError(HttpStatus.INTERNAL_SERVER_ERROR, e);
+        }
+    }
+
+    @Override
+    public ResponseEntity<AddListingPhotoResponseBody> addPhotoToListing(UUID listingId, AddListingPhotoRequestBody requestBody) {
+
+
+        try {
+            final var command = new AddNewPhotoToListing(
+                currentUserId.get()
+                    .orElseThrow(() -> new ControllerException(HttpStatus.FORBIDDEN, "Host not authenticated")),
+                requestBody.getOperationId().toString(),
+                listingId.toString(),
+                new AddNewPhotoToListing.UploadedFileData(
+                    requestBody.getUploadedFile().getBucketName(),
+                    requestBody.getUploadedFile().getObjectName()
+                )
+            );
+
+            addNewPhotoToListingHandler.handle(command);
+
+            return ResponseEntity.ok(new AddListingPhotoResponseBody());
+
+        } catch (AddNewPhotoToListingHandler.Exception.ListingNotFound |
+                 AddNewPhotoToListingHandler.Exception.PhotoNotFound e) {
+
+            throw ControllerException.createError(HttpStatus.NOT_FOUND, e);
+
+        } catch (AddNewPhotoToListingHandler.Exception.AccessForbidden e) {
+
+            throw ControllerException.createError(HttpStatus.FORBIDDEN, e);
+
+        } catch (AddNewPhotoToListingHandler.Exception.PhotoAlreadyExists |
+                 AddNewPhotoToListingHandler.Exception.MaxPhotosReached e) {
+
+            throw ControllerException.createError(HttpStatus.CONFLICT, e);
         }
     }
 }

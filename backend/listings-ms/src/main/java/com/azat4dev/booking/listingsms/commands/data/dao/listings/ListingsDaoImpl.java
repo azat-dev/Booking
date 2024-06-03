@@ -11,7 +11,7 @@ import static org.jooq.generated.Tables.LISTINGS;
 
 
 @AllArgsConstructor
-public class ListingsDaoImpl implements ListingsDao {
+public final class ListingsDaoImpl implements ListingsDao {
 
     private final DSLContext context;
 
@@ -27,5 +27,10 @@ public class ListingsDaoImpl implements ListingsDao {
         return context.selectFrom(LISTINGS)
             .where(LISTINGS.ID.eq(id))
             .fetchOptional();
+    }
+
+    @Override
+    public void update(ListingsRecord listing) throws Exception.ListingNotFound {
+
     }
 }

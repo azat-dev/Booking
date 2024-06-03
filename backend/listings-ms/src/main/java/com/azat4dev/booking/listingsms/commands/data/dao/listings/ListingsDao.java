@@ -10,6 +10,8 @@ public interface ListingsDao {
 
     void addNew(ListingsRecord listing) throws Exception.ListingAlreadyExists;
 
+    void update(ListingsRecord listing) throws Exception.ListingNotFound;
+
     Optional<ListingsRecord> findById(UUID id);
 
     // Exceptions
@@ -22,6 +24,12 @@ public interface ListingsDao {
         public static class ListingAlreadyExists extends Exception {
             public ListingAlreadyExists() {
                 super("Listing already exists");
+            }
+        }
+
+        public static class ListingNotFound extends Exception {
+            public ListingNotFound() {
+                super("Listing not found");
             }
         }
     }

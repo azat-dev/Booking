@@ -24,7 +24,6 @@ public final class HostListingsImpl implements HostListings {
         }
 
         final var listing = foundListing.get();
-        final var hostId = listing.hostId().getValue();
 
         if (!listing.hostId().equals(hostId)) {
             return Optional.empty();

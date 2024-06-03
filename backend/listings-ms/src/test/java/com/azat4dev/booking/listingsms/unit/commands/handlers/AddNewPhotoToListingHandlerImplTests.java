@@ -1,9 +1,9 @@
 package com.azat4dev.booking.listingsms.unit.commands.handlers;
 
 import com.azat4dev.booking.listingsms.commands.application.commands.AddNewPhotoToListing;
-import com.azat4dev.booking.listingsms.commands.application.handlers.AddNewPhotoToListingHandler;
-import com.azat4dev.booking.listingsms.commands.application.handlers.AddNewPhotoToListingHandlerImpl;
-import com.azat4dev.booking.listingsms.commands.application.handlers.MakeNewListingPhoto;
+import com.azat4dev.booking.listingsms.commands.application.handlers.photo.AddNewPhotoToListingHandler;
+import com.azat4dev.booking.listingsms.commands.application.handlers.photo.AddNewPhotoToListingHandlerImpl;
+import com.azat4dev.booking.listingsms.commands.application.handlers.photo.MakeNewListingPhoto;
 import com.azat4dev.booking.listingsms.commands.domain.entities.*;
 import com.azat4dev.booking.listingsms.commands.domain.values.HostId;
 import com.azat4dev.booking.listingsms.commands.domain.values.ListingId;

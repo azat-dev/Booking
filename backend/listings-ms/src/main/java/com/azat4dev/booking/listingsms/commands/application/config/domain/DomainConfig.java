@@ -1,7 +1,7 @@
 package com.azat4dev.booking.listingsms.commands.application.config.domain;
 
-import com.azat4dev.booking.listingsms.commands.domain.entities.ListingsCatalog;
-import com.azat4dev.booking.listingsms.commands.domain.entities.ListingsCatalogImpl;
+import com.azat4dev.booking.listingsms.commands.domain.entities.*;
+import com.azat4dev.booking.listingsms.commands.domain.interfaces.repositories.ListingsRepository;
 import com.azat4dev.booking.listingsms.commands.domain.interfaces.repositories.UnitOfWorkFactory;
 import com.azat4dev.booking.listingsms.commands.domain.values.MakeNewListingId;
 import com.azat4dev.booking.listingsms.commands.domain.values.MakeNewListingIdImpl;
@@ -43,5 +43,19 @@ public class DomainConfig {
     @Bean
     MakeNewListingId makeNewListingId() {
         return new MakeNewListingIdImpl();
+    }
+
+    @Bean
+    HostListingsFactory hostListingsFactory(ListingsRepository listingsRepository) {
+        return new HostListingsFactoryImpl(
+            listingsRepository
+        );
+    }
+
+    @Bean
+    Hosts hosts(HostListingsFactory hostListingsFactory) {
+        return new HostsImpl(
+            hostListingsFactory
+        );
     }
 }

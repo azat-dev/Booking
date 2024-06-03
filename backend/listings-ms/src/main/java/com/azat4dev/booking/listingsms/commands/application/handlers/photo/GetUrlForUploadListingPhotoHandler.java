@@ -1,4 +1,4 @@
-package com.azat4dev.booking.listingsms.commands.application.handlers;
+package com.azat4dev.booking.listingsms.commands.application.handlers.photo;
 
 import com.azat4dev.booking.listingsms.commands.application.commands.GetUrlForUploadListingPhoto;
 import com.azat4dev.booking.listingsms.commands.domain.events.GeneratedUrlForUploadListingPhoto;

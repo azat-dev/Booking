@@ -11,13 +11,13 @@ import org.springframework.context.annotation.Configuration;
 @Configuration("queriesDomainConfig")
 public class DomainConfig {
 
-    @Bean
-    Hosts users(HostListingsFactory hostListingsFactory) {
+    @Bean("queries/Hosts")
+    Hosts hosts(HostListingsFactory hostListingsFactory) {
         return new HostsImpl(hostListingsFactory);
     }
 
-    @Bean
-    HostListingsFactory userListingFactory(PrivateListingsReadRepository repository) {
+    @Bean("queries/hostListingsFactory")
+    HostListingsFactory hostListingsFactory(PrivateListingsReadRepository repository) {
         return new HostListingsFactoryImpl(repository);
     }
 }

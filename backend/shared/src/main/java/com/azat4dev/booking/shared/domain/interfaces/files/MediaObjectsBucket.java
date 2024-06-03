@@ -16,7 +16,6 @@ public interface MediaObjectsBucket {
         int expiresInSeconds
     );
 
-
     UploadFileFormData generateUploadFormData(
         MediaObjectName objectName,
         int expiresInSeconds,
