@@ -102,6 +102,9 @@ dependencies {
     testImplementation("com.github.javafaker:javafaker:1.0.2") {
         exclude(group = "org.yaml", module = "snakeyaml")
     }
+
+    // OkHttp
+    testImplementation("com.squareup.okhttp3:okhttp:4.9.3")
 }
 
 if (hasProperty("buildScan")) {

@@ -32,6 +32,10 @@ components:
           $ref: "../../common/models/AddressDTO.yaml"
         location:
           $ref: "../../common/models/LocationDTO.yaml"
+        photos:
+          type: array
+          items:
+            $ref: "../../common/models/ListingPhotoPathDTO.yaml"
 
     GetPhotoUploadUrlForListingResponse:
       type: object
