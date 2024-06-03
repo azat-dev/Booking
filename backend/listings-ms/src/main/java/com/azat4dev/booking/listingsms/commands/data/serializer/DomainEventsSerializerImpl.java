@@ -1,11 +1,9 @@
 package com.azat4dev.booking.listingsms.commands.data.serializer;
 
-import com.azat4dev.booking.listingsms.commands.domain.events.FailedGenerateUrlForUploadListingPhoto;
-import com.azat4dev.booking.listingsms.commands.domain.events.FailedToAddNewListing;
-import com.azat4dev.booking.listingsms.commands.domain.events.GeneratedUrlForUploadListingPhoto;
-import com.azat4dev.booking.listingsms.commands.domain.events.NewListingAdded;
+import com.azat4dev.booking.listingsms.commands.domain.events.*;
 import com.azat4dev.booking.listingsms.commands.domain.values.HostId;
 import com.azat4dev.booking.listingsms.commands.domain.values.ListingId;
+import com.azat4dev.booking.listingsms.commands.domain.values.ListingPhoto;
 import com.azat4dev.booking.listingsms.commands.domain.values.ListingTitle;
 import com.azat4dev.booking.listingsms.generated.events.dto.*;
 import com.azat4dev.booking.shared.data.serializers.DomainEventSerializer;
@@ -92,6 +90,15 @@ public final class DomainEventsSerializerImpl implements DomainEventSerializer {
                 .fileSize(p.fileSize())
                 .build();
 
+            case AddedNewPhotoToListing p -> AddedNewPhotoToListingDTO.builder()
+                .listingId(p.listingId().getValue())
+                .photo(ListingPhotoDTO.builder()
+                    .id(p.photo().getId())
+                    .bucketName(p.photo().getBucketName().getValue())
+                    .objectName(p.photo().getObjectName().getValue())
+                    .build()
+                ).build();
+
             default ->
                 throw new RuntimeException("Serialization. Unknown payload type: " + payload.getClass().getName());
         };
@@ -161,6 +168,15 @@ public final class DomainEventsSerializerImpl implements DomainEventSerializer {
                 ListingId.dangerouslyMakeFrom(p.getListingId().toString()),
                 PhotoFileExtension.dangerouslyMakeFrom(p.getFileExtension()),
                 p.getFileSize()
+            );
+
+            case AddedNewPhotoToListingDTO p -> new AddedNewPhotoToListing(
+                ListingId.dangerouslyMakeFrom(p.getListingId().toString()),
+                new ListingPhoto(
+                    p.getPhoto().getId(),
+                    BucketName.makeWithoutChecks(p.getPhoto().getBucketName()),
+                    MediaObjectName.dangerouslyMake(p.getPhoto().getObjectName())
+                )
             );
 
             default ->
