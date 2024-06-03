@@ -183,6 +183,10 @@ public class Listing {
         }
     }
 
+    public void internalSetUpdatedAt(LocalDateTime updatedAt) {
+        this.updatedAt = updatedAt;
+    }
+
     public void addPhoto(ListingPhoto photo) throws Exception.MaxPhotosReached {
         if (this.photos.size() >= MAX_NUMBER_OF_PHOTOS) {
             throw new Exception.MaxPhotosReached();

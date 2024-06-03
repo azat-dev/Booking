@@ -37,4 +37,17 @@ public final class ListingsRepositoryImpl implements ListingsRepository {
         return dao.findById(id.getValue())
             .map(mapRecordToListing::map);
     }
+
+    @Override
+    public void update(Listing listing) throws ListingsRepository.Exception.ListingNotFound {
+
+        listing.internalSetUpdatedAt(timeProvider.currentTime());
+        final var data = mapListingToRecord.map(listing);
+
+        try {
+            dao.update(data);
+        } catch (ListingsDao.Exception.ListingNotFound e) {
+            throw new ListingsRepository.Exception.ListingNotFound();
+        }
+    }
 }
