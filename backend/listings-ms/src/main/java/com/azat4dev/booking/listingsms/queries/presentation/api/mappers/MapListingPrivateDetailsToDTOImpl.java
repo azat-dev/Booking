@@ -5,8 +5,12 @@ import com.azat4dev.booking.listingsms.common.domain.values.GuestsCapacity;
 import com.azat4dev.booking.listingsms.common.domain.values.address.ListingAddress;
 import com.azat4dev.booking.listingsms.generated.server.model.*;
 import com.azat4dev.booking.listingsms.queries.domain.entities.ListingPrivateDetails;
+import lombok.AllArgsConstructor;
 
+@AllArgsConstructor
 public final class MapListingPrivateDetailsToDTOImpl implements MapListingPrivateDetailsToDTO {
+
+    private final MapListingPhotoToDTO mapListingPhotoToDTO;
 
     private GuestsCapacityDTO mapGuestsCapacity(GuestsCapacity guestsCapacity) {
         return GuestsCapacityDTO.builder()
@@ -47,6 +51,9 @@ public final class MapListingPrivateDetailsToDTOImpl implements MapListingPrivat
             ).address(
                 listingDetails.address().map(this::mapAddress)
                     .orElse(null)
+            ).photos(
+                listingDetails.photos().stream()
+                    .map(mapListingPhotoToDTO::map).toList()
             ).build();
     }
 }
