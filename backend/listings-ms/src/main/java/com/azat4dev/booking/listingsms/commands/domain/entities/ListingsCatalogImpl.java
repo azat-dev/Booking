@@ -51,4 +51,9 @@ public class ListingsCatalogImpl implements ListingsCatalog {
             throw e;
         }
     }
+
+    @Override
+    public void update(Listing listing) {
+        throw new UnsupportedOperationException("Not implemented yet");
+    }
 }

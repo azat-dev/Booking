@@ -11,4 +11,6 @@ public interface ListingsCatalog {
         HostId hostId,
         ListingTitle title
     );
+
+    void update(Listing listing);
 }

@@ -7,7 +7,8 @@ public interface AddNewPhotoToListingHandler {
 
     void handle(AddNewPhotoToListing command)
         throws Exception.ListingNotFound, Exception.PhotoNotFound,
-        Exception.AccessForbidden, Exception.PhotoAlreadyExists;
+        Exception.AccessForbidden, Exception.PhotoAlreadyExists,
+        Exception.MaxPhotosReached;
 
     // Exceptions
     abstract class Exception extends DomainException {
@@ -36,6 +37,12 @@ public interface AddNewPhotoToListingHandler {
         public static final class AccessForbidden extends Exception {
             public AccessForbidden() {
                 super("Access forbidden");
+            }
+        }
+
+        public static final class MaxPhotosReached extends Exception {
+            public MaxPhotosReached() {
+                super("Max photos reached");
             }
         }
     }
