@@ -137,13 +137,6 @@ public class ListingsDaoTests {
     void test_update_givenListingDoesntExist_thanThrowException() throws ListingsDao.Exception.ListingAlreadyExists {
         // Given
         final var listing1 = anyListingData();
-        final var listing2 = anyListingData();
-        final var listing3 = anyListingData();
-
-        dao.addNew(listing1);
-        dao.addNew(listing2);
-        dao.addNew(listing3);
-
         final var updatedListing1 = anyListingData();
         updatedListing1.setId(listing1.getId());
 

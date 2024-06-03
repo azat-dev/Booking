@@ -32,5 +32,13 @@ public final class ListingsDaoImpl implements ListingsDao {
     @Override
     public void update(ListingsRecord listing) throws Exception.ListingNotFound {
 
+        final var numberOfUpdatedRecords = context.update(LISTINGS)
+            .set(listing)
+            .where(LISTINGS.ID.eq(listing.getId()))
+            .execute();
+
+        if (numberOfUpdatedRecords == 0) {
+            throw new Exception.ListingNotFound();
+        }
     }
 }
