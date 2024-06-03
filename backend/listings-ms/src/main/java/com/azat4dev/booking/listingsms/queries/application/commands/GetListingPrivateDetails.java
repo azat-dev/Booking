@@ -4,7 +4,7 @@ import com.azat4dev.booking.shared.application.events.ApplicationCommand;
 import com.azat4dev.booking.shared.domain.values.user.UserId;
 
 public record GetListingPrivateDetails(
-    UserId userId,
+    UserId hostId,
     String listingId
 ) implements ApplicationCommand {
 }

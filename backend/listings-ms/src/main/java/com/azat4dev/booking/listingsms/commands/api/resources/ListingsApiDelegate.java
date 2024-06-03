@@ -24,7 +24,7 @@ public class ListingsApiDelegate implements CommandsModificationsApiDelegate {
         final var userId = currentUserId.get()
             .orElseThrow(() -> new ControllerException(
                 org.springframework.http.HttpStatus.UNAUTHORIZED,
-                "User not authenticated"
+                "Host not authenticated"
             ));
 
         final var command = new AddNewListing(

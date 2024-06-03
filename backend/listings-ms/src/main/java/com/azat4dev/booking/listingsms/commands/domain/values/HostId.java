@@ -8,27 +8,27 @@ import java.util.UUID;
 
 @EqualsAndHashCode(of = "value")
 @Getter
-public final class OwnerId {
+public final class HostId {
 
     private final UUID value;
 
-    private OwnerId(UUID value) {
+    private HostId(UUID value) {
         this.value = value;
     }
 
-    public static OwnerId checkAndMakeFrom(String value) {
-        return new OwnerId(UUID.fromString(value));
+    public static HostId checkAndMakeFrom(String value) {
+        return new HostId(UUID.fromString(value));
     }
 
-    public static OwnerId dangerouslyMakeFrom(String value) {
-        return new OwnerId(UUID.fromString(value));
+    public static HostId dangerouslyMakeFrom(String value) {
+        return new HostId(UUID.fromString(value));
     }
 
     public String toString() {
         return value.toString();
     }
 
-    public static OwnerId fromUserId(UserId userId) {
-        return new OwnerId(userId.value());
+    public static HostId fromUserId(UserId userId) {
+        return new HostId(userId.value());
     }
 }

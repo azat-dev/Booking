@@ -39,7 +39,7 @@ public class ListingsDaoTests {
         o.setUpdatedAt(LocalDateTime.now());
         o.setUpdatedAtNano(2);
 
-        o.setOwnerId(UUID.randomUUID());
+        o.setHostId(UUID.randomUUID());
         o.setTitle(Faker.instance().name().title());
         o.setStatus("DRAFT");
         o.setDescription(Faker.instance().lorem().toString());

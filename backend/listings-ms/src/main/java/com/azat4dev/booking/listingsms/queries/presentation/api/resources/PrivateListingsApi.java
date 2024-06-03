@@ -1,5 +1,6 @@
 package com.azat4dev.booking.listingsms.queries.presentation.api.resources;
 
+import com.azat4dev.booking.listingsms.commands.domain.values.HostId;
 import com.azat4dev.booking.listingsms.generated.server.api.QueriesPrivateApiDelegate;
 import com.azat4dev.booking.listingsms.generated.server.model.GetListingPrivateDetailsResponse;
 import com.azat4dev.booking.listingsms.generated.server.model.ListingPrivateDetailsDTO;
@@ -32,7 +33,7 @@ public class PrivateListingsApi implements QueriesPrivateApiDelegate {
     public ResponseEntity<GetListingPrivateDetailsResponse> getListingPrivateDetails(UUID listingId) {
 
         final var userId = currentUserId.get()
-            .orElseThrow(() -> new ControllerException(HttpStatus.FORBIDDEN, "User not authenticated"));
+            .orElseThrow(() -> new ControllerException(HttpStatus.FORBIDDEN, "Host not authenticated"));
 
         final var command = new GetListingPrivateDetails(
             userId,
@@ -56,9 +57,10 @@ public class PrivateListingsApi implements QueriesPrivateApiDelegate {
     public ResponseEntity<List<ListingPrivateDetailsDTO>> getOwnListings() {
 
         final var userId = currentUserId.get()
-            .orElseThrow(() -> new ControllerException(HttpStatus.FORBIDDEN, "User not authenticated"));
+            .orElseThrow(() -> new ControllerException(HttpStatus.FORBIDDEN, "Host not authenticated"));
 
-        final var command = new GetOwnListings(userId);
+        final var hostId = HostId.fromUserId(userId);
+        final var command = new GetOwnListings(hostId);
 
         try {
 

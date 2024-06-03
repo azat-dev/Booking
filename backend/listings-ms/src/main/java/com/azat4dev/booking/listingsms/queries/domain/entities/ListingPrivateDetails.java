@@ -14,7 +14,7 @@ public record ListingPrivateDetails(
     ListingId id,
     LocalDateTime createdAt,
     LocalDateTime updatedAt,
-    OwnerId ownerId,
+    HostId hostId,
     ListingTitle title,
     ListingStatus status,
     Optional<ListingDescription> description,

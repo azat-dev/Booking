@@ -24,9 +24,9 @@ public final class ListingsReadDaoJooq implements ListingsReadDao {
     }
 
     @Override
-    public List<ListingsRecord> findAllByOwnerId(UUID ownerId) {
+    public List<ListingsRecord> findAllByHostId(UUID hostId) {
         return context.selectFrom(LISTINGS)
-            .where(LISTINGS.OWNER_ID.eq(ownerId))
+            .where(LISTINGS.HOST_ID.eq(hostId))
             .fetchInto(ListingsRecord.class);
     }
 }

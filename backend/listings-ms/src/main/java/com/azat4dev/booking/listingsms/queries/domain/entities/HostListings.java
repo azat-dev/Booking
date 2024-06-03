@@ -5,7 +5,7 @@ import com.azat4dev.booking.listingsms.commands.domain.values.ListingId;
 import java.util.List;
 import java.util.Optional;
 
-public interface UserListings {
+public interface HostListings {
 
     Optional<ListingPrivateDetails> findById(ListingId listingId);
 

@@ -1,18 +1,17 @@
 package com.azat4dev.booking.listingsms.queries.domain.entities;
 
+import com.azat4dev.booking.listingsms.commands.domain.values.HostId;
 import com.azat4dev.booking.listingsms.commands.domain.values.ListingId;
-import com.azat4dev.booking.listingsms.commands.domain.values.OwnerId;
 import com.azat4dev.booking.listingsms.queries.domain.interfaces.PrivateListingsReadRepository;
-import com.azat4dev.booking.shared.domain.values.user.UserId;
 import lombok.AllArgsConstructor;
 
 import java.util.List;
 import java.util.Optional;
 
 @AllArgsConstructor
-public final class UserListingsImpl implements UserListings {
+public final class HostListingsImpl implements HostListings {
 
-    private final UserId userId;
+    private final HostId hostId;
     private final PrivateListingsReadRepository readRepository;
 
     @Override
@@ -25,10 +24,9 @@ public final class UserListingsImpl implements UserListings {
         }
 
         final var listing = foundListing.get();
-        final var ownerId = listing.ownerId().getValue();
-        final var currentUserId = userId.value();
+        final var hostId = listing.hostId().getValue();
 
-        if (!ownerId.equals(currentUserId)) {
+        if (!listing.hostId().equals(hostId)) {
             return Optional.empty();
         }
 
@@ -38,6 +36,6 @@ public final class UserListingsImpl implements UserListings {
     @Override
     public List<ListingPrivateDetails> listAll() {
 
-        return readRepository.findAllByOwnerId(OwnerId.fromUserId(userId));
+        return readRepository.findAllByHostId(hostId);
     }
 }

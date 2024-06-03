@@ -10,5 +10,5 @@ public interface ListingsReadDao {
 
     Optional<ListingsRecord> findById(UUID listingId);
 
-    List<ListingsRecord> findAllByOwnerId(UUID ownerId);
+    List<ListingsRecord> findAllByHostId(UUID hostId);
 }

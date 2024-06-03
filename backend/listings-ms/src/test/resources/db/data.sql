@@ -2,7 +2,7 @@
 INSERT INTO listings (id,
                       created_at, created_at_nano,
                       updated_at, updated_at_nano,
-                      owner_id,
+                      host_id,
                       status,
                       title,
                       description,

@@ -4,7 +4,7 @@ import com.azat4dev.booking.listingsms.commands.domain.events.NewListingAdded;
 import com.azat4dev.booking.listingsms.commands.domain.interfaces.repositories.UnitOfWorkFactory;
 import com.azat4dev.booking.listingsms.commands.domain.values.ListingId;
 import com.azat4dev.booking.listingsms.commands.domain.values.ListingTitle;
-import com.azat4dev.booking.listingsms.commands.domain.values.OwnerId;
+import com.azat4dev.booking.listingsms.commands.domain.values.HostId;
 import com.azat4dev.booking.shared.utils.TimeProvider;
 import lombok.AllArgsConstructor;
 
@@ -17,7 +17,7 @@ public class ListingsCatalogImpl implements ListingsCatalog {
     @Override
     public void addNew(
         ListingId listingId,
-        OwnerId ownerId,
+        HostId hostId,
         ListingTitle title
     ) {
         final var now = timeProvider.currentTime();
@@ -25,7 +25,7 @@ public class ListingsCatalogImpl implements ListingsCatalog {
         final var newListing = Listing.makeNewDraft(
             listingId,
             now,
-            ownerId,
+            hostId,
             title
         );
 
@@ -40,7 +40,7 @@ public class ListingsCatalogImpl implements ListingsCatalog {
             outbox.publish(
                 new NewListingAdded(
                     listingId,
-                    ownerId,
+                    hostId,
                     title
                 )
             );

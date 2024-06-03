@@ -1,7 +1,7 @@
 package com.azat4dev.booking.listingsms.unit.helpers;
 
+import com.azat4dev.booking.listingsms.commands.domain.values.HostId;
 import com.azat4dev.booking.listingsms.commands.domain.values.ListingId;
-import com.azat4dev.booking.listingsms.commands.domain.values.OwnerId;
 import com.azat4dev.booking.shared.domain.values.user.UserId;
 
 import java.util.UUID;
@@ -24,7 +24,7 @@ public class ListingHelpers {
         }
     }
 
-    public static OwnerId anyOwnerId() {
-        return OwnerId.checkAndMakeFrom(UUID.randomUUID().toString());
+    public static HostId anyHostId() {
+        return HostId.checkAndMakeFrom(UUID.randomUUID().toString());
     }
 }

@@ -36,7 +36,7 @@ public final class GetUrlForUploadListingPhotoHandlerImpl implements GetUrlForUp
         } catch (GenerateUrlForUploadListingPhoto.Exception.FailedGenerate e) {
             throw new Exception.FailedGenerate();
         } catch (UserId.WrongFormatException e) {
-            throw ValidationException.withPath("userId", e);
+            throw ValidationException.withPath("hostId", e);
         } catch (ListingId.Exception.WrongFormat e) {
             throw ValidationException.withPath("listingId", e);
         }

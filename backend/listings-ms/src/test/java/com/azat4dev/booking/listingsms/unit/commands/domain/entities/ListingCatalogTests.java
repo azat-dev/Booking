@@ -59,7 +59,7 @@ public class ListingCatalogTests {
         // Given
         var sut = createSUT();
         final var listingId = DomainHelpers.anyListingId();
-        final var ownerId = DomainHelpers.anyOwnerId();
+        final var hostId = DomainHelpers.anyHostId();
         final var title = DomainHelpers.anyListingTitle();
 
         final var now = LocalDateTime.now();
@@ -70,7 +70,7 @@ public class ListingCatalogTests {
         // When
         sut.listingsCatalog.addNew(
             listingId,
-            ownerId,
+            hostId,
             title
         );
 
@@ -78,7 +78,7 @@ public class ListingCatalogTests {
         final var expectedListing = Listing.makeNewDraft(
             listingId,
             now,
-            ownerId,
+            hostId,
             title
         );
 
@@ -87,7 +87,7 @@ public class ListingCatalogTests {
 
         final var expectedEvent = new NewListingAdded(
             listingId,
-            ownerId,
+            hostId,
             title
         );
 
@@ -104,7 +104,7 @@ public class ListingCatalogTests {
         // Given
         var sut = createSUT();
         final var listingId = DomainHelpers.anyListingId();
-        final var ownerId = DomainHelpers.anyOwnerId();
+        final var hostId = DomainHelpers.anyHostId();
         final var title = DomainHelpers.anyListingTitle();
 
         willThrow(new RuntimeException())
@@ -116,7 +116,7 @@ public class ListingCatalogTests {
         final var exception = assertThrows(RuntimeException.class, () -> {
             sut.listingsCatalog.addNew(
                 listingId,
-                ownerId,
+                hostId,
                 title
             );
         });

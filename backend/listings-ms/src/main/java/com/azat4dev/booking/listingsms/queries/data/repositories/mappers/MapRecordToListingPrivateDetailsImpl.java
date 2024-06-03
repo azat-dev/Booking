@@ -76,7 +76,7 @@ public class MapRecordToListingPrivateDetailsImpl implements MapRecordToListingP
             ListingId.dangerouslyMakeFrom(data.getId().toString()),
             data.getCreatedAt().withNano(data.getCreatedAtNano()),
             data.getUpdatedAt().withNano(data.getUpdatedAtNano()),
-            OwnerId.dangerouslyMakeFrom(data.getOwnerId().toString()),
+            HostId.dangerouslyMakeFrom(data.getHostId().toString()),
             ListingTitle.dangerouslyMakeFrom(data.getTitle()),
             ListingStatus.valueOf(data.getStatus()),
 

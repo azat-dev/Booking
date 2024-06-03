@@ -31,7 +31,7 @@ public class MapListingToRecordImpl implements MapListingToRecord {
         o.setTitle(listing.getTitle().getValue());
         o.setDescription(listing.getDescription().map(ListingDescription::getValue).orElse(null));
 
-        o.setOwnerId(listing.getOwnerId().getValue());
+        o.setHostId(listing.getHostId().getValue());
 
         o.setStatus(listing.getStatus().name());
 

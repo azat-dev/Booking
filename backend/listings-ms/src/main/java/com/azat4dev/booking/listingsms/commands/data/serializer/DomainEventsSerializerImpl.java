@@ -4,9 +4,9 @@ import com.azat4dev.booking.listingsms.commands.domain.events.FailedGenerateUrlF
 import com.azat4dev.booking.listingsms.commands.domain.events.FailedToAddNewListing;
 import com.azat4dev.booking.listingsms.commands.domain.events.GeneratedUrlForUploadListingPhoto;
 import com.azat4dev.booking.listingsms.commands.domain.events.NewListingAdded;
+import com.azat4dev.booking.listingsms.commands.domain.values.HostId;
 import com.azat4dev.booking.listingsms.commands.domain.values.ListingId;
 import com.azat4dev.booking.listingsms.commands.domain.values.ListingTitle;
-import com.azat4dev.booking.listingsms.commands.domain.values.OwnerId;
 import com.azat4dev.booking.listingsms.generated.events.dto.*;
 import com.azat4dev.booking.shared.data.serializers.DomainEventSerializer;
 import com.azat4dev.booking.shared.domain.events.DomainEvent;
@@ -68,13 +68,13 @@ public final class DomainEventsSerializerImpl implements DomainEventSerializer {
         return switch (payload) {
             case NewListingAdded p -> NewListingAddedDTO.builder()
                 .listingId(p.listingId().getValue())
-                .ownerId(p.ownerId().getValue())
+                .hostId(p.hostId().getValue())
                 .title(p.title().getValue())
                 .build();
 
             case FailedToAddNewListing p -> FailedToAddNewListingDTO.builder()
                 .listingId(p.listingId().getValue())
-                .ownerId(p.ownerId().getValue())
+                .hostId(p.hostId().getValue())
                 .title(p.title().getValue())
                 .build();
 
@@ -139,13 +139,13 @@ public final class DomainEventsSerializerImpl implements DomainEventSerializer {
         return switch (payload) {
             case NewListingAddedDTO p -> new NewListingAdded(
                 ListingId.dangerouslyMakeFrom(p.getListingId().toString()),
-                OwnerId.dangerouslyMakeFrom(p.getOwnerId().toString()),
+                HostId.dangerouslyMakeFrom(p.getHostId().toString()),
                 ListingTitle.dangerouslyMakeFrom(p.getTitle())
             );
 
             case FailedToAddNewListingDTO p -> new FailedToAddNewListing(
                 ListingId.dangerouslyMakeFrom(p.getListingId().toString()),
-                OwnerId.dangerouslyMakeFrom(p.getOwnerId().toString()),
+                HostId.dangerouslyMakeFrom(p.getHostId().toString()),
                 ListingTitle.dangerouslyMakeFrom(p.getTitle())
             );
 

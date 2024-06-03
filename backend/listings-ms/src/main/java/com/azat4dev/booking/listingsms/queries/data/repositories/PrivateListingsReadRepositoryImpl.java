@@ -1,7 +1,7 @@
 package com.azat4dev.booking.listingsms.queries.data.repositories;
 
+import com.azat4dev.booking.listingsms.commands.domain.values.HostId;
 import com.azat4dev.booking.listingsms.commands.domain.values.ListingId;
-import com.azat4dev.booking.listingsms.commands.domain.values.OwnerId;
 import com.azat4dev.booking.listingsms.queries.data.dao.ListingsReadDao;
 import com.azat4dev.booking.listingsms.queries.data.repositories.mappers.MapRecordToListingPrivateDetails;
 import com.azat4dev.booking.listingsms.queries.domain.entities.ListingPrivateDetails;
@@ -24,8 +24,8 @@ public final class PrivateListingsReadRepositoryImpl implements PrivateListingsR
     }
 
     @Override
-    public List<ListingPrivateDetails> findAllByOwnerId(OwnerId ownerId) {
-        return dao.findAllByOwnerId(ownerId.getValue())
+    public List<ListingPrivateDetails> findAllByHostId(HostId hostId) {
+        return dao.findAllByHostId(hostId.getValue())
             .stream()
             .map(mapper::map)
             .toList();

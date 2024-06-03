@@ -22,11 +22,12 @@ import java.util.Optional;
 public class Listing {
 
     public static final int MINIMUM_NUMBER_OF_PHOTOS = 5;
+    private static final int MAX_NUMBER_OF_PHOTOS = 20;
 
     private final ListingId id;
     private final LocalDateTime createdAt;
     private LocalDateTime updatedAt;
-    private final OwnerId ownerId;
+    private final HostId hostId;
     private ListingTitle title;
     private ListingStatus status;
     private Optional<ListingDescription> description;
@@ -39,7 +40,7 @@ public class Listing {
     public static Listing makeNewDraft(
         ListingId id,
         LocalDateTime createdAt,
-        OwnerId ownerId,
+        HostId hostId,
         ListingTitle title
     ) {
 
@@ -47,7 +48,7 @@ public class Listing {
             id,
             createdAt,
             createdAt,
-            ownerId,
+            hostId,
             title,
             ListingStatus.DRAFT,
             Optional.empty(),
@@ -64,7 +65,7 @@ public class Listing {
         ListingStatus status,
         LocalDateTime createdAt,
         LocalDateTime updatedAt,
-        OwnerId ownerId,
+        HostId hostId,
         ListingTitle title,
         Optional<ListingDescription> description,
         Optional<PropertyType> propertyType,
@@ -78,7 +79,7 @@ public class Listing {
             id,
             createdAt,
             updatedAt,
-            ownerId,
+            hostId,
             title,
             status,
             description,
@@ -182,6 +183,14 @@ public class Listing {
         }
     }
 
+    public void addPhoto(ListingPhoto photo) throws Exception.MaxPhotosReached {
+        if (this.photos.size() >= MAX_NUMBER_OF_PHOTOS) {
+            throw new Exception.MaxPhotosReached();
+        }
+
+        this.photos.add(photo);
+    }
+
     // Exceptions
 
     public static class Exception extends DomainException {
@@ -192,6 +201,12 @@ public class Listing {
         public static class CantModifyPublishedListing extends Exception {
             public CantModifyPublishedListing() {
                 super("Can't modify published listing");
+            }
+        }
+
+        public static class MaxPhotosReached extends Exception {
+            public MaxPhotosReached() {
+                super("Maximum number of photos reached. Can't add more than " + MAX_NUMBER_OF_PHOTOS + " photos");
             }
         }
 

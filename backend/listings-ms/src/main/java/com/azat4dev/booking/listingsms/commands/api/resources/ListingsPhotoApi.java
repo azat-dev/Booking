@@ -29,7 +29,7 @@ public final class ListingsPhotoApi implements CommandsListingsPhotoApiDelegate 
     ) {
 
         final var userId = currentUserId.get()
-            .orElseThrow(() -> new ControllerException(HttpStatus.FORBIDDEN, "User not authenticated"));
+            .orElseThrow(() -> new ControllerException(HttpStatus.FORBIDDEN, "Host not authenticated"));
 
         try {
             final var result = getUrlForUploadListingPhotoHandler.handle(

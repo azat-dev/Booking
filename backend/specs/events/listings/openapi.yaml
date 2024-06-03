@@ -50,14 +50,14 @@ components:
     NewListingAdded:
       type: object
       required:
-        - ownerId
+        - hostId
         - listingId
         - title
       properties:
         operationId:
           $ref: "../common/models/OperationId.yaml"
-        ownerId:
-          $ref: "#/components/schemas/OwnerId"
+        hostId:
+          $ref: "#/components/schemas/HostId"
         listingId:
           $ref: "#/components/schemas/ListingId"
         title:
@@ -66,12 +66,12 @@ components:
     FailedToAddNewListing:
       type: object
       required:
-        - ownerId
+        - hostId
         - listingId
         - title
       properties:
-        ownerId:
-          $ref: "#/components/schemas/OwnerId"
+        hostId:
+          $ref: "#/components/schemas/HostId"
         listingId:
           $ref: "#/components/schemas/ListingId"
         title:
@@ -141,5 +141,5 @@ components:
       type: string
       format: uuid
 
-    OwnerId:
+    HostId:
       $ref: "#/components/schemas/UserId"

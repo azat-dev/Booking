@@ -53,7 +53,7 @@ public class ListingsReadDaoJooqTests {
     void test_findById_givenValidId_thenReturnRecord() {
         // Given
         final var listingId = UUID.fromString("00000000-0000-0000-0000-000000000001");
-        final var ownerId = UUID.fromString("00000000-0000-0000-0000-000000000010");
+        final var hostId = UUID.fromString("00000000-0000-0000-0000-000000000010");
 
         // When
         final var foundListing = dao.findById(listingId).orElseThrow();
@@ -65,7 +65,7 @@ public class ListingsReadDaoJooqTests {
             1,
             LocalDateTime.of(2024, 5, 8, 12, 0, 0),
             2,
-            ownerId,
+            hostId,
             "listing1",
             "description1",
             "DRAFT",
@@ -89,12 +89,12 @@ public class ListingsReadDaoJooqTests {
     @Sql("/db/drop-schema.sql")
     @Sql("/db/schema.sql")
     @Sql("/db/data.sql")
-    void test_findAllByOwnerId_givenExistingOwnerId_thenReturnAllRecords() {
+    void test_findAllByHostId_givenExistingHostId_thenReturnAllRecords() {
         // Given
-        final var ownerId = UUID.fromString("00000000-0000-0000-0000-000000000010");
+        final var hostId = UUID.fromString("00000000-0000-0000-0000-000000000010");
 
         // When
-        final var foundListings = dao.findAllByOwnerId(ownerId);
+        final var foundListings = dao.findAllByHostId(hostId);
 
         // Then
         assertThat(foundListings.size()).isEqualTo(2);

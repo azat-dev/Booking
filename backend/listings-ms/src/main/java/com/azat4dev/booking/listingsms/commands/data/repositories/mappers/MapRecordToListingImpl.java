@@ -77,7 +77,7 @@ public class MapRecordToListingImpl implements MapRecordToListing {
             ListingStatus.valueOf(data.getStatus()),
             data.getCreatedAt().withNano(data.getCreatedAtNano()),
             data.getUpdatedAt().withNano(data.getUpdatedAtNano()),
-            OwnerId.dangerouslyMakeFrom(data.getOwnerId().toString()),
+            HostId.dangerouslyMakeFrom(data.getHostId().toString()),
             ListingTitle.dangerouslyMakeFrom(data.getTitle()),
 
             Optional.ofNullable(data.getDescription()).map(ListingDescription::dangerouslyMakeFrom),

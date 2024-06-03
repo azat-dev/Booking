@@ -22,7 +22,7 @@ import java.util.Map;
 
 import static com.azat4dev.booking.listingsms.unit.commands.domain.entities.DomainHelpers.anyListingId;
 import static com.azat4dev.booking.listingsms.unit.helpers.EventHelpers.eventsFactory;
-import static com.azat4dev.booking.listingsms.unit.helpers.ListingHelpers.anyOwnerId;
+import static com.azat4dev.booking.listingsms.unit.helpers.ListingHelpers.anyHostId;
 import static com.azat4dev.booking.listingsms.unit.helpers.ListingHelpers.anyUserId;
 import static org.assertj.core.api.Assertions.assertThat;
 
@@ -43,14 +43,14 @@ public class DomainEventSerializerImplTests {
             eventsFactory.issue(
                 new NewListingAdded(
                     anyListingId(),
-                    anyOwnerId(),
+                    anyHostId(),
                     ListingTitle.dangerouslyMakeFrom("title")
                 )
             ),
             eventsFactory.issue(
                 new FailedToAddNewListing(
                     anyListingId(),
-                    anyOwnerId(),
+                    anyHostId(),
                     ListingTitle.dangerouslyMakeFrom("title")
                 )
             ),

@@ -9,7 +9,7 @@ public record ListingRecord(
     UUID id,
     LocalDateTime createdAt,
     LocalDateTime updatedAt,
-    UUID ownerId,
+    UUID hostId,
     String title,
     String status,
     Optional<String> description,
