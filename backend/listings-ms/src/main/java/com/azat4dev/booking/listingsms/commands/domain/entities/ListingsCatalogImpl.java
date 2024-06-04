@@ -1,6 +1,7 @@
 package com.azat4dev.booking.listingsms.commands.domain.entities;
 
 import com.azat4dev.booking.listingsms.commands.domain.events.AddedNewPhotoToListing;
+import com.azat4dev.booking.listingsms.commands.domain.events.ListingUpdated;
 import com.azat4dev.booking.listingsms.commands.domain.events.NewListingAdded;
 import com.azat4dev.booking.listingsms.commands.domain.interfaces.repositories.ListingsRepository;
 import com.azat4dev.booking.listingsms.commands.domain.interfaces.repositories.UnitOfWorkFactory;
@@ -14,6 +15,7 @@ import lombok.AllArgsConstructor;
 
 import java.util.LinkedList;
 import java.util.List;
+import java.util.Optional;
 import java.util.stream.Collectors;
 
 @AllArgsConstructor
@@ -60,6 +62,54 @@ public class ListingsCatalogImpl implements ListingsCatalog {
         }
     }
 
+    private Optional<StateDifference> getStateDifference(Listing prevListingState, Listing newListing) {
+        var newStateBuilder = ListingUpdated.State.builder();
+        var prevStateBuilder = ListingUpdated.State.builder();
+
+        if (!prevListingState.getTitle().equals(newListing.getTitle())) {
+            newStateBuilder.title(newListing.getTitle());
+            prevStateBuilder.title(prevListingState.getTitle());
+        }
+
+        if (!prevListingState.getStatus().equals(newListing.getStatus())) {
+            newStateBuilder.status(newListing.getStatus());
+            prevStateBuilder.status(prevListingState.getStatus());
+        }
+
+        if (!prevListingState.getDescription().equals(newListing.getDescription())) {
+            newStateBuilder.description(newListing.getDescription());
+            prevStateBuilder.description(prevListingState.getDescription());
+        }
+
+        if (!prevListingState.getPropertyType().equals(newListing.getPropertyType())) {
+            newStateBuilder.propertyType(newListing.getPropertyType());
+            prevStateBuilder.propertyType(prevListingState.getPropertyType());
+        }
+
+        if (!prevListingState.getRoomType().equals(newListing.getRoomType())) {
+            newStateBuilder.roomType(newListing.getRoomType());
+            prevStateBuilder.roomType(prevListingState.getRoomType());
+        }
+
+        if (!prevListingState.getAddress().equals(newListing.getAddress())) {
+            newStateBuilder.address(newListing.getAddress());
+            prevStateBuilder.address(prevListingState.getAddress());
+        }
+
+        if (!prevListingState.getGuestsCapacity().equals(newListing.getGuestsCapacity())) {
+            newStateBuilder.guestsCapacity(newListing.getGuestsCapacity());
+            prevStateBuilder.guestsCapacity(prevListingState.getGuestsCapacity());
+        }
+
+        final var newState = newStateBuilder.build();
+        final var prevState = prevStateBuilder.build();
+
+        if (newState.equals(prevState)) {
+            return Optional.empty();
+        }
+        return Optional.of(new StateDifference(prevState, newState));
+    }
+
     private List<DomainEventPayload> getEventsAfterUpdate(Listing prevListingState, Listing newListing) {
 
         final var prevPhotosIds = prevListingState.getPhotos()
@@ -80,6 +130,19 @@ public class ListingsCatalogImpl implements ListingsCatalog {
                 newPhoto
             )
         ));
+
+        final var stateDifference = getStateDifference(prevListingState, newListing);
+
+        stateDifference.ifPresent(
+            diff -> events.add(
+                new ListingUpdated(
+                    newListing.getId(),
+                    newListing.getUpdatedAt(),
+                    diff.prevState(),
+                    diff.newState()
+                )
+            )
+        );
 
         return events;
     }
@@ -107,5 +170,11 @@ public class ListingsCatalogImpl implements ListingsCatalog {
             unitOfWork.rollback();
             throw new Exception.ListingNotFound();
         }
+    }
+
+    private record StateDifference(
+        ListingUpdated.State prevState,
+        ListingUpdated.State newState
+    ) {
     }
 }
