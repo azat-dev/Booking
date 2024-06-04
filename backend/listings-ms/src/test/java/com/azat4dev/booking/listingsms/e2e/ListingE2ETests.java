@@ -6,7 +6,7 @@ import com.azat4dev.booking.listingsms.e2e.helpers.GenerateAccessToken;
 import com.azat4dev.booking.listingsms.generated.client.api.CommandsModificationsApi;
 import com.azat4dev.booking.listingsms.generated.client.api.QueriesPrivateApi;
 import com.azat4dev.booking.listingsms.generated.client.base.ApiClient;
-import com.azat4dev.booking.listingsms.generated.client.model.AddListingRequestBody;
+import com.azat4dev.booking.listingsms.generated.client.model.*;
 import com.azat4dev.booking.listingsms.helpers.KafkaTests;
 import com.azat4dev.booking.listingsms.helpers.MinioTests;
 import com.azat4dev.booking.listingsms.helpers.PostgresTests;
@@ -123,6 +123,58 @@ class ListingE2ETests implements PostgresTests, MinioTests, KafkaTests {
             .addListing(requestAddListing);
 
         return response.getListingId();
+    }
+
+    UpdateListingDetailsFieldsDTO anyFields() {
+        final var f = Faker.instance();
+
+        return new UpdateListingDetailsFieldsDTO()
+            .title(f.book().title())
+            .description(f.lorem().paragraph())
+            .guestCapacity(
+                new GuestsCapacityDTO()
+                    .adults(f.number().numberBetween(1, 10))
+                    .children(f.number().numberBetween(0, 5))
+                    .infants(f.number().numberBetween(0, 3))
+            ).propertyType(PropertyTypeDTO.BUNGALOW)
+            .roomType(RoomTypeDTO.SHARED_ROOM)
+            .address(
+                new AddressDTO()
+                    .country(f.address().country())
+                    .city(f.address().city())
+                    .street(f.address().streetAddress())
+            );
+    }
+
+    @Test
+    void test_updateListingDetails_givenExistingListing_thenUpdate() {
+
+        // Given
+        final var userId = USER1;
+        final var listingId = givenExistingListing(userId);
+
+        // When
+        final var updateData = anyFields();
+
+        apiClient(CommandsModificationsApi.class, userId)
+            .updateListingDetails(
+                listingId,
+                new UpdateListingDetailsRequestBody()
+                    .operationId(UUID.randomUUID())
+                    .fields(updateData)
+            );
+
+        // Then
+        final var listingDetails = apiClient(QueriesPrivateApi.class, userId)
+            .getListingPrivateDetails(listingId)
+            .getListing();
+
+        assertThat(listingDetails.getTitle()).isEqualTo(updateData.getTitle());
+        assertThat(listingDetails.getDescription()).isEqualTo(updateData.getDescription());
+        assertThat(listingDetails.getGuestCapacity()).isEqualTo(updateData.getGuestCapacity());
+        assertThat(listingDetails.getPropertyType()).isEqualTo(updateData.getPropertyType());
+        assertThat(listingDetails.getRoomType()).isEqualTo(updateData.getRoomType());
+        assertThat(listingDetails.getAddress()).isEqualTo(updateData.getAddress());
     }
 
     private <T extends ApiClient.Api> T apiClient(Class<T> apiClass, UserId userId) {

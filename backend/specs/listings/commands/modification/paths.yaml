@@ -37,3 +37,46 @@ paths:
             application/json:
               schema:
                 $ref: "../../../common/errors.yaml#/ErrorDTO"
+
+  /listings/{listingId}:
+    patch:
+      tags:
+        - commandsModifications
+      summary: Update listing details
+      operationId: updateListingDetails
+      parameters:
+        - name: listingId
+          in: path
+          required: true
+          description: Listing ID
+          schema:
+            $ref: "../../common/models/ListingIdDTO.yaml"
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "models.yaml#/components/schemas/UpdateListingDetailsRequestBody"
+      responses:
+        "201":
+          description: Listing updated successfully
+        "401":
+          description: Validation error
+          content:
+            application/json:
+              schema:
+                oneOf:
+                  - $ref: "../../../common/errors.yaml#/ValidationErrorDTO"
+                  - $ref: "../../../common/errors.yaml#/ErrorDTO"
+        403:
+          description: Forbidden
+          content:
+            application/json:
+              schema:
+                $ref: "../../../common/errors.yaml#/ErrorDTO"
+        "404":
+          description: Listing not found
+          content:
+            application/json:
+              schema:
+                $ref: "../../../common/errors.yaml#/ErrorDTO"

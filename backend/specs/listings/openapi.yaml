@@ -5,6 +5,8 @@ info:
   description: Describes the API of Listings service
 
 paths:
+  # Modification API
+
   /api/private/users/currrent/listings/{listingId}:
     $ref: "queries/private/paths.yaml#/paths/~1listings~1{listingId}"
 
@@ -14,7 +16,10 @@ paths:
   /api/private/listings:
     $ref: "commands/modification/paths.yaml#/paths/~1listings"
 
-#  Photos API
+  /api/private/listings/{listingId}:
+    $ref: "commands/modification/paths.yaml#/paths/~1listings~1{listingId}"
+
+  #  Photos API
 
   /api/private/listings/{listingId}/photos/get-upload-url:
     $ref: "commands/attach-photo/paths.yaml#/paths/~1listings~1{listingId}~1photos~1get-upload-url"

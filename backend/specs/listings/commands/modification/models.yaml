@@ -26,3 +26,32 @@ components:
       properties:
         listingId:
           $ref: "../../common/models/ListingIdDTO.yaml"
+
+    UpdateListingDetailsRequestBody:
+      type: object
+      required:
+        - operationId
+        - listingId
+      properties:
+        operationId:
+          $ref: "../../../common/models/OperationIdDTO.yaml"
+        fields:
+            $ref: "#/components/schemas/UpdateListingDetailsFieldsDTO"
+
+    UpdateListingDetailsFieldsDTO:
+      type: object
+      properties:
+        title:
+          type: string
+          maxLength: 1000
+        description:
+          type: string
+        maxLength: 10000
+        guestCapacity:
+          $ref: "../../common/models/GuestsCapacityDTO.yaml"
+        propertyType:
+          $ref: "../../common/models/PropertyTypeDTO.yaml"
+        roomType:
+          $ref: "../../common/models/RoomTypeDTO.yaml"
+        address:
+          $ref: "../../common/models/AddressDTO.yaml"
