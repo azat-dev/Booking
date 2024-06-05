@@ -1,10 +1,11 @@
 package com.azat4dev.booking.listingsms.commands.data.serializer;
 
 import com.azat4dev.booking.listingsms.commands.domain.events.*;
-import com.azat4dev.booking.listingsms.commands.domain.values.HostId;
-import com.azat4dev.booking.listingsms.commands.domain.values.ListingId;
-import com.azat4dev.booking.listingsms.commands.domain.values.ListingPhoto;
-import com.azat4dev.booking.listingsms.commands.domain.values.ListingTitle;
+import com.azat4dev.booking.listingsms.commands.domain.values.*;
+import com.azat4dev.booking.listingsms.common.domain.values.GuestsCapacity;
+import com.azat4dev.booking.listingsms.common.domain.values.PropertyType;
+import com.azat4dev.booking.listingsms.common.domain.values.RoomType;
+import com.azat4dev.booking.listingsms.common.domain.values.address.ListingAddress;
 import com.azat4dev.booking.listingsms.generated.events.dto.*;
 import com.azat4dev.booking.shared.data.serializers.DomainEventSerializer;
 import com.azat4dev.booking.shared.domain.events.DomainEvent;
@@ -61,6 +62,52 @@ public final class DomainEventsSerializerImpl implements DomainEventSerializer {
         }
     }
 
+    private AddressDTO map(ListingAddress address) {
+        return AddressDTO.builder()
+            .country(address.getCountry().getValue())
+            .city(address.getCity().getValue())
+            .street(address.getStreet().getValue())
+            .build();
+    }
+
+    private GuestsCapacityDTO map(GuestsCapacity guestsCapacity) {
+        return GuestsCapacityDTO.builder()
+            .adults(guestsCapacity.getAdults())
+            .children(guestsCapacity.getChildren())
+            .infants(guestsCapacity.getInfants())
+            .build();
+    }
+
+    private ListingDetailsFieldsDTO map(ListingDetailsUpdated.Change change) {
+        final var builder = ListingDetailsFieldsDTO.builder();
+
+//        change.title().ifPresent(val -> {
+//            builder.title(val.getValue());
+//        });
+//
+//        change.description().ifPresent(val -> {
+//            builder.description(val.map(ListingDescription::getValue).orElse(null));
+//        });
+//
+//        change.propertyType().ifPresent(val -> {
+//            builder.propertyType(val.map(PropertyType::name).orElse(null));
+//        });
+//
+//        change.roomType().ifPresent(val -> {
+//            builder.roomType(val.map(RoomType::name).orElse(null));
+//        });
+//
+//        change.address().ifPresent(val -> {
+//            builder.address(val.map(this::map).orElse(null));
+//        });
+//
+//        change.guestsCapacity().ifPresent(
+//            val -> builder.guestCapacity(this::map(val))
+//        );
+
+        return builder.build();
+    }
+
     private ListingsDomainEventPayloadDTO toDTO(DomainEventPayload payload) {
 
         return switch (payload) {
@@ -99,88 +146,94 @@ public final class DomainEventsSerializerImpl implements DomainEventSerializer {
                     .build()
                 ).build();
 
-            default ->
-                throw new RuntimeException("Serialization. Unknown payload type: " + payload.getClass().getName());
-        };
-    }
+            case ListingDetailsUpdated p -> ListingDetailsUpdatedDTO.builder()
+                    .listingId(p.listingId().getValue())
+                    .newValues(map(p.newState()))
+                    .prevValues(map(p.previousState()))
+                    .build();
 
-    public long map(LocalDateTime localDateTime) {
-        return localDateTime.toInstant(ZoneOffset.UTC).toEpochMilli();
-    }
+                default ->
+                    throw new RuntimeException("Serialization. Unknown payload type: " + payload.getClass().getName());
+            };
+        }
 
-    public LocalDateTime map(long epochMillis) {
-        return Instant.ofEpochMilli(epochMillis).atOffset(ZoneOffset.UTC).toLocalDateTime();
-    }
+        public long map (LocalDateTime localDateTime){
+            return localDateTime.toInstant(ZoneOffset.UTC).toEpochMilli();
+        }
 
-    @Override
-    public DomainEvent<?> deserialize(String event) {
+        public LocalDateTime map ( long epochMillis){
+            return Instant.ofEpochMilli(epochMillis).atOffset(ZoneOffset.UTC).toLocalDateTime();
+        }
 
-        try {
-            final var dto = objectMapper.readValue(event, ListingsDomainEventDTO.class);
-            final var payload = toDomain(dto.getPayload());
-            return new DomainEvent<>(
-                EventId.dangerouslyCreateFrom(dto.getEventId()),
-                map(dto.getOccurredAt()),
-                payload
-            );
-        } catch (JsonProcessingException e) {
-            throw new RuntimeException(e);
+        @Override
+        public DomainEvent<?> deserialize (String event){
+
+            try {
+                final var dto = objectMapper.readValue(event, ListingsDomainEventDTO.class);
+                final var payload = toDomain(dto.getPayload());
+                return new DomainEvent<>(
+                    EventId.dangerouslyCreateFrom(dto.getEventId()),
+                    map(dto.getOccurredAt()),
+                    payload
+                );
+            } catch (JsonProcessingException e) {
+                throw new RuntimeException(e);
+            }
+        }
+
+        private UploadFileFormData toDomain (UploadFileFormDataDTO formData){
+            try {
+                return new UploadFileFormData(
+                    formData.getUrl().toURL(),
+                    BucketName.makeWithoutChecks(formData.getBucketName()),
+                    MediaObjectName.dangerouslyMake(formData.getObjectName()),
+                    formData.getFields()
+                );
+            } catch (MalformedURLException e) {
+                throw new RuntimeException(e);
+            }
+        }
+
+        private DomainEventPayload toDomain (ListingsDomainEventPayloadDTO payload){
+
+            return switch (payload) {
+                case NewListingAddedDTO p -> new NewListingAdded(
+                    ListingId.dangerouslyMakeFrom(p.getListingId().toString()),
+                    HostId.dangerouslyMakeFrom(p.getHostId().toString()),
+                    ListingTitle.dangerouslyMakeFrom(p.getTitle())
+                );
+
+                case FailedToAddNewListingDTO p -> new FailedToAddNewListing(
+                    ListingId.dangerouslyMakeFrom(p.getListingId().toString()),
+                    HostId.dangerouslyMakeFrom(p.getHostId().toString()),
+                    ListingTitle.dangerouslyMakeFrom(p.getTitle())
+                );
+
+                case GeneratedUrlForUploadListingPhotoDTO p -> new GeneratedUrlForUploadListingPhoto(
+                    UserId.dangerouslyMakeFrom(p.getUserId().toString()),
+                    ListingId.dangerouslyMakeFrom(p.getListingId().toString()),
+                    toDomain(p.getFormData())
+                );
+
+                case FailedGenerateUrlForUploadListingPhotoDTO p -> new FailedGenerateUrlForUploadListingPhoto(
+                    IdempotentOperationId.dangerouslyMakeFrom(p.getOperationId()),
+                    UserId.dangerouslyMakeFrom(p.getUserId().toString()),
+                    ListingId.dangerouslyMakeFrom(p.getListingId().toString()),
+                    PhotoFileExtension.dangerouslyMakeFrom(p.getFileExtension()),
+                    p.getFileSize()
+                );
+
+                case AddedNewPhotoToListingDTO p -> new AddedNewPhotoToListing(
+                    ListingId.dangerouslyMakeFrom(p.getListingId().toString()),
+                    new ListingPhoto(
+                        p.getPhoto().getId(),
+                        BucketName.makeWithoutChecks(p.getPhoto().getBucketName()),
+                        MediaObjectName.dangerouslyMake(p.getPhoto().getObjectName())
+                    )
+                );
+
+                default ->
+                    throw new RuntimeException("Deserialization. Unknown payload type: " + payload.getClass().getName());
+            };
         }
     }
-
-    private UploadFileFormData toDomain(UploadFileFormDataDTO formData) {
-        try {
-            return new UploadFileFormData(
-                formData.getUrl().toURL(),
-                BucketName.makeWithoutChecks(formData.getBucketName()),
-                MediaObjectName.dangerouslyMake(formData.getObjectName()),
-                formData.getFields()
-            );
-        } catch (MalformedURLException e) {
-            throw new RuntimeException(e);
-        }
-    }
-
-    private DomainEventPayload toDomain(ListingsDomainEventPayloadDTO payload) {
-
-        return switch (payload) {
-            case NewListingAddedDTO p -> new NewListingAdded(
-                ListingId.dangerouslyMakeFrom(p.getListingId().toString()),
-                HostId.dangerouslyMakeFrom(p.getHostId().toString()),
-                ListingTitle.dangerouslyMakeFrom(p.getTitle())
-            );
-
-            case FailedToAddNewListingDTO p -> new FailedToAddNewListing(
-                ListingId.dangerouslyMakeFrom(p.getListingId().toString()),
-                HostId.dangerouslyMakeFrom(p.getHostId().toString()),
-                ListingTitle.dangerouslyMakeFrom(p.getTitle())
-            );
-
-            case GeneratedUrlForUploadListingPhotoDTO p -> new GeneratedUrlForUploadListingPhoto(
-                UserId.dangerouslyMakeFrom(p.getUserId().toString()),
-                ListingId.dangerouslyMakeFrom(p.getListingId().toString()),
-                toDomain(p.getFormData())
-            );
-
-            case FailedGenerateUrlForUploadListingPhotoDTO p -> new FailedGenerateUrlForUploadListingPhoto(
-                IdempotentOperationId.dangerouslyMakeFrom(p.getOperationId()),
-                UserId.dangerouslyMakeFrom(p.getUserId().toString()),
-                ListingId.dangerouslyMakeFrom(p.getListingId().toString()),
-                PhotoFileExtension.dangerouslyMakeFrom(p.getFileExtension()),
-                p.getFileSize()
-            );
-
-            case AddedNewPhotoToListingDTO p -> new AddedNewPhotoToListing(
-                ListingId.dangerouslyMakeFrom(p.getListingId().toString()),
-                new ListingPhoto(
-                    p.getPhoto().getId(),
-                    BucketName.makeWithoutChecks(p.getPhoto().getBucketName()),
-                    MediaObjectName.dangerouslyMake(p.getPhoto().getObjectName())
-                )
-            );
-
-            default ->
-                throw new RuntimeException("Deserialization. Unknown payload type: " + payload.getClass().getName());
-        };
-    }
-}

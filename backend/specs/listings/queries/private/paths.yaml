@@ -18,7 +18,7 @@ paths:
           required: true
           description: Listing ID
           schema:
-            $ref: "../../common/models/ListingIdDTO.yaml"
+            $ref: "../../common/models/ListingId.yaml"
       responses:
         "200":
           description: Private details of listing
@@ -44,6 +44,6 @@ paths:
               schema:
                 type: array
                 items:
-                  "$ref": "models.yaml#/components/schemas/ListingPrivateDetailsDTO"
+                  "$ref": "models.yaml#/components/schemas/ListingPrivateDetails"
         "403":
           description: Forbidden

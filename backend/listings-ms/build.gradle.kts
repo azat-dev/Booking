@@ -143,12 +143,13 @@ tasks.register<GenerateTask>("generateServerApi") {
     modelPackage.set("com.azat4dev.booking.listingsms.generated.server.model")
     packageName.set("com.azat4dev.booking.listingsms.generated.server")
     ignoreFileOverride.set(".openapi-generator-ignore")
+    modelNameSuffix.set("DTO")
     configOptions.set(
         mapOf(
-            "useOptional" to "true",
-            "openApiNullable" to "false",
+            "useOptional" to "false",
+            "openApiNullable" to "true",
             "interfaceOnly" to "false",
-            "additionalModelTypeAnnotations" to "@lombok.Builder(toBuilder = true)\n@lombok.AllArgsConstructor\n@com.fasterxml.jackson.annotation.JsonIgnoreProperties(ignoreUnknown=true)",
+            "additionalModelTypeAnnotations" to "@lombok.Builder(toBuilder = true)\n@lombok.AllArgsConstructor\n@lombok.NoArgsConstructor\n@com.fasterxml.jackson.annotation.JsonIgnoreProperties(ignoreUnknown=true)",
             "generatedConstructorWithRequiredArgs" to "false",
             "useTags" to "true",
             "dateLibrary" to "java8-localdatetime",
@@ -172,9 +173,11 @@ tasks.register<GenerateTask>("generateApiClient") {
     modelPackage.set("com.azat4dev.booking.listingsms.generated.client.model")
     packageName.set("com.azat4dev.booking.listingsms.generated.client")
     ignoreFileOverride.set(".openapi-generator-ignore")
+    modelNameSuffix.set("DTO")
     configOptions.set(
         mapOf(
             "useOptional" to "true",
+            "openApiNullable" to "true",
             "generateConstructorWithAllArgs" to "true",
             "generateBuilders" to "true",
             "useTags" to "true"
@@ -194,10 +197,10 @@ tasks.register<GenerateTask>("generateDomainEventsDTO") {
     configOptions.set(
         mapOf(
             "useOptional" to "true",
-            "openApiNullable" to "false",
+            "openApiNullable" to "true",
             "interfaceOnly" to "true",
 
-            "additionalModelTypeAnnotations" to "@lombok.Builder(toBuilder = true)\n@lombok.AllArgsConstructor\n@com.fasterxml.jackson.annotation.JsonIgnoreProperties(ignoreUnknown=true)",
+            "additionalModelTypeAnnotations" to "@lombok.Builder(toBuilder = true)\n@lombok.AllArgsConstructor\n@lombok.NoArgsConstructor\n@com.fasterxml.jackson.annotation.JsonIgnoreProperties(ignoreUnknown=true)",
             "generatedConstructorWithRequiredArgs" to "false",
             "generateSupportingFiles" to "false",
             "useTags" to "true",

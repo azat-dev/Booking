@@ -14,7 +14,7 @@ components:
         - email
       properties:
         operationId:
-          $ref: "../../common/models/OperationIdDTO.yaml"
+          $ref: "../../common/models/OperationId.yaml"
         email:
           type: string
           format: email
@@ -27,7 +27,7 @@ components:
         - resetPasswordToken
       properties:
         operationId:
-          $ref: "../../common/models/OperationIdDTO.yaml"
+          $ref: "../../common/models/OperationId.yaml"
         newPassword:
           type: string
           minLength: 1

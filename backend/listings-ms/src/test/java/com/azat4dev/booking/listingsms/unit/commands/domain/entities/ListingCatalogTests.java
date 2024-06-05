@@ -7,12 +7,17 @@ import com.azat4dev.booking.listingsms.commands.domain.events.NewListingAdded;
 import com.azat4dev.booking.listingsms.commands.domain.interfaces.repositories.ListingsRepository;
 import com.azat4dev.booking.listingsms.commands.domain.interfaces.repositories.UnitOfWork;
 import com.azat4dev.booking.listingsms.commands.domain.interfaces.repositories.UnitOfWorkFactory;
+import com.azat4dev.booking.listingsms.commands.domain.values.ListingStatus;
+import com.azat4dev.booking.listingsms.common.domain.values.GuestsCapacity;
 import com.azat4dev.booking.shared.data.repositories.outbox.OutboxEventsRepository;
 import com.azat4dev.booking.shared.utils.TimeProvider;
 import org.junit.jupiter.api.Test;
 
 import java.time.LocalDateTime;
+import java.util.List;
+import java.util.Optional;
 
+import static com.azat4dev.booking.listingsms.unit.commands.domain.entities.DomainHelpers.*;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.mockito.ArgumentMatchers.any;
@@ -58,9 +63,9 @@ public class ListingCatalogTests {
 
         // Given
         var sut = createSUT();
-        final var listingId = DomainHelpers.anyListingId();
-        final var hostId = DomainHelpers.anyHostId();
-        final var title = DomainHelpers.anyListingTitle();
+        final var listingId = anyListingId();
+        final var hostId = anyHostId();
+        final var title = anyListingTitle();
 
         final var now = LocalDateTime.now();
 
@@ -103,9 +108,10 @@ public class ListingCatalogTests {
 
         // Given
         var sut = createSUT();
-        final var listingId = DomainHelpers.anyListingId();
-        final var hostId = DomainHelpers.anyHostId();
-        final var title = DomainHelpers.anyListingTitle();
+        final var listingId = anyListingId();
+        final var hostId = anyHostId();
+        final var title = anyListingTitle();
+
 
         willThrow(new RuntimeException())
             .given(sut.outboxRepository)

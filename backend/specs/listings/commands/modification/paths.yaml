@@ -29,14 +29,14 @@ paths:
             application/json:
               schema:
                 oneOf:
-                  - $ref: "../../../common/errors.yaml#/ValidationErrorDTO"
-                  - $ref: "../../../common/errors.yaml#/ErrorDTO"
+                  - $ref: "../../../common/errors.yaml#/ValidationError"
+                  - $ref: "../../../common/errors.yaml#/Error"
         "404":
           description: Not found
           content:
             application/json:
               schema:
-                $ref: "../../../common/errors.yaml#/ErrorDTO"
+                $ref: "../../../common/errors.yaml#/Error"
 
   /listings/{listingId}:
     patch:
@@ -50,7 +50,7 @@ paths:
           required: true
           description: Listing ID
           schema:
-            $ref: "../../common/models/ListingIdDTO.yaml"
+            $ref: "../../common/models/ListingId.yaml"
       requestBody:
         required: true
         content:
@@ -66,17 +66,17 @@ paths:
             application/json:
               schema:
                 oneOf:
-                  - $ref: "../../../common/errors.yaml#/ValidationErrorDTO"
-                  - $ref: "../../../common/errors.yaml#/ErrorDTO"
+                  - $ref: "../../../common/errors.yaml#/ValidationError"
+                  - $ref: "../../../common/errors.yaml#/Error"
         403:
           description: Forbidden
           content:
             application/json:
               schema:
-                $ref: "../../../common/errors.yaml#/ErrorDTO"
+                $ref: "../../../common/errors.yaml#/Error"
         "404":
           description: Listing not found
           content:
             application/json:
               schema:
-                $ref: "../../../common/errors.yaml#/ErrorDTO"
+                $ref: "../../../common/errors.yaml#/Error"

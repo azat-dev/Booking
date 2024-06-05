@@ -17,9 +17,9 @@ components:
         - uploadedFile
       properties:
         operationId:
-          $ref: "../../../common/models/OperationIdDTO.yaml"
+          $ref: "../../../common/models/OperationId.yaml"
         uploadedFile:
-          $ref: "#/components/schemas/UploadedFileDataDTO"
+          $ref: "#/components/schemas/UploadedFileData"
 
     AddListingPhotoResponseBody:
       type: "object"
@@ -28,9 +28,9 @@ components:
         - listingPhotoId
       properties:
         operationId:
-          $ref: "../../../common/models/OperationIdDTO.yaml"
+          $ref: "../../../common/models/OperationId.yaml"
         listingPhotoId:
-          $ref: "../../common/models/ListingPhotoIdDTO.yaml"
+          $ref: "../../common/models/ListingPhotoId.yaml"
 
 
     DeleteListingPhotoRequestBody:
@@ -40,11 +40,11 @@ components:
         - photoId
       properties:
         operationId:
-          $ref: "../../../common/models/OperationIdDTO.yaml"
+          $ref: "../../../common/models/OperationId.yaml"
         uploadedFile:
-          $ref: "#/components/schemas/UploadedFileDataDTO"
+          $ref: "#/components/schemas/UploadedFileData"
 
-    UploadedFileDataDTO:
+    UploadedFileData:
       type: "object"
       required:
         - url
@@ -62,7 +62,7 @@ components:
       type: "object"
       properties:
         operationId:
-          $ref: "../../../common/models/OperationIdDTO.yaml"
+          $ref: "../../../common/models/OperationId.yaml"
         fileName:
           type: "string"
         fileExtension:
@@ -79,7 +79,7 @@ components:
         - formData
       properties:
         objectPath:
-          $ref: "#/components/schemas/UploadedFileDataDTO"
+          $ref: "#/components/schemas/UploadedFileData"
         formData:
           type: "object"
           additionalProperties:

@@ -15,7 +15,7 @@ paths:
           content:
             application/json:
               schema:
-                "$ref": "models/PersonalUserInfoDTO.yaml"
+                "$ref": "models/PersonalUserInfo.yaml"
         "401":
           description: "User not authenticated"
         404:

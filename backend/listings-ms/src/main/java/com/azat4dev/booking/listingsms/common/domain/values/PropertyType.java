@@ -14,6 +14,6 @@ public enum PropertyType {
     LOFT,
     HOSTEL,
     BOAT,
-    BEDANDBREAKFAST,
+    BED_AND_BREAKFAST,
     OTHER
 }

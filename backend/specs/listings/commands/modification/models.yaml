@@ -14,7 +14,7 @@ components:
         - title
       properties:
         operationId:
-          $ref: "../../../common/models/OperationIdDTO.yaml"
+          $ref: "../../../common/models/OperationId.yaml"
         title:
           type: string
           maxLength: 1000
@@ -25,33 +25,43 @@ components:
         - listingId
       properties:
         listingId:
-          $ref: "../../common/models/ListingIdDTO.yaml"
+          $ref: "../../common/models/ListingId.yaml"
 
     UpdateListingDetailsRequestBody:
       type: object
       required:
         - operationId
         - listingId
+        - fields
       properties:
         operationId:
-          $ref: "../../../common/models/OperationIdDTO.yaml"
+          $ref: "../../../common/models/OperationId.yaml"
         fields:
-            $ref: "#/components/schemas/UpdateListingDetailsFieldsDTO"
+            $ref: "#/components/schemas/UpdateListingDetailsFields"
 
-    UpdateListingDetailsFieldsDTO:
+    UpdateListingDetailsFields:
       type: object
       properties:
         title:
           type: string
-          maxLength: 1000
+          maxLength: 100
         description:
           type: string
-        maxLength: 10000
+          maxLength: 2000
+          nullable: true
         guestCapacity:
-          $ref: "../../common/models/GuestsCapacityDTO.yaml"
+          nullable: true
+          allOf:
+            - $ref: "../../common/models/GuestsCapacity.yaml"
         propertyType:
-          $ref: "../../common/models/PropertyTypeDTO.yaml"
+          nullable: true
+          allOf:
+            - $ref: "../../common/models/PropertyType.yaml"
         roomType:
-          $ref: "../../common/models/RoomTypeDTO.yaml"
+          nullable: true
+          allOf:
+            - $ref: "../../common/models/RoomType.yaml"
         address:
-          $ref: "../../common/models/AddressDTO.yaml"
+          nullable: true
+          allOf:
+            - $ref: "../../common/models/Address.yaml"

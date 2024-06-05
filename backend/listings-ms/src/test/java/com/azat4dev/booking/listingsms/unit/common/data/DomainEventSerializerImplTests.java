@@ -2,8 +2,13 @@ package com.azat4dev.booking.listingsms.unit.common.data;
 
 import com.azat4dev.booking.listingsms.commands.data.serializer.DomainEventsSerializerImpl;
 import com.azat4dev.booking.listingsms.commands.domain.events.*;
+import com.azat4dev.booking.listingsms.commands.domain.values.ListingDescription;
 import com.azat4dev.booking.listingsms.commands.domain.values.ListingPhoto;
+import com.azat4dev.booking.listingsms.commands.domain.values.ListingStatus;
 import com.azat4dev.booking.listingsms.commands.domain.values.ListingTitle;
+import com.azat4dev.booking.listingsms.common.domain.values.GuestsCapacity;
+import com.azat4dev.booking.listingsms.common.domain.values.PropertyType;
+import com.azat4dev.booking.listingsms.common.domain.values.RoomType;
 import com.azat4dev.booking.shared.data.serializers.DomainEventSerializer;
 import com.azat4dev.booking.shared.domain.values.IdempotentOperationId;
 import com.azat4dev.booking.shared.domain.values.files.BucketName;
@@ -17,6 +22,7 @@ import java.net.MalformedURLException;
 import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Map;
+import java.util.Optional;
 
 import static com.azat4dev.booking.listingsms.unit.commands.domain.entities.DomainHelpers.anyListingId;
 import static com.azat4dev.booking.listingsms.unit.helpers.EventHelpers.eventsFactory;
@@ -83,6 +89,31 @@ public class DomainEventSerializerImplTests {
                         "photoId",
                         BucketName.checkAndMake("bucket"),
                         MediaObjectName.checkAndMakeFrom("object")
+                    )
+                )
+            ),
+
+            eventsFactory.issue(
+                new ListingDetailsUpdated(
+                    anyListingId(),
+                    now,
+                    new ListingDetailsUpdated.Change(
+                        Optional.of(ListingStatus.DRAFT),
+                        Optional.of(ListingTitle.dangerouslyMakeFrom("title")),
+                        Optional.of(Optional.of(ListingDescription.dangerouslyMakeFrom("description"))),
+                        Optional.of(Optional.of(PropertyType.APARTMENT)),
+                        Optional.of(Optional.of(RoomType.ENTIRE_PLACE)),
+                        Optional.of(GuestsCapacity.DEFAULT),
+                        Optional.empty()
+                    ),
+                    new ListingDetailsUpdated.Change(
+                        Optional.of(ListingStatus.DRAFT),
+                        Optional.of(ListingTitle.dangerouslyMakeFrom("title")),
+                        Optional.of(Optional.of(ListingDescription.dangerouslyMakeFrom("description"))),
+                        Optional.of(Optional.of(PropertyType.APARTMENT)),
+                        Optional.of(Optional.of(RoomType.ENTIRE_PLACE)),
+                        Optional.of(GuestsCapacity.DEFAULT),
+                        Optional.empty()
                     )
                 )
             )

@@ -20,7 +20,7 @@ components:
         password:
           type: string
         fullName:
-          $ref: "../../common/models/FullNameDTO.yaml"
+          $ref: "../../common/models/FullName.yaml"
 
     SignUpResponseBody:
       type: object
@@ -29,9 +29,9 @@ components:
         - tokens
       properties:
         userId:
-          $ref: "../../common/models/UserIdDTO.yaml"
+          $ref: "../../common/models/UserId.yaml"
         tokens:
-          $ref: "#/components/schemas/TokensPairDTO"
+          $ref: "#/components/schemas/TokensPair"
 
     LoginByEmailRequestBody:
       type: object
@@ -52,9 +52,9 @@ components:
         - userId
       properties:
         userId:
-          $ref: "../../common/models/UserIdDTO.yaml"
+          $ref: "../../common/models/UserId.yaml"
         tokens:
-          $ref: "#/components/schemas/TokensPairDTO"
+          $ref: "#/components/schemas/TokensPair"
 
     SignUpByEmailResponseBody:
       type: object
@@ -63,11 +63,11 @@ components:
         - tokens
       properties:
         userId:
-          $ref: "../../common/models/UserIdDTO.yaml"
+          $ref: "../../common/models/UserId.yaml"
         tokens:
-          $ref: "#/components/schemas/TokensPairDTO"
+          $ref: "#/components/schemas/TokensPair"
 
-    UserWithSameEmailAlreadyExistsErrorDTO:
+    UserWithSameEmailAlreadyExistsError:
       type: object
       required:
         - code
@@ -79,7 +79,7 @@ components:
         message:
           type: string
 
-    TokensPairDTO:
+    TokensPair:
       type: object
       required:
         - access

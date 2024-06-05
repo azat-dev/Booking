@@ -24,9 +24,9 @@ public final class ListingsPhotoApi implements CommandsListingsPhotoApiDelegate 
     private final CurrentAuthenticatedUserIdProvider currentUserId;
 
     @Override
-    public ResponseEntity<GenerateUploadListingPhotoUrlResponseBody> generateUploadListingPhotoUrl(
+    public ResponseEntity<GenerateUploadListingPhotoUrlResponseBodyDTO> generateUploadListingPhotoUrl(
         UUID listingId,
-        GenerateUploadListingPhotoUrlRequestBody requestBody
+        GenerateUploadListingPhotoUrlRequestBodyDTO requestBody
     ) {
 
         final var userId = currentUserId.get()
@@ -38,12 +38,12 @@ public final class ListingsPhotoApi implements CommandsListingsPhotoApiDelegate 
                     requestBody.getOperationId().toString(),
                     userId.value().toString(),
                     listingId.toString(),
-                    requestBody.getFileExtension(),
-                    requestBody.getFileSize()
+                    requestBody.getFileExtension().orElse(null),
+                    requestBody.getFileSize().orElse(null)
                 )
             );
 
-            return ResponseEntity.ok(new GenerateUploadListingPhotoUrlResponseBody(
+            return ResponseEntity.ok(new GenerateUploadListingPhotoUrlResponseBodyDTO(
                 UploadedFileDataDTO.builder()
                     .url(result.formData().url().toString())
                     .bucketName(result.formData().bucketName().getValue())
@@ -58,7 +58,7 @@ public final class ListingsPhotoApi implements CommandsListingsPhotoApiDelegate 
     }
 
     @Override
-    public ResponseEntity<AddListingPhotoResponseBody> addPhotoToListing(UUID listingId, AddListingPhotoRequestBody requestBody) {
+    public ResponseEntity<AddListingPhotoResponseBodyDTO> addPhotoToListing(UUID listingId, AddListingPhotoRequestBodyDTO requestBody) {
 
 
         try {
@@ -75,7 +75,7 @@ public final class ListingsPhotoApi implements CommandsListingsPhotoApiDelegate 
 
             addNewPhotoToListingHandler.handle(command);
 
-            return ResponseEntity.ok(new AddListingPhotoResponseBody());
+            return ResponseEntity.ok(new AddListingPhotoResponseBodyDTO());
 
         } catch (AddNewPhotoToListingHandler.Exception.ListingNotFound |
                  AddNewPhotoToListingHandler.Exception.PhotoNotFound e) {

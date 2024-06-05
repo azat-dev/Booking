@@ -18,7 +18,7 @@ paths:
           description: Listing Id
           required: true
           schema:
-            $ref: "../../common/models/ListingIdDTO.yaml"
+            $ref: "../../common/models/ListingId.yaml"
       requestBody:
         content:
           application/json:
@@ -45,7 +45,7 @@ paths:
           description: Listing Id
           required: true
           schema:
-            $ref: "../../common/models/ListingIdDTO.yaml"
+            $ref: "../../common/models/ListingId.yaml"
       requestBody:
         required: true
         content:
@@ -74,13 +74,13 @@ paths:
           description: Listing Id
           required: true
           schema:
-            $ref: "../../common/models/ListingIdDTO.yaml"
+            $ref: "../../common/models/ListingId.yaml"
         - name: photoId
           in: path
           description: Listing Id
           required: true
           schema:
-            $ref: "../../common/models/ListingPhotoIdDTO.yaml"
+            $ref: "../../common/models/ListingPhotoId.yaml"
       responses:
         "204":
           description: Photo attached

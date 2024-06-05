@@ -2,7 +2,10 @@ package com.azat4dev.booking.listingsms.commands.application.config.application;
 
 import com.azat4dev.booking.listingsms.commands.application.handlers.AddNewListingHandler;
 import com.azat4dev.booking.listingsms.commands.application.handlers.AddNewListingHandlerImpl;
+import com.azat4dev.booking.listingsms.commands.domain.entities.Hosts;
 import com.azat4dev.booking.listingsms.commands.domain.entities.ListingsCatalog;
+import com.azat4dev.booking.listingsms.commands.domain.handers.modification.UpdateListingDetailsHandler;
+import com.azat4dev.booking.listingsms.commands.domain.handers.modification.UpdateListingDetailsHandlerImpl;
 import com.azat4dev.booking.listingsms.commands.domain.values.MakeNewListingId;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -17,6 +20,17 @@ public class ApplicationConfig {
     ) {
         return new AddNewListingHandlerImpl(
             makeListingId,
+            listings
+        );
+    }
+
+    @Bean
+    UpdateListingDetailsHandler updateListingDetailsHandler(
+        Hosts hosts,
+        ListingsCatalog listings
+    ) {
+        return new UpdateListingDetailsHandlerImpl(
+            hosts,
             listings
         );
     }

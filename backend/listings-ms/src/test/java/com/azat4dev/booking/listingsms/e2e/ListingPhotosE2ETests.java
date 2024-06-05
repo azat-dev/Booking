@@ -52,10 +52,10 @@ class ListingPhotosE2ETests implements PostgresTests, MinioTests, KafkaTests {
     @Value("classpath:test_image.jpg")
     private Resource testImageFile;
 
-    static AddListingRequestBody anyRequestAddListing() {
+    static AddListingRequestBodyDTO anyRequestAddListing() {
         final var faker = Faker.instance();
 
-        return new AddListingRequestBody()
+        return new AddListingRequestBodyDTO()
             .operationId(UUID.randomUUID())
             .title(faker.book().title());
     }
@@ -89,7 +89,7 @@ class ListingPhotosE2ETests implements PostgresTests, MinioTests, KafkaTests {
         final var response = apiClient(CommandsListingsPhotoApi.class, userId)
             .addPhotoToListing(
                 listingId,
-                new AddListingPhotoRequestBody()
+                new AddListingPhotoRequestBodyDTO()
                     .operationId(UUID.randomUUID())
                     .uploadedFile(
                         new UploadedFileDataDTO()
@@ -108,7 +108,7 @@ class ListingPhotosE2ETests implements PostgresTests, MinioTests, KafkaTests {
         assertThat(listingDetails.getPhotos().size()).isEqualTo(1);
     }
 
-    private GenerateUploadListingPhotoUrlResponseBody givenUploadedListingPhoto(
+    private GenerateUploadListingPhotoUrlResponseBodyDTO givenUploadedListingPhoto(
         UserId userId,
         UUID listingId
     ) throws IOException {
@@ -120,7 +120,7 @@ class ListingPhotosE2ETests implements PostgresTests, MinioTests, KafkaTests {
         final var result = apiClient(CommandsListingsPhotoApi.class, userId)
             .generateUploadListingPhotoUrl(
                 listingId,
-                new GenerateUploadListingPhotoUrlRequestBody()
+                new GenerateUploadListingPhotoUrlRequestBodyDTO()
                     .operationId(UUID.randomUUID())
                     .fileExtension("jpg")
                     .fileSize((int) file.length())

@@ -43,6 +43,7 @@ components:
       oneOf:
         - $ref: "#/components/schemas/NewListingAdded"
         - $ref: "#/components/schemas/FailedToAddNewListing"
+        - $ref: "#/components/schemas/ListingDetailsUpdated"
 
         - $ref: "#/components/schemas/GeneratedUrlForUploadListingPhoto"
         - $ref: "#/components/schemas/FailedGenerateUrlForUploadListingPhoto"
@@ -158,6 +159,72 @@ components:
           type: string
         objectName:
           type: string
+
+    ListingDetailsUpdated:
+      type: object
+      required:
+        - listingId
+        - prevValues
+        - newValues
+      properties:
+        listingId:
+          $ref: "#/components/schemas/ListingId"
+        prevValues:
+          $ref: "#/components/schemas/ListingDetailsFields"
+        newValues:
+          $ref: "#/components/schemas/ListingDetailsFields"
+
+    ListingDetailsFields:
+      type: object
+      properties:
+        title:
+          type: string
+          nullable: true
+        description:
+          type: string
+          nullable: true
+        guestCapacity:
+          nullable: true
+          allOf:
+            - $ref: "#/components/schemas/GuestsCapacity"
+        propertyType:
+          nullable: false
+          allOf:
+            - $ref: "../../listings/common/models/PropertyType.yaml"
+        roomType:
+          type: string
+        address:
+          $ref: "#/components/schemas/Address"
+
+    Address:
+      type: object
+      required:
+        - country
+        - city
+        - street
+      properties:
+        street:
+          type: string
+        city:
+          type: string
+        state:
+          type: string
+        country:
+          type: string
+
+    GuestsCapacity:
+      type: object
+      required:
+        - adults
+        - children
+        - infants
+      properties:
+        adults:
+          type: integer
+        children:
+          type: integer
+        infants:
+          type: integer
 
     ListingId:
       type: string

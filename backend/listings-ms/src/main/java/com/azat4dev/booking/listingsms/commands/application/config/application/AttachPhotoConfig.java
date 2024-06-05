@@ -3,7 +3,7 @@ package com.azat4dev.booking.listingsms.commands.application.config.application;
 import com.azat4dev.booking.listingsms.commands.application.handlers.photo.*;
 import com.azat4dev.booking.listingsms.commands.domain.entities.Hosts;
 import com.azat4dev.booking.listingsms.commands.domain.entities.ListingsCatalog;
-import com.azat4dev.booking.listingsms.commands.domain.handers.GenerateUrlForUploadListingPhoto;
+import com.azat4dev.booking.listingsms.commands.domain.handers.photo.GenerateUrlForUploadListingPhoto;
 import com.azat4dev.booking.shared.domain.interfaces.files.MediaObjectsBucket;
 import com.azat4dev.booking.shared.domain.values.files.BucketName;
 import org.springframework.beans.factory.annotation.Qualifier;

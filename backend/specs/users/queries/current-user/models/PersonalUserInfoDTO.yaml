@@ -9,11 +9,11 @@ properties:
     type: string
     format: uuid
   fullName:
-    $ref: "../../../common/models/FullNameDTO.yaml"
+    $ref: "../../../common/models/FullName.yaml"
   email:
     type: string
     format: email
   photo:
-    $ref: "../../../common/models/PhotoPathDTO.yaml"
+    $ref: "../../../common/models/PhotoPath.yaml"
   emailVerificationStatus:
-    $ref: "../../../common/models/EmailVerificationStatusDTO.yaml"
+    $ref: "../../../common/models/EmailVerificationStatus.yaml"

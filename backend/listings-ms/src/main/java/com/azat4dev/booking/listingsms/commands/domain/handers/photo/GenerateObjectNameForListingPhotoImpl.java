@@ -1,4 +1,4 @@
-package com.azat4dev.booking.listingsms.commands.domain.handers;
+package com.azat4dev.booking.listingsms.commands.domain.handers.photo;
 
 import com.azat4dev.booking.listingsms.commands.domain.values.ListingId;
 import com.azat4dev.booking.shared.domain.values.files.MediaObjectName;

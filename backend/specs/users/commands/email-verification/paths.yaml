@@ -32,13 +32,13 @@ paths:
             application/json:
               schema:
                 oneOf:
-                  - $ref: "../../common/errors.yaml#/ValidationErrorDTO"
-                  - $ref: "../../common/errors.yaml#/ErrorDTO"
+                  - $ref: "../../common/errors.yaml#/ValidationError"
+                  - $ref: "../../common/errors.yaml#/Error"
         "403":
           description: "User not found"
           content:
             application/json:
               schema:
                 oneOf:
-                  - $ref: "../../common/errors.yaml#/ValidationErrorDTO"
-                  - $ref: "../../common/errors.yaml#/ErrorDTO"
+                  - $ref: "../../common/errors.yaml#/ValidationError"
+                  - $ref: "../../common/errors.yaml#/Error"

@@ -1,9 +1,9 @@
 package com.azat4dev.booking.listingsms.commands.application.config.domain;
 
-import com.azat4dev.booking.listingsms.commands.domain.handers.GenerateObjectNameForListingPhoto;
-import com.azat4dev.booking.listingsms.commands.domain.handers.GenerateObjectNameForListingPhotoImpl;
-import com.azat4dev.booking.listingsms.commands.domain.handers.GenerateUrlForUploadListingPhoto;
-import com.azat4dev.booking.listingsms.commands.domain.handers.GenerateUrlForUploadListingPhotoImpl;
+import com.azat4dev.booking.listingsms.commands.domain.handers.photo.GenerateObjectNameForListingPhoto;
+import com.azat4dev.booking.listingsms.commands.domain.handers.photo.GenerateObjectNameForListingPhotoImpl;
+import com.azat4dev.booking.listingsms.commands.domain.handers.photo.GenerateUrlForUploadListingPhoto;
+import com.azat4dev.booking.listingsms.commands.domain.handers.photo.GenerateUrlForUploadListingPhotoImpl;
 import com.azat4dev.booking.shared.domain.interfaces.bus.DomainEventsBus;
 import com.azat4dev.booking.shared.domain.interfaces.files.MediaObjectsBucket;
 import com.azat4dev.booking.shared.utils.TimeProvider;

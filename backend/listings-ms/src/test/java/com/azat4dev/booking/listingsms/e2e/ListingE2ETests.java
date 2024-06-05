@@ -22,6 +22,7 @@ import org.springframework.boot.test.web.server.LocalServerPort;
 import org.springframework.test.annotation.DirtiesContext;
 import org.springframework.test.context.ContextConfiguration;
 
+import java.io.IOException;
 import java.util.UUID;
 
 import static com.azat4dev.booking.listingsms.e2e.helpers.UsersHelpers.USER1;
@@ -43,10 +44,10 @@ class ListingE2ETests implements PostgresTests, MinioTests, KafkaTests {
     @LocalServerPort
     private int port;
 
-    static AddListingRequestBody anyRequestAddListing() {
+    static AddListingRequestBodyDTO anyRequestAddListing() {
         final var faker = Faker.instance();
 
-        return new AddListingRequestBody()
+        return new AddListingRequestBodyDTO()
             .operationId(UUID.randomUUID())
             .title(faker.book().title());
     }
@@ -147,7 +148,7 @@ class ListingE2ETests implements PostgresTests, MinioTests, KafkaTests {
     }
 
     @Test
-    void test_updateListingDetails_givenExistingListing_thenUpdate() {
+    void test_updateListingDetails_givenExistingListing_thenUpdate() throws IOException {
 
         // Given
         final var userId = USER1;
@@ -159,7 +160,7 @@ class ListingE2ETests implements PostgresTests, MinioTests, KafkaTests {
         apiClient(CommandsModificationsApi.class, userId)
             .updateListingDetails(
                 listingId,
-                new UpdateListingDetailsRequestBody()
+                new UpdateListingDetailsRequestBodyDTO()
                     .operationId(UUID.randomUUID())
                     .fields(updateData)
             );

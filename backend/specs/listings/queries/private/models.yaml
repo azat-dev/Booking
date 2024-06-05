@@ -7,35 +7,36 @@ paths:
   \:
 components:
   schemas:
-    ListingPrivateDetailsDTO:
+    ListingPrivateDetails:
       type: object
       required:
         - id
         - title
         - status
+        - guestCapacity
       properties:
         id:
-          $ref: "../../common/models/ListingIdDTO.yaml"
+          $ref: "../../common/models/ListingId.yaml"
         title:
           type: string
         status:
-          $ref: "../../common/models/ListingStatusDTO.yaml"
+          $ref: "../../common/models/ListingStatus.yaml"
         description:
           type: string
         guestCapacity:
-          $ref: "../../common/models/GuestsCapacityDTO.yaml"
+          $ref: "../../common/models/GuestsCapacity.yaml"
         propertyType:
-          $ref: "../../common/models/PropertyTypeDTO.yaml"
+          $ref: "../../common/models/PropertyType.yaml"
         roomType:
-          $ref: "../../common/models/RoomTypeDTO.yaml"
+          $ref: "../../common/models/RoomType.yaml"
         address:
-          $ref: "../../common/models/AddressDTO.yaml"
+          $ref: "../../common/models/Address.yaml"
         location:
-          $ref: "../../common/models/LocationDTO.yaml"
+          $ref: "../../common/models/Location.yaml"
         photos:
           type: array
           items:
-            $ref: "../../common/models/ListingPhotoPathDTO.yaml"
+            $ref: "../../common/models/ListingPhotoPath.yaml"
 
     GetPhotoUploadUrlForListingResponse:
       type: object
@@ -52,4 +53,4 @@ components:
         - listing
       properties:
         listing:
-          $ref: "#/components/schemas/ListingPrivateDetailsDTO"
+          $ref: "#/components/schemas/ListingPrivateDetails"

@@ -19,7 +19,6 @@ public interface PostgresTests {
     static void configureProperties(DynamicPropertyRegistry registry) {
 
         registry.add("spring.datasource.url", () -> {
-            System.out.println("JDBC START!!!!" + postgres.getJdbcUrl());
             return postgres.getJdbcUrl();
         });
         registry.add("spring.datasource.username", postgres::getUsername);
@@ -28,7 +27,6 @@ public interface PostgresTests {
 
     @BeforeEach
     default void beforeEachPostgres() {
-        System.out.println("JDBC!!!!" + postgres.getJdbcUrl());
     }
 
     @AfterEach

@@ -1,4 +1,4 @@
-ErrorDTO:
+Error:
   type: object
   required:
     - code
@@ -8,12 +8,12 @@ ErrorDTO:
       type: string
     message:
       type: string
-ErrorsDTO:
+Errors:
   type: array
   items:
-    $ref: "#/ErrorDTO"
+    $ref: "#/Error"
 
-ValidationErrorDTO:
+ValidationError:
   type: object
   required:
     - type
@@ -25,9 +25,9 @@ ValidationErrorDTO:
     errors:
       type: array
       items:
-        $ref: "#/ValidationErrorDetailsDTO"
+        $ref: "#/ValidationErrorDetails"
 
-ValidationErrorDetailsDTO:
+ValidationErrorDetails:
   type: object
   required:
     - path

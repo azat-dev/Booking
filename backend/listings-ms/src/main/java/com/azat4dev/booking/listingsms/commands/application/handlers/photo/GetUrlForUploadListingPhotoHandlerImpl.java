@@ -2,7 +2,7 @@ package com.azat4dev.booking.listingsms.commands.application.handlers.photo;
 
 import com.azat4dev.booking.listingsms.commands.application.commands.GetUrlForUploadListingPhoto;
 import com.azat4dev.booking.listingsms.commands.domain.events.GeneratedUrlForUploadListingPhoto;
-import com.azat4dev.booking.listingsms.commands.domain.handers.GenerateUrlForUploadListingPhoto;
+import com.azat4dev.booking.listingsms.commands.domain.handers.photo.GenerateUrlForUploadListingPhoto;
 import com.azat4dev.booking.listingsms.commands.domain.values.ListingId;
 import com.azat4dev.booking.shared.application.ValidationException;
 import com.azat4dev.booking.shared.domain.values.IdempotentOperationId;

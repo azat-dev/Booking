@@ -32,25 +32,23 @@ public final class MapListingPrivateDetailsToDTOImpl implements MapListingPrivat
     public ListingPrivateDetailsDTO map(ListingPrivateDetails listingDetails) {
         return ListingPrivateDetailsDTO.builder()
             .id(listingDetails.id().getValue())
+            .status(
+                ListingStatusDTO.valueOf(listingDetails.status().name())
+            )
             .title(listingDetails.title().getValue())
             .description(
                 listingDetails.description()
                     .map(ListingDescription::getValue)
-                    .orElse(null)
-
             ).guestCapacity(
                 mapGuestsCapacity(listingDetails.guestsCapacity())
             ).propertyType(
                 listingDetails.propertyType()
                     .map(p -> PropertyTypeDTO.fromValue(p.name()))
-                    .orElse(null)
             ).roomType(
                 listingDetails.roomType()
                     .map(r -> RoomTypeDTO.fromValue(r.name()))
-                    .orElse(null)
             ).address(
                 listingDetails.address().map(this::mapAddress)
-                    .orElse(null)
             ).photos(
                 listingDetails.photos().stream()
                     .map(mapListingPhotoToDTO::map).toList()
