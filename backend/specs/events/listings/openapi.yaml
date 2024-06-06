@@ -44,6 +44,7 @@ components:
         - $ref: "#/components/schemas/NewListingAdded"
         - $ref: "#/components/schemas/FailedToAddNewListing"
         - $ref: "#/components/schemas/ListingDetailsUpdated"
+        - $ref: "#/components/schemas/ListingPublished"
 
         - $ref: "#/components/schemas/GeneratedUrlForUploadListingPhoto"
         - $ref: "#/components/schemas/FailedGenerateUrlForUploadListingPhoto"
@@ -159,6 +160,18 @@ components:
           type: string
         objectName:
           type: string
+
+    ListingPublished:
+      type: object
+      required:
+        - listingId
+        - publishedAt
+      properties:
+        listingId:
+          $ref: "#/components/schemas/ListingId"
+        publishedAt:
+          type: integer
+          format: int64
 
     ListingDetailsUpdated:
       type: object

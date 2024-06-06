@@ -97,6 +97,13 @@ public class DomainEventSerializerImplTests {
             ),
 
             eventsFactory.issue(
+                new ListingPublished(
+                    anyListingId(),
+                    now
+                )
+            ),
+
+            eventsFactory.issue(
                 new ListingDetailsUpdated(
                     anyListingId(),
                     now,

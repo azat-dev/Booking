@@ -187,6 +187,11 @@ public final class DomainEventsSerializerImpl implements DomainEventSerializer {
                 .prevValues(map(p.previousState()))
                 .build();
 
+            case ListingPublished p -> ListingPublishedDTO.builder()
+                .listingId(p.listingId().getValue())
+                .publishedAt(map(p.publishedAt()))
+                .build();
+
             default ->
                 throw new RuntimeException("Serialization. Unknown payload type: " + payload.getClass().getName());
         };
@@ -284,6 +289,11 @@ public final class DomainEventsSerializerImpl implements DomainEventSerializer {
                 map(p.getUpdatedAt()),
                 map(p.getPrevValues()),
                 map(p.getNewValues())
+            );
+
+            case ListingPublishedDTO p -> new ListingPublished(
+                ListingId.dangerouslyMakeFrom(p.getListingId().toString()),
+                map(p.getPublishedAt())
             );
 
             default ->

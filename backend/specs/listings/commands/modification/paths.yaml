@@ -80,3 +80,46 @@ paths:
             application/json:
               schema:
                 $ref: "../../../common/errors.yaml#/Error"
+
+  /listings/{listingId}/publish:
+    post:
+      tags:
+        - commandsModifications
+      summary: Publish the listing
+      operationId: publishListing
+      parameters:
+        - name: listingId
+          in: path
+          required: true
+          description: Listing ID
+          schema:
+            $ref: "../../common/models/ListingId.yaml"
+      responses:
+        "201":
+          description: Listing published successfully
+        "401":
+          description: Validation error
+          content:
+            application/json:
+              schema:
+                oneOf:
+                  - $ref: "../../../common/errors.yaml#/ValidationError"
+                  - $ref: "../../../common/errors.yaml#/Error"
+        409:
+          description: Can't publish
+          content:
+            application/json:
+              schema:
+                $ref: "../../../common/errors.yaml#/Error"
+        403:
+          description: Forbidden
+          content:
+            application/json:
+              schema:
+                $ref: "../../../common/errors.yaml#/Error"
+        "404":
+          description: Listing not found
+          content:
+            application/json:
+              schema:
+                $ref: "../../../common/errors.yaml#/Error"
