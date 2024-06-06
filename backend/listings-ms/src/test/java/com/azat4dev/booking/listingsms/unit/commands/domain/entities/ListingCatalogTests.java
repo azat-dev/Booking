@@ -7,15 +7,12 @@ import com.azat4dev.booking.listingsms.commands.domain.events.NewListingAdded;
 import com.azat4dev.booking.listingsms.commands.domain.interfaces.repositories.ListingsRepository;
 import com.azat4dev.booking.listingsms.commands.domain.interfaces.repositories.UnitOfWork;
 import com.azat4dev.booking.listingsms.commands.domain.interfaces.repositories.UnitOfWorkFactory;
-import com.azat4dev.booking.listingsms.commands.domain.values.ListingStatus;
-import com.azat4dev.booking.listingsms.common.domain.values.GuestsCapacity;
 import com.azat4dev.booking.shared.data.repositories.outbox.OutboxEventsRepository;
+import com.azat4dev.booking.shared.domain.producers.OutboxEventsPublisher;
 import com.azat4dev.booking.shared.utils.TimeProvider;
 import org.junit.jupiter.api.Test;
 
 import java.time.LocalDateTime;
-import java.util.List;
-import java.util.Optional;
 
 import static com.azat4dev.booking.listingsms.unit.commands.domain.entities.DomainHelpers.*;
 import static org.assertj.core.api.Assertions.assertThat;
@@ -46,9 +43,12 @@ public class ListingCatalogTests {
         given(unitOfWorkFactory.make())
             .willReturn(unitOfWork);
 
+        final var eventsPublisher = mock(OutboxEventsPublisher.class);
+
         return new SUT(
             new ListingsCatalogImpl(
                 unitOfWorkFactory,
+                eventsPublisher::publishEvents,
                 timeProvider
             ),
             unitOfWork,

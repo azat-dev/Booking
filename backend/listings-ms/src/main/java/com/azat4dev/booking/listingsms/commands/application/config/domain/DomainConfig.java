@@ -5,10 +5,14 @@ import com.azat4dev.booking.listingsms.commands.domain.interfaces.repositories.L
 import com.azat4dev.booking.listingsms.commands.domain.interfaces.repositories.UnitOfWorkFactory;
 import com.azat4dev.booking.listingsms.commands.domain.values.MakeNewListingId;
 import com.azat4dev.booking.listingsms.commands.domain.values.MakeNewListingIdImpl;
+import com.azat4dev.booking.shared.data.repositories.outbox.OutboxEventsRepository;
 import com.azat4dev.booking.shared.domain.events.DomainEventsFactory;
 import com.azat4dev.booking.shared.domain.events.DomainEventsFactoryImpl;
 import com.azat4dev.booking.shared.domain.events.EventIdGenerator;
 import com.azat4dev.booking.shared.domain.events.RandomEventIdGenerator;
+import com.azat4dev.booking.shared.domain.interfaces.bus.DomainEventsBus;
+import com.azat4dev.booking.shared.domain.producers.OutboxEventsPublisher;
+import com.azat4dev.booking.shared.domain.producers.OutboxEventsPublisherImpl;
 import com.azat4dev.booking.shared.utils.TimeProvider;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -19,9 +23,14 @@ public class DomainConfig {
     @Bean
     ListingsCatalog listingsCatalog(
         UnitOfWorkFactory unitOfWorkFactory,
-        TimeProvider timeProvider
+        TimeProvider timeProvider,
+        OutboxEventsPublisher outboxEventsPublisher
     ) {
-        return new ListingsCatalogImpl(unitOfWorkFactory, timeProvider);
+        return new ListingsCatalogImpl(
+            unitOfWorkFactory,
+            outboxEventsPublisher::publishEvents,
+            timeProvider
+        );
     }
 
     @Bean
@@ -57,5 +66,13 @@ public class DomainConfig {
         return new HostsImpl(
             hostListingsFactory
         );
+    }
+
+    @Bean
+    public OutboxEventsPublisher outboxEventsPublisher(
+        OutboxEventsRepository outboxEventsRepository,
+        DomainEventsBus domainEventsBus
+    ) {
+        return new OutboxEventsPublisherImpl(outboxEventsRepository, domainEventsBus);
     }
 }

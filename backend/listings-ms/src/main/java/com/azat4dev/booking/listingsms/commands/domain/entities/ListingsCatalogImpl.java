@@ -21,6 +21,7 @@ import java.util.stream.Collectors;
 public class ListingsCatalogImpl implements ListingsCatalog {
 
     private final UnitOfWorkFactory unitOfWorkFactory;
+    private final MarkOutboxNeedsSynchronization markOutboxNeedsSynchronization;
     private final TimeProvider timeProvider;
 
     @Override
@@ -58,6 +59,8 @@ public class ListingsCatalogImpl implements ListingsCatalog {
         } catch (Throwable e) {
             unitOfWork.rollback();
             throw e;
+        } finally {
+            markOutboxNeedsSynchronization.execute();
         }
     }
 
@@ -121,6 +124,13 @@ public class ListingsCatalogImpl implements ListingsCatalog {
         } catch (ListingsRepository.Exception.ListingNotFound e) {
             unitOfWork.rollback();
             throw new Exception.ListingNotFound();
+        } finally {
+            markOutboxNeedsSynchronization.execute();
         }
+    }
+
+    @FunctionalInterface
+    public interface MarkOutboxNeedsSynchronization {
+        void execute();
     }
 }

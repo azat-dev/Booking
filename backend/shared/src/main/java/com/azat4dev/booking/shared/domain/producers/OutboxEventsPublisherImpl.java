@@ -1,4 +1,4 @@
-package com.azat4dev.booking.users.users_commands.domain.producers;
+package com.azat4dev.booking.shared.domain.producers;
 
 import com.azat4dev.booking.shared.data.repositories.outbox.OutboxEventsRepository;
 import com.azat4dev.booking.shared.domain.events.DomainEvent;

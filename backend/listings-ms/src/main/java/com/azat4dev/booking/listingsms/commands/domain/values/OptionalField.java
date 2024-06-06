@@ -35,12 +35,16 @@ public class OptionalField<T> {
             return OptionalField.missed();
         }
 
-        return OptionalField.present(Optional.of(value.get()));
+        return OptionalField.present(Optional.ofNullable(value.get()));
     }
 
     public static <T, Output> OptionalField<Optional<Output>> fromNullable(JsonNullable<T> value, MapValue<T, Output, RuntimeException> mapper) {
         if (!value.isPresent()) {
             return OptionalField.missed();
+        }
+
+        if (value.get() == null) {
+            return OptionalField.present(Optional.empty());
         }
 
         final var mappedValue = mapper.map(value.get());

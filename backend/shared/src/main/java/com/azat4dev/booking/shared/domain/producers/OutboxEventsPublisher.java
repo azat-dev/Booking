@@ -1,4 +1,4 @@
-package com.azat4dev.booking.users.users_commands.domain.producers;
+package com.azat4dev.booking.shared.domain.producers;
 
 public interface OutboxEventsPublisher {
     void publishEvents();
