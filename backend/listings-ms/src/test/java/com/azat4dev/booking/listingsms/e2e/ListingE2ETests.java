@@ -90,10 +90,13 @@ class ListingE2ETests implements PostgresTests, MinioTests, KafkaTests {
         final var anotherUserListing = givenExistingListing(USER2);
 
         // When
-        assertThrows(FeignException.Forbidden.class, () -> {
+        final var exception = assertThrows(FeignException.Forbidden.class, () -> {
             apiClient(QueriesPrivateApi.class, USER1)
                 .getListingPrivateDetails(anotherUserListing);
         });
+
+        // Then
+        assertThat(exception).isNotNull();
     }
 
     @Test

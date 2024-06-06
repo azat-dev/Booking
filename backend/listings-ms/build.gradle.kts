@@ -146,7 +146,7 @@ tasks.register<GenerateTask>("generateServerApi") {
     modelNameSuffix.set("DTO")
     configOptions.set(
         mapOf(
-            "useOptional" to "false",
+            "useOptional" to "true",
             "openApiNullable" to "true",
             "interfaceOnly" to "false",
             "additionalModelTypeAnnotations" to "@lombok.Builder(toBuilder = true)\n@lombok.AllArgsConstructor\n@lombok.NoArgsConstructor\n@com.fasterxml.jackson.annotation.JsonIgnoreProperties(ignoreUnknown=true)",

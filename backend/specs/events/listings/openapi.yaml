@@ -164,11 +164,15 @@ components:
       type: object
       required:
         - listingId
+        - updatedAt
         - prevValues
         - newValues
       properties:
         listingId:
           $ref: "#/components/schemas/ListingId"
+        updatedAt:
+          type: integer
+          format: int64
         prevValues:
           $ref: "#/components/schemas/ListingDetailsFields"
         newValues:
@@ -177,9 +181,13 @@ components:
     ListingDetailsFields:
       type: object
       properties:
-        title:
-          type: string
+        status:
           nullable: true
+          anyOf:
+            - $ref: "../../listings/common/models/ListingStatus.yaml"
+        title:
+          nullable: true
+          type: string
         description:
           type: string
           nullable: true
@@ -188,13 +196,17 @@ components:
           allOf:
             - $ref: "#/components/schemas/GuestsCapacity"
         propertyType:
-          nullable: false
+          nullable: true
           allOf:
             - $ref: "../../listings/common/models/PropertyType.yaml"
         roomType:
-          type: string
+          nullable: true
+          allOf:
+            - $ref: "../../listings/common/models/RoomType.yaml"
         address:
-          $ref: "#/components/schemas/Address"
+          nullable: true
+          allOf:
+            - $ref: "#/components/schemas/Address"
 
     Address:
       type: object

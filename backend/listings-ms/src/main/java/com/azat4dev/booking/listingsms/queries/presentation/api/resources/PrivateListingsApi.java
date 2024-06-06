@@ -49,7 +49,7 @@ public class PrivateListingsApi implements QueriesPrivateApiDelegate {
 
             return ResponseEntity.ok(responseData);
         } catch (GetListingPrivateDetailsHandler.ListingNotFoundException e) {
-            throw new RuntimeException(e);
+            throw new ControllerException(HttpStatus.NOT_FOUND, e);
         }
     }
 

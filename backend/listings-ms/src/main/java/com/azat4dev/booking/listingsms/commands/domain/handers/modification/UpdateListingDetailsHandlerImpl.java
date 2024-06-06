@@ -36,18 +36,13 @@ public class UpdateListingDetailsHandlerImpl implements UpdateListingDetailsHand
 
             final var fields = command.fields();
 
-            final var newTitle = fields.getTitle()
-                .map(ListingTitle::dangerouslyMakeFrom);
+            final var newTitle = fields.getTitle().map(ListingTitle::dangerouslyMakeFrom);
 
             final var newDescription = fields.getDescription()
                 .map(v -> v.map(ListingDescription::dangerouslyMakeFrom));
 
-            Optional<GuestsCapacity> newCapacity = Optional.empty();
-
-            final var capacity = fields.getGuestsCapacity();
-            if (capacity.isPresent()) {
-                newCapacity = Optional.of(map(capacity.get()));
-            }
+            final var newCapacity = fields.getGuestsCapacity()
+                .map(this::map);
 
             final var newPropertyType = fields.getPropertyType()
                 .map(v -> v.map(PropertyType::valueOf));
@@ -55,46 +50,29 @@ public class UpdateListingDetailsHandlerImpl implements UpdateListingDetailsHand
             final var newRoomType = fields.getRoomType()
                 .map(v -> v.map(RoomType::valueOf));
 
-            final var address = fields.getAddress();
-            Optional<Optional<ListingAddress>> newAddress = Optional.empty();
+            final var newAddress = fields.getAddress()
+                .map(nullableValue -> {
 
-            if (address.isPresent()) {
-                final var addressValue = address.get();
+                    ListingAddress mappedValue = null;
+                    
+                    if (nullableValue.isPresent()) {
+                        mappedValue = map(nullableValue.get());
+                    }
 
-                if (addressValue.isPresent()) {
-                    newAddress = Optional.of(Optional.of(map(addressValue.get())));
-                } else {
-                    newAddress = Optional.of(Optional.empty());
-                }
-            }
+                    return Optional.ofNullable(mappedValue);
+                });
 
             final var listing = host.getListings()
                 .findById(listingId)
                 .orElseThrow(ListingsCatalog.Exception.ListingNotFound::new);
 
-            if (newTitle.isPresent()) {
-                listing.setTitle(newTitle.get());
-            }
+            newTitle.ifPresent(listing::setTitle);
+            newDescription.ifPresent(listing::setDescription);
+            newCapacity.ifPresent(listing::setGuestsCapacity);
 
-            if (newPropertyType.isPresent()) {
-                listing.setPropertyType(newPropertyType.get());
-            }
-
-            if (newDescription.isPresent()) {
-                listing.setDescription(newDescription.get());
-            }
-
-            if (newRoomType.isPresent()) {
-                listing.setRoomType(newRoomType.get());
-            }
-
-            if (newCapacity.isPresent()) {
-                listing.setGuestsCapacity(newCapacity.get());
-            }
-
-            if (newAddress.isPresent()) {
-                listing.setAddress(newAddress.get());
-            }
+            newPropertyType.ifPresent(listing::setPropertyType);
+            newRoomType.ifPresent(listing::setRoomType);
+            newAddress.ifPresent(listing::setAddress);
 
             listings.update(listing);
 
@@ -111,7 +89,7 @@ public class UpdateListingDetailsHandlerImpl implements UpdateListingDetailsHand
         );
     }
 
-    private ListingAddress map(UpdateListingDetails.Address a) throws Country.Exception.TooLong, Country.Exception.NotBlank, Country.Exception.NotEmpty, City.Exception.TooLong, City.Exception.NotBlank, City.Exception.NotEmpty, Street.Exception.TooLong, Street.Exception.NotBlank, Street.Exception.NotEmpty {
+    private ListingAddress map(UpdateListingDetails.Address a) throws DomainException {
         return new ListingAddress(
             Country.checkAndMakeFrom(a.country()),
             City.checkAndMakeFrom(a.city()),

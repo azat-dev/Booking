@@ -4,6 +4,7 @@ import com.azat4dev.booking.listingsms.commands.application.handlers.AddNewListi
 import com.azat4dev.booking.listingsms.commands.domain.commands.AddNewListing;
 import com.azat4dev.booking.listingsms.commands.domain.commands.UpdateListingDetails;
 import com.azat4dev.booking.listingsms.commands.domain.handers.modification.UpdateListingDetailsHandler;
+import com.azat4dev.booking.listingsms.commands.domain.values.OptionalField;
 import com.azat4dev.booking.listingsms.generated.server.api.CommandsModificationsApiDelegate;
 import com.azat4dev.booking.listingsms.generated.server.model.*;
 import com.azat4dev.booking.shared.application.ControllerException;
@@ -12,7 +13,6 @@ import lombok.AllArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Component;
 
-import java.util.Optional;
 import java.util.UUID;
 
 @Component
@@ -52,42 +52,22 @@ public class ListingsApi implements CommandsModificationsApiDelegate {
             "Host not authenticated"
         ));
 
-        final var inputFields = requestBody.getFields();
-        final var fb = UpdateListingDetails.Fields.builder();
+        final var f = requestBody.getFields();
 
-        if (inputFields.getTitle().isPresent()) {
-            fb.title(Optional.of(inputFields.getTitle().get()));
-        }
-
-        if (inputFields.getDescription().isPresent()) {
-            fb.description(Optional.of(Optional.of(inputFields.getDescription().get())));
-        }
-
-        if (inputFields.getPropertyType().isPresent()) {
-            final var propertyType = Optional.of(inputFields.getPropertyType().get()).map(Enum::name);
-            fb.propertyType(Optional.of(propertyType));
-        }
-
-        if (inputFields.getRoomType().isPresent()) {
-            final var roomType = Optional.of(inputFields.getRoomType().get()).map(Enum::name);
-            fb.roomType(Optional.of(roomType));
-        }
-
-        if (inputFields.getGuestCapacity().isPresent()) {
-            final var guestCapacity = this.map(inputFields.getGuestCapacity().get());
-            fb.guestsCapacity(Optional.of(guestCapacity));
-        }
-
-        if (inputFields.getAddress().isPresent()) {
-            final var address = Optional.of(inputFields.getAddress().get()).map(this::map);
-            fb.address(Optional.of(address));
-        }
+        final var commandFields = UpdateListingDetails.Fields.builder()
+            .title(OptionalField.from(f.getTitle()))
+            .description(OptionalField.fromNullable(f.getDescription()))
+            .propertyType(OptionalField.fromNullable(f.getPropertyType(), Enum::name))
+            .roomType(OptionalField.fromNullable(f.getRoomType(), Enum::name))
+            .guestsCapacity(OptionalField.from(f.getGuestCapacity()).map(this::map))
+            .address(OptionalField.fromNullable(f.getAddress(), this::map))
+            .build();
 
         try {
             final var command = new UpdateListingDetails(
                 userId,
                 listingId.toString(),
-                fb.build()
+                commandFields
             );
 
             updateListingDetailsHandler.handle(command);

@@ -1,10 +1,7 @@
 package com.azat4dev.booking.listingsms.commands.domain.events;
 
 import com.azat4dev.booking.listingsms.commands.domain.entities.Listing;
-import com.azat4dev.booking.listingsms.commands.domain.values.ListingDescription;
-import com.azat4dev.booking.listingsms.commands.domain.values.ListingId;
-import com.azat4dev.booking.listingsms.commands.domain.values.ListingStatus;
-import com.azat4dev.booking.listingsms.commands.domain.values.ListingTitle;
+import com.azat4dev.booking.listingsms.commands.domain.values.*;
 import com.azat4dev.booking.listingsms.common.domain.values.GuestsCapacity;
 import com.azat4dev.booking.listingsms.common.domain.values.PropertyType;
 import com.azat4dev.booking.listingsms.common.domain.values.RoomType;
@@ -22,39 +19,39 @@ public record ListingDetailsUpdated(
 ) implements DomainEventPayload {
 
     public record Change(
-        Optional<ListingStatus> status,
-        Optional<ListingTitle> title,
-        Optional<Optional<ListingDescription>> description,
-        Optional<Optional<PropertyType>> propertyType,
-        Optional<Optional<RoomType>> roomType,
-        Optional<GuestsCapacity> guestsCapacity,
-        Optional<Optional<ListingAddress>> address
+        OptionalField<ListingStatus> status,
+        OptionalField<ListingTitle> title,
+        OptionalField<Optional<ListingDescription>> description,
+        OptionalField<Optional<PropertyType>> propertyType,
+        OptionalField<Optional<RoomType>> roomType,
+        OptionalField<GuestsCapacity> guestsCapacity,
+        OptionalField<Optional<ListingAddress>> address
     ) {
 
-        private static <T> Optional<Optional<T>> ifChanged(Optional<T> oldValue, Optional<T> newValue) {
+        private static <T> OptionalField<Optional<T>> ifChanged(Optional<T> oldValue, Optional<T> newValue) {
 
             if (oldValue.isEmpty() && newValue.isEmpty()) {
-                return Optional.empty();
+                return OptionalField.missed();
             }
 
             if (newValue.isEmpty() || oldValue.isEmpty()) {
-                return Optional.of(newValue);
+                return OptionalField.present(newValue);
             }
 
             if (oldValue.get().equals(newValue.get())) {
-                return Optional.empty();
+                return OptionalField.missed();
             }
 
-            return Optional.of(newValue);
+            return OptionalField.present(newValue);
         }
 
-        private static <T> Optional<T> ifChangedNotOptional(T oldValue, T newValue) {
+        private static <T> OptionalField<T> ifChangedNotOptional(T oldValue, T newValue) {
 
             if (oldValue.equals(newValue)) {
-                return Optional.empty();
+                return OptionalField.missed();
             }
 
-            return Optional.of(newValue);
+            return OptionalField.present(newValue);
         }
 
         public static Change from(Listing baseState, Listing updatedState) {

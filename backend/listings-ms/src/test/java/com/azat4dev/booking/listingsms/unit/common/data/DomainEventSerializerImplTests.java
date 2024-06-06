@@ -2,13 +2,14 @@ package com.azat4dev.booking.listingsms.unit.common.data;
 
 import com.azat4dev.booking.listingsms.commands.data.serializer.DomainEventsSerializerImpl;
 import com.azat4dev.booking.listingsms.commands.domain.events.*;
-import com.azat4dev.booking.listingsms.commands.domain.values.ListingDescription;
-import com.azat4dev.booking.listingsms.commands.domain.values.ListingPhoto;
-import com.azat4dev.booking.listingsms.commands.domain.values.ListingStatus;
-import com.azat4dev.booking.listingsms.commands.domain.values.ListingTitle;
+import com.azat4dev.booking.listingsms.commands.domain.values.*;
 import com.azat4dev.booking.listingsms.common.domain.values.GuestsCapacity;
 import com.azat4dev.booking.listingsms.common.domain.values.PropertyType;
 import com.azat4dev.booking.listingsms.common.domain.values.RoomType;
+import com.azat4dev.booking.listingsms.common.domain.values.address.City;
+import com.azat4dev.booking.listingsms.common.domain.values.address.Country;
+import com.azat4dev.booking.listingsms.common.domain.values.address.ListingAddress;
+import com.azat4dev.booking.listingsms.common.domain.values.address.Street;
 import com.azat4dev.booking.shared.data.serializers.DomainEventSerializer;
 import com.azat4dev.booking.shared.domain.values.IdempotentOperationId;
 import com.azat4dev.booking.shared.domain.values.files.BucketName;
@@ -17,6 +18,7 @@ import com.azat4dev.booking.shared.domain.values.files.PhotoFileExtension;
 import com.azat4dev.booking.shared.domain.values.files.UploadFileFormData;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.junit.jupiter.api.Test;
+import org.openapitools.jackson.nullable.JsonNullableModule;
 
 import java.net.MalformedURLException;
 import java.time.LocalDateTime;
@@ -30,11 +32,12 @@ import static com.azat4dev.booking.listingsms.unit.helpers.ListingHelpers.anyHos
 import static com.azat4dev.booking.listingsms.unit.helpers.ListingHelpers.anyUserId;
 import static org.assertj.core.api.Assertions.assertThat;
 
-
 public class DomainEventSerializerImplTests {
+
 
     DomainEventSerializer createSUT() {
         final var objectMapper = new ObjectMapper();
+        objectMapper.registerModule(new JsonNullableModule());
         return new DomainEventsSerializerImpl(objectMapper);
     }
 
@@ -98,22 +101,30 @@ public class DomainEventSerializerImplTests {
                     anyListingId(),
                     now,
                     new ListingDetailsUpdated.Change(
-                        Optional.of(ListingStatus.DRAFT),
-                        Optional.of(ListingTitle.dangerouslyMakeFrom("title")),
-                        Optional.of(Optional.of(ListingDescription.dangerouslyMakeFrom("description"))),
-                        Optional.of(Optional.of(PropertyType.APARTMENT)),
-                        Optional.of(Optional.of(RoomType.ENTIRE_PLACE)),
-                        Optional.of(GuestsCapacity.DEFAULT),
-                        Optional.empty()
+                        OptionalField.present(ListingStatus.DRAFT),
+                        OptionalField.present(ListingTitle.dangerouslyMakeFrom("title")),
+                        OptionalField.present(Optional.of(ListingDescription.dangerouslyMakeFrom("description"))),
+                        OptionalField.present(Optional.of(PropertyType.APARTMENT)),
+                        OptionalField.present(Optional.of(RoomType.ENTIRE_PLACE)),
+                        OptionalField.present(GuestsCapacity.DEFAULT),
+                        OptionalField.missed()
                     ),
                     new ListingDetailsUpdated.Change(
-                        Optional.of(ListingStatus.DRAFT),
-                        Optional.of(ListingTitle.dangerouslyMakeFrom("title")),
-                        Optional.of(Optional.of(ListingDescription.dangerouslyMakeFrom("description"))),
-                        Optional.of(Optional.of(PropertyType.APARTMENT)),
-                        Optional.of(Optional.of(RoomType.ENTIRE_PLACE)),
-                        Optional.of(GuestsCapacity.DEFAULT),
-                        Optional.empty()
+                        OptionalField.present(ListingStatus.DRAFT),
+                        OptionalField.present(ListingTitle.dangerouslyMakeFrom("title")),
+                        OptionalField.present(Optional.of(ListingDescription.dangerouslyMakeFrom("description"))),
+                        OptionalField.present(Optional.of(PropertyType.APARTMENT)),
+                        OptionalField.present(Optional.of(RoomType.ENTIRE_PLACE)),
+                        OptionalField.present(GuestsCapacity.DEFAULT),
+                        OptionalField.present(
+                            Optional.of(
+                                ListingAddress.dangerouslyMakeFrom(
+                                    Country.dangerouslyMakeFrom("country"),
+                                    City.dangerouslyMakeFrom("city"),
+                                    Street.dangerouslyMakeFrom("street")
+                                )
+                            )
+                        )
                     )
                 )
             )
