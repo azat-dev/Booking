@@ -114,7 +114,7 @@ public class Listing {
         }
     }
 
-    public void publish() throws Exception.Publishing, Exception.CantModifyPublishedListing {
+    public void publish() throws Exception.Publishing {
 
         validateFieldsBeforePublishing();
         this.status = ListingStatus.PUBLISHED;
