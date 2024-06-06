@@ -3,6 +3,7 @@ package com.azat4dev.booking.listingsms.e2e;
 import com.azat4dev.booking.listingsms.e2e.helpers.AccessTokenConfig;
 import com.azat4dev.booking.listingsms.e2e.helpers.ApiHelpers;
 import com.azat4dev.booking.listingsms.e2e.helpers.GenerateAccessToken;
+import com.azat4dev.booking.listingsms.generated.client.api.CommandsListingsPhotoApi;
 import com.azat4dev.booking.listingsms.generated.client.api.CommandsModificationsApi;
 import com.azat4dev.booking.listingsms.generated.client.api.QueriesPrivateApi;
 import com.azat4dev.booking.listingsms.generated.client.base.ApiClient;
@@ -16,15 +17,19 @@ import feign.FeignException;
 import io.minio.MinioClient;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.boot.test.web.server.LocalServerPort;
+import org.springframework.core.io.Resource;
+import org.springframework.http.HttpStatus;
 import org.springframework.test.annotation.DirtiesContext;
 import org.springframework.test.context.ContextConfiguration;
 
 import java.io.IOException;
 import java.util.UUID;
 
+import static com.azat4dev.booking.listingsms.e2e.helpers.PhotoHelpers.*;
 import static com.azat4dev.booking.listingsms.e2e.helpers.UsersHelpers.USER1;
 import static com.azat4dev.booking.listingsms.e2e.helpers.UsersHelpers.USER2;
 import static org.assertj.core.api.Assertions.assertThat;
@@ -40,6 +45,9 @@ class ListingE2ETests implements PostgresTests, MinioTests, KafkaTests {
 
     @Autowired
     GenerateAccessToken generateAccessToken;
+
+    @Value("classpath:test_image.jpg")
+    private Resource testImageFile;
 
     @LocalServerPort
     private int port;
@@ -148,6 +156,69 @@ class ListingE2ETests implements PostgresTests, MinioTests, KafkaTests {
                     .city(f.address().city())
                     .street(f.address().streetAddress())
             );
+    }
+
+    @Test
+    void test_publishListing_givenDraftListing_thenRejectPublishing() {
+
+        // Given
+        final var userId = USER1;
+        final var listingId = givenExistingListing(userId);
+
+        // When
+        final var exception = assertThrows(FeignException.BadRequest.class, () -> {
+            apiClient(CommandsModificationsApi.class, userId)
+                .publishListing(listingId);
+        });
+
+        // Then
+        assertThat(exception).isNotNull();
+    }
+
+    void givenListingReadyForPublishing(UserId userId) throws IOException {
+        // Given
+        final var listingId = givenExistingListing(userId);
+
+        apiClient(CommandsModificationsApi.class, userId)
+            .updateListingDetails(
+                listingId,
+                new UpdateListingDetailsRequestBodyDTO()
+                    .operationId(UUID.randomUUID())
+                    .fields(anyFields())
+            );
+
+
+        givenAllPhotosUploaded(
+            listingId,
+            apiClient(CommandsListingsPhotoApi.class, userId),
+            testImageFile
+        );
+    }
+
+    @Test
+    void test_publishListing_givenListingReadyForPublishing_thenPublish() throws IOException {
+
+        // Given
+        final var userId = USER1;
+        final var listingId = givenExistingListing(userId);
+
+        givenListingReadyForPublishing(userId);
+
+        apiClient(CommandsModificationsApi.class, userId)
+            .updateListingDetails(
+                listingId,
+                new UpdateListingDetailsRequestBodyDTO()
+                    .operationId(UUID.randomUUID())
+                    .fields(anyFields())
+            );
+
+        // When
+        final var result = apiClient(CommandsModificationsApi.class, userId)
+            .publishListingWithHttpInfo(listingId);
+
+        // Then
+        assertThat(result.getStatusCode())
+            .isEqualTo(HttpStatus.NO_CONTENT.value());
     }
 
     @Test

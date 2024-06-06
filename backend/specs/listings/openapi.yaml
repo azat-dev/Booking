@@ -19,6 +19,9 @@ paths:
   /api/private/listings/{listingId}:
     $ref: "commands/modification/paths.yaml#/paths/~1listings~1{listingId}"
 
+  /api/private/listings/{listingId}/publish:
+    $ref: "commands/modification/paths.yaml#/paths/~1listings~1{listingId}~1publish"
+
   #  Photos API
 
   /api/private/listings/{listingId}/photos/get-upload-url:

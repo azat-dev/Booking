@@ -79,6 +79,11 @@ public class ListingsApi implements CommandsModificationsApiDelegate {
         }
     }
 
+    @Override
+    public ResponseEntity<Void> publishListing(UUID listingId) {
+        return CommandsModificationsApiDelegate.super.publishListing(listingId);
+    }
+
     private UpdateListingDetails.GuestsCapacity map(GuestsCapacityDTO dto) {
         return new UpdateListingDetails.GuestsCapacity(
             dto.getAdults(),

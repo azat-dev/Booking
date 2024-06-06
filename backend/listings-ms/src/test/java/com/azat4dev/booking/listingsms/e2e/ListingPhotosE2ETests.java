@@ -7,14 +7,15 @@ import com.azat4dev.booking.listingsms.generated.client.api.CommandsListingsPhot
 import com.azat4dev.booking.listingsms.generated.client.api.CommandsModificationsApi;
 import com.azat4dev.booking.listingsms.generated.client.api.QueriesPrivateApi;
 import com.azat4dev.booking.listingsms.generated.client.base.ApiClient;
-import com.azat4dev.booking.listingsms.generated.client.model.*;
+import com.azat4dev.booking.listingsms.generated.client.model.AddListingPhotoRequestBodyDTO;
+import com.azat4dev.booking.listingsms.generated.client.model.AddListingRequestBodyDTO;
+import com.azat4dev.booking.listingsms.generated.client.model.UploadedFileDataDTO;
 import com.azat4dev.booking.listingsms.helpers.KafkaTests;
 import com.azat4dev.booking.listingsms.helpers.MinioTests;
 import com.azat4dev.booking.listingsms.helpers.PostgresTests;
 import com.azat4dev.booking.shared.domain.values.user.UserId;
 import com.github.javafaker.Faker;
 import io.minio.MinioClient;
-import okhttp3.*;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
@@ -29,9 +30,9 @@ import org.springframework.test.context.ContextConfiguration;
 
 import java.io.File;
 import java.io.IOException;
-import java.util.Map;
 import java.util.UUID;
 
+import static com.azat4dev.booking.listingsms.e2e.helpers.PhotoHelpers.givenUploadedListingPhoto;
 import static com.azat4dev.booking.listingsms.e2e.helpers.UsersHelpers.USER1;
 import static org.assertj.core.api.Assertions.assertThat;
 
@@ -71,7 +72,11 @@ class ListingPhotosE2ETests implements PostgresTests, MinioTests, KafkaTests {
         final var listingId = givenExistingListing(userId);
 
         // When
-        final var result = givenUploadedListingPhoto(userId, listingId);
+        final var result = givenUploadedListingPhoto(
+            listingId,
+            apiClient(CommandsListingsPhotoApi.class, userId),
+            testImageFile
+        );
 
         // Then
         assertThat(result).isNotNull();
@@ -84,7 +89,11 @@ class ListingPhotosE2ETests implements PostgresTests, MinioTests, KafkaTests {
         final var userId = USER1;
         final var listingId = givenExistingListing(userId);
 
-        final var result = givenUploadedListingPhoto(userId, listingId);
+        final var result = givenUploadedListingPhoto(
+            listingId,
+            apiClient(CommandsListingsPhotoApi.class, userId),
+            testImageFile
+        );
 
         final var response = apiClient(CommandsListingsPhotoApi.class, userId)
             .addPhotoToListing(
@@ -106,71 +115,6 @@ class ListingPhotosE2ETests implements PostgresTests, MinioTests, KafkaTests {
 
 
         assertThat(listingDetails.getPhotos().size()).isEqualTo(1);
-    }
-
-    private GenerateUploadListingPhotoUrlResponseBodyDTO givenUploadedListingPhoto(
-        UserId userId,
-        UUID listingId
-    ) throws IOException {
-
-        // Given
-        final var file = testImageFile.getFile();
-
-        // When
-        final var result = apiClient(CommandsListingsPhotoApi.class, userId)
-            .generateUploadListingPhotoUrl(
-                listingId,
-                new GenerateUploadListingPhotoUrlRequestBodyDTO()
-                    .operationId(UUID.randomUUID())
-                    .fileExtension("jpg")
-                    .fileSize((int) file.length())
-                    .fileName("test-image")
-            );
-
-        // Then
-        assertThat(result).isNotNull();
-        uploadFile(
-            result.getObjectPath().getUrl(),
-            result.getObjectPath().getObjectName(),
-            result.getFormData(),
-            file,
-            "image/jpeg"
-        );
-        return result;
-    }
-
-    private void uploadFile(
-        String url,
-        String objectName,
-        Map<String, String> formFields,
-        File file,
-        String contentType
-    ) throws IOException {
-
-        // Upload an image using POST object with form-data.
-        MultipartBody.Builder multipartBuilder = new MultipartBody.Builder();
-        multipartBuilder.setType(MultipartBody.FORM);
-
-        for (Map.Entry<String, String> entry : formFields.entrySet()) {
-            multipartBuilder.addFormDataPart(entry.getKey(), entry.getValue());
-        }
-        multipartBuilder.addFormDataPart("Content-Type", contentType);
-
-        // "file" must be added at last.
-        multipartBuilder.addFormDataPart(
-            "file", file.getName(), RequestBody.create(file, null)
-        );
-
-        Request request =
-            new Request.Builder()
-                .url(url)
-                .post(multipartBuilder.build())
-                .build();
-        OkHttpClient httpClient = new OkHttpClient().newBuilder().build();
-        Response response = httpClient.newCall(request).execute();
-
-        final var responseBody = response.body().string();
-        assertThat(response.isSuccessful()).isTrue();
     }
 
     // Helpers
