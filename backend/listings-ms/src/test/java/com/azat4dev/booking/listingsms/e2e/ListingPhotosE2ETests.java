@@ -25,6 +25,7 @@ import org.springframework.context.annotation.Bean;
 import org.springframework.core.io.Resource;
 import org.springframework.test.annotation.DirtiesContext;
 import org.springframework.test.context.ContextConfiguration;
+import org.springframework.test.context.jdbc.Sql;
 
 import java.io.File;
 import java.io.IOException;
@@ -38,6 +39,8 @@ import static org.assertj.core.api.Assertions.assertThat;
 @ContextConfiguration(classes = {AccessTokenConfig.class})
 @SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
 @DirtiesContext(classMode = DirtiesContext.ClassMode.BEFORE_CLASS)
+@Sql("/db/drop-schema.sql")
+@Sql("/db/schema.sql")
 class ListingPhotosE2ETests implements PostgresTests, MinioTests, KafkaTests {
 
     @MockBean(name = "listingsPhotoClient")
