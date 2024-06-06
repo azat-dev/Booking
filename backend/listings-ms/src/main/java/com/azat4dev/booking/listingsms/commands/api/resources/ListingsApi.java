@@ -1,6 +1,8 @@
 package com.azat4dev.booking.listingsms.commands.api.resources;
 
+import com.azat4dev.booking.listingsms.commands.application.commands.PublishListing;
 import com.azat4dev.booking.listingsms.commands.application.handlers.AddNewListingHandler;
+import com.azat4dev.booking.listingsms.commands.application.handlers.PublishListingHandler;
 import com.azat4dev.booking.listingsms.commands.domain.commands.AddNewListing;
 import com.azat4dev.booking.listingsms.commands.domain.commands.UpdateListingDetails;
 import com.azat4dev.booking.listingsms.commands.domain.handers.modification.UpdateListingDetailsHandler;
@@ -10,6 +12,7 @@ import com.azat4dev.booking.listingsms.generated.server.model.*;
 import com.azat4dev.booking.shared.application.ControllerException;
 import com.azat4dev.booking.shared.presentation.CurrentAuthenticatedUserIdProvider;
 import lombok.AllArgsConstructor;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Component;
 
@@ -22,10 +25,11 @@ public class ListingsApi implements CommandsModificationsApiDelegate {
     private final CurrentAuthenticatedUserIdProvider currentUserId;
     private final AddNewListingHandler addNewListingHandler;
     private final UpdateListingDetailsHandler updateListingDetailsHandler;
+    private final PublishListingHandler publishListingHandler;
 
 
     @Override
-    public ResponseEntity<AddListingResponseDTO> addListing(AddListingRequestBodyDTO body) {
+    public ResponseEntity<AddListingResponseDTO> addListing(AddListingRequestBodyDTO body) throws Exception  {
 
         final var userId = currentUserId.get()
             .orElseThrow(() -> new ControllerException(
@@ -45,7 +49,7 @@ public class ListingsApi implements CommandsModificationsApiDelegate {
 
 
     @Override
-    public ResponseEntity<Void> updateListingDetails(UUID listingId, UpdateListingDetailsRequestBodyDTO requestBody) {
+    public ResponseEntity<Void> updateListingDetails(UUID listingId, UpdateListingDetailsRequestBodyDTO requestBody) throws Exception  {
 
         final var userId = currentUserId.get().orElseThrow(() -> new ControllerException(
             org.springframework.http.HttpStatus.UNAUTHORIZED,
@@ -80,8 +84,28 @@ public class ListingsApi implements CommandsModificationsApiDelegate {
     }
 
     @Override
-    public ResponseEntity<Void> publishListing(UUID listingId) {
-        return CommandsModificationsApiDelegate.super.publishListing(listingId);
+    public ResponseEntity<Void> publishListing(UUID listingId) throws Exception  {
+
+        final var userId = currentUserId.get().orElseThrow(() -> new ControllerException(
+            org.springframework.http.HttpStatus.UNAUTHORIZED,
+            "Host not authenticated"
+        ));
+
+        final var command = new PublishListing(
+            userId,
+            listingId.toString()
+        );
+
+        try {
+            publishListingHandler.handle(command);
+
+            return ResponseEntity.noContent().build();
+
+        } catch (PublishListingHandler.Exception.FailedToPublish e) {
+            throw new ControllerException(HttpStatus.CONFLICT, e);
+        } catch (PublishListingHandler.Exception.ListingNotFoundException e) {
+            throw new ControllerException(HttpStatus.NOT_FOUND, e);
+        }
     }
 
     private UpdateListingDetails.GuestsCapacity map(GuestsCapacityDTO dto) {

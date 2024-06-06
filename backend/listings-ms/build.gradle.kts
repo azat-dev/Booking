@@ -147,6 +147,7 @@ tasks.register<GenerateTask>("generateServerApi") {
     configOptions.set(
         mapOf(
             "useOptional" to "true",
+            "unhandledException" to "true",
             "openApiNullable" to "true",
             "interfaceOnly" to "false",
             "additionalModelTypeAnnotations" to "@lombok.Builder(toBuilder = true)\n@lombok.AllArgsConstructor\n@lombok.NoArgsConstructor\n@com.fasterxml.jackson.annotation.JsonIgnoreProperties(ignoreUnknown=true)",

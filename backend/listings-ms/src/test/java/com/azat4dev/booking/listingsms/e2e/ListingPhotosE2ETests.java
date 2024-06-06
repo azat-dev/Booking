@@ -7,9 +7,7 @@ import com.azat4dev.booking.listingsms.generated.client.api.CommandsListingsPhot
 import com.azat4dev.booking.listingsms.generated.client.api.CommandsModificationsApi;
 import com.azat4dev.booking.listingsms.generated.client.api.QueriesPrivateApi;
 import com.azat4dev.booking.listingsms.generated.client.base.ApiClient;
-import com.azat4dev.booking.listingsms.generated.client.model.AddListingPhotoRequestBodyDTO;
 import com.azat4dev.booking.listingsms.generated.client.model.AddListingRequestBodyDTO;
-import com.azat4dev.booking.listingsms.generated.client.model.UploadedFileDataDTO;
 import com.azat4dev.booking.listingsms.helpers.KafkaTests;
 import com.azat4dev.booking.listingsms.helpers.MinioTests;
 import com.azat4dev.booking.listingsms.helpers.PostgresTests;
@@ -32,6 +30,7 @@ import java.io.File;
 import java.io.IOException;
 import java.util.UUID;
 
+import static com.azat4dev.booking.listingsms.e2e.helpers.PhotoHelpers.givenAddedPhoto;
 import static com.azat4dev.booking.listingsms.e2e.helpers.PhotoHelpers.givenUploadedListingPhoto;
 import static com.azat4dev.booking.listingsms.e2e.helpers.UsersHelpers.USER1;
 import static org.assertj.core.api.Assertions.assertThat;
@@ -95,26 +94,24 @@ class ListingPhotosE2ETests implements PostgresTests, MinioTests, KafkaTests {
             testImageFile
         );
 
-        final var response = apiClient(CommandsListingsPhotoApi.class, userId)
-            .addPhotoToListing(
-                listingId,
-                new AddListingPhotoRequestBodyDTO()
-                    .operationId(UUID.randomUUID())
-                    .uploadedFile(
-                        new UploadedFileDataDTO()
-                            .url(result.getObjectPath().getUrl())
-                            .bucketName(result.getObjectPath().getBucketName())
-                            .objectName(result.getObjectPath().getObjectName())
-                    )
-            );
+        givenAddedPhoto(
+            listingId,
+            apiClient(CommandsListingsPhotoApi.class, userId),
+            testImageFile
+        );
+
+        givenAddedPhoto(
+            listingId,
+            apiClient(CommandsListingsPhotoApi.class, userId),
+            testImageFile
+        );
 
         // Then
         final var listingDetails = apiClient(QueriesPrivateApi.class, userId)
             .getListingPrivateDetails(listingId)
             .getListing();
 
-
-        assertThat(listingDetails.getPhotos().size()).isEqualTo(1);
+        assertThat(listingDetails.getPhotos().size()).isEqualTo(2);
     }
 
     // Helpers

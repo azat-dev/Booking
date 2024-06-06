@@ -2,3 +2,4 @@ type: string
 enum:
   - PUBLISHED
   - DRAFT
+  - READY_FOR_PUBLISHING
