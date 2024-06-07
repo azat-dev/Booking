@@ -20,7 +20,7 @@ public class CurrentUserApi implements QueriesCurrentUserApiDelegate {
     private final MapPersonalUserInfoToDTO mapToDTO;
 
     @Override
-    public ResponseEntity<PersonalUserInfoDTO> getCurrentUser() {
+    public ResponseEntity<PersonalUserInfoDTO> getCurrentUser() throws Exception {
 
         final var userId = currentUserId.get()
             .orElseThrow(() -> new ControllerException(HttpStatus.UNAUTHORIZED, "User not authenticated"));

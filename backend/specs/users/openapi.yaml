@@ -4,24 +4,24 @@ info:
   title: "Users  API"
   description: Describes the API of Users Endpoint
 paths:
-  /api/public/verify-email:
+  /api/public/identity/verify-email:
     $ref: "commands/email-verification/paths.yaml#/paths/~1verify-email"
-  /api/public/auth/sign-up:
+  /api/public/identity/sign-up:
     $ref: "commands/authentication/paths.yaml#/paths/~1sign-up"
-  /api/public/auth/login:
+  /api/public/identity/login:
       $ref: "commands/authentication/paths.yaml#/paths/~1login-by-email"
 
-  /api/public/password/reset:
+  /api/public/identity/password/reset:
     $ref: "commands/reset-password/paths.yaml#/paths/~1reset"
-  /api/public/password/set-new:
+  /api/public/identity/password/set-new:
     $ref: "commands/reset-password/paths.yaml#/paths/~1set-new"
 
-  /api/with-auth/users/current/photo/get-upload-url:
+  /api/private/identity/users/current/photo/get-upload-url:
     $ref: "commands/update-user-photo/paths.yaml#/paths/~1get-upload-url"
-  /api/with-auth/users/current/photo/update:
+  /api/private/identity/users/current/photo/update:
     $ref: "commands/update-user-photo/paths.yaml#/paths/~1update"
 
-  /api/with-auth/users/current:
+  /api/private/identity/users/current:
     $ref: "queries/current-user/paths.yaml#/paths/~1"
 
 components:

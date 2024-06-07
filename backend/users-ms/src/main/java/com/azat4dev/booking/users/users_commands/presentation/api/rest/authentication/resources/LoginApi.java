@@ -4,8 +4,8 @@ import com.azat4dev.booking.users.users_commands.application.commands.LoginByEma
 import com.azat4dev.booking.users.users_commands.application.handlers.LoginByEmailHandler;
 import com.azat4dev.booking.users.users_commands.presentation.api.rest.authentication.utils.AuthenticateCurrentSession;
 import com.azat4dev.booking.usersms.generated.server.api.CommandsLoginApiDelegate;
-import com.azat4dev.booking.usersms.generated.server.model.LoginByEmailRequestBody;
-import com.azat4dev.booking.usersms.generated.server.model.LoginByEmailResponseBody;
+import com.azat4dev.booking.usersms.generated.server.model.LoginByEmailRequestBodyDTO;
+import com.azat4dev.booking.usersms.generated.server.model.LoginByEmailResponseBodyDTO;
 import com.azat4dev.booking.usersms.generated.server.model.TokensPairDTO;
 import lombok.AllArgsConstructor;
 import org.apache.commons.logging.Log;
@@ -26,7 +26,7 @@ public final class LoginApi implements CommandsLoginApiDelegate {
 
 
     @Override
-    public ResponseEntity<LoginByEmailResponseBody> loginByEmail(LoginByEmailRequestBody loginByEmailRequestBody) {
+    public ResponseEntity<LoginByEmailResponseBodyDTO> loginByEmail(LoginByEmailRequestBodyDTO loginByEmailRequestBody) throws Exception {
 
         try {
             final var user = loginByEmailHandler.handle(
@@ -42,7 +42,7 @@ public final class LoginApi implements CommandsLoginApiDelegate {
             }
 
             return ResponseEntity.ok(
-                LoginByEmailResponseBody.builder()
+                LoginByEmailResponseBodyDTO.builder()
                     .userId(user.getId().value())
                     .tokens(
                         TokensPairDTO.builder()

@@ -45,10 +45,10 @@ public class WebSecurityConfig {
                         "/api/public/**"
                     ).permitAll()
 
-                    .requestMatchers("/api/with-auth/**")
+                    .requestMatchers("/api/private/**")
                     .authenticated()
             )
-            .csrf(c -> c.ignoringRequestMatchers("/api/public/**", "/api/with-auth/**"))
+            .csrf(c -> c.ignoringRequestMatchers("/api/public/**", "/api/private/**"))
             .httpBasic(Customizer.withDefaults())
             .oauth2ResourceServer(c -> c.jwt(jwtCustom -> jwtCustom.decoder(jwtDecoder)))
             .sessionManagement(s -> s.sessionCreationPolicy(SessionCreationPolicy.STATELESS))

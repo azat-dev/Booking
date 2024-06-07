@@ -9,7 +9,7 @@ import com.azat4dev.booking.users.users_commands.domain.core.values.password.Pas
 import com.azat4dev.booking.users.users_commands.presentation.api.rest.authentication.resources.SignUpApi;
 import com.azat4dev.booking.users.users_commands.presentation.api.rest.authentication.utils.AuthenticateCurrentSession;
 import com.azat4dev.booking.usersms.generated.server.model.FullNameDTO;
-import com.azat4dev.booking.usersms.generated.server.model.SignUpByEmailRequestBody;
+import com.azat4dev.booking.usersms.generated.server.model.SignUpByEmailRequestBodyDTO;
 import org.junit.jupiter.api.Test;
 import org.springframework.http.HttpStatus;
 
@@ -49,7 +49,7 @@ public class SignUpApiTests {
             .given(sut.handler)
             .handle(any(SignUp.class));
 
-        final var request = new SignUpByEmailRequestBody(
+        final var request = new SignUpByEmailRequestBodyDTO(
             validEmail,
             validPassword,
             fullName
@@ -81,7 +81,7 @@ public class SignUpApiTests {
         final var expectedAccessToken = "accessToken";
         final var expectedRefreshToken = "refreshToken";
 
-        final var request = new SignUpByEmailRequestBody(
+        final var request = new SignUpByEmailRequestBodyDTO(
             validEmail,
             password.getValue(),
             fullName

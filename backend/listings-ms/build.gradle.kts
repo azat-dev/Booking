@@ -6,6 +6,7 @@ import org.jooq.meta.jaxb.Configuration
 import org.jooq.meta.jaxb.Logging
 import org.jooq.meta.jaxb.Target
 import org.openapitools.generator.gradle.plugin.tasks.GenerateTask
+import org.springframework.boot.gradle.tasks.bundling.BootBuildImage
 import org.testcontainers.containers.PostgreSQLContainer
 import org.testcontainers.utility.MountableFile
 
@@ -29,6 +30,8 @@ plugins {
     id("org.openapi.generator") version "7.6.0"
 }
 
+val springCloudVersion by extra("2023.0.2")
+
 group = "com.azat4dev.booking"
 version = "0.0.1-SNAPSHOT"
 
@@ -43,7 +46,7 @@ repositories {
 dependencies {
 
     implementation(project(":shared"))
-    implementation(project(":apiclient"))
+    testImplementation(project(":apiclient"))
 
     // Spring
     implementation("org.springframework.boot:spring-boot-starter-oauth2-resource-server")
@@ -51,6 +54,7 @@ dependencies {
     implementation("org.springframework.kafka:spring-kafka")
     implementation("org.springframework.boot:spring-boot-starter-security")
     implementation("org.springframework.boot:spring-boot-starter-jdbc")
+    implementation("org.springframework.cloud:spring-cloud-starter-netflix-eureka-client")
     testImplementation("org.springframework.boot:spring-boot-starter-test")
     testImplementation("org.springframework.boot:spring-boot-starter-actuator")
     testImplementation("org.springframework.security:spring-security-test")
@@ -115,6 +119,12 @@ if (hasProperty("buildScan")) {
 }
 tasks.named<Test>("test") {
     useJUnitPlatform()
+}
+
+dependencyManagement {
+    imports {
+        mavenBom("org.springframework.cloud:spring-cloud-dependencies:$springCloudVersion")
+    }
 }
 
 sourceSets {
@@ -224,10 +234,14 @@ tasks.register("generateCodeFromOpenApiSpecs") {
     dependsOn("generateApiClient", "generateServerApi", "generateDomainEventsDTO")
 }
 
+tasks.withType<JavaCompile> {
+    dependsOn("generateJooqClasses", "generateDomainEventsDTO", "generateServerApi")
+}
+
 // JOOQ Codegen
 
 tasks.withType<KotlinCompile> {
-    dependsOn("generateJooqClasses")
+    dependsOn("generateJooqClasses", "generateDomainEventsDTO", "generateServerApi")
     compilerOptions {
         freeCompilerArgs.add("-Xjsr305=strict")
         jvmTarget.set(JvmTarget.JVM_21)
@@ -274,4 +288,8 @@ tasks.register("generateJooqClasses") {
 
         containerInstance.stop()
     }
+}
+
+tasks.named<BootBuildImage>("bootBuildImage") {
+    imageName.set("azat4dev/listings-ms")
 }

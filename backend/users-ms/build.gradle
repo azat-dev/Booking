@@ -2,10 +2,13 @@ import org.openapitools.generator.gradle.plugin.tasks.GenerateTask
 
 plugins {
     id 'java'
-    id("com.google.protobuf") version "0.8.17"
     id 'org.springframework.boot' version '3.2.5'
     id 'io.spring.dependency-management' version '1.1.4'
     id 'org.openapi.generator' version '7.6.0'
+}
+
+ext {
+    springCloudVersion = "2023.0.2"
 }
 
 group = 'com.azat4dev'
@@ -19,12 +22,19 @@ repositories {
     mavenCentral()
 }
 
+dependencyManagement {
+    imports {
+        mavenBom "org.springframework.cloud:spring-cloud-dependencies:$springCloudVersion"
+    }
+}
+
 dependencies {
 
     implementation project(path: ':shared')
     testImplementation project(path: ':apiclient')
 
     // Spring Boot
+    implementation 'org.springframework.cloud:spring-cloud-starter-netflix-eureka-client'
     implementation 'org.springframework.boot:spring-boot-starter-oauth2-resource-server'
     implementation 'org.springframework.boot:spring-boot-starter-security'
     implementation 'org.springframework.boot:spring-boot-starter-web'
@@ -38,6 +48,7 @@ dependencies {
 
     // Minio
     implementation 'io.minio:minio:8.5.10'
+    testImplementation("org.testcontainers:minio:1.19.8")
 
     // Kafka
     testImplementation 'org.springframework.kafka:spring-kafka-test'
@@ -119,8 +130,10 @@ task generateServerApi(type: GenerateTask) {
     modelPackage.set("com.azat4dev.booking.usersms.generated.server.model")
     packageName.set("com.azat4dev.booking.usersms.generated.server")
     ignoreFileOverride.set(".openapi-generator-ignore")
+    modelNameSuffix.set("DTO")
     configOptions.set([
             useOptional: "true",
+            unhandledException: "true",
             openApiNullable: "false",
             interfaceOnly: "false",
             additionalModelTypeAnnotations: "@lombok.Builder(toBuilder = true)\n@lombok.AllArgsConstructor\n@com.fasterxml.jackson.annotation.JsonIgnoreProperties(ignoreUnknown=true)",
@@ -147,6 +160,7 @@ task generateApiClient(type: GenerateTask) {
     modelPackage.set("com.azat4dev.booking.usersms.generated.client.model")
     packageName.set("com.azat4dev.booking.usersms.generated.client")
     ignoreFileOverride.set(".openapi-generator-ignore")
+    modelNameSuffix.set("DTO")
     configOptions.set([
             useOptional: "true",
             generateConstructorWithAllArgs: "true",
@@ -183,5 +197,19 @@ task generateDomainEventsDTO(type: GenerateTask) {
     ])
 }
 
-
 task generateCodeFromOpenApiSpecs(dependsOn: ['generateApiClient', 'generateServerApi', 'generateDomainEventsDTO'])
+
+tasks.named("bootBuildImage") {
+    imageName = "azat4dev/booking-users-ms"
+}
+
+tasks.withType(JavaCompile) {
+    dependsOn 'generateDomainEventsDTO', 'generateServerApi'
+}
+
+if (hasProperty('buildScan')) {
+    buildScan {
+        termsOfServiceUrl = 'https://gradle.com/terms-of-service'
+        termsOfServiceAgree = 'yes'
+    }
+}

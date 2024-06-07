@@ -7,6 +7,10 @@ plugins {
 group = 'com.azat4dev.booking.shared'
 version = '1.0-SNAPSHOT'
 
+java {
+    sourceCompatibility = '21'
+}
+
 repositories {
     mavenCentral()
 }

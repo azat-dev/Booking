@@ -6,10 +6,10 @@ import com.azat4dev.booking.users.users_commands.application.commands.password.R
 import com.azat4dev.booking.users.users_commands.application.handlers.password.CompletePasswordResetHandler;
 import com.azat4dev.booking.users.users_commands.application.handlers.password.ResetPasswordByEmailHandler;
 import com.azat4dev.booking.usersms.generated.server.api.CommandsResetPasswordApiDelegate;
-import com.azat4dev.booking.usersms.generated.server.model.CompleteResetPassword200Response;
-import com.azat4dev.booking.usersms.generated.server.model.CompleteResetPasswordRequestBody;
-import com.azat4dev.booking.usersms.generated.server.model.ResetPasswordByEmail200Response;
-import com.azat4dev.booking.usersms.generated.server.model.ResetPasswordByEmailRequestBody;
+import com.azat4dev.booking.usersms.generated.server.model.CompleteResetPassword200ResponseDTO;
+import com.azat4dev.booking.usersms.generated.server.model.CompleteResetPasswordRequestBodyDTO;
+import com.azat4dev.booking.usersms.generated.server.model.ResetPasswordByEmail200ResponseDTO;
+import com.azat4dev.booking.usersms.generated.server.model.ResetPasswordByEmailRequestBodyDTO;
 import lombok.AllArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -23,7 +23,7 @@ public class ResetPasswordApi implements CommandsResetPasswordApiDelegate {
     private final CompletePasswordResetHandler completePasswordResetHandler;
 
     @Override
-    public ResponseEntity<ResetPasswordByEmail200Response> resetPasswordByEmail(ResetPasswordByEmailRequestBody requestBody) {
+    public ResponseEntity<ResetPasswordByEmail200ResponseDTO> resetPasswordByEmail(ResetPasswordByEmailRequestBodyDTO requestBody) {
 
         final var command = new ResetPasswordByEmail(
             requestBody.getOperationId().toString(),
@@ -37,11 +37,11 @@ public class ResetPasswordApi implements CommandsResetPasswordApiDelegate {
         } catch (ResetPasswordByEmailHandler.Exception.FailedToSendResetPasswordEmail e) {
             throw ControllerException.createError(HttpStatus.INTERNAL_SERVER_ERROR, e);
         }
-        return ResponseEntity.ok(ResetPasswordByEmail200Response.builder().build());
+        return ResponseEntity.ok(ResetPasswordByEmail200ResponseDTO.builder().build());
     }
 
     @Override
-    public ResponseEntity<CompleteResetPassword200Response> completeResetPassword(CompleteResetPasswordRequestBody requestBody) {
+    public ResponseEntity<CompleteResetPassword200ResponseDTO> completeResetPassword(CompleteResetPasswordRequestBodyDTO requestBody) throws Exception {
         final var command = new CompletePasswordReset(
             requestBody.getOperationId().toString(),
             requestBody.getNewPassword(),
@@ -54,6 +54,6 @@ public class ResetPasswordApi implements CommandsResetPasswordApiDelegate {
             throw ControllerException.createError(HttpStatus.FORBIDDEN, e);
         }
 
-        return ResponseEntity.ok(CompleteResetPassword200Response.builder().build());
+        return ResponseEntity.ok(CompleteResetPassword200ResponseDTO.builder().build());
     }
 }

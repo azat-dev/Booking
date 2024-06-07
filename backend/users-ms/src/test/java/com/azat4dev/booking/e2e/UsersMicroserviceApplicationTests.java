@@ -1,6 +1,9 @@
-package com.azat4dev.booking;
+package com.azat4dev.booking.e2e;
 
+import com.azat4dev.booking.helpers.ApiHelpers;
 import com.azat4dev.booking.helpers.EmailBoxMock;
+import com.azat4dev.booking.helpers.KafkaTests;
+import com.azat4dev.booking.helpers.PostgresTests;
 import com.azat4dev.booking.shared.domain.values.user.UserId;
 import com.azat4dev.booking.users.users_commands.domain.core.values.email.EmailAddress;
 import com.azat4dev.booking.users.users_commands.domain.core.values.password.Password;
@@ -22,6 +25,7 @@ import org.springframework.boot.test.context.TestConfiguration;
 import org.springframework.boot.test.web.server.LocalServerPort;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Primary;
+import org.springframework.test.context.jdbc.Sql;
 import org.springframework.web.util.UriComponentsBuilder;
 
 import java.util.UUID;
@@ -29,6 +33,8 @@ import java.util.UUID;
 import static org.assertj.core.api.Assertions.assertThat;
 
 @SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
+@Sql("/db/drop-schema.sql")
+@Sql("/db/schema.sql")
 class UsersMicroserviceApplicationTests implements KafkaTests, PostgresTests {
 
     public static final Faker faker = Faker.instance();
@@ -53,8 +59,8 @@ class UsersMicroserviceApplicationTests implements KafkaTests, PostgresTests {
     void contextLoads() {
     }
 
-    SignUpByEmailRequestBody anySignUpRequest() {
-        return new SignUpByEmailRequestBody()
+    SignUpByEmailRequestBodyDTO anySignUpRequest() {
+        return new SignUpByEmailRequestBodyDTO()
             .fullName(
                 new FullNameDTO()
                     .firstName(faker.name().firstName())
@@ -83,10 +89,10 @@ class UsersMicroserviceApplicationTests implements KafkaTests, PostgresTests {
     @Test
     void test_resetPasswordByEmail() throws Exception {
         // Given
-        final var commandsApiClient = anonymousClient(CommandsResetPasswordApi.class);
+        final var commandsApiClient = apiClient(CommandsResetPasswordApi.class);
 
         final var user = givenAnySignedUpUser();
-        final var request = new ResetPasswordByEmailRequestBody()
+        final var request = new ResetPasswordByEmailRequestBodyDTO()
             .operationId(anyIdempotentOperationId())
             .email(user.email().getValue());
 
@@ -107,15 +113,15 @@ class UsersMicroserviceApplicationTests implements KafkaTests, PostgresTests {
 
         //When
         commandsApiClient.completeResetPassword(
-            new CompleteResetPasswordRequestBody()
+            new CompleteResetPasswordRequestBodyDTO()
                 .operationId(anyIdempotentOperationId())
                 .resetPasswordToken(token)
                 .newPassword(newPassword)
         );
 
         //Then
-        final var loginResponse = anonymousClient(CommandsLoginApi.class).loginByEmail(
-            new LoginByEmailRequestBody()
+        final var loginResponse = apiClient(CommandsLoginApi.class).loginByEmail(
+            new LoginByEmailRequestBodyDTO()
                 .email(user.email().getValue())
                 .password(newPassword)
         );
@@ -126,11 +132,11 @@ class UsersMicroserviceApplicationTests implements KafkaTests, PostgresTests {
     SignedUpUser givenAnyConfirmedUser() throws Exception {
         // Given
         final var signedUpUser = givenAnySignedUpUser();
-        final var queriesApiClient = apiClient(signedUpUser.accessToken, QueriesCurrentUserApi.class);
+        final var queriesApiClient = apiClient(QueriesCurrentUserApi.class, signedUpUser.accessToken);
 
         final var token = parseParamFromLink(signedUpUser.verificationLink, "token");
         // When
-        final var response = anonymousClient(CommandsEmailVerificationApi.class)
+        final var response = apiClient(CommandsEmailVerificationApi.class)
             .verifyEmail(token);
 
         // Then
@@ -149,7 +155,7 @@ class UsersMicroserviceApplicationTests implements KafkaTests, PostgresTests {
         final var email = EmailAddress.dangerMakeWithoutChecks(request.getEmail());
 
         // When
-        final var response = anonymousClient(CommandsSignUpApi.class)
+        final var response = apiClient(CommandsSignUpApi.class)
             .signUpByEmail(request);
 
         // Then
@@ -157,7 +163,7 @@ class UsersMicroserviceApplicationTests implements KafkaTests, PostgresTests {
         assertThat(accessToken).isNotNull();
 
         // When
-        final var userInfo = apiClient(accessToken, QueriesCurrentUserApi.class)
+        final var userInfo = apiClient(QueriesCurrentUserApi.class, accessToken)
             .getCurrentUser();
 
         // Then
@@ -198,17 +204,12 @@ class UsersMicroserviceApplicationTests implements KafkaTests, PostgresTests {
             .build().getQueryParams().getFirst(paramName);
     }
 
-    private <T extends ApiClient.Api> T anonymousClient(Class<T> apiClass) {
-        final var api = new ApiClient();
-        api.setBasePath("http://localhost:" + port);
-        return api.buildClient(apiClass);
+    private <T extends ApiClient.Api> T apiClient(Class<T> apiClass,  String accessToken) {
+        return ApiHelpers.apiClient(apiClass, accessToken, port);
     }
 
-    private <T extends ApiClient.Api> T apiClient(String accessToken, Class<T> apiClass) {
-        final var api = new ApiClient("BearerAuth");
-        api.setBearerToken(accessToken);
-        api.setBasePath("http://localhost:" + port);
-        return api.buildClient(apiClass);
+    private <T extends ApiClient.Api> T apiClient(Class<T> apiClass) {
+        return ApiHelpers.apiClient(apiClass, port);
     }
 
     record SignedUpUser(

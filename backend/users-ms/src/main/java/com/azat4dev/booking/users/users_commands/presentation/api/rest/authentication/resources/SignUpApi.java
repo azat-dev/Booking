@@ -6,8 +6,8 @@ import com.azat4dev.booking.users.users_commands.application.commands.SignUp;
 import com.azat4dev.booking.users.users_commands.application.handlers.SignUpHandler;
 import com.azat4dev.booking.users.users_commands.presentation.api.rest.authentication.utils.AuthenticateCurrentSession;
 import com.azat4dev.booking.usersms.generated.server.api.CommandsSignUpApiDelegate;
-import com.azat4dev.booking.usersms.generated.server.model.SignUpByEmailRequestBody;
-import com.azat4dev.booking.usersms.generated.server.model.SignUpByEmailResponseBody;
+import com.azat4dev.booking.usersms.generated.server.model.SignUpByEmailRequestBodyDTO;
+import com.azat4dev.booking.usersms.generated.server.model.SignUpByEmailResponseBodyDTO;
 import com.azat4dev.booking.usersms.generated.server.model.TokensPairDTO;
 import lombok.AllArgsConstructor;
 import org.apache.commons.logging.Log;
@@ -25,7 +25,7 @@ public final class SignUpApi implements CommandsSignUpApiDelegate {
     private final SignUpHandler signUpHandler;
     private final AuthenticateCurrentSession authenticateCurrentSession;
 
-    private ResponseEntity<SignUpByEmailResponseBody> _signUpByEmail(SignUpByEmailRequestBody requestBody) throws SignUpHandler.Exception.UserWithSameEmailAlreadyExists {
+    private ResponseEntity<SignUpByEmailResponseBodyDTO> _signUpByEmail(SignUpByEmailRequestBodyDTO requestBody) throws SignUpHandler.Exception.UserWithSameEmailAlreadyExists {
 
         final var fullName = requestBody.getFullName();
 
@@ -42,7 +42,7 @@ public final class SignUpApi implements CommandsSignUpApiDelegate {
 
         final var tokens = authenticateCurrentSession.execute(userId, new String[]{"ROLE_USER"});
 
-        final var response = SignUpByEmailResponseBody.builder()
+        final var response = SignUpByEmailResponseBodyDTO.builder()
             .userId(userId.value())
             .tokens(
                 TokensPairDTO.builder()
@@ -57,7 +57,7 @@ public final class SignUpApi implements CommandsSignUpApiDelegate {
     }
 
     @Override
-    public ResponseEntity<SignUpByEmailResponseBody> signUpByEmail(SignUpByEmailRequestBody requestBody) {
+    public ResponseEntity<SignUpByEmailResponseBodyDTO> signUpByEmail(SignUpByEmailRequestBodyDTO requestBody) throws Exception {
 
         try {
 

@@ -9,9 +9,10 @@ import com.azat4dev.booking.users.users_commands.application.handlers.password.C
 import com.azat4dev.booking.users.users_commands.application.handlers.password.ResetPasswordByEmailHandler;
 import com.azat4dev.booking.users.users_commands.domain.UserHelpers;
 import com.azat4dev.booking.users.users_commands.domain.core.values.password.reset.TokenForPasswordReset;
+
 import com.azat4dev.booking.users.users_commands.presentation.api.rest.authentication.resources.ResetPasswordApi;
-import com.azat4dev.booking.usersms.generated.server.model.CompleteResetPasswordRequestBody;
-import com.azat4dev.booking.usersms.generated.server.model.ResetPasswordByEmailRequestBody;
+import com.azat4dev.booking.usersms.generated.server.model.CompleteResetPasswordRequestBodyDTO;
+import com.azat4dev.booking.usersms.generated.server.model.ResetPasswordByEmailRequestBodyDTO;
 import org.junit.jupiter.api.Test;
 import org.springframework.http.HttpStatus;
 
@@ -48,7 +49,7 @@ public class ResetPasswordApiTests {
         // Given
         final var sut = createSUT();
 
-        final var request = new ResetPasswordByEmailRequestBody(
+        final var request = new ResetPasswordByEmailRequestBodyDTO(
             anyIdempotentOperationId(),
             UserHelpers.anyValidEmail().getValue()
         );
@@ -78,7 +79,7 @@ public class ResetPasswordApiTests {
         // Given
         final var sut = createSUT();
 
-        final var request = new ResetPasswordByEmailRequestBody(
+        final var request = new ResetPasswordByEmailRequestBodyDTO(
             anyIdempotentOperationId(),
             "notValidEmail"
         );
@@ -109,7 +110,7 @@ public class ResetPasswordApiTests {
         final var newPassword = "newPassword";
         final var token = TokenForPasswordReset.dangerouslyMakeFrom(tokenValue);
 
-        final var request = new CompleteResetPasswordRequestBody(
+        final var request = new CompleteResetPasswordRequestBodyDTO(
             operationId,
             newPassword,
             tokenValue

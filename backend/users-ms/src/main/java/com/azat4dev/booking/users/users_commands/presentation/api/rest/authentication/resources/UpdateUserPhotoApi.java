@@ -27,7 +27,7 @@ public class UpdateUserPhotoApi implements CommandsUpdateUserPhotoApiDelegate {
     private CurrentAuthenticatedUserIdProvider getCurrentUserId;
 
     @Override
-    public ResponseEntity<GenerateUploadUserPhotoUrlResponseBody> generateUploadUserPhotoUrl(GenerateUploadUserPhotoUrlRequestBody requestBody) {
+    public ResponseEntity<GenerateUploadUserPhotoUrlResponseBodyDTO> generateUploadUserPhotoUrl(GenerateUploadUserPhotoUrlRequestBodyDTO requestBody) throws Exception {
 
         final var userId = getCurrentUserId.get().orElseThrow(() -> new ResponseStatusException(HttpStatus.UNAUTHORIZED, "Unauthorized"));
         final var command = new GenerateUserPhotoUploadUrl(
@@ -41,7 +41,7 @@ public class UpdateUserPhotoApi implements CommandsUpdateUserPhotoApiDelegate {
         try {
             final var result = generateUserPhotoUploadUrlHandler.handle(command);
 
-            return ResponseEntity.ok(new GenerateUploadUserPhotoUrlResponseBody(
+            return ResponseEntity.ok(new GenerateUploadUserPhotoUrlResponseBodyDTO(
                 UploadedFileDataDTO.builder()
                     .url(result.formData().url().toString())
                     .bucketName(result.formData().bucketName().toString())
@@ -56,7 +56,7 @@ public class UpdateUserPhotoApi implements CommandsUpdateUserPhotoApiDelegate {
     }
 
     @Override
-    public ResponseEntity<UpdateUserPhoto200Response> updateUserPhoto(UpdateUserPhotoRequestBody requestBody) {
+    public ResponseEntity<UpdateUserPhoto200ResponseDTO> updateUserPhoto(UpdateUserPhotoRequestBodyDTO requestBody) throws Exception {
 
         final var userId = getCurrentUserId.get().orElseThrow(() -> new ResponseStatusException(HttpStatus.UNAUTHORIZED, "Unauthorized"));
 
@@ -71,7 +71,7 @@ public class UpdateUserPhotoApi implements CommandsUpdateUserPhotoApiDelegate {
 
         try {
             updateUserPhoto.handle(command);
-            return ResponseEntity.ok(UpdateUserPhoto200Response.builder().build());
+            return ResponseEntity.ok(UpdateUserPhoto200ResponseDTO.builder().build());
         } catch (UpdateUserPhotoHandler.Exception.FailedToAttachPhoto e) {
             throw new ResponseStatusException(HttpStatus.INTERNAL_SERVER_ERROR, e.getMessage());
         }

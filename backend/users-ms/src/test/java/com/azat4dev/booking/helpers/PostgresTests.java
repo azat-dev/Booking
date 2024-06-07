@@ -1,4 +1,4 @@
-package com.azat4dev.booking;
+package com.azat4dev.booking.helpers;
 
 import org.springframework.test.context.DynamicPropertyRegistry;
 import org.springframework.test.context.DynamicPropertySource;

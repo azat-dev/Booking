@@ -4,7 +4,7 @@ import com.azat4dev.booking.shared.application.ControllerException;
 import com.azat4dev.booking.users.users_commands.application.commands.email.verification.CompleteEmailVerification;
 import com.azat4dev.booking.users.users_commands.application.handlers.email.verification.CompleteEmailVerificationHandler;
 import com.azat4dev.booking.usersms.generated.server.api.CommandsEmailVerificationApiDelegate;
-import com.azat4dev.booking.usersms.generated.server.model.VerifyEmail200Response;
+import com.azat4dev.booking.usersms.generated.server.model.VerifyEmail200ResponseDTO;
 import lombok.AllArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -17,7 +17,7 @@ public class EmailVerificationApi implements CommandsEmailVerificationApiDelegat
     private final CompleteEmailVerificationHandler completeEmailVerificationHandler;
 
     @Override
-    public ResponseEntity<VerifyEmail200Response> verifyEmail(String token) {
+    public ResponseEntity<VerifyEmail200ResponseDTO> verifyEmail(String token) throws Exception {
 
         final var command = new CompleteEmailVerification(token);
         try {
@@ -26,7 +26,7 @@ public class EmailVerificationApi implements CommandsEmailVerificationApiDelegat
             throw ControllerException.createError(HttpStatus.FORBIDDEN, e);
         }
 
-        final var response = VerifyEmail200Response.builder().build();
+        final var response = VerifyEmail200ResponseDTO.builder().build();
         return ResponseEntity.ok(response);
     }
 }

@@ -5,7 +5,7 @@ import com.azat4dev.booking.users.users_commands.application.handlers.LoginByEma
 import com.azat4dev.booking.users.users_commands.domain.UserHelpers;
 import com.azat4dev.booking.users.users_commands.presentation.api.rest.authentication.resources.LoginApi;
 import com.azat4dev.booking.users.users_commands.presentation.api.rest.authentication.utils.AuthenticateCurrentSession;
-import com.azat4dev.booking.usersms.generated.server.model.LoginByEmailRequestBody;
+import com.azat4dev.booking.usersms.generated.server.model.LoginByEmailRequestBodyDTO;
 import org.junit.jupiter.api.Test;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.server.ResponseStatusException;
@@ -37,7 +37,7 @@ public class LoginApiTests {
 
         // Given
         final var sut = createSUT();
-        final var loginByEmailRequest = new LoginByEmailRequestBody(
+        final var loginByEmailRequest = new com.azat4dev.booking.usersms.generated.server.model.LoginByEmailRequestBodyDTO(
             anyValidEmail(),
             "password"
         );
@@ -69,10 +69,9 @@ public class LoginApiTests {
 
         final var validEmail = UserHelpers.anyValidEmail();
 
-        final var requestBody = new LoginByEmailRequestBody(
-            validEmail.getValue(),
-            anyValidPassword()
-        );
+        final var requestBody = new LoginByEmailRequestBodyDTO()
+            .email(validEmail.getValue())
+                .password(anyValidPassword());
 
         final var user = anyUser();
 
