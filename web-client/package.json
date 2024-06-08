@@ -29,7 +29,8 @@
     "dev": "vite",
     "build": "tsc && vite build",
     "preview": "vite preview",
-    "generate-api-client": "openapi-generator-cli generate -g typescript-fetch -i ../backend/specs/users/openapi.yaml -o ./src/data/API",
+    "generate-identity-api-client": "openapi-generator-cli generate -g typescript-fetch -i ../backend/specs/users/openapi.yaml -o ./src/data/api/identity",
+    "generate-listings-api-client": "openapi-generator-cli generate -g typescript-fetch -i ../backend/specs/listings/openapi.yaml -o ./src/data/api/listings",
     "generate-class-map": "ts-node update_types_info.ts"
   },
   "devDependencies": {

@@ -1,8 +1,8 @@
 import ProfileButtonVM from "./ProfileButtonVM";
-import Subject from "../../../utils/binding/Subject";
+import {ReadonlySubject} from "../../../utils/binding/Subject";
 
 interface PropsProfileButton {
-    vm: Subject<ProfileButtonVM>;
+    vm: ReadonlySubject<ProfileButtonVM>;
 }
 
 export default PropsProfileButton;

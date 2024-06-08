@@ -18,8 +18,8 @@ public class GatewayApplication {
 	@Bean
 	public RouteLocator customRouteLocator(RouteLocatorBuilder builder) {
 		return builder.routes()
-			.route("users-ms", r -> r.path("/api/private/identity/**").or().path("api/public/identity/**").uri("lb://users-ms"))
-			.route("users-ms", r -> r.path("/api/private/listings/**").or().path("api/public/listings**").uri("lb://users-ms"))
+			.route("users-ms", r -> r.path("/api/private/identity/**").or().path("/api/public/identity/**").uri("lb://users-ms"))
+			.route("users-ms", r -> r.path("/api/private/listings/**").or().path("/api/public/listings**").uri("lb://listings-ms"))
 			.build();
 	}
 }

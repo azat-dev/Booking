@@ -63,6 +63,13 @@ class PagesConfig {
             }
         )
     }
+
+    public listingsPage = async (session: AppSessionAuthenticated) => {
+
+        const PageUserProfileVM = (await import("../../pages/page-listings/PageListingsVM.ts")).default;
+        return new PageUserProfileVM(
+        )
+    }
 }
 
 export default PagesConfig;

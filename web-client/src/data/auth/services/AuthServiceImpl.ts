@@ -16,9 +16,9 @@ import {
     CommandsLoginApi, CommandsSignUpApi,
     QueriesCurrentUserApi,
     ResponseError,
-    UserWithSameEmailAlreadyExistsErrorDTO,
-    ValidationErrorDTO,
-} from "../../API";
+    UserWithSameEmailAlreadyExistsError,
+    ValidationError,
+} from "../../api/identity";
 import PersonalUserInfo from "../../../domain/auth/values/PersonalUserInfo";
 import PhotoPath from "../../../domain/auth/values/PhotoPath.ts";
 
@@ -112,13 +112,13 @@ class AuthServiceImpl implements AuthService {
         } catch (e) {
             if (e instanceof ResponseError) {
                 if (e.response.status === 400) {
-                    const error = (await e.response.json()) as ValidationErrorDTO;
+                    const error = (await e.response.json()) as ValidationError;
                     throw error;
                 }
 
                 if (e.response.status) {
                     const error =
-                        (await e.response.json()) as UserWithSameEmailAlreadyExistsErrorDTO;
+                        (await e.response.json()) as UserWithSameEmailAlreadyExistsError;
                     throw error;
                 }
             }

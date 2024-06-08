@@ -6,7 +6,7 @@ info:
 servers:
   - url: 'https'
 paths:
-  /listings/{listingId}:
+  /queryListing/{listingId}:
     get:
       tags:
         - queriesPrivate
@@ -30,7 +30,7 @@ paths:
           description: Not valid Token
         "404":
           description: Not found
-  /listings:
+  /queryListings:
     get:
       tags:
         - queriesPrivate

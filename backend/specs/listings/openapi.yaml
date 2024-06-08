@@ -7,16 +7,16 @@ info:
 paths:
   # Modification API
 
-  /api/private/users/currrent/listings/{listingId}:
-    $ref: "queries/private/paths.yaml#/paths/~1listings~1{listingId}"
+  /api/private/listings/{listingId}:
+    $ref: "queries/private/paths.yaml#/paths/~1queryListing~1{listingId}"
 
-  /api/private/users/currrent/listings:
-    $ref: "queries/private/paths.yaml#/paths/~1listings"
+  /api/private/listings/own:
+    $ref: "queries/private/paths.yaml#/paths/~1queryListings"
 
   /api/private/listings:
     $ref: "commands/modification/paths.yaml#/paths/~1listings"
 
-  /api/private/listings/{listingId}:
+  /api/private/listings/{listingId}/update:
     $ref: "commands/modification/paths.yaml#/paths/~1listings~1{listingId}"
 
   /api/private/listings/{listingId}/publish:

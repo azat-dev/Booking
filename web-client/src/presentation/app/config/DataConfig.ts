@@ -5,7 +5,7 @@ import {
     CommandsUpdateUserPhotoApi,
     Configuration,
     QueriesCurrentUserApi
-} from "../../../data/API";
+} from "../../../data/api/identity";
 import AuthServiceImpl from "../../../data/auth/services/AuthServiceImpl.ts";
 import PersonalUserInfoService from "../../../domain/auth/interfaces/services/PersonalUserInfoService.ts";
 import UserInfoServiceImpl from "../../../data/auth/services/UserInfoServiceImpl.ts";

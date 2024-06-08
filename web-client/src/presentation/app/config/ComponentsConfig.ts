@@ -16,6 +16,7 @@ import OpenSignUpDialog from "../../commands/OpenSignUpDialog";
 import Subject from "../../utils/binding/Subject";
 import ProfileButtonLoadingVM from "../../components/navigation-bar/profile-button-loading/ProfileButtonLoadingVM";
 import NavigationDelegate from "../NavigationDelegate.ts";
+import mappedValue from "../../utils/binding/mappedValue.ts";
 
 class ComponentsConfig {
 
@@ -56,8 +57,13 @@ class ComponentsConfig {
     };
 
     public navigationBar = () => {
+        const showHostingButton = mappedValue(
+            this.appSession.state,
+            (session) => session.type === AppSessionAuthenticated.type
+        );
         return new NavigationBarVM(
-            this.profileButton()
+            this.profileButton(),
+            showHostingButton
         )
     }
 
