@@ -1,4 +1,4 @@
-import ProfileButtonVM from "./profile-button/ProfileButtonVM";
+import ProfileButtonVM from "../profile-button/ProfileButtonVM";
 import {ReadonlySubject} from "../../utils/binding/Subject";
 
 

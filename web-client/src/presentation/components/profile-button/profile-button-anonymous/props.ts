@@ -1,4 +1,4 @@
-import ProfileButtonAnonymousVM from "./ProfileButtonAnonymousVM";
+import ProfileButtonAnonymousVM from "./ProfileButtonAnonymousVM.ts";
 
 interface PropsProfileButtonAnonymous {
     vm: ProfileButtonAnonymousVM;

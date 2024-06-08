@@ -4,7 +4,6 @@ import OpenFileDialogForUploadingUserPhoto from "../../commands/OpenFileDialogFo
 import OpenFileDialogForUploadingUserPhotoHandler from "../../handlers/OpenFileDialogForUploadingUserPhotoHandler.ts";
 import Bus from "../../../domain/utils/Bus.ts";
 import AppSession from "../../../domain/auth/entities/AppSession.ts";
-import OpenUserProfilePage from "../../commands/OpenUserProfilePage.ts";
 
 class PresentationCommandHandlersConfig {
 

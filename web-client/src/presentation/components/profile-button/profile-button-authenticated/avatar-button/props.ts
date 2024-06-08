@@ -1,4 +1,4 @@
-import AvatarButtonVM from "./AvatarButtonVM";
+import AvatarButtonVM from "./AvatarButtonVM.ts";
 
 interface PropsAvatarButton {
     vm: AvatarButtonVM;

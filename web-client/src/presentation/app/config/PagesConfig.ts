@@ -4,9 +4,9 @@ import AppSessionAuthenticated from "../../../domain/auth/entities/AppSessionAut
 import OpenFileDialogForUploadingUserPhoto from "../../commands/OpenFileDialogForUploadingUserPhoto";
 import Bus, {matchClasses} from "../../../domain/utils/Bus";
 import UpdatedUserPhoto from "../../../domain/auth/events/UpdatedUserPhoto.ts";
-import FailedUpdateUserInfoInAppSession from "../../../domain/auth/events/FailedUpdateUserInfoInAppSession.ts";
 import FailedUpdateUserPhoto from "../../../domain/auth/events/FailedUpdateUserPhoto.ts";
-import navigationBar from "../../components/navigation-bar/NavigationBar.tsx";
+import Listings from "../../../domain/listings/entities/Listings.ts";
+import PageEditListingVM from "../../pages/page-edit-listing/PageEditListingVM.ts";
 
 class PagesConfig {
     public constructor(
@@ -67,7 +67,19 @@ class PagesConfig {
     public listingsPage = async (session: AppSessionAuthenticated) => {
 
         const PageUserProfileVM = (await import("../../pages/page-listings/PageListingsVM.ts")).default;
+        const navigationBar = await this.components.hostingNavigationBar();
+
         return new PageUserProfileVM(
+            new Listings(),
+            navigationBar
+        )
+    }
+
+    public editListingPage = async (session: AppSessionAuthenticated) => {
+
+        const PageEditListingVM = (await import("../../pages/page-edit-listing/PageEditListingVM")).default;
+
+        return new PageEditListingVM(
         )
     }
 }

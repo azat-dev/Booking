@@ -1,13 +1,13 @@
 import React from "react";
 
-import PropsProfileButton from "./props";
+import PropsProfileButton from "./props.ts";
 import style from "./style.module.scss";
-import ProfileButtonAnonymous from "../profile-button-anonymous/ProfileButtonAnonymous";
-import ProfileButtonAuthenticated from "../profile-button-authenticated/ProfileButtonAuthenticated";
-import useUpdatesFrom from "../../../utils/binding/useUpdatesFrom";
-import ProfileButtonAnonymousVM from "../profile-button-anonymous/ProfileButtonAnonymousVM";
-import ProfileButtonAuthenticatedVM from "../profile-button-authenticated/ProfileButtonAuthenticatedVM";
-import ProfileButtonLoadingVM from "../profile-button-loading/ProfileButtonLoadingVM";
+import ProfileButtonAnonymous from "./profile-button-anonymous/ProfileButtonAnonymous.tsx";
+import ProfileButtonAuthenticated from "./profile-button-authenticated/ProfileButtonAuthenticated.tsx";
+import useUpdatesFrom from "../../utils/binding/useUpdatesFrom.ts";
+import ProfileButtonAnonymousVM from "./profile-button-anonymous/ProfileButtonAnonymousVM.ts";
+import ProfileButtonAuthenticatedVM from "./profile-button-authenticated/ProfileButtonAuthenticatedVM.ts";
+import ProfileButtonLoadingVM from "./profile-button-loading/ProfileButtonLoadingVM.ts";
 
 const ProfileButton = ({vm}: PropsProfileButton) => {
     const [button] = useUpdatesFrom(vm);

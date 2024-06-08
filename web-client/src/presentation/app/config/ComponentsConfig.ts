@@ -1,9 +1,9 @@
-import ProfileButtonVM from "../../components/navigation-bar/profile-button/ProfileButtonVM";
+import ProfileButtonVM from "../../components/profile-button/ProfileButtonVM";
 import Bus from "../../../domain/utils/Bus";
 import ProfileButtonAnonymousVM
-    from "../../components/navigation-bar/profile-button-anonymous/ProfileButtonAnonymousVM";
+    from "../../components/profile-button/profile-button-anonymous/ProfileButtonAnonymousVM";
 import ProfileButtonAuthenticatedVM
-    from "../../components/navigation-bar/profile-button-authenticated/ProfileButtonAuthenticatedVM";
+    from "../../components/profile-button/profile-button-authenticated/ProfileButtonAuthenticatedVM";
 import AppSession, {SessionState} from "../../../domain/auth/entities/AppSession";
 import AppSessionAuthenticated from "../../../domain/auth/entities/AppSessionAuthenticated";
 import value from "../../utils/binding/value";
@@ -14,9 +14,10 @@ import Logout from "../../../domain/auth/commands/Logout";
 import OpenLoginDialog from "../../commands/OpenLoginDialog";
 import OpenSignUpDialog from "../../commands/OpenSignUpDialog";
 import Subject from "../../utils/binding/Subject";
-import ProfileButtonLoadingVM from "../../components/navigation-bar/profile-button-loading/ProfileButtonLoadingVM";
+import ProfileButtonLoadingVM from "../../components/profile-button/profile-button-loading/ProfileButtonLoadingVM";
 import NavigationDelegate from "../NavigationDelegate.ts";
 import mappedValue from "../../utils/binding/mappedValue.ts";
+import HostingNavigationBarVM from "../../components/hosting-navigation-bar/HostingNavigationBarVM.ts";
 
 class ComponentsConfig {
 
@@ -116,6 +117,13 @@ class ComponentsConfig {
         };
 
         return button;
+    }
+
+    public hostingNavigationBar = async () => {
+
+        return new HostingNavigationBarVM(
+            this.profileButton()
+        )
     }
 }
 

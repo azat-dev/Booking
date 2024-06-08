@@ -1,8 +1,8 @@
-import FullName from "../../../../../domain/auth/values/FullName";
-import Subject, {ReadonlySubject} from "../../../../utils/binding/Subject";
-import value from "../../../../utils/binding/value";
-import PhotoPath from "../../../../../domain/auth/values/PhotoPath";
-import Disposables from "../../../../utils/binding/Disposables";
+import FullName from "../../../../../domain/auth/values/FullName.ts";
+import Subject, {ReadonlySubject} from "../../../../utils/binding/Subject.ts";
+import value from "../../../../utils/binding/value.ts";
+import PhotoPath from "../../../../../domain/auth/values/PhotoPath.ts";
+import Disposables from "../../../../utils/binding/Disposables.ts";
 import KeepType from "../../../../../domain/utils/KeepType.ts";
 
 class AvatarButtonVM extends KeepType {

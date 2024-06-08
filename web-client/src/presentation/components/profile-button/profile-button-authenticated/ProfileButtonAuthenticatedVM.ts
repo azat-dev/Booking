@@ -1,10 +1,10 @@
-import FullName from "../../../../domain/auth/values/FullName";
-import AvatarButtonVM from "./avatar-button/AvatarButtonVM";
-import Subject, {ReadonlySubject} from "../../../utils/binding/Subject";
-import Email from "../../../../domain/auth/values/Email";
-import PhotoPath from "../../../../domain/auth/values/PhotoPath";
-import value from "../../../utils/binding/value";
-import Disposables from "../../../utils/binding/Disposables";
+import FullName from "../../../../domain/auth/values/FullName.ts";
+import AvatarButtonVM from "./avatar-button/AvatarButtonVM.ts";
+import Subject, {ReadonlySubject} from "../../../utils/binding/Subject.ts";
+import Email from "../../../../domain/auth/values/Email.ts";
+import PhotoPath from "../../../../domain/auth/values/PhotoPath.ts";
+import value from "../../../utils/binding/value.ts";
+import Disposables from "../../../utils/binding/Disposables.ts";
 import KeepType from "../../../../domain/utils/KeepType.ts";
 
 class ProfileButtonAuthenticatedVM extends KeepType {

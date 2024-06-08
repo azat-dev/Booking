@@ -1,9 +1,9 @@
 import React from "react";
 
-import PropsAvatarButton from "./props";
+import PropsAvatarButton from "./props.ts";
 import style from "./style.module.scss";
 import Avatar from "@mui/joy/Avatar";
-import useUpdatesFrom from "../../../../utils/binding/useUpdatesFrom";
+import useUpdatesFrom from "../../../../utils/binding/useUpdatesFrom.ts";
 
 const AvatarButton = ({ vm }: PropsAvatarButton) => {
     const [fullName, shortName, photoUrl] = useUpdatesFrom(

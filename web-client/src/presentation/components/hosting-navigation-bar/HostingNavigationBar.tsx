@@ -4,16 +4,13 @@ import Typography from '@mui/joy/Typography';
 
 import MapsHomeWorkIcon from '@mui/icons-material/MapsHomeWork';
 
-import PropsNavigationBar from './props';
+import PropsHostingNavigationBar from './props';
 import {desktop, mobile, tablet} from '../../utils/selectors';
 import {Link} from 'react-router-dom';
-import ProfileButton from '../profile-button/ProfileButton';
-import MuiLink from '@mui/joy/Link';
-import Button from "@mui/joy/Button";
-import useUpdatesFrom from "../../utils/binding/useUpdatesFrom.ts";
+import Tabs from './tabs/Tabs';
 
-const NavigationBar = ({vm}: PropsNavigationBar) => {
-    const [showHostingButton] = useUpdatesFrom(vm.showHostingButton);
+const HostingNavigationBar = ({vm}: PropsHostingNavigationBar) => {
+
     return (
         <>
             <Box
@@ -63,21 +60,8 @@ const NavigationBar = ({vm}: PropsNavigationBar) => {
                         </Typography>
                     </Box>
                 </Link>
-
-                <Stack direction='row' spacing={1}>
-                    {
-                        showHostingButton &&
-                        <MuiLink
-                            overlay
-                            href='/listings'
-                            underline='none'
-                        >
-                            <Button variant='plain' color='neutral'>
-                                Switch to hosting
-                            </Button>
-                        </MuiLink>
-                    }
-                    <ProfileButton vm={vm.profileButton}/>
+                <Stack direction='row' justifyContent='center' sx={{width: '100%'}}>
+                    <Tabs vm={vm.tabs}/>
                 </Stack>
             </Box>
             <Divider/>
@@ -85,4 +69,4 @@ const NavigationBar = ({vm}: PropsNavigationBar) => {
     );
 };
 
-export default React.memo(NavigationBar);
+export default React.memo(HostingNavigationBar);

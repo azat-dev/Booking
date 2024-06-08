@@ -28,6 +28,7 @@ import AppStarted from './domain/auth/events/AppStarted.ts';
 import PresentationCommandHandlersConfig from "./presentation/app/config/PresentationCommandHandlersConfig.ts";
 import DialogsCommandHandlersConfig from "./presentation/app/config/DialogsCommandHandlersConfig.ts";
 import PageListings from "./presentation/pages/page-listings/PageListings.tsx";
+import PageEditListing from "./presentation/pages/page-edit-listing/PageEditListing.tsx";
 
 
 const buildApp = (baseApiUrl: string) => {
@@ -107,6 +108,19 @@ const buildApp = (baseApiUrl: string) => {
                 }
 
                 return <PageListings vm={vm}/>;
+            }
+        ),
+        new PrivateRoute(
+            "/listings/add-new",
+            "/",
+            () => <h1>Authenticating...</h1>,
+            ({session}) => {
+                const vm = useLoadedValue(() => pagesConfig.editListingPage(session), [session]);
+                if (!vm) {
+                    return <h1>Loading...</h1>;
+                }
+
+                return <PageEditListing vm={vm}/>;
             }
         )
     ];

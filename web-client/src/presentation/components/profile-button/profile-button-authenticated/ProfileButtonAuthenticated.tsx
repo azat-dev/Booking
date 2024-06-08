@@ -1,13 +1,13 @@
 import React from "react";
 import {Dropdown, ListDivider, Menu, MenuButton, MenuItem, Stack, Typography,} from "@mui/joy";
-import PropsProfileButtonAuthenticated from "./props";
-import AvatarButton from "./avatar-button/AvatarButton";
+import PropsProfileButtonAuthenticated from "./props.ts";
+import AvatarButton from "./avatar-button/AvatarButton.tsx";
 import SettingsRoundedIcon from '@mui/icons-material/SettingsRounded';
 import HelpRoundedIcon from '@mui/icons-material/HelpRounded';
 import LogoutRoundedIcon from '@mui/icons-material/LogoutRounded';
 import Box from "@mui/joy/Box";
-import useUpdatesFrom from "../../../utils/binding/useUpdatesFrom";
-import useScreenType, {ScreenType} from "../../../utils/hooks/useScreenType";
+import useUpdatesFrom from "../../../utils/binding/useUpdatesFrom.ts";
+import useScreenType, {ScreenType} from "../../../utils/hooks/useScreenType.ts";
 
 const ProfileButtonAuthenticated = ({vm}: PropsProfileButtonAuthenticated) => {
 

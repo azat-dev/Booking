@@ -1,6 +1,6 @@
 import React from "react";
 
-import PropsProfileButtonAnonymous from "./props";
+import PropsProfileButtonAnonymous from "./props.ts";
 import Stack from "@mui/joy/Stack";
 import Button from "@mui/joy/Button";
 
