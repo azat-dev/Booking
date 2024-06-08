@@ -8,6 +8,10 @@ import {Step, Stepper} from "@mui/joy";
 import useUpdatesFrom from "../../utils/binding/useUpdatesFrom.ts";
 import TitleEditorVM from "./title-editor/TitleEditorVM.ts";
 import TitleEditor from "./title-editor/TitleEditor.tsx";
+import DescriptionEditor from "./description-editor/DescriptionEditor.tsx";
+import DescriptionEditorVM from "./description-editor/DescriptionEditorVM.ts";
+import PhotosEditorVM from "./photos-editor/PhotosEditorVM.ts";
+import PhotosEditor from "./photos-editor/PhotosEditor.tsx";
 
 const PageEditListing = ({vm}: PropsPageEditListing) => {
 
@@ -16,11 +20,18 @@ const PageEditListing = ({vm}: PropsPageEditListing) => {
     return (
         <div className={style.pageEditListing}>
 
-                {
-                    (content instanceof TitleEditorVM) &&
-                    <TitleEditor vm={content}/>
-                }
-
+            {
+                (content instanceof TitleEditorVM) &&
+                <TitleEditor vm={content}/>
+            }
+            {
+                (content instanceof DescriptionEditorVM) &&
+                <DescriptionEditor vm={content}/>
+            }
+            {
+                (content instanceof PhotosEditorVM) &&
+                <PhotosEditor vm={content}/>
+            }
             <Box
                 sx={{
                     width: '100%',
