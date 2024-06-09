@@ -1,5 +1,4 @@
 import PersonalUserInfoService from "../../../domain/auth/interfaces/services/PersonalUserInfoService";
-import {CommandsUpdateUserPhotoApi, QueriesCurrentUserApi} from "../../API";
 import PersonalUserInfo from "../../../domain/auth/values/PersonalUserInfo";
 import Email from "../../../domain/auth/values/Email";
 import UserId from "../../../domain/auth/values/UserId";
@@ -7,6 +6,7 @@ import FullName from "../../../domain/auth/values/FullName";
 import FirstName from "../../../domain/auth/values/FirstName";
 import LastName from "../../../domain/auth/values/LastName";
 import PhotoPath from "../../../domain/auth/values/PhotoPath";
+import {CommandsUpdateUserPhotoApi, QueriesCurrentUserApi} from "../../api/identity";
 
 class UserInfoServiceImpl implements PersonalUserInfoService {
 

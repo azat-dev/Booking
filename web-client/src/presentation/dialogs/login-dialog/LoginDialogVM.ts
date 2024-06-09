@@ -2,23 +2,23 @@ import {AuthenticateByEmailData} from "../../../domain/auth/interfaces/services/
 import Email from "../../../domain/auth/values/Email";
 import value from "../../utils/binding/value";
 import FormInputVM from "../sign-up-dialog/form-input/FormInputVM";
-import KeepType from "../../../domain/utils/KeepType.ts";
+import VM from "../../utils/VM.ts";
 
-class LoginDialogVM extends KeepType {
+class LoginDialogVM extends VM {
 
     public readonly isProcessing = value(false);
     public readonly showWrongCredentialsError = value(false);
 
     public readonly passwordInput: FormInputVM;
     public readonly emailInput: FormInputVM;
-
+    public delegate!: {
+        login: (data: AuthenticateByEmailData) => void;
+        openSignUpDialog: () => void;
+        closeDialog: () => void;
+    }
     private readonly inputs: FormInputVM[];
 
-    public constructor(
-        private login?: (data: AuthenticateByEmailData) => Promise<void>,
-        private readonly onClose?: () => void,
-        private readonly onSignUp?: () => void
-    ) {
+    public constructor() {
         super();
         this.emailInput = new FormInputVM(
             "",
@@ -49,7 +49,7 @@ class LoginDialogVM extends KeepType {
     }
 
     public close = () => {
-        this.onClose?.();
+        this.delegate.closeDialog();
     };
 
     public validateInput = () => {
@@ -97,28 +97,31 @@ class LoginDialogVM extends KeepType {
         const email = Email.checkAndCreateFromString(this.emailInput.getValue() ?? "");
         const password = this.passwordInput.getValue() ?? "";
 
-        try {
-            await this.login?.({
-                email,
-                password,
-            });
-
-            this.close();
-            return;
-
-        } catch (e) {
-            console.error(e);
-            this.isProcessing.set(false);
-            this.showWrongCredentialsError.set(true);
-        }
+        this.delegate.login({
+            email,
+            password,
+        });
     };
 
+    public displayDidLogin = () => {
+        this.close();
+    }
+
+    public displayFailedLoginWrongCredentials = () => {
+        this.isProcessing.set(false);
+        this.showWrongCredentialsError.set(true);
+    }
+
     public signUp = () => {
-        this.onSignUp?.();
+        this.delegate.openSignUpDialog();
     };
 
     private resetErrors = () => {
         this.inputs.forEach(input => input.resetError());
+    }
+
+    public displayDidClose = () => {
+
     }
 }
 

@@ -1,4 +1,6 @@
-class AccommodationPreviewVM {
+import VM from "../../utils/VM.ts";
+
+class AccommodationPreviewVM extends VM {
     public constructor(
         public readonly id: string,
         public readonly title: string,
@@ -9,7 +11,10 @@ class AccommodationPreviewVM {
         public readonly image: string,
         public readonly isFavorite: boolean,
         private onToggleFavorite: () => void
-    ) {}
+    ) {
+
+        super();
+    }
 
     public toggleFavorite = (): void => {
         this.onToggleFavorite();

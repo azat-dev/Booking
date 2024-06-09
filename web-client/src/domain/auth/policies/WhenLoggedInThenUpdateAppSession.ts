@@ -1,5 +1,5 @@
 import type AppSession from "../entities/AppSession";
-import UserLoggedIn from "../events/UserLoggedIn";
+import UserLoggedIn from "../events/login/UserLoggedIn.ts";
 import Policy from "../../utils/Policy";
 
 class WhenLoggedInThenUpdateAppSession extends Policy {

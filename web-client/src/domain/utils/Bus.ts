@@ -10,7 +10,9 @@ interface Bus {
 
     publishAndWaitFor(event: any, condition: (event: any) => boolean): Promise<any>;
 
-    subscribe(handler: (event: any) => Promise<void>): Disposable;
+    subscribe(handler: (event: any) => void): Disposable;
+
+    publishCommand(command: Command): Promise<AppEvent>;
 }
 
 export const matchTypes = (...types: string[]) => {

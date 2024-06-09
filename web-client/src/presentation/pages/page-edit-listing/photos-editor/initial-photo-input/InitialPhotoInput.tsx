@@ -19,7 +19,6 @@ const InitialPhotoInput = ({vm}: PropsInitialPhotoInput) => {
 
     return (
         <Box
-            variant='outlined'
             sx={{
                 display: 'flex',
                 flexDirection: 'row',
@@ -37,12 +36,6 @@ const InitialPhotoInput = ({vm}: PropsInitialPhotoInput) => {
             }}
         >
             <Button
-                component="label"
-                role={undefined}
-                tabIndex={-1}
-                variant="outlined"
-                color="neutral"
-                bgColor='white'
                 startDecorator={
                     <SvgIcon>
                         <svg
@@ -62,7 +55,7 @@ const InitialPhotoInput = ({vm}: PropsInitialPhotoInput) => {
                 }
             >
                 Add photos
-                <VisuallyHiddenInput type="file" accept=".png, .jpg, .jpeg, .webp" multiple="false"/>
+                <VisuallyHiddenInput type="file" accept=".png, .jpg, .jpeg, .webp" multiple={false}/>
             </Button>
         </Box>
     );

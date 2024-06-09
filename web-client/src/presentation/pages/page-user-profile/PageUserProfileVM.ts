@@ -9,37 +9,26 @@ import NavigationBarVM from "../../components/navigation-bar/NavigationBarVM.ts"
 
 class PageUserProfileVM extends KeepType {
 
-    public readonly photo: UserPhotoVM;
     public readonly name: PersonalInfoItemVM;
     public readonly email: PersonalInfoItemVM;
-
     private disposables = new Disposables();
 
     public constructor(
         public readonly navigationBar: NavigationBarVM,
-        userInfo: ReadonlySubject<PersonalUserInfo>,
-        private uploadUserPhoto: () => Promise<void>
+        public readonly photo: UserPhotoVM,
+        userInfo: ReadonlySubject<PersonalUserInfo>
     ) {
 
         super();
 
-        const fullName = mappedValue(userInfo, (v) => v.fullName);
-        const photo = mappedValue(userInfo, v => v.photo);
         const name = mappedValue(userInfo, v => v.fullName.toString());
         const email = mappedValue(userInfo, v => v.email.toString());
 
         this.disposables.addItems(
             name,
-            fullName,
-            photo,
             email
         );
 
-        this.photo = new UserPhotoVM(
-            fullName,
-            photo,
-            this.uploadUserPhoto
-        );
 
         this.name = new PersonalInfoItemVM(name);
         this.email = new PersonalInfoItemVM(email);

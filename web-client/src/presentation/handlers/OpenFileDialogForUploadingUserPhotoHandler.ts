@@ -6,6 +6,7 @@ import UserClosedFileDialogForUploadingUserPhoto from "../events/UserClosedFileD
 import AppSession from "../../domain/auth/entities/AppSession.ts";
 import AppSessionAuthenticated from "../../domain/auth/entities/AppSessionAuthenticated.ts";
 import Handler from "../../domain/utils/Handler.ts";
+import UploadingUserPhoto from "../../domain/auth/events/personal-info/UploadingUserPhoto.ts";
 
 class OpenFileDialogForUploadingUserPhotoHandler extends Handler {
 
@@ -22,7 +23,10 @@ class OpenFileDialogForUploadingUserPhotoHandler extends Handler {
         const isUserLoggedIn = session instanceof AppSessionAuthenticated;
 
         if (!isUserLoggedIn) {
-            this.bus.publish(new UserClosedFileDialogForUploadingUserPhoto());
+            this.bus.publish(
+                new UserClosedFileDialogForUploadingUserPhoto()
+                    .withSender(command.senderId)
+            );
             return;
         }
 
@@ -30,16 +34,20 @@ class OpenFileDialogForUploadingUserPhotoHandler extends Handler {
 
         const files = await fileDialog({accept: ['.png', '.jpg', '.webp', '.jpeg']});
         if (files.length === 0) {
-            this.bus.publish(new UserClosedFileDialogForUploadingUserPhoto());
+            this.bus.publish(
+                new UserClosedFileDialogForUploadingUserPhoto()
+                    .withSender(command.senderId)
+            );
             return;
         }
 
         const file = files[0];
-        this.bus.publish(new UploadNewUserPhoto(
-            userId,
-            file
-        ));
-
+        this.bus.publish(
+            new UploadNewUserPhoto(
+                userId,
+                file,
+            ).withSender(command.senderId)
+        );
     }
 }
 

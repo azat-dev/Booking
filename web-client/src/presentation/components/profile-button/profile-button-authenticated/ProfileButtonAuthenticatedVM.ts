@@ -4,24 +4,25 @@ import Subject, {ReadonlySubject} from "../../../utils/binding/Subject.ts";
 import Email from "../../../../domain/auth/values/Email.ts";
 import PhotoPath from "../../../../domain/auth/values/PhotoPath.ts";
 import value from "../../../utils/binding/value.ts";
-import Disposables from "../../../utils/binding/Disposables.ts";
-import KeepType from "../../../../domain/utils/KeepType.ts";
+import VM from "../../../utils/VM.ts";
 
-class ProfileButtonAuthenticatedVM extends KeepType {
+class ProfileButtonAuthenticatedVM extends VM {
 
     public readonly fullName: Subject<string>;
     public readonly email: Subject<string>;
 
     public avatar: AvatarButtonVM;
 
-    private readonly disposables = new Disposables();
+    public delegate!: {
+        openProfile: () => void;
+        openHelp: () => void;
+        logout: () => void;
+    }
 
     public constructor(
         fullName: ReadonlySubject<FullName>,
         email: ReadonlySubject<Email>,
-        readonly photo: ReadonlySubject<PhotoPath | null>,
-        private readonly onOpenProfile: () => void,
-        private readonly onLogout: () => void
+        readonly photo: ReadonlySubject<PhotoPath | null>
     ) {
 
         super();
@@ -29,13 +30,13 @@ class ProfileButtonAuthenticatedVM extends KeepType {
         this.email = value(email.value.toString());
         this.fullName = value(fullName.value.toString());
 
-        this.disposables.add(
+        this.cleanOnDestroy(
             email.listen((email) => {
                 this.email.set(email.toString());
             })
         );
 
-        this.disposables.add(
+        this.cleanOnDestroy(
             fullName.listen((fullName) => {
                 this.fullName.set(fullName.toString());
             })
@@ -43,7 +44,7 @@ class ProfileButtonAuthenticatedVM extends KeepType {
     }
 
     public openProfile = () => {
-        this.onOpenProfile();
+        this.delegate.openProfile();
     };
 
     public openHelp = () => {
@@ -51,12 +52,8 @@ class ProfileButtonAuthenticatedVM extends KeepType {
     }
 
     public logout = () => {
-        this.onLogout();
+        this.delegate.logout();
     };
-
-    public dispose = () => {
-        this.avatar.dispose();
-    }
 }
 
 export default ProfileButtonAuthenticatedVM;

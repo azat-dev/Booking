@@ -8,61 +8,82 @@ import RouteItem from "./presentation/app/router/RouteItem.ts";
 import PageMain from "./presentation/pages/page-main/PageMain.tsx";
 import PageUserProfile from "./presentation/pages/page-user-profile/PageUserProfile.tsx";
 import PrivateRoute from "./presentation/app/router/PrivateRoute.tsx";
-import DataConfig from "./presentation/app/config/DataConfig.ts";
-import DomainConfig from "./presentation/app/config/DomainConfig.ts";
-import ComponentsConfig from "./presentation/app/config/ComponentsConfig.ts";
-import DialogsConfig from "./presentation/app/config/DialogsConfig.ts";
+import LocalAuthDataConfig from "./presentation/app/config/data/LocalAuthDataConfig.ts";
+import DomainConfig from "./presentation/app/config/domain/DomainConfig.ts";
+import GuestComponentsConfig from "./presentation/app/config/presentation/guest/GuestComponentsConfig.ts";
 import DialogsStore from "./presentation/stores/DialogsStore.ts";
-import PagesConfig from "./presentation/app/config/PagesConfig.ts";
-import PresentationConfig from "./presentation/app/config/PresentationConfig.ts";
+import CommonPagesConfig from "./presentation/app/config/presentation/common/CommonPagesConfig.ts";
+import CommonDialogsConfig from "./presentation/app/config/presentation/common/CommonDialogsConfig.ts";
+import PresentationConfig from "./presentation/app/config/presentation/PresentationConfig.ts";
 import App from "./presentation/app/App.tsx";
 import RouterVM from "./presentation/app/router/RouterVM.tsx";
 import AppVM from "./presentation/app/AppVM.tsx";
 import PublicRoute from "./presentation/app/router/PublicRoute.tsx";
 import useLoadedValue from "./presentation/app/router/useLoadedValue.ts";
-import DomainPoliciesConfig from "./presentation/app/config/DomainPoliciesConfig.ts";
+import IdentityPoliciesProvider from "./presentation/app/config/domain/IdentityPoliciesProvider.ts";
 import AppSessionImpl from "./domain/auth/entities/AppSessionImpl.ts";
 import BusImpl from "./domain/utils/BusImpl.ts";
-import DomainCommandHandlersConfig from "./presentation/app/config/DomainCommandHandlersConfig.ts";
+import IdentityCommandHandlersProvider from "./presentation/app/config/domain/IdentityCommandHandlersProvider.ts";
 import AppStarted from './domain/auth/events/AppStarted.ts';
-import PresentationCommandHandlersConfig from "./presentation/app/config/PresentationCommandHandlersConfig.ts";
-import DialogsCommandHandlersConfig from "./presentation/app/config/DialogsCommandHandlersConfig.ts";
+import ProfileCommandsHandlersProvider from "./presentation/app/config/presentation/ProfileCommandsHandlersProvider.ts";
+import DialogsCommandHandlersProvider from "./presentation/app/config/presentation/common/DialogsCommandHandlersProvider.ts";
 import PageListings from "./presentation/pages/page-listings/PageListings.tsx";
 import PageEditListing from "./presentation/pages/page-edit-listing/PageEditListing.tsx";
+import ListingsCommandHandlersProvider from "./presentation/app/config/domain/ListingsCommandHandlersProvider.ts";
+import IdentityDataConfig from "./presentation/app/config/data/IdentityDataConfig.ts";
+import ListingsDataConfig from "./presentation/app/config/data/ListingsDataConfig.ts";
+import singleton from "./utils/singleton.ts";
 
 
 const buildApp = (baseApiUrl: string) => {
-
-    const dataConfig = new DataConfig(baseApiUrl);
 
     const bus = new BusImpl();
 
     const appSession = new AppSessionImpl(bus)
 
-    const domainPoliciesConfig = new DomainPoliciesConfig(
+    const localAuthDataConfig = new LocalAuthDataConfig();
+
+    const identityDataConfig = new IdentityDataConfig(
+        baseApiUrl,
+        localAuthDataConfig.localAuthDataRepository()
+    );
+
+    const listingsDataConfig = new ListingsDataConfig(
+        baseApiUrl,
+        localAuthDataConfig.localAuthDataRepository()
+    );
+
+
+    const domainPoliciesConfig = new IdentityPoliciesProvider(
         appSession,
-        dataConfig.localAuthDataRepository(),
+        localAuthDataConfig.localAuthDataRepository(),
         bus
     );
 
-    const domainCommandHandlersConfig = new DomainCommandHandlersConfig(
+    const identityCommandHandlersConfig = new IdentityCommandHandlersProvider(
         appSession,
         bus,
-        dataConfig.localAuthService(),
-        dataConfig.userInfoService(),
-        domainPoliciesConfig
+        identityDataConfig.localAuthService(),
+        identityDataConfig.userInfoService()
     );
 
-    const domainConfig = new DomainConfig(
-        domainPoliciesConfig,
-        domainCommandHandlersConfig,
+    const listingsCommandHandlersConfig = new ListingsCommandHandlersProvider(
+        listingsDataConfig.listingsPrivateQueriesApi(),
+        listingsDataConfig.listingsModificationsApi(),
         bus
     );
 
 
-    const components = new ComponentsConfig(appSession, bus);
+    const domainConfig = new DomainConfig(bus);
+    domainConfig.addCommandHandlersProvider(identityCommandHandlersConfig);
+    domainConfig.addPoliciesProvider(domainPoliciesConfig);
 
-    const dialogs = new DialogsConfig(bus);
+    domainConfig.addCommandHandlersProvider(listingsCommandHandlersConfig);
+
+
+    const guestComponents = new GuestComponentsConfig(appSession, bus);
+
+    const dialogs = new CommonDialogsConfig(bus);
 
     const activeDialogStore = new DialogsStore(dialogs, bus);
 
@@ -70,13 +91,40 @@ const buildApp = (baseApiUrl: string) => {
         activeDialogStore.handle(event);
     });
 
-    const pagesConfig = new PagesConfig(components, bus);
+    const commonPagesConfig = new CommonPagesConfig(
+        guestComponents,
+        bus
+    );
+
+    const guestPages = singleton(async () => {
+
+        const GuestPagesConfig = (await import("./presentation/app/config/presentation/guest/GuestPagesConfig.ts")).default;
+
+        return new GuestPagesConfig(
+            guestComponents,
+            bus
+        );
+    });
+
+    const hostingPages = singleton(async () => {
+
+        const HostingPagesConfig = (await import("./presentation/app/config/presentation/hosting/HostingPagesConfig.ts")).default;
+        const HostingComponents = (await import("./presentation/app/config/presentation/hosting/HostingComponentsConfig.ts")).default;
+
+        const components = new HostingComponents(appSession, bus);
+
+        return new HostingPagesConfig(
+            components,
+            bus
+        );
+    });
 
     const routes: RouteItem[] = [
         new PublicRoute(
             "/",
             () => {
-                const vm = useLoadedValue(() => pagesConfig.mainPage(), []);
+
+                const vm = useLoadedValue(() => guestPages().then(p => p.mainPage()), []);
                 if (!vm) {
                     return <h1>Loading...</h1>;
                 }
@@ -89,7 +137,7 @@ const buildApp = (baseApiUrl: string) => {
             "/",
             () => <h1>Authenticating...</h1>,
             ({session}) => {
-                const vm = useLoadedValue(() => pagesConfig.profilePage(session), [session]);
+                const vm = useLoadedValue(() => commonPagesConfig.profilePage(session), [session]);
                 if (!vm) {
                     return <h1>Loading...</h1>;
                 }
@@ -102,7 +150,7 @@ const buildApp = (baseApiUrl: string) => {
             "/",
             () => <h1>Authenticating...</h1>,
             ({session}) => {
-                const vm = useLoadedValue(() => pagesConfig.listingsPage(session), [session]);
+                const vm = useLoadedValue(() => hostingPages().then(p => p.listingsPage(session)), [session]);
                 if (!vm) {
                     return <h1>Loading...</h1>;
                 }
@@ -115,7 +163,7 @@ const buildApp = (baseApiUrl: string) => {
             "/",
             () => <h1>Authenticating...</h1>,
             ({session}) => {
-                const vm = useLoadedValue(() => pagesConfig.editListingPage(session), [session]);
+                const vm = useLoadedValue(() => hostingPages().then(p => p.editListingPage(session)), [session]);
                 if (!vm) {
                     return <h1>Loading...</h1>;
                 }
@@ -125,26 +173,31 @@ const buildApp = (baseApiUrl: string) => {
         )
     ];
 
-    const router = new RouterVM(routes, appSession, pagesConfig);
+    const router = new RouterVM(routes, appSession);
 
-    components.navigation = {
+    guestComponents.navigation = {
         openUserProfilePage() {
             router.navigate("/profile");
         }
     }
 
-    const presentationHandlersConfig = new PresentationCommandHandlersConfig(
+    const profileCommandsHandlersProvider = new ProfileCommandsHandlersProvider(
         appSession,
         bus
-    )
+    );
 
-    new PresentationConfig(presentationHandlersConfig, bus);
-
-    new DialogsCommandHandlersConfig(
+    const dialogsCommandHandlersProvider = new DialogsCommandHandlersProvider(
         activeDialogStore.activeDialog,
         dialogs,
         bus
     );
+
+    const presentationConfig = new PresentationConfig(bus);
+
+    presentationConfig.addCommandHandlersProvider(profileCommandsHandlersProvider);
+    presentationConfig.addCommandHandlersProvider(dialogsCommandHandlersProvider);
+
+
 
     const app = new AppVM(router, activeDialogStore.activeDialog);
     bus.publish(new AppStarted());

@@ -6,9 +6,9 @@ import FirstName from "../../../domain/auth/values/FirstName";
 import LastName from "../../../domain/auth/values/LastName";
 import FormInputVM from "./form-input/FormInputVM";
 import SignUpByEmailData from "../../../domain/auth/interfaces/services/SignUpByEmailData";
-import KeepType from "../../../domain/utils/KeepType.ts";
+import VM from "../../utils/VM.ts";
 
-class SignUpDialogVM extends KeepType {
+class SignUpDialogVM extends VM {
 
     public isProcessing = value(false);
     public errorText = value<string | undefined>(undefined);
@@ -17,14 +17,14 @@ class SignUpDialogVM extends KeepType {
     public readonly lastNameInput: FormInputVM;
     public readonly emailInput: FormInputVM;
     public readonly passwordInput: FormInputVM;
-
+    public delegate!: {
+        signUp: (data: SignUpByEmailData) => void;
+        closeDialog: () => void;
+        openLoginDialog: () => void;
+    }
     private readonly inputs: FormInputVM[];
 
-    public constructor(
-        private signUp?: (data: SignUpByEmailData) => Promise<void>,
-        private readonly onClose?: () => void,
-        private readonly onOpenLoginDialog?: () => void
-    ) {
+    public constructor() {
         super();
         this.firstNameInput = new FormInputVM("", (newValue) => {
             this.resetErrors();
@@ -58,7 +58,7 @@ class SignUpDialogVM extends KeepType {
     }
 
     public close = () => {
-        this.onClose?.();
+        this.delegate.closeDialog();
     };
 
     public resetErrors = () => {
@@ -118,35 +118,36 @@ class SignUpDialogVM extends KeepType {
             return;
         }
 
-        try {
-            const data = {
-                fullName: new FullName(
-                    FirstName.checkAndCreate(this.firstNameInput.getValue() ?? ""),
-                    LastName.checkAndCreate(this.lastNameInput.getValue() ?? "")
-                ),
-                email: Email.checkAndCreateFromString(this.emailInput.getValue() ?? ""),
-                password: new Password(this.passwordInput.getValue() ?? ""),
-            };
+        const data = {
+            fullName: new FullName(
+                FirstName.checkAndCreate(this.firstNameInput.getValue() ?? ""),
+                LastName.checkAndCreate(this.lastNameInput.getValue() ?? "")
+            ),
+            email: Email.checkAndCreateFromString(this.emailInput.getValue() ?? ""),
+            password: new Password(this.passwordInput.getValue() ?? ""),
+        };
 
-            await this.signUp?.(data);
-            this.errorText.set(undefined);
-            this.isProcessing.set(false);
-            this.close();
-            return;
-        } catch (e) {
-            console.log("Error", e);
-            if ((e as any)?.code === "UserWithSameEmailAlreadyExists") {
-                this.errorText.set("User with same email already exists.");
-                this.isProcessing.set(false);
-            } else {
-                this.errorText.set("Something went wrong. Please try again.");
-                this.isProcessing.set(false);
-            }
-        }
+        this.delegate.signUp(data);
     };
 
+    public displayDidSignUp = () => {
+        this.errorText.set(undefined);
+        this.isProcessing.set(false);
+        this.close();
+    }
+
+    public displayFailedSignUpEmailAlreadyExists = () => {
+        this.errorText.set("User with same email already exists.");
+        this.isProcessing.set(false);
+    }
+
+    public displayFailedSignUpSomethingWrong = () => {
+        this.errorText.set("Something went wrong. Please try again.");
+        this.isProcessing.set(false);
+    }
+
     public logIn = () => {
-        this.onOpenLoginDialog?.();
+        this.delegate.openLoginDialog();
     };
 }
 

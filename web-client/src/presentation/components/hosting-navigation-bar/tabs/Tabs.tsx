@@ -19,7 +19,7 @@ const Tabs = ({vm}: PropsTabs) => {
             <JoyTabs
                 aria-label="Pipeline"
                 value={index}
-                onChange={(event, value) => setIndex(value as number)}
+                // onChange={(event, value) => setIndex(value as number)}
             >
                 <TabList
                     sx={{

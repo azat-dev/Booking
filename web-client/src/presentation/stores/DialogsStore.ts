@@ -1,5 +1,5 @@
 import Bus from "../../domain/utils/Bus";
-import DialogsConfig from "../app/config/DialogsConfig.ts";
+import CommonDialogsConfig from "../app/config/presentation/common/CommonDialogsConfig.ts";
 import Subject from "../utils/binding/Subject";
 import value from "../utils/binding/value";
 import OpenLoginDialog from "../commands/OpenLoginDialog";
@@ -18,7 +18,7 @@ class DialogsStore {
     public readonly activeDialog: Subject<any | null>;
 
     public constructor(
-        private readonly dialogs: DialogsConfig,
+        private readonly dialogs: CommonDialogsConfig,
         private readonly bus: Bus
     ) {
         this.activeDialog = value(null);
@@ -42,20 +42,20 @@ class DialogsStore {
         }
     }
 
-    public handle = (event: Command) => {
+    public handle = (command: Command) => {
 
-        switch (event.type) {
+        switch (command.type) {
             case OpenLoginDialog.type: {
                 const vm = this.dialogs.loginDialog();
                 this.activeDialog.set(vm);
-                this.bus.publish(new OpenedLoginDialog());
+                this.bus.publish(new OpenedLoginDialog().withSender(command.senderId));
                 return;
             }
 
             case OpenSignUpDialog.type: {
                 const vm = this.dialogs.signUpDialog();
                 this.activeDialog.set(vm);
-                this.bus.publish(new OpenedSignUpDialog());
+                this.bus.publish(new OpenedSignUpDialog().withSender(command.senderId));
                 return;
             }
 

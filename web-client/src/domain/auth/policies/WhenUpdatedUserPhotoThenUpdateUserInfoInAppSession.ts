@@ -1,5 +1,5 @@
 import AppSession from "../entities/AppSession";
-import UpdatedUserPhoto from "../events/UpdatedUserPhoto";
+import UpdatedUserPhoto from "../events/personal-info/UpdatedUserPhoto.ts";
 import AppSessionAuthenticated from "../entities/AppSessionAuthenticated";
 import Policy from "../../utils/Policy";
 import Bus from "../../utils/Bus";

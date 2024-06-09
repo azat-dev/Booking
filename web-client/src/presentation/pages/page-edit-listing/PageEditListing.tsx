@@ -4,7 +4,7 @@ import PropsPageEditListing from "./props";
 import style from './style.module.scss';
 import Button from "@mui/joy/Button";
 import Box from "@mui/joy/Box";
-import {Step, Stepper} from "@mui/joy";
+import {Step, stepClasses, Stepper} from "@mui/joy";
 import useUpdatesFrom from "../../utils/binding/useUpdatesFrom.ts";
 import TitleEditorVM from "./title-editor/TitleEditorVM.ts";
 import TitleEditor from "./title-editor/TitleEditor.tsx";
@@ -15,7 +15,15 @@ import PhotosEditor from "./photos-editor/PhotosEditor.tsx";
 
 const PageEditListing = ({vm}: PropsPageEditListing) => {
 
-    const [content, isNextButtonEnabled] = useUpdatesFrom(vm.content, vm.isNextButtonEnabled);
+    const [
+        content, steps,
+        isNextButtonDisabled, isNextButtonLoading,
+        isBackButtonDisabled, isBackButtonLoading
+    ] = useUpdatesFrom(
+        vm.content, vm.steps,
+        vm.nextButton.isDisabled, vm.nextButton.isLoading,
+        vm.backButton.isDisabled, vm.backButton.isLoading
+    );
 
     return (
         <div className={style.pageEditListing}>
@@ -49,13 +57,23 @@ const PageEditListing = ({vm}: PropsPageEditListing) => {
                         "--Step-connectorInset": "10px",
                         "--Step-connectorThickness": "5px",
                         "--Step-gap": "10px",
+                        [`& .${stepClasses.completed}`]: {
+                            '&::after': {
+                                bgcolor: 'primary.500',
+                            },
+                        }
                     }}
                 >
-                    <Step/>
-                    <Step/>
-                    <Step/>
-                    <Step/>
-                    <Step/>
+                    {
+                        steps.map((isCompleted: boolean, index: number) => {
+                            return (
+                                <Step
+                                    key={index}
+                                    completed={isCompleted}
+                                />
+                            );
+                        })
+                    }
                 </Stepper>
 
                 <Box
@@ -71,13 +89,20 @@ const PageEditListing = ({vm}: PropsPageEditListing) => {
 
                     }
                 >
-                    <Button variant='plain' color='neutral'>
+                    <Button
+                        variant='plain'
+                        color='neutral'
+                        disabled={isBackButtonDisabled}
+                        loading={isBackButtonLoading}
+                        onClick={vm.backButton.click}
+                    >
                         Back
                     </Button>
 
                     <Button
-                        disabled={!isNextButtonEnabled}
-                        onClick={vm.moveToNextStep}
+                        disabled={isNextButtonDisabled}
+                        loading={isNextButtonLoading}
+                        onClick={vm.nextButton.click}
                     >
                         Next
                     </Button>

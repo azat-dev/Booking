@@ -1,5 +1,5 @@
 import value from "../../presentation/utils/binding/value";
-import Bus from "./Bus";
+import Bus, {matchClasses} from "./Bus";
 import Subject from "../../presentation/utils/binding/Subject";
 import AppEvent from "./AppEvent";
 import Command from "./Command";
@@ -15,7 +15,7 @@ class BusImpl implements Bus {
         this.eventsStream.set(event);
     }
 
-    subscribe = (handler: (event: any) => Promise<void>): Disposable => {
+    subscribe = (handler: (event: any) => void): Disposable => {
         return this.eventsStream.listen((event) => {
             handler(event);
         });
@@ -25,7 +25,7 @@ class BusImpl implements Bus {
         return new Promise<T>(resolve => {
             const ref = {} as any;
             ref.c = this.subscribe(async event => {
-                const found = await condition(event);
+                const found = condition(event);
                 if (!found) {
                     return;
                 }
@@ -41,6 +41,12 @@ class BusImpl implements Bus {
         const promise = this.waitFor(condition);
         this.publish(event);
         return await promise
+    }
+
+    publishCommand = (command: Command): Promise<any> => {
+        const promise = this.waitFor((event) => event.operationId === command.id);
+        this.publish(command);
+        return promise;
     }
 }
 

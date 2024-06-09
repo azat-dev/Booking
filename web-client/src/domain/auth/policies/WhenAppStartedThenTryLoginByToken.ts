@@ -1,7 +1,7 @@
 import type Bus from "../../utils/Bus";
 import type LocalAuthDataRepository from "../interfaces/repositories/LocalAuthDataRepository";
 import LoginByToken from "../commands/LoginByToken";
-import FailedLoginByToken from "../events/FailedLoginByToken";
+import FailedLoginByToken from "../events/login/login-by-token/FailedLoginByToken.ts";
 import Policy from "../../utils/Policy";
 
 

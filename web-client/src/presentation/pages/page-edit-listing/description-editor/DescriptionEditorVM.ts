@@ -26,7 +26,6 @@ class DescriptionEditorVM {
     }
 
     private updateCanMoveNext = () => {
-        debugger
         this.canMoveNext.set(this.numberOfCharacters.value > 0 && this.numberOfCharacters.value <= this.maxNumberOfCharacters);
 
     }

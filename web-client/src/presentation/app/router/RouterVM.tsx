@@ -2,7 +2,6 @@ import {createBrowserRouter, useLoaderData} from "react-router-dom";
 import RouteItem from "./RouteItem";
 import AppSession from "../../../domain/auth/entities/AppSession.ts";
 import React from "react";
-import PagesConfig from "../config/PagesConfig.ts";
 
 const RouteComponent = React.memo(() => {
 
@@ -15,13 +14,13 @@ class RouterVM {
 
     public reactRouter: any;
 
-    constructor(routes: RouteItem[], appSession: AppSession, pagesConfig: PagesConfig) {
+    constructor(routes: RouteItem[], appSession: AppSession) {
 
         const mappedRoutes = routes.map((route) => {
             return {
                 path: route.path,
                 loader: async (params: any) => {
-                    return await route.view(appSession.state, params, pagesConfig);
+                    return await route.view(appSession.state, params);
                 },
                 element: <RouteComponent/>,
             };
