@@ -1,8 +1,7 @@
 import AppSessionAuthenticated from "../../../../../domain/auth/entities/AppSessionAuthenticated.ts";
-import Bus, {matchClasses} from "../../../../../domain/utils/Bus.ts";
+import Bus from "../../../../../domain/utils/Bus.ts";
 import ListingId from "../../../../../domain/listings/values/ListingId.ts";
 import CreateDraftListing from "../../../../../domain/listings/commands/CreateDraftListing.ts";
-import CreatedDraftListing from "../../../../../domain/listings/events/CreatedDraftListing.ts";
 import FailedCreateDraftListing from "../../../../../domain/listings/events/FailedCreateDraftListing.ts";
 import UpdateListingDetails from "../../../../../domain/listings/commands/UpdateListingDetails.ts";
 import ListingDetailsUpdated from "../../../../../domain/listings/events/ListingDetailsUpdated.ts";
@@ -10,6 +9,7 @@ import FailedUpdateListingDetails from "../../../../../domain/listings/events/Fa
 import HostingComponentsConfig from "./HostingComponentsConfig.ts";
 import LoadOwnListings from "../../../../../domain/listings/commands/LoadOwnListings.ts";
 import LoadedOwnListings from "../../../../../domain/listings/events/LoadedOwnListings.ts";
+import ListingDraftCreated from "../../../../../domain/listings/events/ListingDraftCreated.ts";
 
 class HostingPagesConfig {
     public constructor(
@@ -29,11 +29,12 @@ class HostingPagesConfig {
 
         table.listenOwnEvents(this.bus, event => {
             if (event instanceof LoadedOwnListings) {
+                debugger
                 table.displayLoadedListings(event.listings);
                 return;
             }
 
-            if (event instanceof  FailedCreateDraftListing) {
+            if (event instanceof FailedCreateDraftListing) {
                 table.displayFailedLoadListings();
                 return;
             }
@@ -53,12 +54,6 @@ class HostingPagesConfig {
             navigationBar
         );
 
-        table.delegate = {
-            loadListings: async () => {
-
-            }
-        };
-
         return vm;
     }
 
@@ -71,46 +66,43 @@ class HostingPagesConfig {
             null
         );
 
+        vm.listenOwnEvents(this.bus, response => {
+            if (response instanceof ListingDraftCreated) {
+                vm.displayCreatedDraft(response.listingId);
+                return
+            }
+
+            if (response instanceof FailedCreateDraftListing) {
+                vm.displayFailedCreateDraft();
+                return
+            }
+
+            if (response instanceof ListingDetailsUpdated) {
+                vm.displayUpdatedDescription();
+                return
+            }
+
+            if (response instanceof FailedUpdateListingDetails) {
+                vm.displayFailedUpdateDraft();
+                return
+            }
+        })
+
         vm.delegate = {
-            createDraft: async (title: string) => {
-                const response = await this.bus.publishAndWaitFor(
-                    new CreateDraftListing(title),
-                    matchClasses(CreatedDraftListing)
+            createDraft: (title: string) => {
+                this.bus.publish(
+                    new CreateDraftListing(title)
+                        .withSender(vm)
                 );
-
-                if (response instanceof CreatedDraftListing) {
-                    vm.displayCreatedDraft(response.listingId);
-                    return
-                }
-
-                if (response instanceof FailedCreateDraftListing) {
-                    vm.displayFailedCreateDraft();
-                    return
-                }
-
-                throw new Error("Unexpected response");
             },
-            updateDescription: async (listingId: ListingId, description: string) => {
+            updateDescription: (listingId: ListingId, description: string) => {
 
-                const response = await this.bus.publishAndWaitFor(
+                this.bus.publish(
                     new UpdateListingDetails(
                         listingId,
                         {description}
-                    ),
-                    matchClasses(CreatedDraftListing)
+                    ).withSender(vm)
                 );
-
-                if (response instanceof ListingDetailsUpdated) {
-                    vm.displayUpdatedDescription();
-                    return
-                }
-
-                if (response instanceof FailedUpdateListingDetails) {
-                    vm.displayFailedUpdateDraft();
-                    return
-                }
-
-                throw new Error("Unexpected response");
             }
         }
 

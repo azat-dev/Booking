@@ -3,8 +3,7 @@ import ListingId from "../values/ListingId.ts";
 
 class ListingDraftCreated extends AppEvent {
     public constructor(
-        public readonly listingId: ListingId,
-        public readonly operationId: string
+        public readonly listingId: ListingId
     ) {
         super();
     }

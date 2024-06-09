@@ -17,18 +17,16 @@ class HandleLoadOwnListings extends Handler {
     public execute = async (command: LoadOwnListings): Promise<void> => {
 
         try {
-
             const response = await this.queriesApi.getOwnListings();
             this.bus.publish(new LoadedOwnListings(
-                command.id,
                 response
-            ));
+            ).withSender(command.senderId));
         } catch (error: any) {
             this.bus.publish(new FailedToLoadOwnListings(
                 error,
-                command.id,
-            ));
+            ).withSender(command.senderId));
         }
+
     }
 }
 

@@ -5,8 +5,7 @@ class FailedUpdateListingDetails extends AppEvent {
 
     public constructor(
         public readonly listingId: ListingId,
-        public readonly error: Error,
-        public readonly operationId: string
+        public readonly error: Error
     ) {
         super();
     }

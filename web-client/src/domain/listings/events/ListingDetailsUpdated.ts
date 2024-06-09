@@ -12,8 +12,7 @@ class ListingDetailsUpdated extends AppEvent {
 
     public constructor(
         public readonly listingId: ListingId,
-        public readonly payload: ListingUpdatedPayload,
-        public readonly operationId: string
+        public readonly payload: ListingUpdatedPayload
     ) {
         super();
     }

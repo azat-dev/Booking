@@ -18,9 +18,8 @@ class PageEditListingVM extends VM {
     public steps!: Subject<boolean[]>;
     public nextButton: LoadingButtonVM;
     public backButton: LoadingButtonVM;
-
-    private step!: Step;
     public delegate!: PageEditListingVMDelegate;
+    private step!: Step;
 
     public constructor(
         private readonly initialListingId: ListingId | null
@@ -54,29 +53,6 @@ class PageEditListingVM extends VM {
         );
 
         this.setStep(step);
-    }
-
-    private moveToDescription = (listingId: ListingId) => {
-        this.setStep(
-            new DescriptionStepVM(
-                listingId,
-                this.moveToPhotos,
-                this.displayProcessingNextStep,
-                this.displayFinishedProcessingNextStep,
-                this.delegate.updateDescription
-            )
-        );
-    }
-
-    private moveToPhotos = async (listingId: ListingId) => {
-
-        this.setStep(new PhotosStepVM(
-                listingId,
-                async (listingId) => {
-                    alert('done');
-                }
-            )
-        );
     }
 
     public displayFinishedProcessingNextStep = () => {
@@ -130,6 +106,31 @@ class PageEditListingVM extends VM {
         if (this.step instanceof DescriptionStepVM) {
             this.step.displayUpdatedDescription();
         }
+    }
+
+    private moveToDescription = (listingId: ListingId) => {
+        this.setStep(
+            new DescriptionStepVM(
+                listingId,
+                this.moveToPhotos,
+                this.displayProcessingNextStep,
+                this.displayFinishedProcessingNextStep,
+                this.delegate.updateDescription
+            )
+        );
+    }
+
+    private moveToPhotos = async (listingId: ListingId) => {
+
+        this.setStep(new PhotosStepVM(
+                listingId,
+                async (listingId) => {
+                    alert('done');
+                },
+                this.displayProcessingNextStep,
+                this.displayFinishedProcessingNextStep,
+            )
+        );
     }
 
     private setStep = (step: Step) => {
@@ -220,6 +221,7 @@ class TitleStepVM {
     }
 
     public displayCreatedDraft = (listingId: ListingId) => {
+        this.displayFinishedProcessingNextStep();
         this.moveToNextStep(listingId);
     }
 }
@@ -260,12 +262,16 @@ class PhotosStepVM {
 
     public constructor(
         private listingId: ListingId,
-        private readonly moveToNextStep: (listingId: ListingId) => void
+        private readonly moveToNextStep: (listingId: ListingId) => void,
+        private readonly displayProcessingNextStep: () => void,
+        private readonly displayFinishedProcessingNextStep: () => void,
     ) {
         this.editor = new PhotosEditorVM('initial value');
     }
 
     public next = async () => {
+        this.displayFinishedProcessingNextStep();
+        this.displayFinishedProcessingNextStep();
         this.moveToNextStep(this.listingId);
     }
 }

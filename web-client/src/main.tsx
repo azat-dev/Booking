@@ -67,7 +67,7 @@ const buildApp = (baseApiUrl: string) => {
         identityDataConfig.userInfoService()
     );
 
-    const listingsCommandHandlersConfig = new ListingsCommandHandlersProvider(
+    const listingsCommandHandlers = new ListingsCommandHandlersProvider(
         listingsDataConfig.listingsPrivateQueriesApi(),
         listingsDataConfig.listingsModificationsApi(),
         bus
@@ -78,7 +78,7 @@ const buildApp = (baseApiUrl: string) => {
     domainConfig.addCommandHandlersProvider(identityCommandHandlersConfig);
     domainConfig.addPoliciesProvider(domainPoliciesConfig);
 
-    domainConfig.addCommandHandlersProvider(listingsCommandHandlersConfig);
+    domainConfig.addCommandHandlersProvider(listingsCommandHandlers);
 
 
     const guestComponents = new GuestComponentsConfig(appSession, bus);

@@ -7,7 +7,7 @@ import VM from "../../../utils/VM.ts";
 export interface ListingsTableVMLoadedListing {
     id: string;
     title: string;
-    address: {
+    address?: {
         country: string;
         city: string;
         street: string;
@@ -29,7 +29,7 @@ class ListingsTableVM extends VM {
     }
 
     public load = async () => {
-        this.delegate.loadListings;
+        this.delegate.loadListings();
     }
 
     public displayLoadedListings = (listings: ListingsTableVMLoadedListing[]) => {
@@ -37,7 +37,7 @@ class ListingsTableVM extends VM {
             return new RowVM(
                 item.id,
                 item.title,
-                `${item.address.country}, ${item.address.city}, ${item.address.street}`,
+                item.address && `${item.address.country}, ${item.address.city}, ${item.address.street}`,
                 item.status
             );
         });

@@ -24,8 +24,10 @@ class HandleUpdateListingDetails extends Handler {
                 {
                     listingId: command.listingId.val,
                     updateListingDetailsRequestBody: {
-                        ...command.payload,
-                        operationId
+                        operationId,
+                        fields: {
+                            ...command.payload,
+                        }
                     } as any
                 }
             );
@@ -33,16 +35,14 @@ class HandleUpdateListingDetails extends Handler {
             this.bus.publish(
                 new ListingDetailsUpdated(
                     command.listingId,
-                    command.payload,
-                    command.id
-                )
+                    command.payload
+                ).withSender(command.senderId)
             );
         } catch (error: any) {
             this.bus.publish(new FailedUpdateListingDetails(
                 command.listingId,
-                error,
-                command.id
-            ));
+                error
+            ).withSender(command.senderId));
         }
     }
 }

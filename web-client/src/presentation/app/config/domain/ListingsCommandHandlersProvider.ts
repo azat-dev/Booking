@@ -6,9 +6,9 @@ import LoadOwnListings from "../../../../domain/listings/commands/LoadOwnListing
 import {CommandsModificationsApi, QueriesPrivateApi} from "../../../../data/api/listings";
 import UpdateListingDetails from "../../../../domain/listings/commands/UpdateListingDetails.ts";
 import HandleUpdateListingDetails from "../../../../domain/listings/handlers/HandleUpdateListingDetails.ts";
-import CreatedDraftListing from "../../../../domain/listings/events/CreatedDraftListing.ts";
 import HandleCreateDraftListing from "../../../../domain/listings/handlers/HandleCreateDraftListing.ts";
 import CommandHandlersProvider from "./CommandHandlersProvider.ts";
+import CreateDraftListing from "../../../../domain/listings/commands/CreateDraftListing.ts";
 
 class ListingsCommandHandlersProvider implements CommandHandlersProvider {
 
@@ -22,12 +22,15 @@ class ListingsCommandHandlersProvider implements CommandHandlersProvider {
         this.handlersByCommands = {
             [LoadOwnListings.name]: new HandleLoadOwnListings(listingQueriesPrivateApi, bus),
             [UpdateListingDetails.name]: new HandleUpdateListingDetails(listingsModificationsApi, bus),
-            [CreatedDraftListing.name]: new HandleCreateDraftListing(listingsModificationsApi, bus)
+            [CreateDraftListing.name]: new HandleCreateDraftListing(listingsModificationsApi, bus)
         };
     }
 
     public getHandlerForCommand = (command: Command): Handler => {
-        return this.handlersByCommands[command.constructor.name];
+        const handler = this.handlersByCommands[command.constructor.name];
+        console.log("LISTING", handler, typeof command.constructor.name, this.handlersByCommands);
+
+        return handler;
     }
 }
 

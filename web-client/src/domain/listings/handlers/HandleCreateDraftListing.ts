@@ -1,10 +1,10 @@
 import type Bus from "../../utils/Bus";
 import Handler from "../../utils/Handler";
 import CreateDraftListing from "../commands/CreateDraftListing";
-import CreatedDraftListing from "../events/CreatedDraftListing";
 import FailedCreateDraftListing from "../events/FailedCreateDraftListing";
 import {CommandsModificationsApi} from "../../../data/api/listings";
 import ListingId from "../values/ListingId.ts";
+import ListingDraftCreated from "../events/ListingDraftCreated.ts";
 
 class HandleCreateDraftListing extends Handler {
 
@@ -29,16 +29,14 @@ class HandleCreateDraftListing extends Handler {
             );
 
             this.bus.publish(
-                new CreatedDraftListing(
-                    new ListingId(response.listingId),
-                    command.title
-                )
+                new ListingDraftCreated(
+                    new ListingId(response.listingId)
+                ).withSender(command.senderId)
             );
         } catch (error: any) {
             this.bus.publish(new FailedCreateDraftListing(
-                error,
-                command.id
-            ));
+                error
+            ).withSender(command.senderId));
         }
     }
 }
