@@ -29,7 +29,6 @@ class HostingPagesConfig {
 
         table.listenOwnEvents(this.bus, event => {
             if (event instanceof LoadedOwnListings) {
-                debugger
                 table.displayLoadedListings(event.listings);
                 return;
             }

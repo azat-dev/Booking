@@ -48,12 +48,6 @@ const buildApp = (baseApiUrl: string) => {
         localAuthDataConfig.localAuthDataRepository()
     );
 
-    const listingsDataConfig = new ListingsDataConfig(
-        baseApiUrl,
-        localAuthDataConfig.localAuthDataRepository()
-    );
-
-
     const domainPoliciesConfig = new IdentityPoliciesProvider(
         appSession,
         localAuthDataConfig.localAuthDataRepository(),
@@ -67,18 +61,10 @@ const buildApp = (baseApiUrl: string) => {
         identityDataConfig.userInfoService()
     );
 
-    const listingsCommandHandlers = new ListingsCommandHandlersProvider(
-        listingsDataConfig.listingsPrivateQueriesApi(),
-        listingsDataConfig.listingsModificationsApi(),
-        bus
-    );
-
 
     const domainConfig = new DomainConfig(bus);
     domainConfig.addCommandHandlersProvider(identityCommandHandlersConfig);
     domainConfig.addPoliciesProvider(domainPoliciesConfig);
-
-    domainConfig.addCommandHandlersProvider(listingsCommandHandlers);
 
 
     const guestComponents = new GuestComponentsConfig(appSession, bus);
@@ -108,14 +94,12 @@ const buildApp = (baseApiUrl: string) => {
 
     const hostingPages = singleton(async () => {
 
-        const HostingPagesConfig = (await import("./presentation/app/config/presentation/hosting/HostingPagesConfig.ts")).default;
-        const HostingComponents = (await import("./presentation/app/config/presentation/hosting/HostingComponentsConfig.ts")).default;
-
-        const components = new HostingComponents(appSession, bus);
-
-        return new HostingPagesConfig(
-            components,
-            bus
+        const HostingsModule = (await import("./application/HostingsModule.ts")).default;
+        return HostingsModule.make(
+            baseApiUrl,
+            appSession,
+            localAuthDataConfig,
+            domainConfig
         );
     });
 

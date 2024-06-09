@@ -55,7 +55,7 @@ const InitialPhotoInput = ({vm}: PropsInitialPhotoInput) => {
                 }
             >
                 Add photos
-                <VisuallyHiddenInput type="file" accept=".png, .jpg, .jpeg, .webp" multiple={false}/>
+                <VisuallyHiddenInput type="file" accept=".png, .jpg, .jpeg, .webp"/>
             </Button>
         </Box>
     );
