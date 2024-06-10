@@ -10,8 +10,13 @@ import HostingComponentsConfig from "./HostingComponentsConfig.ts";
 import LoadOwnListings from "../../../../../domain/listings/commands/LoadOwnListings.ts";
 import LoadedOwnListings from "../../../../../domain/listings/events/LoadedOwnListings.ts";
 import ListingDraftCreated from "../../../../../domain/listings/events/ListingDraftCreated.ts";
+import NewPhotoAddedToListing from "../../../../../domain/listings/events/NewPhotoAddedToListing.ts";
+import FailedToAddNewPhotoToListing from "../../../../../domain/listings/events/FailedToAddNewPhotoToListing.ts";
+import OpenAddPhotoToListingDialog from "../../../../hosting/commands/OpenAddPhotoToListingDialog.ts";
+import LoadListingDetails from "../../../../../domain/listings/commands/LoadListingDetails.ts";
+import ListingDetailsLoaded from "../../../../../domain/listings/events/ListingDetailsLoaded.ts";
 
-class HostingPagesConfig {
+class HostingPagesVmConfig {
     public constructor(
         private readonly components: HostingComponentsConfig,
         private readonly bus: Bus
@@ -20,8 +25,8 @@ class HostingPagesConfig {
 
     public listingsPage = async (session: AppSessionAuthenticated) => {
 
-        const PageListingsVM = (await import("../../../../pages/page-listings/PageListingsVM.ts")).default;
-        const ListingsTableVM = (await import("../../../../pages/page-listings/table/ListingsTableVM.ts")).default;
+        const PageListingsVM = (await import("../../../../hosting/page-listings/PageListingsVM.ts")).default;
+        const ListingsTableVM = (await import("../../../../hosting/page-listings/table/ListingsTableVM.ts")).default;
 
         const navigationBar = await this.components.hostingNavigationBar();
 
@@ -58,7 +63,7 @@ class HostingPagesConfig {
 
     public editListingPage = async (session: AppSessionAuthenticated) => {
 
-        const PageEditListingVM = (await import("../../../../pages/page-edit-listing/PageEditListingVM.ts")).default;
+        const PageEditListingVM = (await import("../../../../hosting/page-edit-listing/PageEditListingVM.ts")).default;
 
 
         const vm = new PageEditListingVM(
@@ -85,7 +90,27 @@ class HostingPagesConfig {
                 vm.displayFailedUpdateDraft();
                 return
             }
-        })
+        });
+
+        vm.listenOwnEvents(this.bus, response => {
+
+            if (response instanceof NewPhotoAddedToListing) {
+                vm.displayAddedNewPhoto();
+                return;
+            }
+
+            if (response instanceof FailedToAddNewPhotoToListing) {
+                vm.displayFailedFailedToAddPhoto();
+                return;
+            }
+        });
+
+        vm.listenOwnEvents(this.bus, response => {
+            if (response instanceof ListingDetailsLoaded) {
+                vm.displayLoadedListingDetails(response.details);
+                return;
+            }
+        });
 
         vm.delegate = {
             createDraft: (title: string) => {
@@ -102,6 +127,16 @@ class HostingPagesConfig {
                         {description}
                     ).withSender(vm)
                 );
+            },
+            addNewPhoto: (listingId: ListingId) => {
+                this.bus.publish(
+                    new OpenAddPhotoToListingDialog(listingId)
+                        .withSender(vm)
+                )
+            },
+            loadPhotos: (listingId: ListingId) => {
+                this.bus.publish(new LoadListingDetails(listingId)
+                    .withSender(vm));
             }
         }
 
@@ -109,4 +144,4 @@ class HostingPagesConfig {
     }
 }
 
-export default HostingPagesConfig;
+export default HostingPagesVmConfig;

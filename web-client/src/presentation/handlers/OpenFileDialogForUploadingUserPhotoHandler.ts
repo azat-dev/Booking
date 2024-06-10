@@ -6,7 +6,6 @@ import UserClosedFileDialogForUploadingUserPhoto from "../events/UserClosedFileD
 import AppSession from "../../domain/auth/entities/AppSession.ts";
 import AppSessionAuthenticated from "../../domain/auth/entities/AppSessionAuthenticated.ts";
 import Handler from "../../domain/utils/Handler.ts";
-import UploadingUserPhoto from "../../domain/auth/events/personal-info/UploadingUserPhoto.ts";
 
 class OpenFileDialogForUploadingUserPhotoHandler extends Handler {
 

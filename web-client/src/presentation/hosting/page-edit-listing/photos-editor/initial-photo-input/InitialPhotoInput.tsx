@@ -53,9 +53,10 @@ const InitialPhotoInput = ({vm}: PropsInitialPhotoInput) => {
                         </svg>
                     </SvgIcon>
                 }
+                onClick={vm.addPhoto}
             >
                 Add photos
-                <VisuallyHiddenInput type="file" accept=".png, .jpg, .jpeg, .webp"/>
+                {/*<VisuallyHiddenInput type="file" accept=".png, .jpg, .jpeg, .webp"/>*/}
             </Button>
         </Box>
     );

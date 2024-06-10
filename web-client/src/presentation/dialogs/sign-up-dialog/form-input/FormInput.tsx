@@ -7,7 +7,7 @@ import FormLabel from "@mui/joy/FormLabel";
 import Input from "@mui/joy/Input";
 import useUpdatesFrom from "../../../utils/binding/useUpdatesFrom";
 import FormHelperText from "@mui/joy/FormHelperText";
-import { InfoOutlined } from "@mui/icons-material";
+import InfoOutlined from "@mui/icons-material/InfoOutlined";
 
 const FormInput = ({ vm, label, type, placeholder }: PropsFormInput) => {
     const [text, isDisabled, isWrong, errorText] = useUpdatesFrom(

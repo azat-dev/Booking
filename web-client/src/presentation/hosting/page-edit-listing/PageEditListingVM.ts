@@ -7,18 +7,18 @@ import LoadingButtonVM from "../../components/LoadingButtonVM.ts";
 import ListingId from "../../../domain/listings/values/ListingId.ts";
 import VM from "../../utils/VM.ts";
 
-interface PageEditListingVMDelegate {
-    createDraft: (title: string) => void;
-    updateDescription: (id: ListingId, description: string) => void;
-}
-
 class PageEditListingVM extends VM {
 
     public content!: Subject<Content>;
     public steps!: Subject<boolean[]>;
     public nextButton: LoadingButtonVM;
     public backButton: LoadingButtonVM;
-    public delegate!: PageEditListingVMDelegate;
+    public delegate!: {
+        createDraft: (title: string) => void;
+        updateDescription: (id: ListingId, description: string) => void;
+        addNewPhoto: (id: ListingId) => void;
+        loadPhotos: (id: ListingId) => void;
+    };
     private step!: Step;
 
     public constructor(
@@ -40,7 +40,13 @@ class PageEditListingVM extends VM {
         );
 
         this.moveToTitle();
-        this.updateSteps();
+    }
+
+    public displayFinishedProcessingNextStep = () => {
+        this.enableButtons();
+    }
+
+    public moveToTitle = () => {
 
         const step = new TitleStepVM(
             '',
@@ -53,20 +59,6 @@ class PageEditListingVM extends VM {
         );
 
         this.setStep(step);
-    }
-
-    public displayFinishedProcessingNextStep = () => {
-        this.enableButtons();
-    }
-
-    public moveToTitle = () => {
-
-        const editor = new TitleEditorVM('initial value');
-        editor.canMoveNext.listen((canMoveNext) => {
-            this.nextButton.isDisabled.set(canMoveNext);
-        });
-        this.content = value(editor);
-        this.updateSteps();
     }
 
     public next = async () => {
@@ -108,6 +100,19 @@ class PageEditListingVM extends VM {
         }
     }
 
+    public displayAddedNewPhoto = () => {
+
+        if (this.step.editor instanceof PhotosEditorVM) {
+            this.step.editor.displayAddedNewPhoto();
+        }
+    }
+
+    public displayFailedFailedToAddPhoto = () => {
+        if (this.step.editor instanceof PhotosEditorVM) {
+            this.step.editor.displayFailedToAddNewPhoto();
+        }
+    }
+
     private moveToDescription = (listingId: ListingId) => {
         this.setStep(
             new DescriptionStepVM(
@@ -122,20 +127,44 @@ class PageEditListingVM extends VM {
 
     private moveToPhotos = async (listingId: ListingId) => {
 
-        this.setStep(new PhotosStepVM(
+        this.setStep(
+            new PhotosStepVM(
                 listingId,
                 async (listingId) => {
                     alert('done');
                 },
                 this.displayProcessingNextStep,
                 this.displayFinishedProcessingNextStep,
+                this.delegate.addNewPhoto,
+                this.delegate.loadPhotos
             )
         );
     }
 
     private setStep = (step: Step) => {
+
+        if (this.step) {
+            this.step.editor.canMoveNext.dispose();
+        }
+
         this.step = step;
-        this.content.set(this.step.editor);
+        const newEditor = this.step.editor;
+
+        if (!this.content) {
+            this.content = value(newEditor);
+        } else {
+            this.content.set(newEditor);
+        }
+
+        this.updateSteps();
+
+        this.nextButton.isDisabled.set(!newEditor.canMoveNext.value);
+
+        this.cleanOnDestroy(
+            this.step.editor.canMoveNext.listen((canMoveNext) => {
+                this.nextButton.isDisabled.set(!canMoveNext);
+            })
+        );
     }
 
     private getCurrentStepIndex = (): number => {
@@ -146,6 +175,10 @@ class PageEditListingVM extends VM {
 
         if (this.step instanceof DescriptionStepVM) {
             return 1;
+        }
+
+        if (this.step instanceof PhotosStepVM) {
+            return 2;
         }
 
         return 0;
@@ -169,7 +202,6 @@ class PageEditListingVM extends VM {
         this.backButton.updateIsDisabled(true);
     }
 
-
     private enableNextButton = () => {
         this.nextButton.updateIsDisabled(false);
         this.nextButton.updateIsLoading(false);
@@ -178,6 +210,13 @@ class PageEditListingVM extends VM {
     private enableBackButton = () => {
         this.backButton.updateIsDisabled(false);
         this.backButton.updateIsLoading(false);
+    }
+
+    public displayLoadedListingDetails = (data: any) => {
+
+        if (this.step.editor instanceof PhotosEditorVM) {
+            this.step.editor.displayPhotos(data.photos);
+        }
     }
 }
 
@@ -265,12 +304,17 @@ class PhotosStepVM {
         private readonly moveToNextStep: (listingId: ListingId) => void,
         private readonly displayProcessingNextStep: () => void,
         private readonly displayFinishedProcessingNextStep: () => void,
+        addNewPhoto: (listingId: ListingId) => void,
+        loadPhotos: (listingId: ListingId) => void
     ) {
-        this.editor = new PhotosEditorVM('initial value');
+        this.editor = new PhotosEditorVM(
+            listingId,
+            addNewPhoto,
+            loadPhotos
+        );
     }
 
     public next = async () => {
-        this.displayFinishedProcessingNextStep();
         this.displayFinishedProcessingNextStep();
         this.moveToNextStep(this.listingId);
     }

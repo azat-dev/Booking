@@ -18,7 +18,7 @@ import Handler from "../../../../domain/utils/Handler.ts";
 import Command from "../../../../domain/utils/Command.ts";
 import CommandHandlersProvider from "./CommandHandlersProvider.ts";
 
-class IdentityCommandHandlersProvider implements CommandHandlersProvider {
+class IdentityCommandHandlers implements CommandHandlersProvider {
 
     private readonly handlersByCommands: Record<string, Handler>;
 
@@ -43,4 +43,4 @@ class IdentityCommandHandlersProvider implements CommandHandlersProvider {
     }
 }
 
-export default IdentityCommandHandlersProvider;
+export default IdentityCommandHandlers;

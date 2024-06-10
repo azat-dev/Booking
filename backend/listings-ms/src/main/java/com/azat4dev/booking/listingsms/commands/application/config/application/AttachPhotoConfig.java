@@ -38,13 +38,13 @@ public class AttachPhotoConfig {
 
     @Bean
     MakeNewListingPhoto makeNewListingPhoto(
-        @Value("listingsPhotoBucketName")
-        String listingsPhotoBucketName,
+        @Qualifier("listingsPhotoBucketName")
+        BucketName listingsPhotoBucketName,
         @Qualifier("listingsPhotoBucket")
         MediaObjectsBucket mediaObjectsBucket
     ) throws BucketName.Exception {
         return new MakeNewListingPhotoImpl(
-            BucketName.checkAndMake(listingsPhotoBucketName),
+            listingsPhotoBucketName,
             mediaObjectsBucket
         );
     }

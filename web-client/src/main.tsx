@@ -20,18 +20,15 @@ import RouterVM from "./presentation/app/router/RouterVM.tsx";
 import AppVM from "./presentation/app/AppVM.tsx";
 import PublicRoute from "./presentation/app/router/PublicRoute.tsx";
 import useLoadedValue from "./presentation/app/router/useLoadedValue.ts";
-import IdentityPoliciesProvider from "./presentation/app/config/domain/IdentityPoliciesProvider.ts";
+import IdentityPolicies from "./presentation/app/config/domain/IdentityPolicies.ts";
 import AppSessionImpl from "./domain/auth/entities/AppSessionImpl.ts";
 import BusImpl from "./domain/utils/BusImpl.ts";
-import IdentityCommandHandlersProvider from "./presentation/app/config/domain/IdentityCommandHandlersProvider.ts";
+import IdentityCommandHandlers from "./presentation/app/config/domain/IdentityCommandHandlers.ts";
 import AppStarted from './domain/auth/events/AppStarted.ts';
 import ProfileCommandsHandlersProvider from "./presentation/app/config/presentation/ProfileCommandsHandlersProvider.ts";
-import DialogsCommandHandlersProvider from "./presentation/app/config/presentation/common/DialogsCommandHandlersProvider.ts";
-import PageListings from "./presentation/pages/page-listings/PageListings.tsx";
-import PageEditListing from "./presentation/pages/page-edit-listing/PageEditListing.tsx";
-import ListingsCommandHandlersProvider from "./presentation/app/config/domain/ListingsCommandHandlersProvider.ts";
+import DialogsCommandHandlersProvider
+    from "./presentation/app/config/presentation/common/DialogsCommandHandlersProvider.ts";
 import IdentityDataConfig from "./presentation/app/config/data/IdentityDataConfig.ts";
-import ListingsDataConfig from "./presentation/app/config/data/ListingsDataConfig.ts";
 import singleton from "./utils/singleton.ts";
 
 
@@ -48,13 +45,13 @@ const buildApp = (baseApiUrl: string) => {
         localAuthDataConfig.localAuthDataRepository()
     );
 
-    const domainPoliciesConfig = new IdentityPoliciesProvider(
+    const domainPoliciesConfig = new IdentityPolicies(
         appSession,
         localAuthDataConfig.localAuthDataRepository(),
         bus
     );
 
-    const identityCommandHandlersConfig = new IdentityCommandHandlersProvider(
+    const identityCommandHandlersConfig = new IdentityCommandHandlers(
         appSession,
         bus,
         identityDataConfig.localAuthService(),
@@ -94,7 +91,7 @@ const buildApp = (baseApiUrl: string) => {
 
     const hostingPages = singleton(async () => {
 
-        const HostingsModule = (await import("./application/HostingsModule.ts")).default;
+        const HostingsModule = (await import("./application/HostingModule.ts")).default;
         return HostingsModule.make(
             baseApiUrl,
             appSession,
@@ -110,7 +107,7 @@ const buildApp = (baseApiUrl: string) => {
 
                 const vm = useLoadedValue(() => guestPages().then(p => p.mainPage()), []);
                 if (!vm) {
-                    return <h1>Loading...</h1>;
+                    return null;
                 }
 
                 return <PageMain vm={vm}/>;
@@ -119,11 +116,11 @@ const buildApp = (baseApiUrl: string) => {
         new PrivateRoute(
             "/profile",
             "/",
-            () => <h1>Authenticating...</h1>,
+            () => null,
             ({session}) => {
                 const vm = useLoadedValue(() => commonPagesConfig.profilePage(session), [session]);
                 if (!vm) {
-                    return <h1>Loading...</h1>;
+                    return null;
                 }
 
                 return <PageUserProfile vm={vm}/>;
@@ -132,27 +129,27 @@ const buildApp = (baseApiUrl: string) => {
         new PrivateRoute(
             "/listings",
             "/",
-            () => <h1>Authenticating...</h1>,
+            () => null,
             ({session}) => {
-                const vm = useLoadedValue(() => hostingPages().then(p => p.listingsPage(session)), [session]);
-                if (!vm) {
-                    return <h1>Loading...</h1>;
+                const page = useLoadedValue(() => hostingPages().then(p => p.listingsPage(session)), [session]);
+                if (!page) {
+                    return null;
                 }
 
-                return <PageListings vm={vm}/>;
+                return page;
             }
         ),
         new PrivateRoute(
             "/listings/add-new",
             "/",
-            () => <h1>Authenticating...</h1>,
+            () => null,
             ({session}) => {
-                const vm = useLoadedValue(() => hostingPages().then(p => p.editListingPage(session)), [session]);
-                if (!vm) {
-                    return <h1>Loading...</h1>;
+                const page = useLoadedValue(() => hostingPages().then(p => p.editListingPage(session)), [session]);
+                if (!page) {
+                    return null;
                 }
 
-                return <PageEditListing vm={vm}/>;
+                return page;
             }
         )
     ];
@@ -180,7 +177,6 @@ const buildApp = (baseApiUrl: string) => {
 
     presentationConfig.addCommandHandlersProvider(profileCommandsHandlersProvider);
     presentationConfig.addCommandHandlersProvider(dialogsCommandHandlersProvider);
-
 
 
     const app = new AppVM(router, activeDialogStore.activeDialog);

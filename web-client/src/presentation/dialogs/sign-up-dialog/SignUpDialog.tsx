@@ -6,7 +6,7 @@ import {Alert, Button, DialogTitle, Link, Modal, ModalClose, ModalDialog, Stack,
 import {desktop, mobile, tablet} from "../../utils/selectors";
 import useScreenType, {ScreenType} from "../../utils/hooks/useScreenType";
 import FormInput from "./form-input/FormInput";
-import {InfoOutlined} from "@mui/icons-material";
+import InfoOutlined from "@mui/icons-material/InfoOutlined";
 
 const SignUpDialog = ({vm}: PropsSignUpDialog) => {
     const [isProcessing, errorText] = useUpdatesFrom(

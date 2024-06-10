@@ -7,6 +7,7 @@ import FirstName from "../../../domain/auth/values/FirstName";
 import LastName from "../../../domain/auth/values/LastName";
 import PhotoPath from "../../../domain/auth/values/PhotoPath";
 import {CommandsUpdateUserPhotoApi, QueriesCurrentUserApi} from "../../api/identity";
+import uploadPhoto from "../../uploadPhoto.ts";
 
 class UserInfoServiceImpl implements PersonalUserInfoService {
 
@@ -44,7 +45,7 @@ class UserInfoServiceImpl implements PersonalUserInfoService {
             }
         );
 
-        await this.uploadPhoto(response.objectPath.url, response.formData as any, photo);
+        await uploadPhoto(response.objectPath.url, response.formData as any, photo);
         await this.commandsUpdateUserPhotoApi.updateUserPhoto({
             updateUserPhotoRequestBody: {
                 operationId: crypto.randomUUID(),
@@ -64,26 +65,6 @@ class UserInfoServiceImpl implements PersonalUserInfoService {
         parts.pop();
         return parts.join(".");
     }
-
-    private uploadPhoto = async (url: string, params: Record<string, string>, photo: File): Promise<boolean> => {
-
-        const formData = new FormData();
-
-        for (const key in params) {
-            formData.append(key, params[key]);
-        }
-
-        formData.append('Content-Type', photo.type);
-        formData.append('file', photo);
-
-        const result = await fetch(url, {
-            method: "POST",
-            body: formData
-        });
-
-        return result.status === 200 || result.status === 201 || result.status === 204;
-    }
-
 }
 
 export default UserInfoServiceImpl;

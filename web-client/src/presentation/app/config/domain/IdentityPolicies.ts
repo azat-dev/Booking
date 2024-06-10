@@ -23,7 +23,7 @@ import Policy from "../../../../domain/utils/Policy.ts";
 import AppEvent from "../../../../domain/utils/AppEvent.ts";
 import PoliciesProvider from "./PoliciesProvider.ts";
 
-class IdentityPoliciesProvider implements PoliciesProvider {
+class IdentityPolicies implements PoliciesProvider {
 
     private readonly policiesByEvents: Record<string, Policy[]>;
 
@@ -63,4 +63,4 @@ class IdentityPoliciesProvider implements PoliciesProvider {
     }
 }
 
-export default IdentityPoliciesProvider;
+export default IdentityPolicies;

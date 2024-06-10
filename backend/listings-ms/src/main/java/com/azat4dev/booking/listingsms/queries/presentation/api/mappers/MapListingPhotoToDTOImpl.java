@@ -13,7 +13,7 @@ public final class MapListingPhotoToDTOImpl implements MapListingPhotoToDTO {
     public ListingPhotoPathDTO map(ListingPhoto listingPhoto) {
         return ListingPhotoPathDTO.builder()
             .photoId(listingPhoto.getId())
-            .url(getListingPhotoUrl.execute(listingPhoto.getObjectName()))
+            .url(getListingPhotoUrl.execute(listingPhoto.getBucketName(), listingPhoto.getObjectName()))
             .build();
     }
 }

@@ -1,15 +1,20 @@
-import React from "react";
+import React, {useEffect} from "react";
 import PropsPhotosEditor from "./props";
 import {Typography} from "@mui/joy";
 import Box from "@mui/joy/Box";
 import useUpdatesFrom from "../../../utils/binding/useUpdatesFrom.ts";
 import {desktop, mobile, tablet} from "../../../utils/selectors.ts";
 import InitialPhotoInput from "./initial-photo-input/InitialPhotoInput.tsx";
+import {ListingPhotoPath} from "../../../../data/api/listings";
 
 
 const PhotosEditor = ({vm}: PropsPhotosEditor) => {
 
-    const [initialPhotoInput] = useUpdatesFrom(vm.initialPhotoInput);
+    const [initialPhotoInput, photos] = useUpdatesFrom(vm.initialPhotoInput, vm.photos);
+
+    useEffect(() => {
+        vm.load();
+    }, [vm]);
 
     return (
         <Box
@@ -61,6 +66,19 @@ const PhotosEditor = ({vm}: PropsPhotosEditor) => {
                 {
                     initialPhotoInput &&
                     <InitialPhotoInput vm={initialPhotoInput}/>
+                }
+                {
+                    photos &&
+                    photos.map((photo: ListingPhotoPath) => {
+                        return (
+                            <img
+                                key={photo.photoId}
+                                src={photo.url}
+                                width={100}
+                                height={100}
+                            />
+                        );
+                    })
                 }
             </Box>
         </Box>

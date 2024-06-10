@@ -2,9 +2,9 @@ import React from "react";
 
 import PropsLoginDialog from "./props";
 import useUpdatesFrom from "../../utils/binding/useUpdatesFrom";
-import {Alert, Button, DialogTitle, Link, Modal, ModalClose, ModalDialog, Stack, Typography,} from "@mui/joy";
+import {Alert, Button, DialogTitle, Modal, ModalClose, ModalDialog, Stack, Typography,} from "@mui/joy";
 import FormInput from "../sign-up-dialog/form-input/FormInput";
-import {InfoOutlined} from "@mui/icons-material";
+import InfoOutlined from "@mui/icons-material/InfoOutlined";
 
 const LoginDialog = ({vm}: PropsLoginDialog) => {
     const [isProcessing, showWrongCredentialsError] = useUpdatesFrom(
