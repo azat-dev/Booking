@@ -5,3 +5,5 @@
 /backend/users-ms/.gradle/
 /backend/listings-ms/.idea/
 /backend/listings-ms/.gradle/
+.idea
+.DS_Store
