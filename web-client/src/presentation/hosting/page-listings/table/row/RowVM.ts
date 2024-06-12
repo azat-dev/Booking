@@ -4,6 +4,7 @@ class RowVM {
         public readonly title: string,
         public readonly location: string | undefined,
         public readonly status: string,
+        public readonly click: () => void
     ) {
     }
 }

@@ -48,14 +48,14 @@ class DialogsStore {
             case OpenLoginDialog.type: {
                 const vm = this.dialogs.loginDialog();
                 this.activeDialog.set(vm);
-                this.bus.publish(new OpenedLoginDialog().withSender(command.senderId));
+                this.bus.publish(new OpenedLoginDialog());
                 return;
             }
 
             case OpenSignUpDialog.type: {
                 const vm = this.dialogs.signUpDialog();
                 this.activeDialog.set(vm);
-                this.bus.publish(new OpenedSignUpDialog().withSender(command.senderId));
+                this.bus.publish(new OpenedSignUpDialog());
                 return;
             }
 

@@ -1,5 +1,8 @@
-import Command from "../../utils/Command";
+import ListingDetailsUpdated from "../events/ListingDetailsUpdated";
+import FailedUpdateListingDetails from "../events/FailedUpdateListingDetails";
+import {CommandsModificationsApi} from "../../../data/api/listings";
 import ListingId from "../values/ListingId.ts";
+import {Emit} from "../../utils/Bus.ts";
 
 export interface UpdateListingDetailsPayload {
     title?: string;
@@ -7,14 +10,51 @@ export interface UpdateListingDetailsPayload {
     status?: string;
 }
 
-class UpdateListingDetails extends Command {
+class UpdateListingDetails {
 
     public constructor(
-        public readonly listingId: ListingId,
-        public readonly payload: UpdateListingDetailsPayload
-
+        private readonly modificationsApi: CommandsModificationsApi,
+        private readonly emit: Emit
     ) {
-        super();
+    }
+
+    public execute = async (
+        listingId: ListingId,
+        payload: UpdateListingDetailsPayload
+    ): Promise<void> => {
+
+        const operationId = crypto.randomUUID();
+
+        try {
+
+            await this.modificationsApi.updateListingDetails(
+                {
+                    listingId: listingId.val,
+                    updateListingDetailsRequestBody: {
+                        operationId,
+                        fields: {
+                            ...payload,
+                        }
+                    } as any
+                }
+            );
+
+            this.emit(
+                new ListingDetailsUpdated(
+                    listingId,
+                    payload
+                )
+            );
+        } catch (error: any) {
+
+            const message = new FailedUpdateListingDetails(
+                listingId,
+                error
+            );
+
+            this.emit(message);
+            throw message;
+        }
     }
 }
 

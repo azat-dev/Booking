@@ -5,13 +5,17 @@ import {Typography} from "@mui/joy";
 const Row = ({vm}: PropsRow) => {
 
     return (
-        <tr>
+        <tr onClick={(e) => {
+            alert("OPE")
+            e.stopPropagation();
+            vm.click();
+        }}>
             <td>
                 <Typography
                     level="title-sm"
                     sx={{alignItems: 'flex-start'}}
                 >
-                    {vm.title}
+                    {vm.title}111
                 </Typography>
             </td>
             <td>

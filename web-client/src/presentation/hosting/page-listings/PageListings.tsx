@@ -1,6 +1,6 @@
 import React from "react";
 import PropsPageListings from "./props";
-import {Link, Typography} from "@mui/joy";
+import {Typography} from "@mui/joy";
 import Box from "@mui/joy/Box";
 import Button from "@mui/joy/Button";
 import AddIcon from '@mui/icons-material/AddRounded';
@@ -47,19 +47,15 @@ const PageListings = ({vm}: PropsPageListings) => {
                     <Typography level="h2" component="h1">
                         Your listings
                     </Typography>
-                    <Link
-                        overlay
-                        underline='none'
-                        href='/listings/add-new'
+
+                    <Button
+                        color="primary"
+                        startDecorator={<AddIcon/>}
+                        size="sm"
+                        onClick={vm.addNewListing}
                     >
-                        <Button
-                            color="primary"
-                            startDecorator={<AddIcon/>}
-                            size="sm"
-                        >
-                            Add new listing
-                        </Button>
-                    </Link>
+                        Add new listing
+                    </Button>
 
                     <ListingsTable vm={vm.listingsTable}/>
                 </Box>

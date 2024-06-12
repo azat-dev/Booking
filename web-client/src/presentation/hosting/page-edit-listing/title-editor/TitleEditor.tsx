@@ -1,4 +1,4 @@
-import React from "react";
+import React, {useEffect} from "react";
 import PropsTitleEditor from "./props";
 import {Textarea, Typography} from "@mui/joy";
 import Box from "@mui/joy/Box";
@@ -8,6 +8,10 @@ import {desktop, mobile, tablet} from "../../../utils/selectors.ts";
 const TitleEditor = ({vm}: PropsTitleEditor) => {
 
     const [title, numberOfCharacters] = useUpdatesFrom(vm.title, vm.numberOfCharacters);
+
+    useEffect(() => {
+        vm.load();
+    }, []);
 
     return (
         <Box

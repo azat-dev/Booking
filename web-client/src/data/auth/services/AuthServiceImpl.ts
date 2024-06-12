@@ -55,7 +55,7 @@ class AuthServiceImpl implements AuthService {
         } catch (e) {
 
             if (e instanceof ResponseError) {
-                if (e.response.status === 401) {
+                if (e.response.status === 403) {
                     throw new WrongCredentialsError();
                 }
 

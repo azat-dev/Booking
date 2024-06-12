@@ -5,7 +5,8 @@ class PageListingsVM {
 
     public constructor(
         public readonly listingsTable: ListingsTableVM,
-        public readonly navigationBar: HostingNavigationBarVM
+        public readonly navigationBar: HostingNavigationBarVM,
+        public readonly addNewListing: () => void
     ) {
     }
 }

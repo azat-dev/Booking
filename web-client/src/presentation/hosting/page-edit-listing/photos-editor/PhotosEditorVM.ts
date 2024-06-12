@@ -13,8 +13,8 @@ class PhotosEditorVM {
 
     public constructor(
         private listingId: ListingId,
-        private readonly addNewPhoto: (listingId: ListingId) => void,
-        private readonly loadPhotos: (listingId: ListingId) => void
+        private readonly addNewPhoto: (listingId: ListingId) => Promise<void>,
+        private readonly loadPhotos: (listingId: ListingId) => Promise<ListingPhotoPath[]>
     ) {
         this.initialPhotoInput = value(null);
         this.photos = value([]);
@@ -23,26 +23,25 @@ class PhotosEditorVM {
         this.displayPhotos([]);
     }
 
-    public load = () => {
-        this.loadPhotos(this.listingId);
+    public load = async () => {
+        try {
+            const loadedPhotos = await this.loadPhotos(this.listingId);
+            this.displayPhotos(loadedPhotos);
+        } catch (e) {
+        }
     }
 
-    public displayFailedToAddNewPhoto = () => {
-
+    private addNewPhotoToListing = async () => {
+        await this.addNewPhoto(this.listingId);
+        this.load();
     }
 
-    public displayAddedNewPhoto = () => {
-        this.loadPhotos(this.listingId);
-    }
-
-    public displayPhotos = (photos: ListingPhotoPath[]) => {
+    private displayPhotos = (photos: ListingPhotoPath[]) => {
 
         if (photos.length) {
             this.initialPhotoInput.set(null);
         } else {
-            this.initialPhotoInput.set(
-                new InitialPhotoInputVM(() => this.addNewPhoto(this.listingId))
-            );
+            this.initialPhotoInput.set(new InitialPhotoInputVM(this.addNewPhotoToListing));
         }
 
         this.photos.set(photos);

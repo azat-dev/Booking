@@ -1,10 +1,41 @@
-import Command from "../../utils/Command";
+import type {Emit} from "../../utils/Bus";
+import FailedCreateDraftListing from "../events/FailedCreateDraftListing";
+import {CommandsModificationsApi} from "../../../data/api/listings";
+import ListingId from "../values/ListingId.ts";
+import ListingDraftCreated from "../events/ListingDraftCreated.ts";
 
-class CreateDraftListing extends Command {
+class CreateDraftListing {
+
     public constructor(
-        public readonly title: string
+        private readonly modificationsApi: CommandsModificationsApi,
+        private readonly emit: Emit
     ) {
-        super();
+    }
+
+    public execute = async (title: string): Promise<ListingId> => {
+
+        try {
+            const response = await this.modificationsApi.addListing(
+                {
+                    addListingRequestBody: {
+                        title: title,
+                        operationId: crypto.randomUUID()
+                    }
+                }
+            );
+
+            this.emit(
+                new ListingDraftCreated(
+                    new ListingId(response.listingId)
+                )
+            );
+
+            return new ListingId(response.listingId);
+        } catch (error: any) {
+            const message = new FailedCreateDraftListing(error);
+            this.emit(message);
+            throw message;
+        }
     }
 }
 

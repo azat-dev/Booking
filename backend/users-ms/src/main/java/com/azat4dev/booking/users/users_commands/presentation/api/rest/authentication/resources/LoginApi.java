@@ -1,5 +1,6 @@
 package com.azat4dev.booking.users.users_commands.presentation.api.rest.authentication.resources;
 
+import com.azat4dev.booking.shared.application.ControllerException;
 import com.azat4dev.booking.users.users_commands.application.commands.LoginByEmail;
 import com.azat4dev.booking.users.users_commands.application.handlers.LoginByEmailHandler;
 import com.azat4dev.booking.users.users_commands.presentation.api.rest.authentication.utils.AuthenticateCurrentSession;
@@ -57,7 +58,7 @@ public final class LoginApi implements CommandsLoginApiDelegate {
             if (logger.isInfoEnabled()) {
                 logger.info("User with email " + loginByEmailRequestBody.getEmail() + " failed to log in");
             }
-            throw new ResponseStatusException(HttpStatus.FORBIDDEN, e.getMessage(), e);
+            throw new ControllerException(HttpStatus.FORBIDDEN, e);
         }
     }
 }

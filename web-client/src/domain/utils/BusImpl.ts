@@ -38,7 +38,7 @@ class BusImpl implements Bus {
 
     publishAndWaitFor = async (event: any, condition: (event: any) => boolean): Promise<any> => {
 
-        const promise = this.waitFor(condition);
+        const promise = this.waitFor((e) => e !== event && condition(e));
         this.publish(event);
         return await promise
     }

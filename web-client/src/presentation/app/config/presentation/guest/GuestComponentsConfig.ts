@@ -10,21 +10,21 @@ import value from "../../../../utils/binding/value.ts";
 import AppSessionAnonymous from "../../../../../domain/auth/entities/AppSessionAnonymous.ts";
 import AppSessionLoading from "../../../../../domain/auth/entities/AppSessionLoading.ts";
 import NavigationBarVM from "../../../../components/navigation-bar/NavigationBarVM.ts";
-import Logout from "../../../../../domain/auth/commands/Logout.ts";
-import OpenLoginDialog from "../../../../commands/OpenLoginDialog.ts";
-import OpenSignUpDialog from "../../../../commands/OpenSignUpDialog.ts";
 import Subject from "../../../../utils/binding/Subject.ts";
 import ProfileButtonLoadingVM
     from "../../../../components/profile-button/profile-button-loading/ProfileButtonLoadingVM.ts";
 import NavigationDelegate from "../../../NavigationDelegate.ts";
 import mappedValue from "../../../../utils/binding/mappedValue.ts";
-import UpdateUserInfoInAppSession from "../../../../../domain/auth/commands/UpdateUserInfoInAppSession.ts";
+import IdentityCommands from "../../domain/IdentityCommands.ts";
+import CommonDialogsCommands from "../common/CommonDialogsCommands.ts";
 
 class GuestComponentsConfig {
 
     public navigation: NavigationDelegate | null = null;
 
     public constructor(
+        private readonly identityCommands: IdentityCommands,
+        private readonly commonDialogsCommands: CommonDialogsCommands,
         private readonly appSession: AppSession,
         private readonly bus: Bus,
     ) {
@@ -76,12 +76,8 @@ class GuestComponentsConfig {
     private anonymousProfileButton = (): ProfileButtonAnonymousVM => {
 
         return new ProfileButtonAnonymousVM(
-            () => {
-                this.bus.publish(new OpenLoginDialog());
-            },
-            () => {
-                this.bus.publish(new OpenSignUpDialog());
-            }
+            this.commonDialogsCommands.openLoginDialog,
+            this.commonDialogsCommands.openSignUpDialog,
         );
     }
 
@@ -95,7 +91,14 @@ class GuestComponentsConfig {
         const button = new ProfileButtonAuthenticatedVM(
             fullName,
             email,
-            photo
+            photo,
+            () => {
+                this.navigation?.openUserProfilePage();
+            },
+            () => {
+                this.navigation?.openUserProfilePage();
+            },
+            this.identityCommands.logout
         );
 
         button.cleanOnDestroy(
@@ -103,18 +106,6 @@ class GuestComponentsConfig {
             photo,
             email
         );
-
-        button.delegate = {
-            openHelp: () => {
-                alert("Help")
-            },
-            openProfile: () => {
-                this.navigation?.openUserProfilePage();
-            },
-            logout: () => {
-                this.bus.publish(new Logout().withSender(button));
-            }
-        }
 
         return button;
     }

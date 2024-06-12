@@ -1,4 +1,4 @@
-import React from "react";
+import React, {useEffect} from "react";
 import PropsDescriptionEditor from "./props";
 import {Textarea, Typography} from "@mui/joy";
 import Box from "@mui/joy/Box";
@@ -8,6 +8,10 @@ import {desktop, mobile, tablet} from "../../../utils/selectors.ts";
 const DescriptionEditor = ({vm}: PropsDescriptionEditor) => {
 
     const [description, numberOfCharacters] = useUpdatesFrom(vm.description, vm.numberOfCharacters);
+
+    useEffect(() => {
+        vm.load();
+    }, [vm]);
 
     return (
         <Box

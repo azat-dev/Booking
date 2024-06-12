@@ -1,15 +1,17 @@
 import GuestComponentsConfig from "../guest/GuestComponentsConfig.ts";
 import AppSessionAuthenticated from "../../../../../domain/auth/entities/AppSessionAuthenticated.ts";
-import OpenFileDialogForUploadingUserPhoto from "../../../../commands/OpenFileDialogForUploadingUserPhoto.ts";
 import Bus from "../../../../../domain/utils/Bus.ts";
-import UpdatedUserPhoto from "../../../../../domain/auth/events/personal-info/UpdatedUserPhoto.ts";
-import FailedUpdateUserPhoto from "../../../../../domain/auth/events/personal-info/FailedUpdateUserPhoto.ts";
 import mappedValue from "../../../../utils/binding/mappedValue.ts";
 import UserPhotoVM from "../../../../pages/page-user-profile/user-photo/UserPhotoVM.ts";
+import ProfileCommands from "../ProfileCommands.ts";
 import UploadingUserPhoto from "../../../../../domain/auth/events/personal-info/UploadingUserPhoto.ts";
+import UpdatedUserPhoto from "../../../../../domain/auth/events/personal-info/UpdatedUserPhoto.ts";
+import FailedUpdateUserPhoto from "../../../../../domain/auth/events/personal-info/FailedUpdateUserPhoto.ts";
+import IdentityCommands from "../../domain/IdentityCommands.ts";
 
 class PagesConfig {
     public constructor(
+        private readonly identityCommands: IdentityCommands,
         private readonly components: GuestComponentsConfig,
         private readonly bus: Bus
     ) {
@@ -24,39 +26,39 @@ class PagesConfig {
         const fullName = mappedValue(userInfo, (v) => v.fullName);
         const photo = mappedValue(userInfo, v => v.photo);
 
-        const photoVM = new UserPhotoVM(fullName, photo);
+        const profileCommands = new ProfileCommands(
+            this.identityCommands,
+            session,
+            this.bus.publish
+        );
 
-        photoVM.listenOwnEvents(this.bus, event => {
+        const photoVM = new UserPhotoVM(
+            fullName,
+            photo,
+            profileCommands.openFileDialogForUploadingUserPhoto
+        );
 
-            if (event instanceof UploadingUserPhoto) {
-                photoVM.displayUploading();
-            }
+        photoVM.cleanOnDestroy(
+            this.bus.subscribe(event => {
+                if (event instanceof UploadingUserPhoto) {
+                    photoVM.displayUploading();
+                }
 
-            if (event instanceof UpdatedUserPhoto) {
-                photoVM.displayUploaded();
-            }
+                if (event instanceof UpdatedUserPhoto) {
+                    photoVM.displayUploaded();
+                }
 
-            if (event instanceof FailedUpdateUserPhoto) {
-                photoVM.displayFailedUpload();
-            }
-        });
+                if (event instanceof FailedUpdateUserPhoto) {
+                    photoVM.displayFailedUpload();
+                }
+            })
+        )
 
-        photoVM.delegate = {
-            openUploadDialog: async () => {
-                this.bus.publish(
-                    new OpenFileDialogForUploadingUserPhoto()
-                        .withSender(photoVM)
-                );
-            }
-        };
-
-        const vm = new PageUserProfileVM(
+        return new PageUserProfileVM(
             this.components.navigationBar(),
             photoVM,
             userInfo,
         );
-
-        return vm;
     }
 }
 

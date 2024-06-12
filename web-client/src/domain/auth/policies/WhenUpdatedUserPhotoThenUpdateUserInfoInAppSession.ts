@@ -2,14 +2,12 @@ import AppSession from "../entities/AppSession";
 import UpdatedUserPhoto from "../events/personal-info/UpdatedUserPhoto.ts";
 import AppSessionAuthenticated from "../entities/AppSessionAuthenticated";
 import Policy from "../../utils/Policy";
-import Bus from "../../utils/Bus";
-import UpdateUserInfoInAppSession from "../commands/UpdateUserInfoInAppSession";
 
 class WhenUpdatedUserPhotoThenUpdateUserInfoInAppSession extends Policy {
 
     public constructor(
-        private readonly appSession: AppSession,
-        private readonly bus: Bus
+        private readonly updateUserInfoInAppSession: () => void,
+        private readonly appSession: AppSession
     ) {
         super();
     }
@@ -23,7 +21,7 @@ class WhenUpdatedUserPhotoThenUpdateUserInfoInAppSession extends Policy {
             return;
         }
 
-        this.bus.publish(new UpdateUserInfoInAppSession())
+        this.updateUserInfoInAppSession();
     }
 }
 

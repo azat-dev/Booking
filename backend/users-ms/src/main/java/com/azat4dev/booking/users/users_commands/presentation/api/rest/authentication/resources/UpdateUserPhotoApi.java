@@ -29,7 +29,7 @@ public class UpdateUserPhotoApi implements CommandsUpdateUserPhotoApiDelegate {
     @Override
     public ResponseEntity<GenerateUploadUserPhotoUrlResponseBodyDTO> generateUploadUserPhotoUrl(GenerateUploadUserPhotoUrlRequestBodyDTO requestBody) throws Exception {
 
-        final var userId = getCurrentUserId.get().orElseThrow(() -> new ResponseStatusException(HttpStatus.UNAUTHORIZED, "Unauthorized"));
+        final var userId = getCurrentUserId.get().orElseThrow(() -> new ControllerException(HttpStatus.UNAUTHORIZED, "Unauthorized"));
         final var command = new GenerateUserPhotoUploadUrl(
             requestBody.getOperationId().toString(),
             userId.toString(),
@@ -58,7 +58,7 @@ public class UpdateUserPhotoApi implements CommandsUpdateUserPhotoApiDelegate {
     @Override
     public ResponseEntity<UpdateUserPhoto200ResponseDTO> updateUserPhoto(UpdateUserPhotoRequestBodyDTO requestBody) throws Exception {
 
-        final var userId = getCurrentUserId.get().orElseThrow(() -> new ResponseStatusException(HttpStatus.UNAUTHORIZED, "Unauthorized"));
+        final var userId = getCurrentUserId.get().orElseThrow(() -> new ControllerException(HttpStatus.UNAUTHORIZED, "Unauthorized"));
 
         final var command = new UpdateUserPhoto(
             userId,

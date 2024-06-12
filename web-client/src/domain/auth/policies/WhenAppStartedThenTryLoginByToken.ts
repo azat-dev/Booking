@@ -1,15 +1,16 @@
-import type Bus from "../../utils/Bus";
+import type {Emit} from "../../utils/Bus";
 import type LocalAuthDataRepository from "../interfaces/repositories/LocalAuthDataRepository";
-import LoginByToken from "../commands/LoginByToken";
 import FailedLoginByToken from "../events/login/login-by-token/FailedLoginByToken.ts";
 import Policy from "../../utils/Policy";
+import AccessToken from "../interfaces/repositories/AccessToken.ts";
 
 
 class WhenAppStartedThenTryLoginByToken extends Policy {
 
     public constructor(
         private readonly localAuthData: LocalAuthDataRepository,
-        private readonly bus: Bus
+        private readonly loginByToken: (token: AccessToken) => Promise<void>,
+        private readonly emit: Emit
     ) {
         super();
     }
@@ -20,11 +21,14 @@ class WhenAppStartedThenTryLoginByToken extends Policy {
         const token = data?.accessToken;
 
         if (!token) {
-            this.bus.publish(new FailedLoginByToken("No token found"))
+            this.emit(new FailedLoginByToken("No token found"))
             return;
         }
 
-        this.bus.publish(new LoginByToken(token));
+        try {
+            await this.loginByToken(token);
+        } catch (e) {
+        }
     }
 }
 

@@ -9,11 +9,13 @@ class DescriptionEditorVM {
 
     public canMoveNext: Subject<boolean>;
 
+    public isLoading: Subject<boolean> = value(true);
+
     public constructor(
-        initialValue: string
+        private readonly getInitialDescription: () => Promise<string>
     ) {
-        this.description = value(initialValue ?? '');
-        this.numberOfCharacters = value(initialValue?.length ?? 0);
+        this.description = value( '');
+        this.numberOfCharacters = value(0);
         this.canMoveNext = value(false);
         this.updateCanMoveNext();
     }
@@ -28,6 +30,14 @@ class DescriptionEditorVM {
     private updateCanMoveNext = () => {
         this.canMoveNext.set(this.numberOfCharacters.value > 0 && this.numberOfCharacters.value <= this.maxNumberOfCharacters);
 
+    }
+
+    public load = async () => {
+        const initialValue = await this.getInitialDescription();
+        this.description.set(initialValue ?? '');
+        this.numberOfCharacters.set(initialValue?.length ?? 0);
+        this.updateCanMoveNext();
+        this.isLoading.set(false);
     }
 }
 

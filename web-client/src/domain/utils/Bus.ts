@@ -15,6 +15,10 @@ interface Bus {
     publishCommand(command: Command): Promise<AppEvent>;
 }
 
+export interface Emit {
+    (event: any): void;
+}
+
 export const matchTypes = (...types: string[]) => {
     const set = new Set(types);
     return (event: any) => set.has(event.type);

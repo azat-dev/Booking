@@ -13,16 +13,13 @@ class ProfileButtonAuthenticatedVM extends VM {
 
     public avatar: AvatarButtonVM;
 
-    public delegate!: {
-        openProfile: () => void;
-        openHelp: () => void;
-        logout: () => void;
-    }
-
     public constructor(
         fullName: ReadonlySubject<FullName>,
         email: ReadonlySubject<Email>,
-        readonly photo: ReadonlySubject<PhotoPath | null>
+        readonly photo: ReadonlySubject<PhotoPath | null>,
+        private readonly _openProfile: () => void,
+        private readonly _openHelp: () => void,
+        private readonly _logout: () => void
     ) {
 
         super();
@@ -44,15 +41,15 @@ class ProfileButtonAuthenticatedVM extends VM {
     }
 
     public openProfile = () => {
-        this.delegate.openProfile();
+        this._openProfile();
     };
 
     public openHelp = () => {
-        console.log("Help");
+        this._openHelp();
     }
 
     public logout = () => {
-        this.delegate.logout();
+        this._logout();
     };
 }
 

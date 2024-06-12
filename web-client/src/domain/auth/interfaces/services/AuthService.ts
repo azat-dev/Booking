@@ -50,7 +50,6 @@ export default interface AuthService {
      */
     authenticateByEmail(data: AuthenticateByEmailData): Promise<AuthenticationByEmailResult>;
 
-
     authenticateByToken(token: AccessToken): Promise<PersonalUserInfo>;
 
     logout(): Promise<void>;

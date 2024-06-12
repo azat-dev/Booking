@@ -5,7 +5,6 @@ import FullName from "../../../domain/auth/values/FullName";
 import FirstName from "../../../domain/auth/values/FirstName";
 import LastName from "../../../domain/auth/values/LastName";
 import FormInputVM from "./form-input/FormInputVM";
-import SignUpByEmailData from "../../../domain/auth/interfaces/services/SignUpByEmailData";
 import VM from "../../utils/VM.ts";
 
 class SignUpDialogVM extends VM {
@@ -17,14 +16,13 @@ class SignUpDialogVM extends VM {
     public readonly lastNameInput: FormInputVM;
     public readonly emailInput: FormInputVM;
     public readonly passwordInput: FormInputVM;
-    public delegate!: {
-        signUp: (data: SignUpByEmailData) => void;
-        closeDialog: () => void;
-        openLoginDialog: () => void;
-    }
     private readonly inputs: FormInputVM[];
 
-    public constructor() {
+    public constructor(
+        private readonly signUp: (fullName: FullName, email: Email, password: Password) => Promise<void>,
+        private readonly closeDialog: () => void,
+        private readonly openLoginDialog: () => void,
+    ) {
         super();
         this.firstNameInput = new FormInputVM("", (newValue) => {
             this.resetErrors();
@@ -58,7 +56,7 @@ class SignUpDialogVM extends VM {
     }
 
     public close = () => {
-        this.delegate.closeDialog();
+        this.closeDialog();
     };
 
     public resetErrors = () => {
@@ -118,37 +116,46 @@ class SignUpDialogVM extends VM {
             return;
         }
 
-        const data = {
-            fullName: new FullName(
-                FirstName.checkAndCreate(this.firstNameInput.getValue() ?? ""),
-                LastName.checkAndCreate(this.lastNameInput.getValue() ?? "")
-            ),
-            email: Email.checkAndCreateFromString(this.emailInput.getValue() ?? ""),
-            password: new Password(this.passwordInput.getValue() ?? ""),
-        };
+        try {
+            await this.signUp(
+                new FullName(
+                    FirstName.checkAndCreate(this.firstNameInput.getValue() ?? ""),
+                    LastName.checkAndCreate(this.lastNameInput.getValue() ?? "")
+                ),
+                Email.checkAndCreateFromString(this.emailInput.getValue() ?? ""),
+                new Password(this.passwordInput.getValue() ?? "")
+            );
 
-        this.delegate.signUp(data);
+            this.displayDidSignUp();
+        } catch (e: any) {
+            if ((e.error as any)?.code === "UserWithSameEmailAlreadyExists") {
+                this.displayFailedSignUpEmailAlreadyExists();
+                return
+            }
+
+            this.displayFailedSignUpSomethingWrong();
+        }
     };
 
-    public displayDidSignUp = () => {
+    private displayDidSignUp = () => {
         this.errorText.set(undefined);
         this.isProcessing.set(false);
         this.close();
     }
 
-    public displayFailedSignUpEmailAlreadyExists = () => {
+    public logIn = () => {
+        this.openLoginDialog();
+    };
+
+    private displayFailedSignUpEmailAlreadyExists = () => {
         this.errorText.set("User with same email already exists.");
         this.isProcessing.set(false);
     }
 
-    public displayFailedSignUpSomethingWrong = () => {
+    private displayFailedSignUpSomethingWrong = () => {
         this.errorText.set("Something went wrong. Please try again.");
         this.isProcessing.set(false);
     }
-
-    public logIn = () => {
-        this.delegate.openLoginDialog();
-    };
 }
 
 export default SignUpDialogVM;

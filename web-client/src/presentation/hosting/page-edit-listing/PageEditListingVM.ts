@@ -6,6 +6,7 @@ import PhotosEditorVM from "./photos-editor/PhotosEditorVM.ts";
 import LoadingButtonVM from "../../components/LoadingButtonVM.ts";
 import ListingId from "../../../domain/listings/values/ListingId.ts";
 import VM from "../../utils/VM.ts";
+import {ListingPhotoPath, ListingPrivateDetails} from "../../../data/api/listings";
 
 class PageEditListingVM extends VM {
 
@@ -13,16 +14,18 @@ class PageEditListingVM extends VM {
     public steps!: Subject<boolean[]>;
     public nextButton: LoadingButtonVM;
     public backButton: LoadingButtonVM;
-    public delegate!: {
-        createDraft: (title: string) => void;
-        updateDescription: (id: ListingId, description: string) => void;
-        addNewPhoto: (id: ListingId) => void;
-        loadPhotos: (id: ListingId) => void;
-    };
     private step!: Step;
 
     public constructor(
-        private readonly initialListingId: ListingId | null
+        listingId: ListingId | null,
+        initialStep: 'title' | 'description' | 'photo' | null,
+        private readonly createDraft: (title: string) => Promise<ListingId>,
+        private readonly addNewPhoto: (id: ListingId) => Promise<void>,
+        private readonly loadListingDetails: (id: ListingId) => Promise<ListingPrivateDetails>,
+        private readonly updateTitle: (id: ListingId, title: string) => Promise<void>,
+        private readonly updateDescription: (id: ListingId, description: string) => Promise<void>,
+        private readonly loadPhotos: (id: ListingId) => Promise<ListingPhotoPath[]>,
+        private readonly updateParams: (step: string | null, listingId: string | null) => void
     ) {
 
         super();
@@ -39,23 +42,54 @@ class PageEditListingVM extends VM {
             this.back
         );
 
-        this.moveToTitle();
+        if (!initialStep || !listingId) {
+            this.moveToTitle(listingId);
+            return;
+        }
+
+        switch (initialStep) {
+            case 'title':
+                this.moveToTitle(listingId);
+                break;
+            case 'description':
+                this.moveToDescription(listingId);
+                break;
+            case 'photo':
+                this.moveToPhotos(listingId);
+                break;
+        }
+    }
+
+    public load = async (listingId: ListingId) => {
+        this.enableButtons();
     }
 
     public displayFinishedProcessingNextStep = () => {
         this.enableButtons();
     }
 
-    public moveToTitle = () => {
+    public moveToTitle = (listingId: ListingId | null) => {
 
         const step = new TitleStepVM(
-            '',
+            listingId,
             this.moveToDescription,
             this.displayProcessingNextStep,
             this.displayFinishedProcessingNextStep,
-            (title) => {
-                this.delegate.createDraft(title);
+            async (title) => {
+                const listingId = await this.createDraft(title);
+                this.updateParams(null, listingId.val);
+                return listingId;
             },
+            this.updateTitle,
+            async (listingId: ListingId) => {
+
+                if (!listingId) {
+                    return '';
+                }
+
+                const details = await this.loadListingDetails(listingId);
+                return details.title;
+            }
         );
 
         this.setStep(step);
@@ -75,58 +109,25 @@ class PageEditListingVM extends VM {
 
     }
 
-    public displayFailedCreateDraft = () => {
-        if (this.step instanceof TitleStepVM) {
-            this.step.displayFailedCreateDraft();
-        }
-    }
-
-    public displayFailedUpdateDraft = () => {
-
-        if (this.step instanceof DescriptionStepVM) {
-            this.step.displayFailedUpdateDraft();
-        }
-    }
-
-    public displayCreatedDraft = (listingId: ListingId) => {
-        if (this.step instanceof TitleStepVM) {
-            this.step.displayCreatedDraft(listingId);
-        }
-    }
-
-    public displayUpdatedDescription = () => {
-        if (this.step instanceof DescriptionStepVM) {
-            this.step.displayUpdatedDescription();
-        }
-    }
-
-    public displayAddedNewPhoto = () => {
-
-        if (this.step.editor instanceof PhotosEditorVM) {
-            this.step.editor.displayAddedNewPhoto();
-        }
-    }
-
-    public displayFailedFailedToAddPhoto = () => {
-        if (this.step.editor instanceof PhotosEditorVM) {
-            this.step.editor.displayFailedToAddNewPhoto();
-        }
-    }
-
     private moveToDescription = (listingId: ListingId) => {
+        this.updateParams('description', listingId.val);
         this.setStep(
             new DescriptionStepVM(
                 listingId,
                 this.moveToPhotos,
                 this.displayProcessingNextStep,
                 this.displayFinishedProcessingNextStep,
-                this.delegate.updateDescription
+                this.updateDescription,
+                async (listingId: ListingId) => {
+                    const details = await this.loadListingDetails(listingId);
+                    return details.description ?? '';
+                }
             )
         );
     }
 
     private moveToPhotos = async (listingId: ListingId) => {
-
+        this.updateParams('photo', listingId.val);
         this.setStep(
             new PhotosStepVM(
                 listingId,
@@ -135,8 +136,8 @@ class PageEditListingVM extends VM {
                 },
                 this.displayProcessingNextStep,
                 this.displayFinishedProcessingNextStep,
-                this.delegate.addNewPhoto,
-                this.delegate.loadPhotos
+                this.addNewPhoto,
+                this.loadPhotos
             )
         );
     }
@@ -211,13 +212,6 @@ class PageEditListingVM extends VM {
         this.backButton.updateIsDisabled(false);
         this.backButton.updateIsLoading(false);
     }
-
-    public displayLoadedListingDetails = (data: any) => {
-
-        if (this.step.editor instanceof PhotosEditorVM) {
-            this.step.editor.displayPhotos(data.photos);
-        }
-    }
 }
 
 export type Content = TitleEditorVM | DescriptionEditorVM | PhotosEditorVM;
@@ -240,28 +234,45 @@ class TitleStepVM {
     public editor: TitleEditorVM;
 
     public constructor(
-        initialValue: string,
+        private readonly listingId: ListingId | null,
         private readonly moveToNextStep: (listingId: ListingId) => void,
         private readonly displayProcessingNextStep: () => void,
         private readonly displayFinishedProcessingNextStep: () => void,
-        private readonly createdDraft: (title: string) => void
+        private readonly createDraft: (title: string) => Promise<ListingId>,
+        private readonly updateTitle: (listingId: ListingId, title: string) => Promise<void>,
+        getInitialListingTitle: (listingId: ListingId) => Promise<string>
     ) {
-        this.editor = new TitleEditorVM(initialValue);
+        this.editor = new TitleEditorVM(
+            async (): Promise<string> => {
+                if (!listingId) {
+                    return '';
+                }
+                return await getInitialListingTitle(listingId);
+            }
+        );
     }
 
     public next = async () => {
 
+        const newTitle = this.editor.title.value;
         this.displayProcessingNextStep();
-        this.createdDraft(this.editor.title.value);
-    }
 
-    public displayFailedCreateDraft = () => {
-        this.displayFinishedProcessingNextStep();
-    }
+        try {
 
-    public displayCreatedDraft = (listingId: ListingId) => {
-        this.displayFinishedProcessingNextStep();
-        this.moveToNextStep(listingId);
+            if (this.listingId) {
+                await this.updateTitle(this.listingId, newTitle);
+                this.displayFinishedProcessingNextStep();
+                this.moveToNextStep(this.listingId);
+                return;
+            }
+
+            const listingId = await this.createDraft(newTitle);
+            this.displayFinishedProcessingNextStep();
+            this.moveToNextStep(listingId);
+
+        } catch (e) {
+            this.displayFinishedProcessingNextStep();
+        }
     }
 }
 
@@ -274,24 +285,32 @@ class DescriptionStepVM {
         private readonly moveToNextStep: (listingId: ListingId) => Promise<void>,
         private readonly displayProcessingNextStep: () => void,
         private readonly displayFinishedProcessingNextStep: () => void,
-        private readonly updateDescription: (id: ListingId, description: string) => void
+        private readonly updateDescription: (id: ListingId, description: string) => Promise<void>,
+        getListingDescription: (listingId: ListingId) => Promise<string>
     ) {
-        this.editor = new DescriptionEditorVM('initial value');
+        this.editor = new DescriptionEditorVM(
+            async () => {
+                if (!listingId) {
+                    return '';
+                }
+
+                return getListingDescription(listingId);
+            }
+        );
     }
 
     public next = async () => {
 
         this.displayProcessingNextStep();
-        this.updateDescription(this.listingId, this.editor.description.value);
-    }
 
-    public displayFailedUpdateDraft = () => {
-        this.displayFinishedProcessingNextStep();
-    }
+        try {
+            await this.updateDescription(this.listingId, this.editor.description.value);
 
-    public displayUpdatedDescription = () => {
-        this.displayFinishedProcessingNextStep();
-        this.moveToNextStep(this.listingId);
+            this.displayFinishedProcessingNextStep();
+            this.moveToNextStep(this.listingId);
+        } catch (e) {
+            this.displayFinishedProcessingNextStep();
+        }
     }
 }
 
@@ -304,8 +323,8 @@ class PhotosStepVM {
         private readonly moveToNextStep: (listingId: ListingId) => void,
         private readonly displayProcessingNextStep: () => void,
         private readonly displayFinishedProcessingNextStep: () => void,
-        addNewPhoto: (listingId: ListingId) => void,
-        loadPhotos: (listingId: ListingId) => void
+        addNewPhoto: (listingId: ListingId) => Promise<void>,
+        loadPhotos: (listingId: ListingId) => Promise<ListingPhotoPath[]>
     ) {
         this.editor = new PhotosEditorVM(
             listingId,

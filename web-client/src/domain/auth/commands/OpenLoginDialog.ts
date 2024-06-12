@@ -1,26 +1,23 @@
-import type Bus from "../../utils/Bus";
-import Handler from "../../utils/Handler";
 import Subject from "../../../presentation/utils/binding/Subject.ts";
 import {DialogVM} from "../../../presentation/app/AppVM.tsx";
 import CommonDialogsConfig from "../../../presentation/app/config/presentation/common/CommonDialogsConfig.ts";
 import OpenedLoginDialog from "../../../presentation/events/OpenedLoginDialog.ts";
-import OpenLoginDialog from "../../../presentation/commands/OpenLoginDialog.ts";
+import {Emit} from "../../utils/Bus.ts";
 
-class HandleOpenLoginDialog extends Handler {
+class OpenLoginDialog {
 
     public constructor(
         public readonly activeDialog: Subject<DialogVM | null>,
         private readonly dialogs: CommonDialogsConfig,
-        private readonly bus: Bus
+        private readonly emit: Emit
     ) {
-        super();
     }
 
-    public execute = async (command: OpenLoginDialog): Promise<void> => {
+    public execute = async (): Promise<void> => {
 
         this.activeDialog.set(this.dialogs.loginDialog());
-        this.bus.publish(new OpenedLoginDialog().withSender(command.senderId));
+        this.emit(new OpenedLoginDialog());
     }
 }
 
-export default HandleOpenLoginDialog;
+export default OpenLoginDialog;

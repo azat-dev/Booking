@@ -18,10 +18,11 @@ import UserLoggedIn from "../../../../domain/auth/events/login/UserLoggedIn.ts";
 import FailedLoginByToken from "../../../../domain/auth/events/login/login-by-token/FailedLoginByToken.ts";
 import UserSignedUpByEmail from "../../../../domain/auth/events/sign-up/UserSignedUpByEmail.ts";
 import UpdatedUserPhoto from "../../../../domain/auth/events/personal-info/UpdatedUserPhoto.ts";
-import Bus from "../../../../domain/utils/Bus.ts";
+import {Emit} from "../../../../domain/utils/Bus.ts";
 import Policy from "../../../../domain/utils/Policy.ts";
 import AppEvent from "../../../../domain/utils/AppEvent.ts";
 import PoliciesProvider from "./PoliciesProvider.ts";
+import IdentityCommands from "./IdentityCommands.ts";
 
 class IdentityPolicies implements PoliciesProvider {
 
@@ -30,12 +31,13 @@ class IdentityPolicies implements PoliciesProvider {
     public constructor(
         appSession: AppSession,
         localAuthData: LocalAuthDataRepository,
-        bus: Bus
+        identityCommands: IdentityCommands,
+        emit: Emit
     ) {
 
         this.policiesByEvents = {
             [AppStarted.name]: [
-                new WhenAppStartedThenTryLoginByToken(localAuthData, bus),
+                new WhenAppStartedThenTryLoginByToken(localAuthData, identityCommands.loginByToken, emit),
             ],
             [PersonalInfoDidChange.name]: [
                 new WhenPersonalInfoChangedUpdateAppSession(appSession)
@@ -53,7 +55,7 @@ class IdentityPolicies implements PoliciesProvider {
                 new WhenUserSignedUpThenUpdateAppSession(appSession)
             ],
             [UpdatedUserPhoto.name]: [
-                new WhenUpdatedUserPhotoThenUpdateUserInfoInAppSession(appSession, bus)
+                new WhenUpdatedUserPhotoThenUpdateUserInfoInAppSession(identityCommands.updateUserInfoInAppSession, appSession)
             ]
         };
     }
