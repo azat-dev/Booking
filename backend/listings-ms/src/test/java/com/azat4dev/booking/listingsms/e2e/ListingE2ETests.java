@@ -13,8 +13,7 @@ import com.azat4dev.booking.listingsms.helpers.KafkaTests;
 import com.azat4dev.booking.listingsms.helpers.MinioTests;
 import com.azat4dev.booking.listingsms.helpers.PostgresTests;
 import com.azat4dev.booking.shared.domain.values.user.UserId;
-import com.github.javafaker.Faker;
-import feign.FeignException;
+import net.datafaker.Faker;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
@@ -25,9 +24,11 @@ import org.springframework.http.HttpStatus;
 import org.springframework.test.annotation.DirtiesContext;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.jdbc.Sql;
+import org.springframework.web.client.RestClientResponseException;
 
 import java.io.IOException;
 import java.util.UUID;
+import java.util.function.Function;
 
 import static com.azat4dev.booking.listingsms.e2e.helpers.PhotoHelpers.givenAllPhotosUploaded;
 import static com.azat4dev.booking.listingsms.e2e.helpers.UsersHelpers.USER1;
@@ -52,7 +53,7 @@ class ListingE2ETests implements PostgresTests, MinioTests, KafkaTests {
     private int port;
 
     static AddListingRequestBodyDTO anyRequestAddListing() {
-        final var faker = Faker.instance();
+        final var faker = new Faker();
 
         return new AddListingRequestBodyDTO()
             .operationId(UUID.randomUUID())
@@ -70,7 +71,7 @@ class ListingE2ETests implements PostgresTests, MinioTests, KafkaTests {
         // Then
         assertThat(listingId).isNotNull();
 
-        final var response = apiClient(QueriesPrivateApi.class, userId)
+        final var response = apiClient(QueriesPrivateApi::new, userId)
             .getListingPrivateDetails(listingId);
 
         assertThat(response.getListing().getId()).isEqualTo(listingId);
@@ -97,13 +98,15 @@ class ListingE2ETests implements PostgresTests, MinioTests, KafkaTests {
         final var anotherUserListing = givenExistingListing(USER2);
 
         // When
-        final var exception = assertThrows(FeignException.NotFound.class, () -> {
-            apiClient(QueriesPrivateApi.class, USER1)
+        final var exception = assertThrows(RestClientResponseException.class, () -> {
+            apiClient(QueriesPrivateApi::new, USER1)
                 .getListingPrivateDetails(anotherUserListing);
         });
 
         // Then
         assertThat(exception).isNotNull();
+        assertThat(exception.getStatusCode())
+            .isEqualTo(HttpStatus.NOT_FOUND);
     }
 
     @Test
@@ -116,7 +119,7 @@ class ListingE2ETests implements PostgresTests, MinioTests, KafkaTests {
         final var anotherUserListing = givenExistingListing(USER2);
 
         // When
-        final var ownListings = apiClient(QueriesPrivateApi.class, USER1)
+        final var ownListings = apiClient(QueriesPrivateApi::new, USER1)
             .getOwnListings();
 
         // Then
@@ -130,14 +133,14 @@ class ListingE2ETests implements PostgresTests, MinioTests, KafkaTests {
         final var requestAddListing = anyRequestAddListing();
 
         // When
-        final var response = apiClient(CommandsModificationsApi.class, userId)
+        final var response = apiClient(CommandsModificationsApi::new, userId)
             .addListing(requestAddListing);
 
         return response.getListingId();
     }
 
     UpdateListingDetailsFieldsDTO anyFields() {
-        final var f = Faker.instance();
+        final var f = new Faker();
 
         return new UpdateListingDetailsFieldsDTO()
             .title(f.book().title())
@@ -165,20 +168,22 @@ class ListingE2ETests implements PostgresTests, MinioTests, KafkaTests {
         final var listingId = givenExistingListing(userId);
 
         // When
-        final var exception = assertThrows(FeignException.Conflict.class, () -> {
-            apiClient(CommandsModificationsApi.class, userId)
+        final var exception = assertThrows(RestClientResponseException.class, () -> {
+            apiClient(CommandsModificationsApi::new, userId)
                 .publishListing(listingId);
         });
 
         // Then
         assertThat(exception).isNotNull();
+        assertThat(exception.getStatusCode())
+            .isEqualTo(HttpStatus.CONFLICT);
     }
 
     UUID givenListingReadyForPublishing(UserId userId) throws IOException {
         // Given
         final var listingId = givenExistingListing(userId);
 
-        apiClient(CommandsModificationsApi.class, userId)
+        apiClient(CommandsModificationsApi::new, userId)
             .updateListingDetails(
                 listingId,
                 new UpdateListingDetailsRequestBodyDTO()
@@ -188,11 +193,11 @@ class ListingE2ETests implements PostgresTests, MinioTests, KafkaTests {
 
         givenAllPhotosUploaded(
             listingId,
-            apiClient(CommandsListingsPhotoApi.class, userId),
+            apiClient(CommandsListingsPhotoApi::new, userId),
             testImageFile
         );
 
-        final var listingDetails = apiClient(QueriesPrivateApi.class, userId)
+        final var listingDetails = apiClient(QueriesPrivateApi::new, userId)
             .getListingPrivateDetails(listingId);
 
         assertThat(listingDetails.getListing().getPhotos().size())
@@ -206,9 +211,9 @@ class ListingE2ETests implements PostgresTests, MinioTests, KafkaTests {
 
         // Given
         final var userId = USER1;
-        final var listingId =  givenListingReadyForPublishing(userId);
+        final var listingId = givenListingReadyForPublishing(userId);
 
-        apiClient(CommandsModificationsApi.class, userId)
+        apiClient(CommandsModificationsApi::new, userId)
             .updateListingDetails(
                 listingId,
                 new UpdateListingDetailsRequestBodyDTO()
@@ -217,14 +222,14 @@ class ListingE2ETests implements PostgresTests, MinioTests, KafkaTests {
             );
 
         // When
-        final var result = apiClient(CommandsModificationsApi.class, userId)
+        final var result = apiClient(CommandsModificationsApi::new, userId)
             .publishListingWithHttpInfo(listingId);
 
         // Then
         assertThat(result.getStatusCode())
-            .isEqualTo(HttpStatus.NO_CONTENT.value());
+            .isEqualTo(HttpStatus.NO_CONTENT);
 
-        final var listingDetails = apiClient(QueriesPrivateApi.class, userId)
+        final var listingDetails = apiClient(QueriesPrivateApi::new, userId)
             .getListingPrivateDetails(listingId)
             .getListing();
 
@@ -241,7 +246,7 @@ class ListingE2ETests implements PostgresTests, MinioTests, KafkaTests {
         // When
         final var updateData = anyFields();
 
-        apiClient(CommandsModificationsApi.class, userId)
+        apiClient(CommandsModificationsApi::new, userId)
             .updateListingDetails(
                 listingId,
                 new UpdateListingDetailsRequestBodyDTO()
@@ -250,7 +255,7 @@ class ListingE2ETests implements PostgresTests, MinioTests, KafkaTests {
             );
 
         // Then
-        final var listingDetails = apiClient(QueriesPrivateApi.class, userId)
+        final var listingDetails = apiClient(QueriesPrivateApi::new, userId)
             .getListingPrivateDetails(listingId)
             .getListing();
 
@@ -262,8 +267,9 @@ class ListingE2ETests implements PostgresTests, MinioTests, KafkaTests {
         assertThat(listingDetails.getAddress()).isEqualTo(updateData.getAddress());
     }
 
-    private <T extends ApiClient.Api> T apiClient(Class<T> apiClass, UserId userId) {
-        final var accessToken = generateAccessToken.execute(userId);
-        return ApiHelpers.apiClient(apiClass, accessToken, port);
+    private <T> T apiClient(Function<ApiClient, T> factory, UserId userId) {
+
+        final var token = generateAccessToken.execute(userId);
+        return ApiHelpers.apiClient(factory, token, port);
     }
 }

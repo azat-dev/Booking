@@ -3,7 +3,7 @@ package com.azat4dev.booking.listingsms.unit.commands.data.dao;
 import com.azat4dev.booking.listingsms.commands.application.config.data.ListingsDaoConfig;
 import com.azat4dev.booking.listingsms.commands.data.dao.listings.ListingsDao;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.github.javafaker.Faker;
+import net.datafaker.Faker;
 import org.jooq.JSON;
 import org.jooq.generated.tables.records.ListingsRecord;
 import org.junit.jupiter.api.Test;
@@ -31,6 +31,7 @@ public class ListingsDaoTests {
 
     ListingsRecord anyListingData() {
 
+        final var faker = new Faker();
         final var o = new ListingsRecord();
 
         o.setId(UUID.randomUUID());
@@ -41,9 +42,9 @@ public class ListingsDaoTests {
         o.setUpdatedAtNano(2);
 
         o.setHostId(UUID.randomUUID());
-        o.setTitle(Faker.instance().name().title());
+        o.setTitle(faker.name().title());
         o.setStatus("DRAFT");
-        o.setDescription(Faker.instance().lorem().toString());
+        o.setDescription(faker.lorem().toString());
         o.setPropertyType("APARTMENT");
         o.setRoomType("PRIVATE");
         o.setGuestsCapacityAdults(1);

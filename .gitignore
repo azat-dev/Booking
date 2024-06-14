@@ -7,3 +7,6 @@
 /backend/listings-ms/.gradle/
 .idea
 .DS_Store
+/backend/shared/target
+/backend/users-ms/target
+/backend/listings-ms/target

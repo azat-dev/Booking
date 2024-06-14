@@ -3,7 +3,8 @@ package com.azat4dev.booking.listingsms.unit.commands.domain.entities;
 import com.azat4dev.booking.listingsms.commands.domain.values.ListingId;
 import com.azat4dev.booking.listingsms.commands.domain.values.ListingTitle;
 import com.azat4dev.booking.listingsms.commands.domain.values.HostId;
-import com.github.javafaker.Faker;
+import net.datafaker.Faker;
+import net.datafaker.Faker;
 
 import java.util.UUID;
 

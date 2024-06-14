@@ -12,7 +12,7 @@ import com.azat4dev.booking.listingsms.helpers.KafkaTests;
 import com.azat4dev.booking.listingsms.helpers.MinioTests;
 import com.azat4dev.booking.listingsms.helpers.PostgresTests;
 import com.azat4dev.booking.shared.domain.values.user.UserId;
-import com.github.javafaker.Faker;
+import net.datafaker.Faker;
 import io.minio.MinioClient;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -30,6 +30,7 @@ import org.springframework.test.context.jdbc.Sql;
 import java.io.File;
 import java.io.IOException;
 import java.util.UUID;
+import java.util.function.Function;
 
 import static com.azat4dev.booking.listingsms.e2e.helpers.PhotoHelpers.givenAddedPhoto;
 import static com.azat4dev.booking.listingsms.e2e.helpers.PhotoHelpers.givenUploadedListingPhoto;
@@ -56,7 +57,7 @@ class ListingPhotosE2ETests implements PostgresTests, MinioTests, KafkaTests {
     private Resource testImageFile;
 
     static AddListingRequestBodyDTO anyRequestAddListing() {
-        final var faker = Faker.instance();
+        final var faker = new Faker();
 
         return new AddListingRequestBodyDTO()
             .operationId(UUID.randomUUID())
@@ -76,7 +77,7 @@ class ListingPhotosE2ETests implements PostgresTests, MinioTests, KafkaTests {
         // When
         final var result = givenUploadedListingPhoto(
             listingId,
-            apiClient(CommandsListingsPhotoApi.class, userId),
+            apiClient(CommandsListingsPhotoApi::new, userId),
             testImageFile
         );
 
@@ -93,24 +94,24 @@ class ListingPhotosE2ETests implements PostgresTests, MinioTests, KafkaTests {
 
         final var result = givenUploadedListingPhoto(
             listingId,
-            apiClient(CommandsListingsPhotoApi.class, userId),
+            apiClient(CommandsListingsPhotoApi::new, userId),
             testImageFile
         );
 
         givenAddedPhoto(
             listingId,
-            apiClient(CommandsListingsPhotoApi.class, userId),
+            apiClient(CommandsListingsPhotoApi::new, userId),
             testImageFile
         );
 
         givenAddedPhoto(
             listingId,
-            apiClient(CommandsListingsPhotoApi.class, userId),
+            apiClient(CommandsListingsPhotoApi::new, userId),
             testImageFile
         );
 
         // Then
-        final var listingDetails = apiClient(QueriesPrivateApi.class, userId)
+        final var listingDetails = apiClient(QueriesPrivateApi::new, userId)
             .getListingPrivateDetails(listingId)
             .getListing();
 
@@ -124,15 +125,16 @@ class ListingPhotosE2ETests implements PostgresTests, MinioTests, KafkaTests {
         final var requestAddListing = anyRequestAddListing();
 
         // When
-        final var response = apiClient(CommandsModificationsApi.class, userId)
+        final var response = apiClient(CommandsModificationsApi::new, userId)
             .addListing(requestAddListing);
 
         return response.getListingId();
     }
 
-    private <T extends ApiClient.Api> T apiClient(Class<T> apiClass, UserId userId) {
-        final var accessToken = generateAccessToken.execute(userId);
-        return ApiHelpers.apiClient(apiClass, accessToken, port);
+    private <T> T apiClient(Function<ApiClient, T> factory, UserId userId) {
+
+        final var token = generateAccessToken.execute(userId);
+        return ApiHelpers.apiClient(factory, token, port);
     }
 
     @TestConfiguration

@@ -102,9 +102,9 @@ public class ListingsApi implements CommandsModificationsApiDelegate {
             return ResponseEntity.noContent().build();
 
         } catch (PublishListingHandler.Exception.FailedToPublish e) {
-            throw new ControllerException(HttpStatus.CONFLICT, e);
+            throw ControllerException.createError(HttpStatus.CONFLICT, e);
         } catch (PublishListingHandler.Exception.ListingNotFoundException e) {
-            throw new ControllerException(HttpStatus.NOT_FOUND, e);
+            throw ControllerException.createError(HttpStatus.NOT_FOUND, e);
         }
     }
 
