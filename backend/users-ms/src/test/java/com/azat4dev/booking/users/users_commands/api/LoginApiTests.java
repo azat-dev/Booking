@@ -1,5 +1,6 @@
 package com.azat4dev.booking.users.users_commands.api;
 
+import com.azat4dev.booking.shared.application.ControllerException;
 import com.azat4dev.booking.users.users_commands.application.commands.LoginByEmail;
 import com.azat4dev.booking.users.users_commands.application.handlers.LoginByEmailHandler;
 import com.azat4dev.booking.users.users_commands.domain.UserHelpers;
@@ -48,12 +49,12 @@ public class LoginApiTests {
 
 
         // When
-        final var exception = assertThrows(ResponseStatusException.class, () -> {
+        final var exception = assertThrows(ControllerException.class, () -> {
             sut.api.loginByEmail(loginByEmailRequest);
         });
 
         // Then
-        assertThat(exception.getStatusCode().value())
+        assertThat(exception.status().value())
             .isEqualTo(HttpStatus.FORBIDDEN.value());
 
         then(sut.authenticateCurrentSession).should(times(0))

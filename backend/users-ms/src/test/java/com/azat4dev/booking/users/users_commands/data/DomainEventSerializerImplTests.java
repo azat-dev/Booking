@@ -9,6 +9,7 @@ import com.azat4dev.booking.users.users_commands.domain.core.entities.UserPhotoP
 import com.azat4dev.booking.users.users_commands.domain.core.events.*;
 import com.azat4dev.booking.users.users_commands.domain.core.values.user.EmailVerificationStatus;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.datatype.jdk8.Jdk8Module;
 import org.junit.jupiter.api.Test;
 
 import java.net.MalformedURLException;
@@ -28,6 +29,8 @@ public class DomainEventSerializerImplTests {
 
     DomainEventSerializer createSUT() {
         final var objectMapper = new ObjectMapper();
+        // Register the Jdk8Module to handle Optional
+        objectMapper.registerModule(new Jdk8Module());
         return new DomainEventsSerializerImpl(objectMapper);
     }
 
@@ -42,7 +45,7 @@ public class DomainEventSerializerImplTests {
 
         final var events = List.of(
             eventsFactory.issue(
-                new UserCreated(
+                new UserSignedUp(
                     now,
                     anyValidUserId(),
                     anyFullName(),

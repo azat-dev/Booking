@@ -42,7 +42,7 @@ components:
       discriminator:
         propertyName: type
       oneOf:
-        - $ref: '#/components/schemas/UserCreated'
+        - $ref: '#/components/schemas/UserSignedUp'
         #              Email verification
         - $ref: '#/components/schemas/UserVerifiedEmail'
         - $ref: '#/components/schemas/VerificationEmailSent'
@@ -238,7 +238,7 @@ components:
         userId:
           type: string
 
-    UserCreated:
+    UserSignedUp:
       type: object
       required:
         - createdAt
@@ -289,6 +289,7 @@ components:
         required:
             - url
             - bucketName
+            - objectName
             - formData
         properties:
             url:

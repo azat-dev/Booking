@@ -1,6 +1,5 @@
 package com.azat4dev.booking.e2e;
 
-import com.azat4dev.booking.helpers.ApiHelpers;
 import com.azat4dev.booking.helpers.EmailBoxMock;
 import com.azat4dev.booking.helpers.KafkaTests;
 import com.azat4dev.booking.helpers.PostgresTests;
@@ -9,9 +8,8 @@ import com.azat4dev.booking.users.users_commands.domain.core.values.email.EmailA
 import com.azat4dev.booking.users.users_commands.domain.core.values.password.Password;
 import com.azat4dev.booking.users.users_commands.domain.interfaces.services.EmailService;
 import com.azat4dev.booking.usersms.generated.client.api.*;
-import com.azat4dev.booking.usersms.generated.client.base.ApiClient;
 import com.azat4dev.booking.usersms.generated.client.model.*;
-import com.github.javafaker.Faker;
+import net.datafaker.Faker;
 import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;
 import org.jsoup.nodes.Element;
@@ -30,6 +28,7 @@ import org.springframework.web.util.UriComponentsBuilder;
 
 import java.util.UUID;
 
+import static com.azat4dev.booking.helpers.ApiHelpers.apiClient;
 import static org.assertj.core.api.Assertions.assertThat;
 
 @SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
@@ -37,7 +36,7 @@ import static org.assertj.core.api.Assertions.assertThat;
 @Sql("/db/schema.sql")
 class UsersMicroserviceApplicationTests implements KafkaTests, PostgresTests {
 
-    public static final Faker faker = Faker.instance();
+    public static final Faker faker = new Faker();
 
     @Autowired
     EmailBoxMock emailBox;
@@ -89,7 +88,7 @@ class UsersMicroserviceApplicationTests implements KafkaTests, PostgresTests {
     @Test
     void test_resetPasswordByEmail() throws Exception {
         // Given
-        final var commandsApiClient = apiClient(CommandsResetPasswordApi.class);
+        final var commandsApiClient = apiClient(CommandsResetPasswordApi::new, port);
 
         final var user = givenAnySignedUpUser();
         final var request = new ResetPasswordByEmailRequestBodyDTO()
@@ -120,11 +119,12 @@ class UsersMicroserviceApplicationTests implements KafkaTests, PostgresTests {
         );
 
         //Then
-        final var loginResponse = apiClient(CommandsLoginApi.class).loginByEmail(
-            new LoginByEmailRequestBodyDTO()
-                .email(user.email().getValue())
-                .password(newPassword)
-        );
+        final var loginResponse = apiClient(CommandsLoginApi::new, port)
+            .loginByEmail(
+                new LoginByEmailRequestBodyDTO()
+                    .email(user.email().getValue())
+                    .password(newPassword)
+            );
 
         assertThat(loginResponse.getTokens().getAccess()).isNotNull();
     }
@@ -132,11 +132,11 @@ class UsersMicroserviceApplicationTests implements KafkaTests, PostgresTests {
     SignedUpUser givenAnyConfirmedUser() throws Exception {
         // Given
         final var signedUpUser = givenAnySignedUpUser();
-        final var queriesApiClient = apiClient(QueriesCurrentUserApi.class, signedUpUser.accessToken);
+        final var queriesApiClient = apiClient(QueriesCurrentUserApi::new, signedUpUser.accessToken, port);
 
         final var token = parseParamFromLink(signedUpUser.verificationLink, "token");
         // When
-        final var response = apiClient(CommandsEmailVerificationApi.class)
+        final var response = apiClient(CommandsEmailVerificationApi::new, port)
             .verifyEmail(token);
 
         // Then
@@ -155,7 +155,7 @@ class UsersMicroserviceApplicationTests implements KafkaTests, PostgresTests {
         final var email = EmailAddress.dangerMakeWithoutChecks(request.getEmail());
 
         // When
-        final var response = apiClient(CommandsSignUpApi.class)
+        final var response = apiClient(CommandsSignUpApi::new, port)
             .signUpByEmail(request);
 
         // Then
@@ -163,7 +163,7 @@ class UsersMicroserviceApplicationTests implements KafkaTests, PostgresTests {
         assertThat(accessToken).isNotNull();
 
         // When
-        final var userInfo = apiClient(QueriesCurrentUserApi.class, accessToken)
+        final var userInfo = apiClient(QueriesCurrentUserApi::new, accessToken, port)
             .getCurrentUser();
 
         // Then
@@ -202,14 +202,6 @@ class UsersMicroserviceApplicationTests implements KafkaTests, PostgresTests {
     private String parseParamFromLink(String link, String paramName) {
         return UriComponentsBuilder.fromUriString(link)
             .build().getQueryParams().getFirst(paramName);
-    }
-
-    private <T extends ApiClient.Api> T apiClient(Class<T> apiClass,  String accessToken) {
-        return ApiHelpers.apiClient(apiClass, accessToken, port);
-    }
-
-    private <T extends ApiClient.Api> T apiClient(Class<T> apiClass) {
-        return ApiHelpers.apiClient(apiClass, port);
     }
 
     record SignedUpUser(

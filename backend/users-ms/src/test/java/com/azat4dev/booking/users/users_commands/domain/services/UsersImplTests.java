@@ -4,7 +4,7 @@ import com.azat4dev.booking.shared.data.repositories.outbox.OutboxEventsReposito
 import com.azat4dev.booking.shared.utils.TimeProvider;
 import com.azat4dev.booking.users.users_commands.domain.UserHelpers;
 import com.azat4dev.booking.users.users_commands.domain.core.commands.NewUserData;
-import com.azat4dev.booking.users.users_commands.domain.core.events.UserCreated;
+import com.azat4dev.booking.users.users_commands.domain.core.events.UserSignedUp;
 import com.azat4dev.booking.users.users_commands.domain.core.events.UserVerifiedEmail;
 import com.azat4dev.booking.users.users_commands.domain.core.values.password.EncodedPassword;
 import com.azat4dev.booking.users.users_commands.domain.core.values.user.EmailVerificationStatus;
@@ -121,7 +121,7 @@ public class UsersImplTests {
         }
 
         // Then
-        final Consumer<UserCreated> assertUserCreatedEvent = (payload) -> {
+        final Consumer<UserSignedUp> assertUserSignedUpEvent = (payload) -> {
 
             assertThat(payload.userId()).isEqualTo(newUserData.userId());
             assertThat(payload.email()).isEqualTo(newUserData.email());
@@ -143,7 +143,7 @@ public class UsersImplTests {
 
         then(sut.outboxEventsRepository).should(times(1))
             .publish(
-                assertArg(assertUserCreatedEvent)
+                assertArg(assertUserSignedUpEvent)
             );
 
         then(sut.markOutboxNeedsSynchronization).should(times(1))

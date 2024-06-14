@@ -54,7 +54,7 @@ public class KafkaConfig {
     KafkaAdmin.NewTopics newTopicList() {
 
         final List<Class<?>> events = List.of(
-            UserCreated.class,
+            UserSignedUp.class,
 
             SendVerificationEmail.class,
             VerificationEmailSent.class,

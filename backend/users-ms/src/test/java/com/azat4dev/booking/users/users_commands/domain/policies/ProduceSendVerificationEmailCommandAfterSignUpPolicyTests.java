@@ -6,7 +6,7 @@ import com.azat4dev.booking.shared.domain.events.EventId;
 import com.azat4dev.booking.shared.domain.events.RandomEventIdGenerator;
 import com.azat4dev.booking.users.users_commands.domain.UserHelpers;
 import com.azat4dev.booking.users.users_commands.domain.core.commands.SendVerificationEmail;
-import com.azat4dev.booking.users.users_commands.domain.core.events.UserCreated;
+import com.azat4dev.booking.users.users_commands.domain.core.events.UserSignedUp;
 import com.azat4dev.booking.users.users_commands.domain.core.values.user.EmailVerificationStatus;
 import org.junit.jupiter.api.Test;
 
@@ -33,7 +33,7 @@ public class ProduceSendVerificationEmailCommandAfterSignUpPolicyTests {
     }
 
     @Test
-    void test_givenUserCreated_thenEmitSendVerificationEmailCommand() {
+    void test_givenUserSignedUp_thenEmitSendVerificationEmailCommand() {
 
         // Given
         final var sut = createSUT();
@@ -44,7 +44,7 @@ public class ProduceSendVerificationEmailCommandAfterSignUpPolicyTests {
         final var inputEvent = new DomainEvent<>(
             anyEventId(),
             LocalDateTime.now(),
-            new UserCreated(
+            new UserSignedUp(
                 LocalDateTime.now(),
                 userId,
                 fullName,

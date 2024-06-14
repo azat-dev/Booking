@@ -19,8 +19,7 @@ public final class MapPersonalUserInfoToDTOImpl implements MapPersonalUserInfoTo
         final var emailVerificationStatus = EmailVerificationStatusDTO.valueOf(userInfo.emailVerificationStatus().name());
 
         final var photo = userInfo.photo()
-            .map(p -> new PhotoPathDTO(p.url().toString()))
-            .orElse(null);
+            .map(p -> new PhotoPathDTO(p.url().toString()));
 
         return PersonalUserInfoDTO.builder()
             .id(userInfo.id().value())

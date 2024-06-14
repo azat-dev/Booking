@@ -7,7 +7,7 @@ import com.azat4dev.booking.users.users_commands.domain.core.commands.NewUserDat
 import com.azat4dev.booking.users.users_commands.domain.core.entities.User;
 import com.azat4dev.booking.users.users_commands.domain.core.entities.UserPhotoPath;
 import com.azat4dev.booking.users.users_commands.domain.core.events.UpdatedUserPhoto;
-import com.azat4dev.booking.users.users_commands.domain.core.events.UserCreated;
+import com.azat4dev.booking.users.users_commands.domain.core.events.UserSignedUp;
 import com.azat4dev.booking.users.users_commands.domain.core.events.UserVerifiedEmail;
 import com.azat4dev.booking.users.users_commands.domain.core.values.email.EmailAddress;
 import com.azat4dev.booking.users.users_commands.domain.core.values.user.EmailVerificationStatus;
@@ -51,7 +51,7 @@ public final class UsersImpl implements Users {
                 usersRepository.addNew(user);
 
                 outboxEventsRepository.publish(
-                    new UserCreated(
+                    new UserSignedUp(
                         currentDate,
                         userId,
                         newUserData.fullName(),

@@ -11,14 +11,14 @@ import com.azat4dev.booking.users.users_commands.domain.core.values.user.EmailVe
 import com.azat4dev.booking.users.users_commands.domain.core.values.user.FirstName;
 import com.azat4dev.booking.users.users_commands.domain.core.values.user.FullName;
 import com.azat4dev.booking.users.users_commands.domain.core.values.user.LastName;
-import com.github.javafaker.Faker;
+import net.datafaker.Faker;
 
 import java.time.LocalDateTime;
 import java.util.Optional;
 import java.util.UUID;
 
 public class UserHelpers {
-    public static final Faker faker = Faker.instance();
+    public static final Faker faker = new Faker();
 
     public static EmailAddress anyValidEmail() {
         try {

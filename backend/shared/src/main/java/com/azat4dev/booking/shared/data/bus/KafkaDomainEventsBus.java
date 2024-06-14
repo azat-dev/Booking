@@ -28,15 +28,17 @@ public final class KafkaDomainEventsBus implements DomainEventsBus {
     @Override
     public void publish(DomainEventPayload event, LocalDateTime time, EventId eventId) {
 
+        final  String serializedEvent = domainEventSerializer.serialize(
+            new DomainEvent<DomainEventPayload>(
+                eventId,
+                time,
+                event
+            )
+        );
+
         kafkaTemplate.send(
             event.getClass().getSimpleName(),
-            domainEventSerializer.serialize(
-                new DomainEvent<DomainEventPayload>(
-                    eventId,
-                    time,
-                    event
-                )
-            )
+            serializedEvent
         );
     }
 

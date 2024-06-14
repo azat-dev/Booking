@@ -1,6 +1,5 @@
 package com.azat4dev.booking.users.users_commands.data.repositories;
 
-import com.azat4dev.booking.generated.events.dto.*;
 import com.azat4dev.booking.shared.data.serializers.DomainEventSerializer;
 import com.azat4dev.booking.shared.domain.events.DomainEvent;
 import com.azat4dev.booking.shared.domain.events.DomainEventPayload;
@@ -16,6 +15,7 @@ import com.azat4dev.booking.users.users_commands.domain.core.values.user.EmailVe
 import com.azat4dev.booking.users.users_commands.domain.core.values.user.FirstName;
 import com.azat4dev.booking.users.users_commands.domain.core.values.user.FullName;
 import com.azat4dev.booking.users.users_commands.domain.core.values.user.LastName;
+import com.azat4dev.booking.usersms.generated.events.dto.*;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import lombok.AllArgsConstructor;
@@ -25,7 +25,6 @@ import java.net.URI;
 import java.time.Instant;
 import java.time.LocalDateTime;
 import java.time.ZoneOffset;
-import java.util.Optional;
 
 
 @AllArgsConstructor
@@ -144,13 +143,12 @@ public final class DomainEventsSerializerImpl implements DomainEventSerializer {
             return new UpdatedUserPhoto(
                 UserId.dangerouslyMakeFrom(inst.getUserId()),
                 toDomain(inst.getNewPhotoPath()),
-                Optional.ofNullable(inst.getPrevPhotoPath()).map(this::toDomain)
-
+                inst.getPrevPhotoPath().map(this::toDomain)
             );
         }
 
-        if (dto instanceof UserCreatedDTO inst) {
-            return new UserCreated(
+        if (dto instanceof UserSignedUpDTO inst) {
+            return new UserSignedUp(
                 map(inst.getCreatedAt()),
                 UserId.dangerouslyMakeFrom(inst.getUserId()),
                 toDomain(inst.getFullName()),
@@ -258,10 +256,10 @@ public final class DomainEventsSerializerImpl implements DomainEventSerializer {
             case UpdatedUserPhoto inst -> UpdatedUserPhotoDTO.builder()
                 .userId(inst.userId().toString())
                 .newPhotoPath(toDTO(inst.newPhotoPath()))
-                .prevPhotoPath(inst.prevPhotoPath().map(this::toDTO).orElse(null))
+                .prevPhotoPath(inst.prevPhotoPath().map(this::toDTO))
                 .build();
 
-            case UserCreated inst -> UserCreatedDTO.builder()
+            case UserSignedUp inst -> UserSignedUpDTO.builder()
                 .createdAt(map(inst.createdAt()))
                 .userId(inst.userId().toString())
                 .email(inst.email().getValue())
