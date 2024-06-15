@@ -1,4 +1,3 @@
-
 <div align="center">
 
   <h1 style="border-bottom: none">
@@ -21,7 +20,6 @@
 
 </div>
 
-
 ## Features
 
 Main features of the project:
@@ -34,5 +32,37 @@ Main features of the project:
 
 ## Microservices
 
-## Users Microservice
+## Requirements
 
+Make sure you have the following components installed before running the application:
+
+- JDK 21 - project built with Oracle [OpenJDK 21](https://jdk.java.net/21/)
+- Maven 3.9.2 - project includes Maven Wrapper (mvnw)
+- Docker - to run the application in a Docker container.
+
+## Running the application on local environment
+
+```bash
+# Clone this repository
+$ git clone https://github.com/azat-dev/Booking.git
+
+# Go into the repository
+$ cd Booking
+
+# Variant 1
+# Run the app
+$ ./build_microservices.sh
+
+# Reads environment variables from .env file
+$ docker-compose up -d
+
+# OR
+
+# Variant 2
+$ ./run.sh
+```
+
+## API Documentation
+
+The `backend/specs` files define the API specification using OpenAPI. It describes the available endpoints, routes, and
+data models used.
