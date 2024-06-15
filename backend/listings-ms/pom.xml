@@ -211,6 +211,11 @@
             <plugin>
                 <groupId>org.springframework.boot</groupId>
                 <artifactId>spring-boot-maven-plugin</artifactId>
+                <configuration>
+                    <image>
+                        <name>booking-demo/listings-ms:${project.version}</name>
+                    </image>
+                </configuration>
             </plugin>
 
             <plugin>

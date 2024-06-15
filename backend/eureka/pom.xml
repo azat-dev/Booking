@@ -52,7 +52,7 @@
 				<artifactId>spring-boot-maven-plugin</artifactId>
 				<configuration>
 					<image>
-						<name>azat4dev/booking-eureka:${project.version}</name>
+						<name>booking-demo/eureka:${project.version}</name>
 					</image>
 				</configuration>
 			</plugin>
