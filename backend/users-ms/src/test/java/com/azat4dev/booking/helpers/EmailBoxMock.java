@@ -52,6 +52,8 @@ public class EmailBoxMock {
             .atMost(seconds, SECONDS)
             .until(() -> {
                 final var isPresent = lastFor(predicate).isPresent();
+                System.out.println("Waiting for email: " + isPresent);
+                System.out.println(this.items);
                 return isPresent;
             });
 

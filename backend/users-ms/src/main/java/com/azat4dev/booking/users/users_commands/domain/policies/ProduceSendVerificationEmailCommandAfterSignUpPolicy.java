@@ -16,6 +16,8 @@ public final class ProduceSendVerificationEmailCommandAfterSignUpPolicy implemen
     @Override
     public void execute(DomainEvent<UserSignedUp> event) {
 
+        System.out.println("ProduceSendVerificationEmailCommandAfterSignUpPolicy send ");
+        System.out.println(event);
         final var payload = event.payload();
         if (payload.emailVerificationStatus() != EmailVerificationStatus.NOT_VERIFIED) {
             return;
