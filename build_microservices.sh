@@ -2,7 +2,7 @@
 
 echo "Building shared libraries..."
 (
-  cd ./shared
+  cd ./backend/shared
   ./mvnw clean install
 ) &&
 (
@@ -10,21 +10,26 @@ echo "Building shared libraries..."
 ) &&
 (
   echo "Building the users microservice..."
-  cd ./users-ms
+  cd ./backend/users-ms
   ./mvnw clean spring-boot:build-image
 ) &&
 (
   echo "Building the listings microservice..."
-  cd ./listings-ms
+  cd ./backend/listings-ms
   ./mvnw clean spring-boot:build-image
 ) &&
 (
   echo "Building the eureka microservice..."
-  cd ./eureka
+  cd ./backend/eureka
   ./mvnw clean spring-boot:build-image
 ) &&
 (
   echo "Building the gateway microservice..."
-  cd ./gateway
+  cd ./backend/gateway
   ./mvnw clean spring-boot:build-image
-)
+) &&
+ (
+   echo "Building the webapp.."
+   cd ./web-client
+   ./build_image.sh
+ )

@@ -29,6 +29,8 @@
   "scripts": {
     "dev": "vite",
     "build": "tsc && vite build",
+    "build-image": "docker build -t booking-demo/web-app .",
+    "run-dev-image": "docker run -p 3000:3000 --env-file .env booking-demo/web-app",
     "preview": "vite preview",
     "generate-identity-api-client": "openapi-generator-cli generate -g typescript-fetch -i ../backend/specs/users/openapi.yaml -o ./src/data/api/identity",
     "generate-listings-api-client": "openapi-generator-cli generate -g typescript-fetch -i ../backend/specs/listings/openapi.yaml -o ./src/data/api/listings",

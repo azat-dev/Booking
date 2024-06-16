@@ -3,15 +3,13 @@ package com.azat4dev.booking.listingsms.e2e;
 import com.azat4dev.booking.listingsms.commands.domain.entities.Listing;
 import com.azat4dev.booking.listingsms.e2e.helpers.AccessTokenConfig;
 import com.azat4dev.booking.listingsms.e2e.helpers.ApiHelpers;
+import com.azat4dev.booking.listingsms.e2e.helpers.EnableTestcontainers;
 import com.azat4dev.booking.listingsms.e2e.helpers.GenerateAccessToken;
 import com.azat4dev.booking.listingsms.generated.client.api.CommandsListingsPhotoApi;
 import com.azat4dev.booking.listingsms.generated.client.api.CommandsModificationsApi;
 import com.azat4dev.booking.listingsms.generated.client.api.QueriesPrivateApi;
 import com.azat4dev.booking.listingsms.generated.client.base.ApiClient;
 import com.azat4dev.booking.listingsms.generated.client.model.*;
-import com.azat4dev.booking.listingsms.helpers.KafkaTests;
-import com.azat4dev.booking.listingsms.helpers.MinioTests;
-import com.azat4dev.booking.listingsms.helpers.PostgresTests;
 import com.azat4dev.booking.shared.domain.values.user.UserId;
 import net.datafaker.Faker;
 import org.junit.jupiter.api.Test;
@@ -21,7 +19,6 @@ import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.web.server.LocalServerPort;
 import org.springframework.core.io.Resource;
 import org.springframework.http.HttpStatus;
-import org.springframework.test.annotation.DirtiesContext;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.jdbc.Sql;
 import org.springframework.web.client.RestClientResponseException;
@@ -36,12 +33,10 @@ import static com.azat4dev.booking.listingsms.e2e.helpers.UsersHelpers.USER2;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 
-@ContextConfiguration(classes = {AccessTokenConfig.class})
+@EnableTestcontainers(classes = {AccessTokenConfig.class})
 @SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
-@DirtiesContext(classMode = DirtiesContext.ClassMode.BEFORE_CLASS)
-@Sql("/db/drop-schema.sql")
-@Sql("/db/schema.sql")
-class ListingE2ETests implements PostgresTests, MinioTests, KafkaTests {
+@Sql(value = {"/db/drop-schema.sql", "/db/schema.sql"})
+class ListingE2ETests {
 
     @Autowired
     GenerateAccessToken generateAccessToken;

@@ -24,6 +24,8 @@ import static org.junit.jupiter.api.Assertions.assertThrows;
 @Import({ListingsDaoConfig.class})
 @JooqTest(properties = {"spring.datasource.url=jdbc:tc:postgresql:15-alpine:///"})
 @AutoConfigureTestDatabase(replace = AutoConfigureTestDatabase.Replace.NONE)
+@Sql(scripts = {"/db/drop-schema.sql"})
+@Sql(scripts = {"/db/schema.sql"})
 public class ListingsDaoTests {
 
     @Autowired
@@ -66,8 +68,6 @@ public class ListingsDaoTests {
     }
 
     @Test
-    @Sql(scripts = {"/db/drop-schema.sql"})
-    @Sql(scripts = {"/db/schema.sql"})
     void test_addNew() throws ListingsDao.Exception.ListingAlreadyExists {
         // Given
         final var newListing = anyListingData();
@@ -85,8 +85,6 @@ public class ListingsDaoTests {
     }
 
     @Test
-    @Sql(scripts = {"/db/drop-schema.sql"})
-    @Sql(scripts = {"/db/schema.sql"})
     void test_findById_givenExistingId_thenReturnListing() throws ListingsDao.Exception.ListingAlreadyExists {
         // Given
         final var listing1 = anyListingData();
@@ -109,8 +107,6 @@ public class ListingsDaoTests {
     }
 
     @Test
-    @Sql(scripts = {"/db/drop-schema.sql"})
-    @Sql(scripts = {"/db/schema.sql"})
     void test_update_givenListingExists_thanUpdate() throws ListingsDao.Exception.ListingAlreadyExists, ListingsDao.Exception.ListingNotFound {
         // Given
         final var listing1 = anyListingData();
@@ -133,8 +129,6 @@ public class ListingsDaoTests {
     }
 
     @Test
-    @Sql(scripts = {"/db/drop-schema.sql"})
-    @Sql(scripts = {"/db/schema.sql"})
     void test_update_givenListingDoesntExist_thanThrowException() throws ListingsDao.Exception.ListingAlreadyExists {
         // Given
         final var listing1 = anyListingData();

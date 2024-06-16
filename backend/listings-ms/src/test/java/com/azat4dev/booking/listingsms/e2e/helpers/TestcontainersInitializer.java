@@ -1,5 +1,4 @@
-package com.azat4dev.booking.helpers;
-
+package com.azat4dev.booking.listingsms.e2e.helpers;
 import org.springframework.boot.test.util.TestPropertyValues;
 import org.springframework.context.ApplicationContextInitializer;
 import org.springframework.context.ConfigurableApplicationContext;
@@ -17,7 +16,7 @@ class TestcontainersInitializer implements ApplicationContextInitializer<Configu
     static KafkaContainer kafka = new KafkaContainer(DockerImageName.parse("confluentinc/cp-kafka:5.4.3"));
 
     static MinIOContainer minio = new MinIOContainer("minio/minio:latest")
-        .waitingFor(new ShellStrategy().withCommand("cd /data && mc mb users-photo"));
+        .waitingFor(new ShellStrategy().withCommand("cd /data && mc mb listings-photo"));
 
     static {
         Startables.deepStart(postgres, kafka, minio).join();
@@ -31,9 +30,9 @@ class TestcontainersInitializer implements ApplicationContextInitializer<Configu
             "spring.datasource.url=" + postgres.getJdbcUrl(),
             "spring.datasource.username=" + postgres.getUsername(),
             "spring.datasource.password=" + postgres.getPassword(),
-            "app.objects_storage.bucket.users-photo.endpoint=" + "http://" + minio.getHost() + ":" + minio.getMappedPort(9000),
-            "app.objects_storage.bucket.users-photo.access-key=" + minio.getUserName(),
-            "app.objects_storage.bucket.users-photo.secret-key=" + minio.getPassword()
+            "app.objects_storage.bucket.listings-photo.endpoint=" + "http://" + minio.getHost() + ":" + minio.getMappedPort(9000),
+            "app.objects_storage.bucket.listings-photo.access-key=" + minio.getUserName(),
+            "app.objects_storage.bucket.listings-photo.secret-key=" + minio.getPassword()
         ).applyTo(ctx.getEnvironment());
     }
 }

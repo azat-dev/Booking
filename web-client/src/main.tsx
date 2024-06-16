@@ -239,8 +239,8 @@ const buildApp = (baseApiUrl: string) => {
     return app;
 }
 
-
-const app = buildApp("http://localhost:8080");
+console.log("API URL", import.meta.env.VITE_API_URL);
+const app = buildApp(`${import.meta.env.VITE_API_URL}`);
 
 const root = ReactDOM.createRoot(
     document.getElementById("root") as HTMLElement

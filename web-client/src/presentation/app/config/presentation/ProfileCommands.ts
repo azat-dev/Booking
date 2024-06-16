@@ -1,5 +1,5 @@
 import {Emit} from "../../../../domain/utils/Bus.ts";
-import OpenFileDialogForUploadingUserPhoto from "../../../handlers/OpenFileDialogForUploadingUserPhoto.ts";
+import OpenFileDialogForUploadingUserPhoto from "../../../commands/OpenFileDialogForUploadingUserPhoto.ts";
 import IdentityCommands from "../domain/IdentityCommands.ts";
 import AppSessionAuthenticated from "../../../../domain/auth/entities/AppSessionAuthenticated.ts";
 

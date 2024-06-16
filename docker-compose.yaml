@@ -18,11 +18,22 @@ services:
       - eureka
       - users-ms
       - listings-ms
+      - webapp
     environment:
         - GATEWAY_EUREKA=http://eureka:${EUREKA_SERVER_PORT}/eureka/
         - GATEWAY_PORT=${GATEWAY_PORT}
+        - GATEWAY_WEBAPP_URL=http://webapp:3000
     ports:
       - "${GATEWAY_PORT}:${GATEWAY_PORT}"
+
+  webapp:
+    image: booking-demo/web-app
+    depends_on:
+      - eureka
+      - users-ms
+      - listings-ms
+    environment:
+      - VITE_API_URL=http://localhost:${GATEWAY_PORT}
 
   users-db:
     image: postgres:16.3-alpine

@@ -4,7 +4,6 @@ import HostingPagesVmConfig from "../presentation/app/config/presentation/hostin
 import LocalAuthDataConfig from "../presentation/app/config/data/LocalAuthDataConfig.ts";
 import DomainConfig from "../presentation/app/config/domain/DomainConfig.ts";
 import HostingComponentsConfig from "../presentation/app/config/presentation/hosting/HostingComponentsConfig.ts";
-import AppSession from "../domain/auth/entities/AppSession.ts";
 import HostingPagesViewConfig from "../presentation/app/config/presentation/hosting/HostingPagesViewConfig.tsx";
 import HostingCommands from "../presentation/app/config/presentation/hosting/HostingCommands.ts";
 import CommonDialogsCommands from "../presentation/app/config/presentation/common/CommonDialogsCommands.ts";
@@ -52,7 +51,8 @@ class HostingModule {
             appSession,
             components,
             hostingCommands,
-            listingsCommands
+            listingsCommands,
+            bus
         );
 
         return new HostingPagesViewConfig(vmConfig);

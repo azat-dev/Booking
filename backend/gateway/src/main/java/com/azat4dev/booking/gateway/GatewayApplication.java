@@ -1,5 +1,6 @@
 package com.azat4dev.booking.gateway;
 
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.cloud.client.discovery.EnableDiscoveryClient;
@@ -16,10 +17,14 @@ public class GatewayApplication {
 	}
 
 	@Bean
-	public RouteLocator customRouteLocator(RouteLocatorBuilder builder) {
+	public RouteLocator customRouteLocator(
+		@Value("${app.webapp.url}")String webAppUrl,
+		RouteLocatorBuilder builder
+	) {
 		return builder.routes()
 			.route("users-ms", r -> r.path("/api/private/identity/**").or().path("/api/public/identity/**").uri("lb://users-ms"))
 			.route("users-ms", r -> r.path("/api/private/listings/**").or().path("/api/public/listings**").uri("lb://listings-ms"))
+			.route("webapp", r -> r.path("/**").uri(webAppUrl))
 			.build();
 	}
 }

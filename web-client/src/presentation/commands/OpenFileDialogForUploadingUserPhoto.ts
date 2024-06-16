@@ -1,6 +1,6 @@
 import {fileDialog} from "file-select-dialog";
-import {Emit} from "../../domain/utils/Bus";
-import UserClosedFileDialogForUploadingUserPhoto from "../events/UserClosedFileDialogForUploadingUserPhoto";
+import {Emit} from "../../domain/utils/Bus.ts";
+import UserClosedFileDialogForUploadingUserPhoto from "../events/UserClosedFileDialogForUploadingUserPhoto.ts";
 import AppSessionAuthenticated from "../../domain/auth/entities/AppSessionAuthenticated.ts";
 import UserId from "../../domain/auth/values/UserId.ts";
 
