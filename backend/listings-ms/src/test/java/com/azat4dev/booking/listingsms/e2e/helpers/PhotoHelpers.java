@@ -26,7 +26,7 @@ public class PhotoHelpers {
         String contentType
     ) throws IOException {
 
-        // Upload an image using POST object with form-data.
+        // Upload an image using POST object with form-infrastructure.
         MultipartBody.Builder multipartBuilder = new MultipartBody.Builder();
         multipartBuilder.setType(MultipartBody.FORM);
 

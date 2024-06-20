@@ -1,7 +1,7 @@
 package com.azat4dev.booking.listingsms.unit.commands.data.dao;
 
-import com.azat4dev.booking.listingsms.commands.application.config.data.ListingsDaoConfig;
-import com.azat4dev.booking.listingsms.commands.data.dao.listings.ListingsDao;
+import com.azat4dev.booking.listingsms.config.commands.infrastructure.persistence.dao.ListingsDaoConfig;
+import com.azat4dev.booking.listingsms.commands.infrastructure.dao.listings.ListingsDao;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import net.datafaker.Faker;
 import org.jooq.JSON;

@@ -1,5 +1,6 @@
 package com.azat4dev.booking.listingsms.e2e.helpers;
 
+import com.azat4dev.booking.listingsms.config.common.infrastracture.api.rest.properties.JwtConfigProperties;
 import com.azat4dev.booking.shared.domain.values.user.UserId;
 import com.nimbusds.jose.jwk.JWKSet;
 import com.nimbusds.jose.jwk.RSAKey;
@@ -16,7 +17,6 @@ import org.springframework.security.oauth2.jwt.NimbusJwtEncoder;
 import java.io.File;
 import java.io.FileInputStream;
 import java.security.interfaces.RSAPrivateKey;
-import java.security.interfaces.RSAPublicKey;
 import java.time.Instant;
 
 @TestConfiguration
@@ -28,8 +28,8 @@ public class AccessTokenConfig {
     }
 
     @Bean
-    public JwtEncoder jwtEncoder(RSAPublicKey publicKey, RSAPrivateKey privateKey) {
-        final var jwk = new RSAKey.Builder(publicKey).privateKey(privateKey).build();
+    public JwtEncoder jwtEncoder(JwtConfigProperties jwtConfigProperties, RSAPrivateKey privateKey) {
+        final var jwk = new RSAKey.Builder(jwtConfigProperties.getPublicKey()).privateKey(privateKey).build();
         final var jwks = new ImmutableJWKSet<>(new JWKSet(jwk));
         return new NimbusJwtEncoder(jwks);
     }

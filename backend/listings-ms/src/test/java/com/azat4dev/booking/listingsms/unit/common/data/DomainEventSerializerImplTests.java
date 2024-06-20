@@ -1,6 +1,6 @@
 package com.azat4dev.booking.listingsms.unit.common.data;
 
-import com.azat4dev.booking.listingsms.commands.data.serializer.DomainEventsSerializerImpl;
+import com.azat4dev.booking.listingsms.commands.infrastructure.serializer.DomainEventsSerializerImpl;
 import com.azat4dev.booking.listingsms.commands.domain.events.*;
 import com.azat4dev.booking.listingsms.commands.domain.values.*;
 import com.azat4dev.booking.listingsms.common.domain.values.GuestsCapacity;

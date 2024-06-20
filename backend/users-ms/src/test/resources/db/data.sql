@@ -1,4 +1,4 @@
--- Insert sample data into the user_data table
+-- Insert sample infrastructure into the user_data table
 INSERT INTO users (id, created_at, created_at_nano, updated_at, updated_at_nano, email, password, first_name, last_name,
                    email_verification_status, photo)
 VALUES ('00000000-0000-0000-0000-000000000001', '2024-05-08 12:00:00', 1, '2024-05-08 12:00:00', 2, 'john@example.com',

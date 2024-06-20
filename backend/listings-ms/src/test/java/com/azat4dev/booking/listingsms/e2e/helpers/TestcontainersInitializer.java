@@ -30,9 +30,9 @@ class TestcontainersInitializer implements ApplicationContextInitializer<Configu
             "spring.datasource.url=" + postgres.getJdbcUrl(),
             "spring.datasource.username=" + postgres.getUsername(),
             "spring.datasource.password=" + postgres.getPassword(),
-            "app.objects_storage.bucket.listings-photo.endpoint=" + "http://" + minio.getHost() + ":" + minio.getMappedPort(9000),
-            "app.objects_storage.bucket.listings-photo.access-key=" + minio.getUserName(),
-            "app.objects_storage.bucket.listings-photo.secret-key=" + minio.getPassword()
+            "app.objects-storage.bucket.listings-photo.endpoint=" + "http://" + minio.getHost() + ":" + minio.getMappedPort(9000),
+            "app.objects-storage.bucket.listings-photo.access-key=" + minio.getUserName(),
+            "app.objects-storage.bucket.listings-photo.secret-key=" + minio.getPassword()
         ).applyTo(ctx.getEnvironment());
     }
 }

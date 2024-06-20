@@ -1,6 +1,6 @@
 package com.azat4dev.booking.listingsms.queries.data.repositories.mappers;
 
-import com.azat4dev.booking.listingsms.commands.data.dao.listings.ListingPhotoData;
+import com.azat4dev.booking.listingsms.commands.infrastructure.dao.listings.ListingPhotoData;
 import com.azat4dev.booking.listingsms.commands.domain.values.*;
 import com.azat4dev.booking.listingsms.common.domain.values.GuestsCapacity;
 import com.azat4dev.booking.listingsms.common.domain.values.PropertyType;

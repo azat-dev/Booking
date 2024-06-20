@@ -4,6 +4,7 @@ import com.azat4dev.booking.shared.domain.values.files.MediaObjectName;
 import com.azat4dev.booking.shared.domain.values.files.UploadFileFormData;
 
 import java.net.URL;
+import java.time.Duration;
 import java.util.Optional;
 
 public interface MediaObjectsBucket {
@@ -13,12 +14,12 @@ public interface MediaObjectsBucket {
 
     URL generateUploadUrl(
         MediaObjectName objectName,
-        int expiresInSeconds
+        Duration expiresIn
     );
 
     UploadFileFormData generateUploadFormData(
         MediaObjectName objectName,
-        int expiresInSeconds,
+        Duration expiresIn,
         Policy policy
     );
 

@@ -1,6 +1,6 @@
 package com.azat4dev.booking.listingsms.unit.queries.data.dao;
 
-import com.azat4dev.booking.listingsms.queries.application.config.data.DaoConfig;
+import com.azat4dev.booking.listingsms.config.queries.infrastructure.persitence.dao.ListingsReadDaoConfig;
 import com.azat4dev.booking.listingsms.queries.data.dao.ListingsReadDao;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.jooq.JSON;
@@ -19,7 +19,7 @@ import java.util.UUID;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
-@Import(DaoConfig.class)
+@Import(ListingsReadDaoConfig.class)
 @Sql("/db/schema.sql")
 @JooqTest(properties = {"spring.datasource.url=jdbc:tc:postgresql:15-alpine:///"})
 @AutoConfigureTestDatabase(replace = AutoConfigureTestDatabase.Replace.NONE)

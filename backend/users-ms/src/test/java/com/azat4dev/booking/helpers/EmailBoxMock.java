@@ -1,8 +1,8 @@
 package com.azat4dev.booking.helpers;
 
 
-import com.azat4dev.booking.users.users_commands.domain.core.values.email.EmailAddress;
-import com.azat4dev.booking.users.users_commands.domain.interfaces.services.EmailService;
+import com.azat4dev.booking.users.commands.domain.core.values.email.EmailAddress;
+import com.azat4dev.booking.users.commands.domain.interfaces.services.EmailService;
 
 import java.time.Duration;
 import java.time.LocalDateTime;

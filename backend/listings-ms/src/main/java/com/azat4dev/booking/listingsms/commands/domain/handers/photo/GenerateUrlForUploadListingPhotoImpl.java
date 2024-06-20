@@ -11,12 +11,13 @@ import com.azat4dev.booking.shared.domain.values.files.PhotoFileExtension;
 import com.azat4dev.booking.shared.domain.values.user.UserId;
 import lombok.RequiredArgsConstructor;
 
+import java.time.Duration;
 import java.util.Optional;
 
 @RequiredArgsConstructor
 public final class GenerateUrlForUploadListingPhotoImpl implements GenerateUrlForUploadListingPhoto {
 
-    private final int expireInSeconds;
+    private final Duration expiresIn;
     private final GenerateObjectNameForListingPhoto generateObjectNameForListingPhoto;
     private final MediaObjectsBucket bucket;
     private final DomainEventsBus bus;
@@ -51,7 +52,7 @@ public final class GenerateUrlForUploadListingPhotoImpl implements GenerateUrlFo
 
             final var formData = bucket.generateUploadFormData(
                 objectName,
-                expireInSeconds,
+                expiresIn,
                 new MediaObjectsBucket.Policy(
                     Optional.of(new MediaObjectsBucket.FileSizeRange(0, MAX_FILE_SIZE)),
                     new MediaObjectsBucket.Condition[]{

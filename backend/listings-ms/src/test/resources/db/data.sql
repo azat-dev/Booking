@@ -1,4 +1,4 @@
--- Insert sample data into the user_data table
+-- Insert sample infrastructure into the user_data table
 INSERT INTO listings (id,
                       created_at, created_at_nano,
                       updated_at, updated_at_nano,

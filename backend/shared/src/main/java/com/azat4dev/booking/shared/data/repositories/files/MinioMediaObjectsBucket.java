@@ -13,6 +13,7 @@ import lombok.RequiredArgsConstructor;
 
 import java.net.MalformedURLException;
 import java.net.URL;
+import java.time.Duration;
 import java.time.ZonedDateTime;
 
 @RequiredArgsConstructor
@@ -32,7 +33,7 @@ public class MinioMediaObjectsBucket implements MediaObjectsBucket {
     }
 
     @Override
-    public URL generateUploadUrl(MediaObjectName objectName, int expiresInSeconds) {
+    public URL generateUploadUrl(MediaObjectName objectName, Duration expiresIn) {
 
         try {
             final var url = minioClient.getPresignedObjectUrl(
@@ -40,7 +41,7 @@ public class MinioMediaObjectsBucket implements MediaObjectsBucket {
                     .bucket(bucketName.toString())
                     .object(objectName.toString())
                     .method(Method.PUT)
-                    .expiry(expiresInSeconds)
+                    .expiry((int) expiresIn.toSeconds())
                     .build()
             );
 
@@ -51,11 +52,11 @@ public class MinioMediaObjectsBucket implements MediaObjectsBucket {
     }
 
     @Override
-    public UploadFileFormData generateUploadFormData(MediaObjectName objectName, int expiresInSeconds, Policy policy) {
+    public UploadFileFormData generateUploadFormData(MediaObjectName objectName, Duration expiresIn, Policy policy) {
 
         final var formPolicy = new PostPolicy(
             bucketName.toString(),
-            ZonedDateTime.now().plusSeconds(expiresInSeconds)
+            ZonedDateTime.now().plusSeconds((int) expiresIn.toSeconds())
         );
 
         for (var condition : policy.conditions()) {
