@@ -5,11 +5,13 @@ import lombok.Data;
 import org.springframework.boot.context.properties.ConfigurationProperties;
 import org.springframework.boot.context.properties.bind.ConstructorBinding;
 import org.springframework.security.converter.RsaKeyConverters;
+import org.springframework.validation.annotation.Validated;
 
 import java.io.File;
 import java.io.FileInputStream;
 import java.security.interfaces.RSAPublicKey;
 
+@Validated
 @Data
 @ConfigurationProperties(prefix = "app.security.jwt")
 public class JwtConfigProperties {

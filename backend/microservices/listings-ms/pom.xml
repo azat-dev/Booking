@@ -11,7 +11,7 @@
     </parent>
 
     <groupId>com.azat4dev</groupId>
-    <artifactId>users-ms</artifactId>
+    <artifactId>listings-ms</artifactId>
     <version>0.0.1-SNAPSHOT</version>
 
     <properties>
@@ -19,8 +19,13 @@
         <java.version>21</java.version>
         <spring-cloud.version>2023.0.2</spring-cloud.version>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
-        <mainClass>com.azat4dev.booking.UsersMicroserviceApplication</mainClass>
-        <default.package>com.azat4dev.booking.usersms</default.package>
+        <mainClass>com.azat4dev.booking.ListingsMicroserviceApplication</mainClass>
+        <default.package>com.azat4dev.booking.listingsms</default.package>
+
+        <!--        JOOQ properties-->
+        <db.url>jdbc:tc:postgresql:16:///listingsdb?TC_TMPFS=/testtmpfs:rw&amp;TC_INITSCRIPT=file:${basedir}/src/main/resources/db/schema.sql</db.url>
+        <db.username>postgres</db.username>
+        <db.password>postgres</db.password>
     </properties>
 
     <dependencies>
@@ -35,7 +40,6 @@
             <groupId>org.springframework.cloud</groupId>
             <artifactId>spring-cloud-starter-netflix-eureka-client</artifactId>
         </dependency>
-
         <dependency>
             <groupId>org.springframework.boot</groupId>
             <artifactId>spring-boot-starter-oauth2-resource-server</artifactId>
@@ -74,6 +78,7 @@
             <version>${spring-boot.version}</version>
             <scope>test</scope>
         </dependency>
+
         <dependency>
             <groupId>org.springframework.security</groupId>
             <artifactId>spring-security-test</artifactId>
@@ -101,6 +106,31 @@
             <groupId>org.postgresql</groupId>
             <artifactId>postgresql</artifactId>
             <version>42.7.3</version>
+        </dependency>
+
+        <!-- JOOQ -->
+        <dependency>
+            <groupId>org.jooq</groupId>
+            <artifactId>jooq</artifactId>
+            <version>3.19.9</version>
+        </dependency>
+
+        <dependency>
+            <groupId>org.jooq</groupId>
+            <artifactId>jooq-meta</artifactId>
+            <version>3.19.9</version>
+        </dependency>
+
+        <dependency>
+            <groupId>org.postgresql</groupId>
+            <artifactId>postgresql</artifactId>
+            <version>42.7.3</version>
+        </dependency>
+
+        <dependency>
+            <groupId>org.testcontainers</groupId>
+            <artifactId>postgresql</artifactId>
+            <version>1.19.8</version>
         </dependency>
 
         <!-- Other dependencies -->
@@ -141,16 +171,10 @@
         </dependency>
 
         <dependency>
-            <groupId>org.testcontainers</groupId>
-            <artifactId>postgresql</artifactId>
-            <version>1.19.8</version>
-            <scope>test</scope>
-        </dependency>
-
-        <dependency>
             <groupId>net.datafaker</groupId>
             <artifactId>datafaker</artifactId>
             <version>2.2.2</version>
+            <scope>test</scope>
         </dependency>
 
         <!-- OpenAPI -->
@@ -184,15 +208,81 @@
 
     <build>
         <plugins>
-
             <plugin>
                 <groupId>org.springframework.boot</groupId>
                 <artifactId>spring-boot-maven-plugin</artifactId>
                 <configuration>
                     <image>
-                        <name>booking-demo/users-ms:${project.version}</name>
+                        <name>booking-demo/listings-ms:${project.version}</name>
                     </image>
                 </configuration>
+            </plugin>
+
+            <plugin>
+                <groupId>org.codehaus.mojo</groupId>
+                <artifactId>build-helper-maven-plugin</artifactId>
+                <version>3.6.0</version>
+                <executions>
+                    <execution>
+                        <id>add-sources</id>
+                        <phase>generate-sources</phase>
+                        <goals>
+                            <goal>add-source</goal>
+                        </goals>
+                        <configuration>
+                            <sources>
+                                <source>${project.basedir}/target/generated-sources/jooq</source>
+                            </sources>
+                        </configuration>
+                    </execution>
+                </executions>
+            </plugin>
+
+            <plugin>
+                <groupId>org.jooq</groupId>
+                <artifactId>jooq-codegen-maven</artifactId>
+                <version>3.19.9</version>
+                <executions>
+                    <execution>
+                        <id>java-generator</id>
+                        <phase>generate-sources</phase>
+                        <goals>
+                            <goal>generate</goal>
+                        </goals>
+                        <configuration>
+                            <jdbc>
+                                <driver>org.testcontainers.jdbc.ContainerDatabaseDriver</driver>
+                                <url>${db.url}</url>
+                                <user>${db.username}</user>
+                                <password>${db.password}</password>
+                            </jdbc>
+                            <generator>
+                                <database>
+                                    <inputSchema>public</inputSchema>
+                                </database>
+                                <generate>
+                                    <triggers>false</triggers>
+                                    <nullableAnnotation>true</nullableAnnotation>
+                                    <nullableAnnotationType>jakarta.annotation.Nullable</nullableAnnotationType>
+                                </generate>
+                                <target>
+                                    <packageName>org.jooq.generated</packageName>
+                                    <directory>target/generated-sources/jooq</directory>
+                                </target>
+                            </generator>
+                        </configuration>
+                    </execution>
+                </executions>
+
+                <dependencies>
+
+                    <!-- Junit seems to be a transitive dependency of testcontainers? -->
+                    <dependency>
+                        <groupId>junit</groupId>
+                        <artifactId>junit</artifactId>
+                        <version>4.13.1</version>
+                    </dependency>
+                </dependencies>
             </plugin>
 
             <plugin>
@@ -208,7 +298,7 @@
                         <configuration>
                             <generatorName>spring</generatorName>
                             <library>spring-boot</library>
-                            <inputSpec>${project.basedir}/../specs/users/openapi.yaml</inputSpec>
+                            <inputSpec>${project.basedir}/../../specs/listings/openapi.yaml</inputSpec>
                             <output>${project.basedir}/target/generated-sources/server-api</output>
                             <invokerPackage>${default.package}.generated.server.base</invokerPackage>
                             <apiPackage>${default.package}.generated.server.api</apiPackage>
@@ -223,6 +313,7 @@
                                 <unhandledException>true</unhandledException>
                                 <additionalModelTypeAnnotations>@lombok.Builder(toBuilder = true)
                                     @lombok.AllArgsConstructor
+                                    @lombok.NoArgsConstructor
                                     @com.fasterxml.jackson.annotation.JsonIgnoreProperties(ignoreUnknown=true)
                                 </additionalModelTypeAnnotations>
                                 <generatedConstructorWithRequiredArgs>false</generatedConstructorWithRequiredArgs>
@@ -248,11 +339,11 @@
                         <configuration>
                             <generatorName>spring</generatorName>
                             <library>spring-boot</library>
-                            <inputSpec>${project.basedir}/../specs/events/users/openapi.yaml</inputSpec>
+                            <inputSpec>${project.basedir}/../../specs/events/listings/openapi.yaml</inputSpec>
                             <modelPackage>${default.package}.generated.events.dto</modelPackage>
                             <ignoreFileOverride>.openapi-generator-ignore</ignoreFileOverride>
                             <output>${project.basedir}/target/generated-sources/events</output>
-                            <templateDirectory>${project.basedir}/../specs/custom_templates/spring</templateDirectory>
+                            <templateDirectory>${project.basedir}/../../specs/custom_templates/spring</templateDirectory>
                             <modelNameSuffix>DTO</modelNameSuffix>
                             <configOptions>
                                 <useOptional>true</useOptional>
@@ -261,6 +352,7 @@
                                 <interfaceOnly>true</interfaceOnly>
                                 <additionalModelTypeAnnotations>@lombok.Builder(toBuilder = true)
                                     @lombok.AllArgsConstructor
+                                    @lombok.NoArgsConstructor
                                     @com.fasterxml.jackson.annotation.JsonIgnoreProperties(ignoreUnknown=true)
                                 </additionalModelTypeAnnotations>
                                 <generatedConstructorWithRequiredArgs>false</generatedConstructorWithRequiredArgs>
@@ -290,12 +382,12 @@
                         <configuration>
                             <generatorName>java</generatorName>
                             <library>restclient</library>
-                            <inputSpec>${project.basedir}/../specs/users/openapi.yaml</inputSpec>
+                            <inputSpec>${project.basedir}/../../specs/listings/openapi.yaml</inputSpec>
                             <output>${project.basedir}/target/generated-sources/api-client</output>
-                            <invokerPackage>com.azat4dev.booking.usersms.generated.client.base</invokerPackage>
-                            <apiPackage>com.azat4dev.booking.usersms.generated.client.api</apiPackage>
-                            <modelPackage>com.azat4dev.booking.usersms.generated.client.model</modelPackage>
-                            <packageName>com.azat4dev.booking.usersms.generated.client</packageName>
+                            <invokerPackage>com.azat4dev.booking.listingsms.generated.client.base</invokerPackage>
+                            <apiPackage>com.azat4dev.booking.listingsms.generated.client.api</apiPackage>
+                            <modelPackage>com.azat4dev.booking.listingsms.generated.client.model</modelPackage>
+                            <packageName>com.azat4dev.booking.listingsms.generated.client</packageName>
                             <ignoreFileOverride>.openapi-generator-ignore</ignoreFileOverride>
                             <modelNameSuffix>DTO</modelNameSuffix>
                             <configOptions>
