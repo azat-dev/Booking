@@ -16,11 +16,14 @@ import org.jsoup.select.Elements;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.boot.test.autoconfigure.actuate.observability.AutoConfigureObservability;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.context.TestConfiguration;
 import org.springframework.boot.test.web.server.LocalServerPort;
+import org.springframework.boot.web.client.RestTemplateBuilder;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Primary;
+import org.springframework.http.HttpStatus;
 import org.springframework.test.context.jdbc.Sql;
 import org.springframework.web.util.UriComponentsBuilder;
 
@@ -29,6 +32,7 @@ import java.util.UUID;
 import static com.azat4dev.booking.helpers.ApiHelpers.apiClient;
 import static org.assertj.core.api.Assertions.assertThat;
 
+@AutoConfigureObservability
 @EnableTestcontainers
 @SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
 @Sql(value = {"/db/drop-schema.sql", "/db/schema.sql"})
@@ -38,6 +42,9 @@ class UsersMicroserviceApplicationTests {
 
     @Autowired
     EmailBoxMock emailBox;
+
+    @Autowired
+    RestTemplateBuilder restTemplateBuilder;
 
     @LocalServerPort
     private int port;
@@ -118,6 +125,22 @@ class UsersMicroserviceApplicationTests {
             );
 
         assertThat(loginResponse.getTokens().getAccess()).isNotNull();
+    }
+
+    @Test
+    void test_fetchDataFromPrometheus_givenAuthenticated() {
+
+        // Given
+        final var url = "http://localhost:" + port + "/actuator/prometheus";
+
+        // When
+        final var response = restTemplateBuilder
+            .basicAuthentication("prometheus-user", "prometheus-password")
+            .build()
+            .getForEntity(url, String.class);
+
+        // Then
+        assertThat(response.getStatusCode()).isEqualTo(HttpStatus.OK);
     }
 
     SignedUpUser givenAnyConfirmedUser() throws Exception {

@@ -13,6 +13,7 @@ import com.azat4dev.booking.users.commands.domain.core.values.user.FullName;
 import com.azat4dev.booking.users.commands.domain.core.values.user.LastName;
 import com.azat4dev.booking.users.commands.domain.handlers.users.Users;
 import com.azat4dev.booking.users.commands.domain.interfaces.services.PasswordService;
+import io.micrometer.core.annotation.Timed;
 import lombok.AllArgsConstructor;
 
 @AllArgsConstructor

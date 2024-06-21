@@ -1,5 +1,4 @@
 version: "2"
-
 services:
   debug-email:
     image: maildev/maildev:latest
@@ -51,6 +50,10 @@ services:
       - eureka
     environment:
       - USERS_MS_PORT=${USERS_MS_PORT}
+      - USERS_MS_SECURITY_USER_NAME=${USERS_MS_SECURITY_USER_NAME}
+      - USERS_MS_SECURITY_USER_PASSWORD=${USERS_MS_SECURITY_USER_PASSWORD}
+      - USERS_MS_PROMETHEUS_USERNAME=${USERS_MS_PROMETHEUS_USERNAME}
+      - USERS_MS_PROMETHEUS_PASSWORD=${USERS_MS_PROMETHEUS_PASSWORD}
       - USERS_MS_EUREKA=http://eureka:${EUREKA_SERVER_PORT}/eureka/
       - USERS_MS_DB_HOST=users-db
       - USERS_MS_DB_PORT=${USERS_DB_PORT}
@@ -78,6 +81,8 @@ services:
       - USERS_MS_MAIL_SERVER_PROTOCOL=${MAIL_SERVER_PROTOCOL}
       - USERS_MS_KAFKA_SERVER=broker:${BROKER_PORT}
       - USERS_MS_KAFKA_CONSUMER_GROUP_ID=users-ms-group
+    ports:
+      - "8081:${USERS_MS_PORT}"
 
   listings-db:
     image: postgres:16.3-alpine
@@ -158,6 +163,19 @@ services:
       KAFKA_TRANSACTION_STATE_LOG_MIN_ISR: 1
       KAFKA_TRANSACTION_STATE_LOG_REPLICATION_FACTOR: 1
       KAFKA_LOG_DIRS: '/tmp/kraft-combined-logs'
+
+  prometheus:
+    image: prom/prometheus
+    volumes:
+      - ./config/metrics/prometheus.yaml:/etc/prometheus/prometheus.yaml
+
+  grafana:
+    image: grafana/grafana
+    ports:
+      - "3000:3000"
+    environment:
+      - GF_SECURITY_ADMIN_USER=${GRAFANA_ADMIN_USER}
+      - GF_SECURITY_ADMIN_PASSWORD=${GRAFANA_ADMIN_PASSWORD}
 
 volumes:
   kafka_data:

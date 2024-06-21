@@ -1,9 +1,9 @@
 package com.azat4dev.booking.users.config.users_commands.presentation;
 
-import com.azat4dev.booking.users.commands.infrastructure.services.password.PasswordServiceImpl;
 import com.azat4dev.booking.users.commands.domain.core.values.password.EncodedPassword;
 import com.azat4dev.booking.users.commands.domain.core.values.password.Password;
 import com.azat4dev.booking.users.commands.domain.interfaces.services.PasswordService;
+import com.azat4dev.booking.users.commands.infrastructure.services.password.PasswordServiceImpl;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -44,11 +44,12 @@ public class WebSecurityConfig {
                         HttpMethod.GET,
                         "/api/public/**"
                     ).permitAll()
-
                     .requestMatchers("/api/private/**")
                     .authenticated()
+                    .requestMatchers("/actuator/prometheus")
+                    .hasAnyRole(Roles.PROMETHEUS_USER.name())
             )
-            .csrf(c -> c.ignoringRequestMatchers("/api/public/**", "/api/private/**"))
+            .csrf(c -> c.ignoringRequestMatchers("/api/public/**", "/api/private/**", "/actuator/**"))
             .httpBasic(Customizer.withDefaults())
             .oauth2ResourceServer(c -> c.jwt(jwtCustom -> jwtCustom.decoder(jwtDecoder)))
             .sessionManagement(s -> s.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
