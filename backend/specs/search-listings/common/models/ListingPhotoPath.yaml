@@ -1,0 +1,9 @@
+type: "object"
+required:
+  - url
+  - photoId
+properties:
+  url:
+    type: "string"
+  photoId:
+    type: "string"

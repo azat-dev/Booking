@@ -1,0 +1,20 @@
+openapi: "3.0.0"
+info:
+  version: "1.0.0"
+  title: "Search API"
+  description: Describes the API of Search service
+
+paths:
+  # Modification API
+
+  /api/public/search:
+    $ref: "queries/public/paths.yaml#/paths/~1public~1listings~1promoted"
+
+components:
+  securitySchemes:
+    BearerAuth:
+      type: http
+      scheme: bearer
+      bearerFormat: JWT
+security:
+  - BearerAuth: [ ]

@@ -1,0 +1,53 @@
+openapi: 3.0.3
+info:
+  title: Title
+  description: Title
+  version: 1.0.0
+paths:
+  \:
+components:
+  schemas:
+    ShortListingData:
+      type: object
+      required:
+        - id
+        - title
+        - price
+        - rating
+        - photos
+      properties:
+        id:
+          $ref: "../../common/models/ListingId.yaml"
+        title:
+          type: string
+        price:
+          $ref: "#/components/schemas/Price"
+        rating:
+          type: number
+        photos:
+          type: array
+          items:
+            $ref: "../../common/models/ListingPhotoPath.yaml"
+    Price:
+      type: object
+      required:
+        - amount
+        - currency
+      properties:
+        amount:
+          type: number
+        currency:
+          type: string
+
+    GetPromotedListingsResponse:
+      type: object
+      required:
+        - total
+        - items
+      properties:
+        total:
+          type: number
+        items:
+          type: array
+          items:
+            $ref: "#/components/schemas/ShortListingData"
