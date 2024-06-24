@@ -8,12 +8,14 @@ import com.azat4dev.booking.users.commands.application.handlers.photo.GenerateUs
 import com.azat4dev.booking.users.commands.application.handlers.photo.UpdateUserPhotoHandler;
 import com.azat4dev.booking.usersms.generated.server.api.CommandsUpdateUserPhotoApiDelegate;
 import com.azat4dev.booking.usersms.generated.server.model.*;
+import io.micrometer.observation.annotation.Observed;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Component;
 import org.springframework.web.server.ResponseStatusException;
 
+@Observed
 @Component
 public class UpdateUserPhotoApi implements CommandsUpdateUserPhotoApiDelegate {
 

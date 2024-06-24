@@ -10,11 +10,13 @@ import com.azat4dev.booking.usersms.generated.server.model.CompleteResetPassword
 import com.azat4dev.booking.usersms.generated.server.model.CompleteResetPasswordRequestBodyDTO;
 import com.azat4dev.booking.usersms.generated.server.model.ResetPasswordByEmail200ResponseDTO;
 import com.azat4dev.booking.usersms.generated.server.model.ResetPasswordByEmailRequestBodyDTO;
+import io.micrometer.observation.annotation.Observed;
 import lombok.AllArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Component;
 
+@Observed
 @Component
 @AllArgsConstructor
 public class ResetPasswordApi implements CommandsResetPasswordApiDelegate {

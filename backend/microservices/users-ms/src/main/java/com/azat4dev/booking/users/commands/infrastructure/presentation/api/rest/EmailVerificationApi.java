@@ -5,11 +5,13 @@ import com.azat4dev.booking.users.commands.application.commands.email.verificati
 import com.azat4dev.booking.users.commands.application.handlers.email.verification.CompleteEmailVerificationHandler;
 import com.azat4dev.booking.usersms.generated.server.api.CommandsEmailVerificationApiDelegate;
 import com.azat4dev.booking.usersms.generated.server.model.VerifyEmail200ResponseDTO;
+import io.micrometer.observation.annotation.Observed;
 import lombok.AllArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Component;
 
+@Observed
 @Component
 @AllArgsConstructor
 public class EmailVerificationApi implements CommandsEmailVerificationApiDelegate {

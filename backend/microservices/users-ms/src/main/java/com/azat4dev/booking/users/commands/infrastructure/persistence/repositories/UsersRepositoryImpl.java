@@ -8,23 +8,19 @@ import com.azat4dev.booking.users.commands.domain.interfaces.repositories.UsersR
 import com.azat4dev.booking.users.commands.infrastructure.persistence.dao.UsersDao;
 import com.azat4dev.booking.users.commands.infrastructure.persistence.repositories.mappers.MapUserDataToDomain;
 import com.azat4dev.booking.users.commands.infrastructure.persistence.repositories.mappers.MapUserToData;
-import io.micrometer.core.annotation.Counted;
-import io.micrometer.core.annotation.Timed;
+import io.micrometer.observation.annotation.Observed;
 import lombok.RequiredArgsConstructor;
 
 import java.util.Optional;
 
+@Observed
 @RequiredArgsConstructor
-public final class UsersRepositoryImpl implements UsersRepository {
-
-    private static final String METRICS_PREFIX = "users-ms.commands.infrastructure.persistence.users-repository.";
+public class UsersRepositoryImpl implements UsersRepository {
 
     private final MapUserToData mapUserToData;
     private final MapUserDataToDomain mapUserDataToDomain;
     private final UsersDao usersDao;
 
-    @Counted(METRICS_PREFIX + "add-new.count")
-    @Timed(METRICS_PREFIX + "add-new.time")
     @Override
     public void addNew(User user) throws Exception.UserWithSameEmailAlreadyExists {
 
@@ -37,8 +33,6 @@ public final class UsersRepositoryImpl implements UsersRepository {
         }
     }
 
-    @Counted(METRICS_PREFIX + "update.count")
-    @Timed(METRICS_PREFIX + "update.time")
     @Override
     public void update(User user) {
 
@@ -51,8 +45,6 @@ public final class UsersRepositoryImpl implements UsersRepository {
         }
     }
 
-    @Counted(METRICS_PREFIX + "find-by-id.count")
-    @Timed(METRICS_PREFIX + "find-by-id.time")
     @Override
     public Optional<User> findById(UserId id) {
 
@@ -66,8 +58,6 @@ public final class UsersRepositoryImpl implements UsersRepository {
         });
     }
 
-    @Counted(METRICS_PREFIX + "find-by-email.count")
-    @Timed(METRICS_PREFIX + "find-by-email.time")
     @Override
     public Optional<User> findByEmail(EmailAddress email) {
         final var foundUserResult = this.usersDao.findByEmail(email.getValue());

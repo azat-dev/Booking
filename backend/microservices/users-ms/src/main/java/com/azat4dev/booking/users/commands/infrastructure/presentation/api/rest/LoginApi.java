@@ -8,6 +8,7 @@ import com.azat4dev.booking.usersms.generated.server.api.CommandsLoginApiDelegat
 import com.azat4dev.booking.usersms.generated.server.model.LoginByEmailRequestBodyDTO;
 import com.azat4dev.booking.usersms.generated.server.model.LoginByEmailResponseBodyDTO;
 import com.azat4dev.booking.usersms.generated.server.model.TokensPairDTO;
+import io.micrometer.observation.annotation.Observed;
 import lombok.AllArgsConstructor;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
@@ -15,9 +16,10 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Component;
 
+@Observed
 @Component
 @AllArgsConstructor
-public final class LoginApi implements CommandsLoginApiDelegate {
+public class LoginApi implements CommandsLoginApiDelegate {
 
     private final Log logger = LogFactory.getLog(this.getClass());
 

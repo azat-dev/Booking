@@ -9,6 +9,7 @@ import com.azat4dev.booking.usersms.generated.server.api.CommandsSignUpApiDelega
 import com.azat4dev.booking.usersms.generated.server.model.SignUpByEmailRequestBodyDTO;
 import com.azat4dev.booking.usersms.generated.server.model.SignUpByEmailResponseBodyDTO;
 import com.azat4dev.booking.usersms.generated.server.model.TokensPairDTO;
+import io.micrometer.observation.annotation.Observed;
 import lombok.AllArgsConstructor;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
@@ -16,9 +17,10 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Component;
 
+@Observed
 @Component
 @AllArgsConstructor
-public final class SignUpApi implements CommandsSignUpApiDelegate {
+public class SignUpApi implements CommandsSignUpApiDelegate {
 
     private final Log logger = LogFactory.getLog(this.getClass());
 

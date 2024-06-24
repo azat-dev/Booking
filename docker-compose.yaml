@@ -81,6 +81,8 @@ services:
       - USERS_MS_MAIL_SERVER_PROTOCOL=${MAIL_SERVER_PROTOCOL}
       - USERS_MS_KAFKA_SERVER=broker:${BROKER_PORT}
       - USERS_MS_KAFKA_CONSUMER_GROUP_ID=users-ms-group
+      - USERS_MS_LOKI_URL=${LOKI_URL}
+      - USERS_MS_ZIPKIN_ENDPOINT=${ZIPKIN_ENDPOINT}
     ports:
       - "8081:${USERS_MS_PORT}"
 
@@ -107,6 +109,7 @@ services:
       - LISTINGS_MS_DB_NAME=${LISTINGS_DB_NAME}
       - LISTINGS_MS_DB_USERNAME=${LISTINGS_DB_USERNAME}
       - LISTINGS_MS_DB_PASSWORD=${LISTINGS_DB_PASSWORD}
+      - LISTINGS_MS_LOKI_URL=${LOKI_URL}
 
       - LISTINGS_MS_RESET_PASSWORD_BASE_URL_FOR_LINK=${GATEWAY_BASE_URL}/reset-password
       - LISTINGS_MS_PHOTO_ENDPOINT=http://localhost:9000
@@ -164,18 +167,57 @@ services:
       KAFKA_TRANSACTION_STATE_LOG_REPLICATION_FACTOR: 1
       KAFKA_LOG_DIRS: '/tmp/kraft-combined-logs'
 
-  prometheus:
-    image: prom/prometheus
+  grafana-tempo:
+    image: grafana/tempo
+    extra_hosts: ['host.docker.internal:host-gateway']
+    command: [ "-config.file=/etc/tempo.yaml" ]
     volumes:
-      - ./config/metrics/prometheus.yaml:/etc/prometheus/prometheus.yaml
+      - ./config/metrics/tempo/tempo-local.yaml:/etc/tempo.yaml:ro
+      - ./tempo-data:/tmp/tempo
+    ports:
+      - "14268:14268"  # jaeger ingest
+      - "9411:9411" # zipkin
+
+  grafana-loki:
+    image: grafana/loki
+    extra_hosts: ['host.docker.internal:host-gateway']
+    command: [ "-config.file=/etc/loki/local-config.yaml" ]
+    ports:
+      - "3100:3100"                                   # loki needs to be exposed so it receives logs
+    environment:
+      - JAEGER_AGENT_HOST=tempo
+      - JAEGER_ENDPOINT=http://grafana-tempo:14268/api/traces # send traces to Tempo
+      - JAEGER_SAMPLER_TYPE=const
+      - JAEGER_SAMPLER_PARAM=1
 
   grafana:
     image: grafana/grafana
-    ports:
-      - "3000:3000"
+    extra_hosts: ['host.docker.internal:host-gateway']
+    volumes:
+      - ./config/metrics/prometheus.yaml:/etc/prometheus/prometheus.yaml
+      - ./config/metrics/grafana/provisioning/datasources:/etc/grafana/provisioning/datasources:ro
+      - ./config/metrics/grafana/provisioning/dashboards:/etc/grafana/provisioning/dashboards:ro
     environment:
       - GF_SECURITY_ADMIN_USER=${GRAFANA_ADMIN_USER}
       - GF_SECURITY_ADMIN_PASSWORD=${GRAFANA_ADMIN_PASSWORD}
+    ports:
+      - "3000:3000"
+
+  prometheus:
+    image: prom/prometheus
+    extra_hosts: [ 'host.docker.internal:host-gateway' ]
+    volumes:
+      - ./config/metrics/prometheus.yaml:/etc/prometheus/prometheus.yml:ro
+    environment:
+      - LISTINGS_MS_PROMETHEUS_USER=${LISTINGS_MS_PROMETHEUS_USERNAME}
+      - LISTINGS_MS_PROMETHEUS_PASSWORD=${LISTINGS_MS_PROMETHEUS_PASSWORD}
+      - USERS_MS_PROMETHEUS_USER=${USERS_MS_PROMETHEUS_USERNAME}
+      - USERS_MS_PROMETHEUS_PASSWORD=${USERS_MS_PROMETHEUS_PASSWORD}
+    command:
+      - --enable-feature=exemplar-storage
+      - --config.file=/etc/prometheus/prometheus.yml
+    ports:
+      - "9090:9090"
 
 volumes:
   kafka_data:

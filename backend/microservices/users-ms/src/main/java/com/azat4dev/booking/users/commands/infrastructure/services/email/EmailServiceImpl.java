@@ -2,6 +2,7 @@ package com.azat4dev.booking.users.commands.infrastructure.services.email;
 
 import com.azat4dev.booking.users.commands.domain.core.values.email.EmailAddress;
 import com.azat4dev.booking.users.commands.domain.interfaces.services.EmailService;
+import io.micrometer.observation.annotation.Observed;
 import jakarta.mail.MessagingException;
 import jakarta.mail.internet.MimeMessage;
 import lombok.RequiredArgsConstructor;
@@ -10,6 +11,7 @@ import org.springframework.mail.javamail.MimeMessageHelper;
 
 import java.io.UnsupportedEncodingException;
 
+@Observed
 @RequiredArgsConstructor
 public class EmailServiceImpl implements EmailService {
 

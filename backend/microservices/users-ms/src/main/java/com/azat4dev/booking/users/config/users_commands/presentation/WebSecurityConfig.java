@@ -47,7 +47,7 @@ public class WebSecurityConfig {
                     .requestMatchers("/api/private/**")
                     .authenticated()
                     .requestMatchers("/actuator/prometheus")
-                    .hasAnyRole(Roles.PROMETHEUS_USER.name())
+                    .permitAll()
             )
             .csrf(c -> c.ignoringRequestMatchers("/api/public/**", "/api/private/**", "/actuator/**"))
             .httpBasic(Customizer.withDefaults())
