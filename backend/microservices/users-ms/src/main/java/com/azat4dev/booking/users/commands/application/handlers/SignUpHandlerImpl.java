@@ -15,7 +15,9 @@ import com.azat4dev.booking.users.commands.domain.handlers.users.Users;
 import com.azat4dev.booking.users.commands.domain.interfaces.services.PasswordService;
 import io.micrometer.core.annotation.Timed;
 import lombok.AllArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 
+@Slf4j
 @AllArgsConstructor
 public final class SignUpHandlerImpl implements SignUpHandler {
 
@@ -44,21 +46,29 @@ public final class SignUpHandlerImpl implements SignUpHandler {
             );
 
             users.createNew(newUserData);
+            log.info("User signed up: {}", email);
             return userId;
 
         } catch (FirstName.ValidationException e) {
+            log.debug("Invalid first name", e);
             throw ValidationException.withPath("firstName", e);
         } catch (LastName.ValidationException e) {
+            log.debug("Invalid last name", e);
             throw ValidationException.withPath("lastName", e);
         } catch (EmailAddress.ValidationException e) {
+            log.debug("Invalid email", e);
             throw ValidationException.withPath("email", e);
         } catch (Password.Exception e) {
+            log.debug("Invalid password", e);
             throw ValidationException.withPath("password", e);
         } catch (Users.Exception.UserWithSameEmailAlreadyExists e) {
+            log.error("User with same email already exists", e);
             throw new SignUpHandler.Exception.UserWithSameEmailAlreadyExists();
         } catch (FullName.Exception e) {
+            log.debug("Invalid full name", e);
             throw ValidationException.withPath("fullName", e);
         } catch (User.Exception e) {
+            log.error("Failed to create new user", e);
             throw new RuntimeException(e);
         }
     }

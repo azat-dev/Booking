@@ -12,11 +12,11 @@ public interface LoginByEmailHandler {
     // Exceptions
 
     abstract class Exception extends DomainException {
-        public Exception(String message) {
+        protected Exception(String message) {
             super(message);
         }
 
-        public final static class WrongCredentials extends Exception {
+        public static final class WrongCredentials extends Exception {
             public WrongCredentials() {
                 super("Wrong credentials");
             }

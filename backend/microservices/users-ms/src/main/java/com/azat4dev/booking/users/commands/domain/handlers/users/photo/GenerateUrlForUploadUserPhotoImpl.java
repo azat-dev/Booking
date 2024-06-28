@@ -9,10 +9,12 @@ import com.azat4dev.booking.shared.domain.values.user.UserId;
 import com.azat4dev.booking.users.commands.domain.core.events.FailedGenerateUserPhotoUploadUrl;
 import com.azat4dev.booking.users.commands.domain.core.events.GeneratedUserPhotoUploadUrl;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 
 import java.time.Duration;
 import java.util.Optional;
 
+@Slf4j
 @RequiredArgsConstructor
 public final class GenerateUrlForUploadUserPhotoImpl implements GenerateUrlForUploadUserPhoto {
 
@@ -61,13 +63,15 @@ public final class GenerateUrlForUploadUserPhotoImpl implements GenerateUrlForUp
                     }
                 )
             );
+            log.debug("Presigned URL generated");
 
             final var event = new GeneratedUserPhotoUploadUrl(userId, formData);
             bus.publish(event);
+            log.debug("GeneratedUserPhotoUploadUrl event published");
             return event;
 
         } catch (Throwable e) {
-
+            log.error("Failed to generate presigned URL for uploading user photo", e);
             publishFailedEvent.run();
             throw new Exception.FailedGenerateUserPhotoUploadUrl();
         }

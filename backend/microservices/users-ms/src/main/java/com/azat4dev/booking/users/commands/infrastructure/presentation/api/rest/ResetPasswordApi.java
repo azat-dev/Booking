@@ -12,10 +12,12 @@ import com.azat4dev.booking.usersms.generated.server.model.ResetPasswordByEmail2
 import com.azat4dev.booking.usersms.generated.server.model.ResetPasswordByEmailRequestBodyDTO;
 import io.micrometer.observation.annotation.Observed;
 import lombok.AllArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Component;
 
+@Slf4j
 @Observed
 @Component
 @AllArgsConstructor
@@ -35,11 +37,16 @@ public class ResetPasswordApi implements CommandsResetPasswordApiDelegate {
         try {
             resetPasswordByEmailHandler.handle(command);
         } catch (ResetPasswordByEmailHandler.Exception.EmailNotFound e) {
+            log.error("Email not found", e);
             throw ControllerException.createError(HttpStatus.NOT_FOUND, e);
         } catch (ResetPasswordByEmailHandler.Exception.FailedToSendResetPasswordEmail e) {
+            log.error("Failed to send reset password email", e);
             throw ControllerException.createError(HttpStatus.INTERNAL_SERVER_ERROR, e);
         }
-        return ResponseEntity.ok(ResetPasswordByEmail200ResponseDTO.builder().build());
+
+        final var response = ResponseEntity.ok(ResetPasswordByEmail200ResponseDTO.builder().build());
+        log.debug("Reset password email sent");
+        return response;
     }
 
     @Override
@@ -53,9 +60,12 @@ public class ResetPasswordApi implements CommandsResetPasswordApiDelegate {
         try {
             completePasswordResetHandler.handle(command);
         } catch (CompletePasswordResetHandler.Exception e) {
+            log.error("Failed to complete password reset", e);
             throw ControllerException.createError(HttpStatus.FORBIDDEN, e);
         }
 
-        return ResponseEntity.ok(CompleteResetPassword200ResponseDTO.builder().build());
+        final var response = ResponseEntity.ok(CompleteResetPassword200ResponseDTO.builder().build());
+        log.debug("Password reset completed");
+        return response;
     }
 }

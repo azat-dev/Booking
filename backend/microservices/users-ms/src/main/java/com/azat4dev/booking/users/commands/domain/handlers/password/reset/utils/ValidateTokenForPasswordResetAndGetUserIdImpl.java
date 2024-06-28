@@ -4,7 +4,9 @@ import com.azat4dev.booking.shared.domain.values.user.UserId;
 import com.azat4dev.booking.shared.utils.TimeProvider;
 import com.azat4dev.booking.users.commands.domain.core.values.password.reset.TokenForPasswordReset;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 
+@Slf4j
 @RequiredArgsConstructor
 public final class ValidateTokenForPasswordResetAndGetUserIdImpl implements ValidateTokenForPasswordResetAndGetUserId {
 
@@ -22,9 +24,12 @@ public final class ValidateTokenForPasswordResetAndGetUserIdImpl implements Vali
                 throw new Exception.TokenExpired();
             }
 
-            return parsedData.userId();
+            final var userId = parsedData.userId();
+            log.debug("Password reset token is valid");
+            return userId;
 
         } catch (GetInfoForPasswordResetToken.Exception.InvalidToken e) {
+            log.debug("Token is not valid");
             throw new Exception.InvalidToken();
         }
     }

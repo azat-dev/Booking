@@ -7,10 +7,12 @@ import com.azat4dev.booking.users.queries.infrastructure.presentation.api.rest.m
 import com.azat4dev.booking.usersms.generated.server.api.QueriesCurrentUserApiDelegate;
 import com.azat4dev.booking.usersms.generated.server.model.PersonalUserInfoDTO;
 import lombok.AllArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Component;
 
+@Slf4j
 @Component
 @AllArgsConstructor
 public class CurrentUserApi implements QueriesCurrentUserApiDelegate {
@@ -23,12 +25,20 @@ public class CurrentUserApi implements QueriesCurrentUserApiDelegate {
     public ResponseEntity<PersonalUserInfoDTO> getCurrentUser() throws Exception {
 
         final var userId = currentUserId.get()
-            .orElseThrow(() -> new ControllerException(HttpStatus.UNAUTHORIZED, "User not authenticated"));
+            .orElseThrow(() -> {
+                log.debug("User not authenticated");
+                return new ControllerException(HttpStatus.UNAUTHORIZED, "User not authenticated");
+
+            });
 
         final var userInfo = usersQueryService.getPersonalInfoById(userId)
-            .orElseThrow(() -> new ControllerException(HttpStatus.NOT_FOUND, "User not found"));
+            .orElseThrow(() -> {
+                log.debug("User not found: {}", userId);
+                return new ControllerException(HttpStatus.NOT_FOUND, "User not found");
+            });
 
         final var dto = mapToDTO.map(userInfo);
+        log.debug("User info: {}", dto);
         return ResponseEntity.ok(dto);
     }
 }

@@ -5,6 +5,7 @@ import com.azat4dev.booking.users.commands.infrastructure.entities.UserData;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.dao.DuplicateKeyException;
 import org.springframework.dao.EmptyResultDataAccessException;
 import org.springframework.jdbc.core.RowMapper;
@@ -18,6 +19,7 @@ import java.util.Map;
 import java.util.Optional;
 import java.util.UUID;
 
+@Slf4j
 @RequiredArgsConstructor
 public final class UsersDaoJdbc implements UsersDao {
 
@@ -41,9 +43,13 @@ public final class UsersDaoJdbc implements UsersDao {
                     """,
                 userDataToParams(userData)
             );
+
+            log.debug("User added");
         } catch (DuplicateKeyException e) {
+            log.error("User already exists", e);
             throw new Exception.UserAlreadyExists();
         } catch (JsonProcessingException e) {
+            log.error("Wrong JSON format", e);
             throw new RuntimeException(e);
         }
     }
@@ -60,8 +66,11 @@ public final class UsersDaoJdbc implements UsersDao {
                 rowMapper
             );
 
-            return Optional.ofNullable(foundUser);
+            final var result = Optional.ofNullable(foundUser);
+            log.debug("User found by email");
+            return result;
         } catch (EmptyResultDataAccessException e) {
+            log.debug("User not found by email");
             return Optional.empty();
         }
     }
@@ -77,8 +86,11 @@ public final class UsersDaoJdbc implements UsersDao {
                 rowMapper
             );
 
-            return Optional.ofNullable(foundUser);
+            final var result = Optional.ofNullable(foundUser);
+            log.debug("User found by id");
+            return result;
         } catch (EmptyResultDataAccessException e) {
+            log.debug("User not found by id", e);
             return Optional.empty();
         }
     }
@@ -131,9 +143,11 @@ public final class UsersDaoJdbc implements UsersDao {
             final var numberOfUpdatedRecords = jdbcTemplate.update(sql, params);
 
             if (numberOfUpdatedRecords == 0) {
+                log.error("User not found");
                 throw new Exception.UserNotFound();
             }
         } catch (JsonProcessingException e) {
+            log.error("Wrong JSON format", e);
         }
 
     }
@@ -150,6 +164,7 @@ public final class UsersDaoJdbc implements UsersDao {
             try {
                 photo = encodedPhoto == null ? Optional.empty() : Optional.of(objectMapper.readValue(encodedPhoto, UserData.PhotoPath.class));
             } catch (JsonProcessingException e) {
+                log.error("Wrong JSON format", e);
                 throw new RuntimeException(e);
             }
 

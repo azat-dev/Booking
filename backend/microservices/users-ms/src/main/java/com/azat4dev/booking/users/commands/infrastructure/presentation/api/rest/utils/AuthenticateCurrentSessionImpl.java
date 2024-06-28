@@ -5,9 +5,7 @@ import com.azat4dev.booking.users.common.infrastructure.presentation.security.se
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import lombok.AllArgsConstructor;
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
-import org.springframework.core.log.LogMessage;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.core.context.SecurityContextHolderStrategy;
 import org.springframework.security.oauth2.server.resource.authentication.BearerTokenAuthenticationToken;
@@ -15,10 +13,9 @@ import org.springframework.security.web.context.SecurityContextRepository;
 
 import java.util.function.Supplier;
 
+@Slf4j
 @AllArgsConstructor
 public final class AuthenticateCurrentSessionImpl implements AuthenticateCurrentSession {
-
-    private final Log logger = LogFactory.getLog(this.getClass());
 
     private final SecurityContextHolderStrategy securityContextHolderStrategy = SecurityContextHolder
         .getContextHolderStrategy();
@@ -55,16 +52,12 @@ public final class AuthenticateCurrentSessionImpl implements AuthenticateCurrent
                 currentResponseSupplier.get()
             );
 
-            if (this.logger.isDebugEnabled()) {
-                this.logger.debug(LogMessage.format("Set SecurityContextHolder to %s", token));
-            }
-
+            log.debug("User authenticated");
             return tokens;
 
         } catch (Exception failed) {
+            log.error("Failed to process authentication request", failed);
             this.securityContextHolderStrategy.clearContext();
-            this.logger.trace("Failed to process authentication request", failed);
-
             throw failed;
         }
     }

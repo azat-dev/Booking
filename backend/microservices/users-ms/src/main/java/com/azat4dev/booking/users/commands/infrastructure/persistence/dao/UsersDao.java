@@ -23,13 +23,13 @@ public interface UsersDao {
             return getClass().getSimpleName();
         }
 
-        public final static class UserAlreadyExists extends Exception {
+        public static final class UserAlreadyExists extends Exception {
         }
 
-        public final static class UserNotFound extends Exception {
+        public static final class UserNotFound extends Exception {
         }
 
-        public final static class WrongJsonFormat extends Exception {
+        public static final class WrongJsonFormat extends Exception {
         }
     }
 }

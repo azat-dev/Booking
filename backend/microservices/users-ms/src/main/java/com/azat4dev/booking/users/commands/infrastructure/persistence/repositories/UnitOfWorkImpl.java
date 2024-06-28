@@ -4,12 +4,13 @@ import com.azat4dev.booking.shared.data.repositories.outbox.OutboxEventsReposito
 import com.azat4dev.booking.users.commands.domain.interfaces.repositories.UnitOfWork;
 import com.azat4dev.booking.users.commands.domain.interfaces.repositories.UsersRepository;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.transaction.support.DefaultTransactionDefinition;
 import org.springframework.transaction.support.TransactionTemplate;
 
 import java.lang.reflect.UndeclaredThrowableException;
 
-
+@Slf4j
 @RequiredArgsConstructor
 public class UnitOfWorkImpl extends DefaultTransactionDefinition implements UnitOfWork {
 
@@ -48,12 +49,14 @@ public class UnitOfWorkImpl extends DefaultTransactionDefinition implements Unit
             return result;
 
         } catch (UndeclaredThrowableException e) {
+            log.error("UnitOfWork failed", e);
             this.status = Status.ROLLED_BACK;
             if (e.getUndeclaredThrowable() instanceof Exception) {
                 throw (Exception) e.getUndeclaredThrowable();
             }
             throw e;
         } catch (Throwable e) {
+            log.error("UnitOfWork failed", e);
             this.status = Status.ROLLED_BACK;
             throw e;
         }

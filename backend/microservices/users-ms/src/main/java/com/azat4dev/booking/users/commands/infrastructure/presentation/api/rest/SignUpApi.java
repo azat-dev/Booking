@@ -11,12 +11,14 @@ import com.azat4dev.booking.usersms.generated.server.model.SignUpByEmailResponse
 import com.azat4dev.booking.usersms.generated.server.model.TokensPairDTO;
 import io.micrometer.observation.annotation.Observed;
 import lombok.AllArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Component;
 
+@Slf4j
 @Observed
 @Component
 @AllArgsConstructor
@@ -54,8 +56,11 @@ public class SignUpApi implements CommandsSignUpApiDelegate {
             )
             .build();
 
-        return ResponseEntity.status(HttpStatus.CREATED)
+        final var result = ResponseEntity.status(HttpStatus.CREATED)
             .body(response);
+
+        log.debug("User signed up");
+        return result;
     }
 
     @Override
@@ -66,6 +71,7 @@ public class SignUpApi implements CommandsSignUpApiDelegate {
             return _signUpByEmail(requestBody);
 
         } catch (SignUpHandler.Exception.UserWithSameEmailAlreadyExists e) {
+            log.error("User with same email already exists", e);
             throw ControllerException.createError(HttpStatus.CONFLICT, e);
         }
     }

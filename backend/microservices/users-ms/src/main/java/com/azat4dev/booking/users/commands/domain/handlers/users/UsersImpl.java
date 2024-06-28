@@ -14,9 +14,11 @@ import com.azat4dev.booking.users.commands.domain.core.values.user.EmailVerifica
 import com.azat4dev.booking.users.commands.domain.interfaces.repositories.UnitOfWorkFactory;
 import com.azat4dev.booking.users.commands.domain.interfaces.repositories.UsersRepository;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 
 import java.util.Optional;
 
+@Slf4j
 @RequiredArgsConstructor
 public final class UsersImpl implements Users {
 
@@ -63,9 +65,14 @@ public final class UsersImpl implements Users {
                 return null;
             });
 
+            log.debug("User created");
+
         } catch (UsersRepository.Exception.UserWithSameEmailAlreadyExists e) {
+
+            log.error("User with same email already exists", e);
             throw new Exception.UserWithSameEmailAlreadyExists();
         } catch (Throwable e) {
+            log.error("Failed to create user", e);
             throw new RuntimeException(e);
         }
 
@@ -94,13 +101,18 @@ public final class UsersImpl implements Users {
                 return null;
             });
 
+            log.debug("Email verified");
+
         } catch (java.lang.Exception e) {
             switch (e) {
                 case UsersRepository.Exception.UserNotFound inst:
+                    log.error("User not found", e);
                     throw new Exception.UserNotFound();
                 case User.Exception.VerifiedEmailDoesntExist inst:
+                    log.error("Email not found", e);
                     throw new Exception.EmailNotFound();
                 default:
+                    log.error("Failed to verify email", e);
                     throw new RuntimeException(e);
             }
         }
@@ -114,11 +126,16 @@ public final class UsersImpl implements Users {
         final var unitOfWork = unitOfWorkFactory.make();
 
         try {
-            return unitOfWork.doOrFail(() -> {
+            final var result = unitOfWork.doOrFail(() -> {
                 final var usersRepository = unitOfWork.getUsersRepository();
                 return usersRepository.findByEmail(email);
             });
+
+            log.debug("User found by email");
+
+            return result;
         } catch (java.lang.Exception e) {
+            log.error("Failed to find user by email", e);
             throw new RuntimeException(e);
         }
     }
@@ -152,7 +169,9 @@ public final class UsersImpl implements Users {
                 return null;
             });
 
+            log.debug("User photo updated");
         } catch (Throwable e) {
+            log.error("Failed to update user photo", e);
             throw new Exception.FailedToUpdateUser();
         }
 

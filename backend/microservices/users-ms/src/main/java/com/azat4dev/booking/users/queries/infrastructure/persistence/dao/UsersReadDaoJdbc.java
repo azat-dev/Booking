@@ -4,6 +4,7 @@ import com.azat4dev.booking.users.queries.infrastructure.persistence.dao.records
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.dao.EmptyResultDataAccessException;
 import org.springframework.jdbc.core.RowMapper;
 import org.springframework.jdbc.core.namedparam.NamedParameterJdbcTemplate;
@@ -14,7 +15,7 @@ import java.util.Map;
 import java.util.Optional;
 import java.util.UUID;
 
-
+@Slf4j
 public class UsersReadDaoJdbc implements UsersReadDao {
 
     private final NamedParameterJdbcTemplate jdbcTemplate;
@@ -43,6 +44,7 @@ public class UsersReadDaoJdbc implements UsersReadDao {
 
             return Optional.ofNullable(foundUser);
         } catch (EmptyResultDataAccessException e) {
+            log.error("User not found: {}", userId);
             return Optional.empty();
         }
     }
@@ -60,6 +62,7 @@ public class UsersReadDaoJdbc implements UsersReadDao {
             try {
                 photo = encodedPhoto == null ? Optional.empty() : Optional.of(objectMapper.readValue(encodedPhoto, UserRecord.PhotoPath.class));
             } catch (JsonProcessingException e) {
+                log.error("Failed to parse photo: {}", encodedPhoto);
                 throw new RuntimeException(e);
             }
 

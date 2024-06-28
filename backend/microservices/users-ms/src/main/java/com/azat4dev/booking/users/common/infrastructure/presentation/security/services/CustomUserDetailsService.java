@@ -4,10 +4,11 @@ import com.azat4dev.booking.shared.domain.values.user.UserId;
 import com.azat4dev.booking.users.common.infrastructure.presentation.security.services.jwt.UserIdNotFoundException;
 import com.azat4dev.booking.users.common.infrastructure.presentation.security.entities.UserPrincipal;
 import com.azat4dev.booking.users.commands.domain.interfaces.repositories.UsersRepository;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 
-
+@Slf4j
 public final class CustomUserDetailsService implements UserDetailsService {
 
     private final UsersRepository usersRepository;
@@ -23,6 +24,7 @@ public final class CustomUserDetailsService implements UserDetailsService {
             final var userId = UserId.checkAndMakeFrom(username);
             return loadUserById(userId);
         } catch (UserId.WrongFormatException e) {
+            log.error("Invalid user id format: {}", username);
             throw new RuntimeException(e);
         }
     }

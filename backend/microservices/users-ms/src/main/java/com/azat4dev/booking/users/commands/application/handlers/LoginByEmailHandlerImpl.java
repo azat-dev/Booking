@@ -8,7 +8,9 @@ import com.azat4dev.booking.users.commands.domain.core.values.password.Password;
 import com.azat4dev.booking.users.commands.domain.handlers.users.Users;
 import com.azat4dev.booking.users.commands.domain.interfaces.services.PasswordService;
 import lombok.AllArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 
+@Slf4j
 @AllArgsConstructor
 public final class LoginByEmailHandlerImpl implements LoginByEmailHandler {
 
@@ -29,10 +31,13 @@ public final class LoginByEmailHandlerImpl implements LoginByEmailHandler {
                 throw new Exception.WrongCredentials();
             }
 
+            log.debug("User logged in by email: {}", email);
             return user;
         } catch (Password.Exception e) {
+            log.debug("Invalid password", e);
             throw ValidationException.withPath("password", e);
         } catch (EmailAddress.WrongFormatException e) {
+            log.debug("Invalid email", e);
             throw ValidationException.withPath("email", e);
         }
     }

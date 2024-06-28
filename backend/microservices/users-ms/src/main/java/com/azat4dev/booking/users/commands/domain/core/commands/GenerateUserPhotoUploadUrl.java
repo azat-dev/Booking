@@ -7,9 +7,11 @@ import com.azat4dev.booking.shared.domain.values.files.PhotoFileExtension;
 import com.azat4dev.booking.shared.domain.values.user.UserId;
 import lombok.EqualsAndHashCode;
 import lombok.Getter;
+import lombok.extern.slf4j.Slf4j;
 
 import java.time.LocalDateTime;
 
+@Slf4j
 @EqualsAndHashCode
 @Getter
 public final class GenerateUserPhotoUploadUrl implements Command {
@@ -21,10 +23,6 @@ public final class GenerateUserPhotoUploadUrl implements Command {
     private final IdempotentOperationId operationId;
     private final LocalDateTime requestedAt;
 
-
-    /**
-     * @throws Exception.InvalidFileSize
-     */
     public GenerateUserPhotoUploadUrl(
         UserId userId,
         PhotoFileExtension fileExtension,
@@ -34,6 +32,7 @@ public final class GenerateUserPhotoUploadUrl implements Command {
     ) throws Exception {
 
         if (fileSize > MAX_FILE_SIZE) {
+            log.error("File size should be less than 5MB");
             throw new Exception.InvalidFileSize();
         }
 
@@ -46,10 +45,8 @@ public final class GenerateUserPhotoUploadUrl implements Command {
 
     // Exceptions
 
-    public static sealed
-
-    abstract class Exception extends DomainException permits Exception.InvalidFileSize {
-        public Exception(String message) {
+    public abstract static sealed class Exception extends DomainException {
+        protected Exception(String message) {
             super(message);
         }
 

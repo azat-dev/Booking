@@ -12,15 +12,15 @@ import com.azat4dev.booking.users.commands.domain.handlers.email.verification.ut
 import com.azat4dev.booking.users.commands.domain.handlers.email.verification.utils.ProvideEmailVerificationToken;
 import com.azat4dev.booking.users.commands.domain.interfaces.services.EmailService;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.time.LocalDateTime;
 
+@Slf4j
 @RequiredArgsConstructor
 public class SendVerificationEmailHandler implements CommandHandler<SendVerificationEmail> {
-
-    private static final Logger logger = LoggerFactory.getLogger(SendVerificationEmailHandler.class);
 
     private final BuildEmailVerificationLink buildVerificationLink;
     private final EmailAddress fromAddress;
@@ -51,8 +51,10 @@ public class SendVerificationEmailHandler implements CommandHandler<SendVerifica
                 )
             );
 
-        } catch (Throwable e) {
-            logger.error("Can' send verification email", e);
+            log.debug("Verification email sent");
+
+        } catch (Exception e) {
+            log.error("Can' send verification email", e);
 
             bus.publish(
                 new FailedToSendVerificationEmail(

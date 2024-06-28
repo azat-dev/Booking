@@ -19,6 +19,7 @@ import com.azat4dev.booking.usersms.generated.events.dto.*;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import lombok.AllArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 
 import java.net.MalformedURLException;
 import java.net.URI;
@@ -26,7 +27,7 @@ import java.time.Instant;
 import java.time.LocalDateTime;
 import java.time.ZoneOffset;
 
-
+@Slf4j
 @AllArgsConstructor
 public final class DomainEventsSerializerImpl implements DomainEventSerializer {
 
@@ -52,6 +53,7 @@ public final class DomainEventsSerializerImpl implements DomainEventSerializer {
         try {
             return objectMapper.writeValueAsString(dto);
         } catch (JsonProcessingException e) {
+            log.error("Serialization error", e);
             throw new RuntimeException(e);
         }
     }
@@ -76,6 +78,7 @@ public final class DomainEventsSerializerImpl implements DomainEventSerializer {
                 payload
             );
         } catch (JsonProcessingException e) {
+            log.error("Deserialization error", e);
             throw new RuntimeException(e);
         }
     }
@@ -94,6 +97,7 @@ public final class DomainEventsSerializerImpl implements DomainEventSerializer {
                 LastName.dangerMakeFromStringWithoutCheck(fullNameDTO.getLastName())
             );
         } catch (FullName.Exception e) {
+            log.error("Failed to deserialize FullName", e);
             throw new RuntimeException(e);
         }
     }
@@ -223,6 +227,7 @@ public final class DomainEventsSerializerImpl implements DomainEventSerializer {
                 dto.getFormData()
             );
         } catch (MalformedURLException e) {
+            log.error("Failed to deserialize URL", e);
             throw new RuntimeException(e);
         }
     }

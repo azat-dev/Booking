@@ -8,6 +8,8 @@ import com.azat4dev.booking.shared.domain.events.DomainEventPayload;
 import com.azat4dev.booking.shared.domain.interfaces.bus.DomainEventsBus;
 import jakarta.annotation.PostConstruct;
 import jakarta.annotation.PreDestroy;
+import lombok.AllArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -22,17 +24,14 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 
+@Slf4j
+@AllArgsConstructor
 @Configuration
 public class ConnectCommandHandlersConfig {
 
-    private static final Logger LOGGER = LoggerFactory.getLogger(ConnectCommandHandlersConfig.class);
     private final List<Closeable> cancellations = new LinkedList<>();
-
-    @Autowired
-    ApplicationContext applicationContext;
-
-    @Autowired
-    DomainEventsBus domainEventsBus;
+    private final ApplicationContext applicationContext;
+    private final DomainEventsBus domainEventsBus;
 
     private static Map<Class<DomainEventPayload>, List<CommandHandler<Command>>> groupHandlersByPayload(List<CommandHandler<Command>> handlers) {
 
@@ -72,7 +71,7 @@ public class ConnectCommandHandlersConfig {
             if (bean instanceof CommandHandler inst) {
                 annotatedBeans.add(inst);
             } else {
-                LOGGER.error("Bean {} is not a CommandHandler", beanName);
+                log.error("Bean {} is not a CommandHandler", beanName);
             }
         }
         return annotatedBeans;
@@ -95,7 +94,6 @@ public class ConnectCommandHandlersConfig {
                         try {
                             listener.handle((Command) event.payload(), event.id(), event.issuedAt());
                         } catch (DomainException e) {
-                            // FIXME:
                             throw new RuntimeException(e);
                         }
                     });
@@ -103,7 +101,7 @@ public class ConnectCommandHandlersConfig {
             }
         }
 
-        LOGGER.info("Connected command handlers to the bus {}", commandHandlers);
+        log.info("Connected command handlers to the bus {}", commandHandlers);
     }
 
     @PreDestroy
@@ -112,10 +110,10 @@ public class ConnectCommandHandlersConfig {
             try {
                 cancellation.close();
             } catch (IOException e) {
-                LOGGER.error("Can't close cancellation", e);
+                log.error("Can't close cancellation", e);
             }
         });
 
-        LOGGER.info("Disconnected command handlers from the bus {}");
+        log.info("Disconnected command handlers from the bus");
     }
 }

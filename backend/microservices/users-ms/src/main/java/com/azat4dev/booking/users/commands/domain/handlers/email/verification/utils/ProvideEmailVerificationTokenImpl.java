@@ -6,6 +6,7 @@ import com.azat4dev.booking.users.common.infrastructure.presentation.security.se
 import com.azat4dev.booking.users.commands.domain.core.values.email.EmailAddress;
 import com.azat4dev.booking.users.commands.domain.core.values.email.verification.EmailVerificationToken;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 
 import java.time.Duration;
 import java.util.Map;

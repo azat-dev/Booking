@@ -7,10 +7,12 @@ import com.azat4dev.booking.usersms.generated.server.api.CommandsEmailVerificati
 import com.azat4dev.booking.usersms.generated.server.model.VerifyEmail200ResponseDTO;
 import io.micrometer.observation.annotation.Observed;
 import lombok.AllArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Component;
 
+@Slf4j
 @Observed
 @Component
 @AllArgsConstructor
@@ -24,7 +26,9 @@ public class EmailVerificationApi implements CommandsEmailVerificationApiDelegat
         final var command = new CompleteEmailVerification(token);
         try {
             completeEmailVerificationHandler.handle(command);
+            log.debug("Email verified");
         } catch (CompleteEmailVerificationHandler.Exception e) {
+            log.error("Failed to verify email", e);
             throw ControllerException.createError(HttpStatus.FORBIDDEN, e);
         }
 

@@ -10,7 +10,7 @@ public interface CompletePasswordResetHandler {
 
     // Exceptions
 
-    sealed abstract class Exception extends DomainException permits Exception.InvalidToken, Exception.TokenExpired {
+    abstract sealed class Exception extends DomainException permits Exception.InvalidToken, Exception.TokenExpired {
         Exception(String message) {
             super(message);
         }

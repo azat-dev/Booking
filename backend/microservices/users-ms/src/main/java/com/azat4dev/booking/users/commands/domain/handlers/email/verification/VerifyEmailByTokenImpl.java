@@ -5,7 +5,9 @@ import com.azat4dev.booking.users.commands.domain.core.values.email.verification
 import com.azat4dev.booking.users.commands.domain.handlers.email.verification.utils.GetInfoForEmailVerificationToken;
 import com.azat4dev.booking.users.commands.domain.handlers.users.Users;
 import lombok.AllArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 
+@Slf4j
 @AllArgsConstructor
 public final class VerifyEmailByTokenImpl implements VerifyEmailByToken {
 
@@ -34,11 +36,16 @@ public final class VerifyEmailByTokenImpl implements VerifyEmailByToken {
                 email
             );
 
+            log.debug("Email verified");
+
         } catch (GetInfoForEmailVerificationToken.TokenIsNotValidException e) {
+            log.debug("Token is not valid");
             throw new Exception.TokenIsNotValid();
         } catch (Users.Exception.UserNotFound e) {
+            log.debug("User not found");
             throw new Exception.UserNotFound();
         } catch (Users.Exception.EmailNotFound e) {
+            log.debug("Email not found");
             throw new Exception.EmailNotFound();
         }
     }

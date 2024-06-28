@@ -5,9 +5,11 @@ import com.azat4dev.booking.users.queries.infrastructure.persistence.dao.records
 import com.azat4dev.booking.users.queries.domain.entities.UserPhoto;
 import com.azat4dev.booking.users.queries.domain.interfaces.repositories.MapToUserPhoto;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 
 import java.net.MalformedURLException;
 
+@Slf4j
 @RequiredArgsConstructor
 public final class MapToUserPhotoImpl implements MapToUserPhoto {
 
@@ -20,6 +22,7 @@ public final class MapToUserPhotoImpl implements MapToUserPhoto {
                 baseUrl.urlWithPath(photoPath.bucketName() + "/" + photoPath.objectName())
             );
         } catch (MalformedURLException e) {
+            log.error("Invalid photo path: {}", photoPath);
             throw new RuntimeException(e);
         }
     }

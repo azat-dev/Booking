@@ -6,7 +6,9 @@ import com.azat4dev.booking.users.commands.application.commands.password.ResetPa
 import com.azat4dev.booking.users.commands.domain.core.values.email.EmailAddress;
 import com.azat4dev.booking.users.commands.domain.handlers.password.reset.SendResetPasswordEmail;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 
+@Slf4j
 @RequiredArgsConstructor
 public final class ResetPasswordByEmailHandlerImpl implements ResetPasswordByEmailHandler {
 
@@ -20,12 +22,16 @@ public final class ResetPasswordByEmailHandlerImpl implements ResetPasswordByEma
             final var email = EmailAddress.checkAndMakeFromString(command.getEmail());
 
             sendResetPasswordEmail.execute(operationId, email);
+            log.debug("Reset password email sent");
 
         } catch (IdempotentOperationId.Exception e) {
+            log.debug("Invalid operation id", e);
             throw ValidationException.withPath("operationId", e);
         } catch (EmailAddress.WrongFormatException e) {
+            log.debug("Invalid email", e);
             throw ValidationException.withPath("email", e);
         } catch (SendResetPasswordEmail.Exception e) {
+            log.debug("Failed to send reset password email", e);
             throw new Exception.FailedToSendResetPasswordEmail();
         }
     }

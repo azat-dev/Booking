@@ -10,18 +10,16 @@ import com.azat4dev.booking.usersms.generated.server.model.LoginByEmailResponseB
 import com.azat4dev.booking.usersms.generated.server.model.TokensPairDTO;
 import io.micrometer.observation.annotation.Observed;
 import lombok.AllArgsConstructor;
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Component;
 
+@Slf4j
 @Observed
 @Component
 @AllArgsConstructor
 public class LoginApi implements CommandsLoginApiDelegate {
-
-    private final Log logger = LogFactory.getLog(this.getClass());
 
     private final LoginByEmailHandler loginByEmailHandler;
     private final AuthenticateCurrentSession authenticateCurrentSession;
@@ -39,9 +37,7 @@ public class LoginApi implements CommandsLoginApiDelegate {
             );
 
             final var tokens = authenticateCurrentSession.execute(user.getId(), new String[]{"ROLE_USER"});
-            if (logger.isInfoEnabled()) {
-                logger.info("User with email " + loginByEmailRequestBody.getEmail() + " logged in");
-            }
+            log.debug("User logged in");
 
             return ResponseEntity.ok(
                 LoginByEmailResponseBodyDTO.builder()
@@ -56,9 +52,7 @@ public class LoginApi implements CommandsLoginApiDelegate {
             );
 
         } catch (LoginByEmailHandler.Exception.WrongCredentials e) {
-            if (logger.isInfoEnabled()) {
-                logger.info("User with email " + loginByEmailRequestBody.getEmail() + " failed to log in");
-            }
+            log.debug("User with email {} failed to log in", loginByEmailRequestBody.getEmail());
             throw new ControllerException(HttpStatus.FORBIDDEN, e);
         }
     }

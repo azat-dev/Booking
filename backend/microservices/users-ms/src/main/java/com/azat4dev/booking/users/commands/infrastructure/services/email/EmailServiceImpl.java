@@ -6,11 +6,13 @@ import io.micrometer.observation.annotation.Observed;
 import jakarta.mail.MessagingException;
 import jakarta.mail.internet.MimeMessage;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.mail.javamail.JavaMailSenderImpl;
 import org.springframework.mail.javamail.MimeMessageHelper;
 
 import java.io.UnsupportedEncodingException;
 
+@Slf4j
 @Observed
 @RequiredArgsConstructor
 public class EmailServiceImpl implements EmailService {
@@ -37,9 +39,9 @@ public class EmailServiceImpl implements EmailService {
             helper.setFrom(data.from().getValue(), data.fromName());
             helper.setSubject(data.subject());
             helper.setText(data.body().value());
-        } catch (MessagingException e) {
-            throw new RuntimeException(e);
-        } catch (UnsupportedEncodingException e) {
+            log.debug("Email sent");
+        } catch (MessagingException | UnsupportedEncodingException e) {
+            log.error("Failed to send email", e);
             throw new RuntimeException(e);
         }
 

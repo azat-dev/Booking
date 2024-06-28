@@ -9,7 +9,9 @@ import com.azat4dev.booking.users.commands.domain.handlers.password.reset.utils.
 import com.azat4dev.booking.users.commands.domain.interfaces.repositories.UsersRepository;
 import com.azat4dev.booking.users.commands.domain.interfaces.services.EmailService;
 import lombok.AllArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 
+@Slf4j
 @AllArgsConstructor
 public final class SendResetPasswordEmailImpl implements SendResetPasswordEmail {
 
@@ -37,9 +39,14 @@ public final class SendResetPasswordEmailImpl implements SendResetPasswordEmail 
                     emailData.body()
                 )
             );
+            log.debug("Reset password email sent");
 
             bus.publish(new SentEmailForPasswordReset(userId, email));
-        } catch (Throwable e) {
+            log.debug("SentEmailForPasswordReset event published");
+
+        } catch (java.lang.Exception e) {
+            log.debug("Failed to send reset password email");
+
             bus.publish(
                 new FailedToSendVerificationEmail(
                     userId,

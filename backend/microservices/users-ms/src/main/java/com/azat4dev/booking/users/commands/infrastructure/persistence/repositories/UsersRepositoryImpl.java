@@ -10,9 +10,11 @@ import com.azat4dev.booking.users.commands.infrastructure.persistence.repositori
 import com.azat4dev.booking.users.commands.infrastructure.persistence.repositories.mappers.MapUserToData;
 import io.micrometer.observation.annotation.Observed;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 
 import java.util.Optional;
 
+@Slf4j
 @Observed
 @RequiredArgsConstructor
 public class UsersRepositoryImpl implements UsersRepository {
@@ -28,7 +30,9 @@ public class UsersRepositoryImpl implements UsersRepository {
 
         try {
             this.usersDao.addNew(userData);
+            log.debug("User added");
         } catch (UsersDao.Exception.UserAlreadyExists e) {
+            log.error("User already exists", e);
             throw new Exception.UserWithSameEmailAlreadyExists();
         }
     }
@@ -40,7 +44,9 @@ public class UsersRepositoryImpl implements UsersRepository {
 
         try {
             this.usersDao.update(userData);
+            log.debug("User updated");
         } catch (UsersDao.Exception.UserNotFound e) {
+            log.error("User not found", e);
             throw new Exception.UserNotFound(user.getId());
         }
     }
@@ -53,6 +59,7 @@ public class UsersRepositoryImpl implements UsersRepository {
             try {
                 return this.mapUserDataToDomain.map(userData);
             } catch (DomainException e) {
+                log.error("User not found", e);
                 throw new RuntimeException(e);
             }
         });
@@ -65,6 +72,7 @@ public class UsersRepositoryImpl implements UsersRepository {
             try {
                 return this.mapUserDataToDomain.map(userData);
             } catch (DomainException e) {
+                log.error("User not found", e);
                 throw new RuntimeException(e);
             }
         });

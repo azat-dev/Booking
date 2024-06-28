@@ -17,17 +17,17 @@ public interface SetNewPasswordByToken {
 
     // Exceptions
 
-    sealed abstract class Exception extends DomainException permits Exception.InvalidToken, Exception.TokenExpired {
+    abstract sealed class Exception extends DomainException {
         Exception(String message) {
             super(message);
         }
 
-        public static <Input extends ValidateTokenForPasswordResetAndGetUserId.Exception> Exception makeFrom(Input e) {
+        public static <I extends ValidateTokenForPasswordResetAndGetUserId.Exception> Exception makeFrom(I e) {
             switch (e) {
-                case Input.TokenExpired inst -> {
+                case I.TokenExpired inst -> {
                     return new TokenExpired();
                 }
-                case Input.InvalidToken inst -> {
+                case I.InvalidToken inst -> {
                     return new InvalidToken();
                 }
             }

@@ -9,24 +9,22 @@ import com.azat4dev.booking.users.commands.application.handlers.photo.UpdateUser
 import com.azat4dev.booking.usersms.generated.server.api.CommandsUpdateUserPhotoApiDelegate;
 import com.azat4dev.booking.usersms.generated.server.model.*;
 import io.micrometer.observation.annotation.Observed;
-import org.springframework.beans.factory.annotation.Autowired;
+import lombok.AllArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Component;
 import org.springframework.web.server.ResponseStatusException;
 
+@Slf4j
+@AllArgsConstructor
 @Observed
 @Component
 public class UpdateUserPhotoApi implements CommandsUpdateUserPhotoApiDelegate {
 
-    @Autowired
-    private UpdateUserPhotoHandler updateUserPhoto;
-
-    @Autowired
-    private GenerateUserPhotoUploadUrlHandler generateUserPhotoUploadUrlHandler;
-
-    @Autowired
-    private CurrentAuthenticatedUserIdProvider getCurrentUserId;
+    private final UpdateUserPhotoHandler updateUserPhoto;
+    private final GenerateUserPhotoUploadUrlHandler generateUserPhotoUploadUrlHandler;
+    private final CurrentAuthenticatedUserIdProvider getCurrentUserId;
 
     @Override
     public ResponseEntity<GenerateUploadUserPhotoUrlResponseBodyDTO> generateUploadUserPhotoUrl(GenerateUploadUserPhotoUrlRequestBodyDTO requestBody) throws Exception {
@@ -39,11 +37,10 @@ public class UpdateUserPhotoApi implements CommandsUpdateUserPhotoApiDelegate {
             requestBody.getFileSize()
         );
 
-
         try {
             final var result = generateUserPhotoUploadUrlHandler.handle(command);
 
-            return ResponseEntity.ok(new GenerateUploadUserPhotoUrlResponseBodyDTO(
+            final var response = ResponseEntity.ok(new GenerateUploadUserPhotoUrlResponseBodyDTO(
                 UploadedFileDataDTO.builder()
                     .url(result.formData().url().toString())
                     .bucketName(result.formData().bucketName().toString())
@@ -52,7 +49,11 @@ public class UpdateUserPhotoApi implements CommandsUpdateUserPhotoApiDelegate {
                 result.formData().formData())
             );
 
+            log.debug("User photo upload url generated");
+            return response;
+
         } catch (GenerateUserPhotoUploadUrlHandler.Exception.FailedGenerateUserPhotoUploadUrl e) {
+            log.error("Failed to generate user photo upload url", e);
             throw ControllerException.createError(HttpStatus.INTERNAL_SERVER_ERROR, e);
         }
     }
@@ -73,8 +74,11 @@ public class UpdateUserPhotoApi implements CommandsUpdateUserPhotoApiDelegate {
 
         try {
             updateUserPhoto.handle(command);
-            return ResponseEntity.ok(UpdateUserPhoto200ResponseDTO.builder().build());
+            final var response = ResponseEntity.ok(UpdateUserPhoto200ResponseDTO.builder().build());
+            log.debug("User photo updated");
+            return response;
         } catch (UpdateUserPhotoHandler.Exception.FailedToAttachPhoto e) {
+            log.error("Failed to attach photo", e);
             throw new ResponseStatusException(HttpStatus.INTERNAL_SERVER_ERROR, e.getMessage());
         }
     }

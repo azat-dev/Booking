@@ -8,7 +8,9 @@ import com.azat4dev.booking.users.commands.domain.core.values.password.reset.Tok
 import com.azat4dev.booking.users.commands.domain.handlers.password.reset.SetNewPasswordByToken;
 import com.azat4dev.booking.users.commands.domain.interfaces.services.PasswordService;
 import lombok.AllArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 
+@Slf4j
 @AllArgsConstructor
 public final class CompletePasswordResetHandlerImpl implements CompletePasswordResetHandler {
 
@@ -29,15 +31,22 @@ public final class CompletePasswordResetHandlerImpl implements CompletePasswordR
                 token,
                 newEncodedPassword
             );
+
+            log.info("Password reset completed");
         } catch (IdempotentOperationId.Exception e) {
+            log.debug("Invalid operation id", e);
             throw ValidationException.withPath("operationId", e);
         } catch (TokenForPasswordReset.Exception e) {
+            log.debug("Invalid token", e);
             throw ValidationException.withPath("passwordResetToken", e);
         } catch (Password.Exception e) {
+            log.debug("Invalid password", e);
             throw ValidationException.withPath("password", e);
         } catch (SetNewPasswordByToken.Exception.InvalidToken e) {
+            log.debug("Invalid token", e);
             throw new Exception.InvalidToken();
         } catch (SetNewPasswordByToken.Exception.TokenExpired e) {
+            log.debug("Token is expired", e);
             throw new Exception.TokenExpired();
         }
     }

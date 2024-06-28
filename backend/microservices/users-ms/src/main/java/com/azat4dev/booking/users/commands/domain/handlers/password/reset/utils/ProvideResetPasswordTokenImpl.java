@@ -2,12 +2,13 @@ package com.azat4dev.booking.users.commands.domain.handlers.password.reset.utils
 
 import com.azat4dev.booking.shared.domain.values.user.UserId;
 import com.azat4dev.booking.shared.utils.TimeProvider;
-import com.azat4dev.booking.users.common.infrastructure.presentation.security.services.jwt.JwtDataEncoder;
 import com.azat4dev.booking.users.commands.domain.core.values.password.reset.TokenForPasswordReset;
+import com.azat4dev.booking.users.common.infrastructure.presentation.security.services.jwt.JwtDataEncoder;
 import lombok.RequiredArgsConstructor;
 
 import java.time.Duration;
 import java.util.Map;
+
 
 @RequiredArgsConstructor
 public final class ProvideResetPasswordTokenImpl implements ProvideResetPasswordToken {

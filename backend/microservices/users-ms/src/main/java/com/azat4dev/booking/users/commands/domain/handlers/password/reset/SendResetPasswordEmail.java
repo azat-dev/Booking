@@ -8,12 +8,11 @@ public interface SendResetPasswordEmail {
 
     void execute(IdempotentOperationId operationId, EmailAddress email) throws Exception;
 
-
     // Exceptions
 
     abstract class Exception extends DomainException {
 
-        public Exception(String message) {
+        protected Exception(String message) {
             super(message);
         }
 

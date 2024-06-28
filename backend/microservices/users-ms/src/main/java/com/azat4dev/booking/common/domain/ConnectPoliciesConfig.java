@@ -5,9 +5,10 @@ import com.azat4dev.booking.shared.domain.events.DomainEvent;
 import com.azat4dev.booking.shared.domain.events.DomainEventPayload;
 import com.azat4dev.booking.shared.domain.interfaces.bus.DomainEventsBus;
 import jakarta.annotation.PostConstruct;
+import lombok.AllArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Configuration;
 
 import java.io.Closeable;
@@ -17,18 +18,14 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 
+@Slf4j
+@AllArgsConstructor
 @Configuration
 public class ConnectPoliciesConfig {
 
-    private static final Logger LOGGER = LoggerFactory.getLogger(ConnectPoliciesConfig.class);
-
-    @Autowired
-    List<Policy<DomainEvent<?>>> policies;
-
-    @Autowired
-    DomainEventsBus domainEventsBus;
-
-    List<Closeable> cancellations = new LinkedList<>();
+    private final List<Policy<DomainEvent<?>>> policies;
+    private final DomainEventsBus domainEventsBus;
+    private final List<Closeable> cancellations = new LinkedList<>();
 
     private static Map<Class<DomainEventPayload>, List<Policy<DomainEvent<?>>>> groupPolicies(List<Policy<DomainEvent<?>>> policies) {
 
@@ -74,7 +71,7 @@ public class ConnectPoliciesConfig {
             }
         }
 
-        LOGGER.info("Connected {} policies to the bus",
+        log.info("Connected {} policies to the bus",
             policies.stream().map(Object::getClass).map(Class::getSimpleName).toList());
     }
 }
