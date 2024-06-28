@@ -1,9 +1,9 @@
 package com.azat4dev.booking.shared.utils;
 
 import com.azat4dev.booking.shared.domain.DomainException;
-//import org.springframework.util.StringUtils;
+import org.springframework.util.StringUtils;
 
-import java.util.function.Function;
+import java.util.function.Predicate;
 import java.util.function.Supplier;
 
 public class Assert {
@@ -13,7 +13,7 @@ public class Assert {
             throw new IllegalArgumentException("Exception supplier is null");
         }
 
-        return new StringValidator<E>(value, exceptionSupplier);
+        return new StringValidator<>(value, exceptionSupplier);
     }
 
     public static <E extends Exception> void notNull(Object object, ExceptionSupplier<E> exceptionProducer) throws E {
@@ -23,9 +23,9 @@ public class Assert {
     }
 
     public static <E extends Exception> void notBlank(String value, ExceptionSupplier<E> exceptionProducer) throws E {
-//        if (!StringUtils.hasText(value)) {
-//            throw exceptionProducer.get();
-//        }
+        if (!StringUtils.hasText(value)) {
+            throw exceptionProducer.get();
+        }
     }
 
     public static <E extends Exception> void isTrue(boolean value, ExceptionSupplier<E> exceptionProducer) throws E {
@@ -78,8 +78,8 @@ public class Assert {
             return this;
         }
 
-        public StringValidator<E> isTrue(Function<String, Boolean> predicate) throws E {
-            Assert.isTrue(predicate.apply(value), exceptionSupplier);
+        public StringValidator<E> isTrue(Predicate<String> predicate) throws E {
+            Assert.isTrue(predicate.test(value), exceptionSupplier);
             return this;
         }
     }

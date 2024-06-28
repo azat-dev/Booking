@@ -2,7 +2,7 @@ package com.azat4dev.booking.shared.domain;
 
 public abstract class DomainException extends Exception {
 
-    public DomainException(String message) {
+    protected DomainException(String message) {
         super(message);
     }
 

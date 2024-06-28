@@ -29,7 +29,7 @@ public final class KafkaDomainEventsBus implements DomainEventsBus {
     public void publish(DomainEventPayload event, LocalDateTime time, EventId eventId) {
 
         final  String serializedEvent = domainEventSerializer.serialize(
-            new DomainEvent<DomainEventPayload>(
+            new DomainEvent<>(
                 eventId,
                 time,
                 event
@@ -70,6 +70,6 @@ public final class KafkaDomainEventsBus implements DomainEventsBus {
         });
 
         container.start();
-        return () -> container.stop();
+        return container::stop;
     }
 }

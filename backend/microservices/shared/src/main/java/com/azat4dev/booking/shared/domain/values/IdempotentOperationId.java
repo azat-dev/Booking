@@ -29,7 +29,7 @@ public record IdempotentOperationId(
 
     // Exceptions
 
-    public static sealed class Exception extends DomainException permits Exception.InvalidIdempotentOperationId {
+    public static sealed class Exception extends DomainException {
         public Exception(String message) {
             super(message);
         }

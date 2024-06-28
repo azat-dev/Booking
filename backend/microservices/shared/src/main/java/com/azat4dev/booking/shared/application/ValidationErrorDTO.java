@@ -6,7 +6,7 @@ import java.util.List;
 
 public record ValidationErrorDTO(List<ValidationErrorDetailsDTO> errors) {
 
-    public final static String TYPE = "validationError";
+    public static final String TYPE = "validationError";
 
     public static ValidationErrorDTO withError(
         String code,

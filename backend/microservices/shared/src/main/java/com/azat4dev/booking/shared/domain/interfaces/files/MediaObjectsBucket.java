@@ -23,8 +23,6 @@ public interface MediaObjectsBucket {
         Policy policy
     );
 
-    void put(FileKey key, byte[] file);
-
     enum ConditionType {
         EQUALS,
         STARTS_WITH

@@ -5,7 +5,7 @@ import com.azat4dev.booking.shared.domain.events.EventId;
 
 import java.time.LocalDateTime;
 
-public interface CommandHandler<CMD extends Command> {
+public interface CommandHandler<C extends Command> {
 
-    void handle(CMD command, EventId eventId, LocalDateTime issuedAt) throws DomainException;
+    void handle(C command, EventId eventId, LocalDateTime issuedAt) throws DomainException;
 }

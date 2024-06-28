@@ -41,8 +41,8 @@ public class FileExtension {
         return value;
     }
 
-    public static abstract sealed class Exception extends DomainException permits EmptyFileExtensionException {
-        public Exception(String message) {
+    public abstract static sealed class Exception extends DomainException permits EmptyFileExtensionException {
+        protected Exception(String message) {
             super(message);
         }
     }

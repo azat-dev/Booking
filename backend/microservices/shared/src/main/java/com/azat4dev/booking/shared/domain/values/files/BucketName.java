@@ -36,7 +36,7 @@ public final class BucketName {
         return value;
     }
 
-    public static abstract class Exception extends DomainException {
+    public abstract static class Exception extends DomainException {
         Exception(String message) {
             super(message);
         }

@@ -12,6 +12,7 @@ import io.minio.http.Method;
 import lombok.RequiredArgsConstructor;
 
 import java.net.MalformedURLException;
+import java.net.URI;
 import java.net.URL;
 import java.time.Duration;
 import java.time.ZonedDateTime;
@@ -44,9 +45,8 @@ public class MinioMediaObjectsBucket implements MediaObjectsBucket {
                     .expiry((int) expiresIn.toSeconds())
                     .build()
             );
-
-            return new URL(url);
-        } catch (Throwable e) {
+            return URI.create(url).toURL();
+        } catch (Exception e) {
             throw new RuntimeException(e);
         }
     }
@@ -97,11 +97,6 @@ public class MinioMediaObjectsBucket implements MediaObjectsBucket {
         } catch (Throwable e) {
             throw new RuntimeException(e);
         }
-    }
-
-    @Override
-    public void put(FileKey key, byte[] file) {
-
     }
 
     @Override

@@ -3,16 +3,17 @@ package com.azat4dev.booking.shared.domain.values.files;
 import com.azat4dev.booking.shared.domain.DomainException;
 import lombok.EqualsAndHashCode;
 
-import java.util.Arrays;
+import java.util.List;
 
 @EqualsAndHashCode(of = "value")
 public final class PhotoFileExtension {
 
-    public static final FileExtension[] ALLOWED_EXTENSIONS = new FileExtension[]{
+    public static final List<FileExtension> ALLOWED_EXTENSIONS = List.of(
         FileExtension.JPG,
         FileExtension.JPEG,
         FileExtension.PNG
-    };
+    );
+
     private final FileExtension value;
 
     private PhotoFileExtension(FileExtension value) {
@@ -23,17 +24,12 @@ public final class PhotoFileExtension {
         return new PhotoFileExtension(FileExtension.dangerouslyMakeFrom(value));
     }
 
-    @Override
-    public String toString() {
-        return value.toString();
-    }
-
     public static PhotoFileExtension checkAndMakeFrom(String value) throws InvalidPhotoFileExtensionException {
 
         try {
             final var extension = FileExtension.checkAndMakeFrom(value);
 
-            Arrays.stream(ALLOWED_EXTENSIONS)
+            ALLOWED_EXTENSIONS.stream()
                 .filter(allowed -> allowed.equals(extension))
                 .findAny()
                 .orElseThrow(InvalidPhotoFileExtensionException::new);
@@ -45,11 +41,16 @@ public final class PhotoFileExtension {
         }
     }
 
+    @Override
+    public String toString() {
+        return value.toString();
+    }
+
     // Exceptions
 
     public static final class InvalidPhotoFileExtensionException extends DomainException {
         public InvalidPhotoFileExtensionException() {
-            super("Invalid photo file extension. Allowed extensions: " + Arrays.toString(ALLOWED_EXTENSIONS));
+            super("Invalid photo file extension. Allowed extensions: " + ALLOWED_EXTENSIONS.toString());
         }
 
         @Override

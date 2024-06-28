@@ -63,8 +63,8 @@ public final class BaseUrl {
 
     // Exceptions
 
-    public static abstract class Exception extends DomainException {
-        public Exception(String message) {
+    public abstract static class Exception extends DomainException {
+        protected Exception(String message) {
             super(message);
         }
 
