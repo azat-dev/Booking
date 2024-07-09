@@ -53,7 +53,7 @@ public final class DomainEventsSerializerImpl implements DomainEventSerializer {
         try {
             return objectMapper.writeValueAsString(dto);
         } catch (JsonProcessingException e) {
-            log.error("Serialization error", e);
+            log.atError().setCause(e).log("Serialization error");
             throw new RuntimeException(e);
         }
     }
@@ -78,7 +78,7 @@ public final class DomainEventsSerializerImpl implements DomainEventSerializer {
                 payload
             );
         } catch (JsonProcessingException e) {
-            log.error("Deserialization error", e);
+            log.atError().setCause(e).log("Deserialization error");
             throw new RuntimeException(e);
         }
     }
@@ -97,7 +97,7 @@ public final class DomainEventsSerializerImpl implements DomainEventSerializer {
                 LastName.dangerMakeFromStringWithoutCheck(fullNameDTO.getLastName())
             );
         } catch (FullName.Exception e) {
-            log.error("Failed to deserialize FullName", e);
+            log.atError().setCause(e).log("Failed to deserialize FullName");
             throw new RuntimeException(e);
         }
     }
@@ -227,7 +227,7 @@ public final class DomainEventsSerializerImpl implements DomainEventSerializer {
                 dto.getFormData()
             );
         } catch (MalformedURLException e) {
-            log.error("Failed to deserialize URL", e);
+            log.atError().setCause(e).log("Failed to deserialize URL");
             throw new RuntimeException(e);
         }
     }
@@ -299,7 +299,13 @@ public final class DomainEventsSerializerImpl implements DomainEventSerializer {
                 .email(inst.email().getValue())
                 .build();
 
-            default -> throw new RuntimeException("Serialization. Unknown event type: " + payload);
+            default -> {
+                log.atError()
+                    .addKeyValue("payload", payload)
+                    .addKeyValue("type", payload.getClass().getSimpleName())
+                    .log("Serialization. Unknown event type");
+                throw new RuntimeException("Serialization. Unknown event type: " + payload);
+            }
         };
     }
 

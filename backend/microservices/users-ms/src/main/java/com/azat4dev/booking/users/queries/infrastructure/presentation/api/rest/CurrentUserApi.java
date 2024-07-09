@@ -26,19 +26,19 @@ public class CurrentUserApi implements QueriesCurrentUserApiDelegate {
 
         final var userId = currentUserId.get()
             .orElseThrow(() -> {
-                log.debug("User not authenticated");
+                log.atInfo().log("User not authenticated");
                 return new ControllerException(HttpStatus.UNAUTHORIZED, "User not authenticated");
 
             });
 
         final var userInfo = usersQueryService.getPersonalInfoById(userId)
             .orElseThrow(() -> {
-                log.debug("User not found: {}", userId);
+                log.atInfo().addKeyValue("userId", userId).log("User not found");
                 return new ControllerException(HttpStatus.NOT_FOUND, "User not found");
             });
 
         final var dto = mapToDTO.map(userInfo);
-        log.debug("User info: {}", dto);
+        log.atDebug().addKeyValue("dto", dto).log("User info");
         return ResponseEntity.ok(dto);
     }
 }

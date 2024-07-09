@@ -26,9 +26,9 @@ public class EmailVerificationApi implements CommandsEmailVerificationApiDelegat
         final var command = new CompleteEmailVerification(token);
         try {
             completeEmailVerificationHandler.handle(command);
-            log.debug("Email verified");
+            log.atInfo().log("Email verified");
         } catch (CompleteEmailVerificationHandler.Exception e) {
-            log.error("Failed to verify email", e);
+            log.atWarn().setCause(e).log("Failed to verify email");
             throw ControllerException.createError(HttpStatus.FORBIDDEN, e);
         }
 

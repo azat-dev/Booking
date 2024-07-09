@@ -19,10 +19,12 @@ public final class MapToUserPhotoImpl implements MapToUserPhoto {
     public UserPhoto map(UserRecord.PhotoPath photoPath) {
         try {
             return new UserPhoto(
-                baseUrl.urlWithPath(photoPath.bucketName() + "/" + photoPath.objectName())
+                    baseUrl.urlWithPath(photoPath.bucketName() + "/" + photoPath.objectName())
             );
         } catch (MalformedURLException e) {
-            log.error("Invalid photo path: {}", photoPath);
+            log.atError()
+                    .addArgument(photoPath)
+                    .log("Invalid photo path: {}");
             throw new RuntimeException(e);
         }
     }

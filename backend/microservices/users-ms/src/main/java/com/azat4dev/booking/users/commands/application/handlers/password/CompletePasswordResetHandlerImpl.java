@@ -32,21 +32,21 @@ public final class CompletePasswordResetHandlerImpl implements CompletePasswordR
                 newEncodedPassword
             );
 
-            log.info("Password reset completed");
+            log.atInfo().log("Password reset completed");
         } catch (IdempotentOperationId.Exception e) {
-            log.debug("Invalid operation id", e);
+            log.atWarn().setCause(e).log("Invalid operation id");
             throw ValidationException.withPath("operationId", e);
         } catch (TokenForPasswordReset.Exception e) {
-            log.debug("Invalid token", e);
+            log.atWarn().log("Invalid token");
             throw ValidationException.withPath("passwordResetToken", e);
         } catch (Password.Exception e) {
-            log.debug("Invalid password", e);
+            log.atWarn().log("Invalid password");
             throw ValidationException.withPath("password", e);
         } catch (SetNewPasswordByToken.Exception.InvalidToken e) {
-            log.debug("Invalid token", e);
+            log.atWarn().log("Invalid token");
             throw new Exception.InvalidToken();
         } catch (SetNewPasswordByToken.Exception.TokenExpired e) {
-            log.debug("Token is expired", e);
+            log.atWarn().setCause(e).log("Token is expired");
             throw new Exception.TokenExpired();
         }
     }

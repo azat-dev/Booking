@@ -52,13 +52,13 @@ public final class AuthenticateCurrentSessionImpl implements AuthenticateCurrent
                 currentResponseSupplier.get()
             );
 
-            log.debug("User authenticated");
+            log.atInfo().log("User authenticated");
             return tokens;
 
-        } catch (Exception failed) {
-            log.error("Failed to process authentication request", failed);
+        } catch (Exception e) {
+            log.atError().setCause(e).log("Failed to process authentication request");
             this.securityContextHolderStrategy.clearContext();
-            throw failed;
+            throw e;
         }
     }
 }

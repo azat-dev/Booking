@@ -37,15 +37,15 @@ public class ResetPasswordApi implements CommandsResetPasswordApiDelegate {
         try {
             resetPasswordByEmailHandler.handle(command);
         } catch (ResetPasswordByEmailHandler.Exception.EmailNotFound e) {
-            log.error("Email not found", e);
+            log.atError().setCause(e).log("Email not found");
             throw ControllerException.createError(HttpStatus.NOT_FOUND, e);
         } catch (ResetPasswordByEmailHandler.Exception.FailedToSendResetPasswordEmail e) {
-            log.error("Failed to send reset password email", e);
+            log.atError().setCause(e).log("Failed to send reset password email");
             throw ControllerException.createError(HttpStatus.INTERNAL_SERVER_ERROR, e);
         }
 
         final var response = ResponseEntity.ok(ResetPasswordByEmail200ResponseDTO.builder().build());
-        log.debug("Reset password email sent");
+        log.atInfo().log("Reset password email sent");
         return response;
     }
 
@@ -60,12 +60,12 @@ public class ResetPasswordApi implements CommandsResetPasswordApiDelegate {
         try {
             completePasswordResetHandler.handle(command);
         } catch (CompletePasswordResetHandler.Exception e) {
-            log.error("Failed to complete password reset", e);
+            log.atError().setCause(e).log("Failed to complete password reset");
             throw ControllerException.createError(HttpStatus.FORBIDDEN, e);
         }
 
         final var response = ResponseEntity.ok(CompleteResetPassword200ResponseDTO.builder().build());
-        log.debug("Password reset completed");
+        log.atInfo().log("Password reset completed");
         return response;
     }
 }

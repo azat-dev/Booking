@@ -31,13 +31,13 @@ public final class LoginByEmailHandlerImpl implements LoginByEmailHandler {
                 throw new Exception.WrongCredentials();
             }
 
-            log.debug("User logged in by email: {}", email);
+            log.atInfo().log("User logged in by email");
             return user;
         } catch (Password.Exception e) {
-            log.debug("Invalid password", e);
+            log.atInfo().setCause(e).log("Invalid password");
             throw ValidationException.withPath("password", e);
         } catch (EmailAddress.WrongFormatException e) {
-            log.debug("Invalid email", e);
+            log.atInfo().setCause(e).log("Invalid email", e);
             throw ValidationException.withPath("email", e);
         }
     }

@@ -65,14 +65,14 @@ public final class UsersImpl implements Users {
                 return null;
             });
 
-            log.debug("User created");
+            log.atInfo().addKeyValue("userId", userId).log("User created2");
 
         } catch (UsersRepository.Exception.UserWithSameEmailAlreadyExists e) {
 
-            log.error("User with same email already exists", e);
+            log.atInfo().setCause(e).log("User with same email already exists");
             throw new Exception.UserWithSameEmailAlreadyExists();
         } catch (Throwable e) {
-            log.error("Failed to create user", e);
+            log.atError().setCause(e).log("Failed to create user");
             throw new RuntimeException(e);
         }
 
@@ -101,18 +101,20 @@ public final class UsersImpl implements Users {
                 return null;
             });
 
-            log.debug("Email verified");
+            log.atInfo().log("Email verified");
 
         } catch (java.lang.Exception e) {
+            final var logEvent = log.atError().setCause(e);
+
             switch (e) {
                 case UsersRepository.Exception.UserNotFound inst:
-                    log.error("User not found", e);
+                    logEvent.log("User not found");
                     throw new Exception.UserNotFound();
                 case User.Exception.VerifiedEmailDoesntExist inst:
-                    log.error("Email not found", e);
+                    logEvent.log("Email not found");
                     throw new Exception.EmailNotFound();
                 default:
-                    log.error("Failed to verify email", e);
+                    logEvent.log("Failed to verify email");
                     throw new RuntimeException(e);
             }
         }
@@ -131,17 +133,17 @@ public final class UsersImpl implements Users {
                 return usersRepository.findByEmail(email);
             });
 
-            log.debug("User found by email");
+            log.atDebug().log("User found by email");
 
             return result;
         } catch (java.lang.Exception e) {
-            log.error("Failed to find user by email", e);
+            log.atInfo().setCause(e).log("Failed to find user by email");
             throw new RuntimeException(e);
         }
     }
 
     @Override
-    public void updatePhoto(UserId userId, UserPhotoPath newPhotoPath) throws Exception.UserNotFound, Exception.FailedToUpdateUser {
+    public void updatePhoto(UserId userId, UserPhotoPath newPhotoPath) throws Exception.FailedToUpdateUser {
 
         final var unitOfWork = unitOfWorkFactory.make();
 
@@ -169,9 +171,9 @@ public final class UsersImpl implements Users {
                 return null;
             });
 
-            log.debug("User photo updated");
+            log.atDebug().log("User photo updated");
         } catch (Throwable e) {
-            log.error("Failed to update user photo", e);
+            log.atError().setCause(e).log("Failed to update user photo");
             throw new Exception.FailedToUpdateUser();
         }
 

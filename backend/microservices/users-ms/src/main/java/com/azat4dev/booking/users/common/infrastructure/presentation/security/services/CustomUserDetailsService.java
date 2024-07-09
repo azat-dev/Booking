@@ -24,7 +24,10 @@ public final class CustomUserDetailsService implements UserDetailsService {
             final var userId = UserId.checkAndMakeFrom(username);
             return loadUserById(userId);
         } catch (UserId.WrongFormatException e) {
-            log.error("Invalid user id format: {}", username);
+            log.atDebug()
+                    .addArgument(username)
+                    .log("Invalid user id format: {}");
+
             throw new RuntimeException(e);
         }
     }
@@ -34,6 +37,6 @@ public final class CustomUserDetailsService implements UserDetailsService {
         final var user = usersRepository.findById(userId);
 
         return user.map(UserPrincipal::from)
-            .orElseThrow(() -> new UserIdNotFoundException("User not found"));
+                .orElseThrow(() -> new UserIdNotFoundException("User not found"));
     }
 }

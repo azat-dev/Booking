@@ -63,15 +63,21 @@ public final class GenerateUrlForUploadUserPhotoImpl implements GenerateUrlForUp
                     }
                 )
             );
-            log.debug("Presigned URL generated");
+            log.atInfo().log("Presigned URL generated");
 
             final var event = new GeneratedUserPhotoUploadUrl(userId, formData);
             bus.publish(event);
-            log.debug("GeneratedUserPhotoUploadUrl event published");
+            log.atDebug().log("Success event published");
             return event;
 
         } catch (Throwable e) {
-            log.error("Failed to generate presigned URL for uploading user photo", e);
+            log.atError()
+                .setCause(e)
+                .addKeyValue("userId", userId)
+                .addKeyValue("fileExtension", fileExtension)
+                .addKeyValue("fileSize", fileSize)
+                .addKeyValue("operationId", operationId)
+                .log("Failed to generate presigned URL for uploading user photo");
             publishFailedEvent.run();
             throw new Exception.FailedGenerateUserPhotoUploadUrl();
         }

@@ -22,9 +22,9 @@ public final class SetNewPasswordByTokenImpl implements SetNewPasswordByToken {
 
     @Override
     public void execute(
-        IdempotentOperationId operationId,
-        TokenForPasswordReset token,
-        EncodedPassword encodedPassword
+            IdempotentOperationId operationId,
+            TokenForPasswordReset token,
+            EncodedPassword encodedPassword
     ) throws Exception.InvalidToken, Exception.TokenExpired {
 
         final Runnable publishFailedEvent = () -> bus.publish(new FailedToCompleteResetPassword(operationId));
@@ -36,25 +36,35 @@ public final class SetNewPasswordByTokenImpl implements SetNewPasswordByToken {
             user.setEncodedPassword(encodedPassword);
 
             usersRepository.update(user);
-            log.debug("User password reset");
+            log.atInfo()
+                    .addKeyValue("userId", userId)
+                    .log("User did reset password");
 
             bus.publish(new UserDidResetPassword(userId));
-            log.debug("UserDidResetPassword event published");
+            log.atDebug().log("Success event published");
 
         } catch (ValidateTokenForPasswordResetAndGetUserId.Exception.TokenExpired e) {
 
-            log.error("Token is expired", e);
+            log.atDebug()
+                    .setCause(e)
+                    .log("Token is expired");
+
             publishFailedEvent.run();
             throw new Exception.TokenExpired();
         } catch (ValidateTokenForPasswordResetAndGetUserId.Exception.InvalidToken e) {
 
-            log.error("Token is invalid", e);
+            log.atDebug()
+                    .setCause(e)
+                    .log("Token is invalid");
             publishFailedEvent.run();
             throw new Exception.InvalidToken();
 
         } catch (User.Exception.PasswordIsRequired e) {
 
-            log.error("Password is required", e);
+            log.atDebug()
+                    .setCause(e)
+                    .log("Password is required");
+
             publishFailedEvent.run();
             throw new RuntimeException(e);
         }

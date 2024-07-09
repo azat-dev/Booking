@@ -30,9 +30,11 @@ public class UsersRepositoryImpl implements UsersRepository {
 
         try {
             this.usersDao.addNew(userData);
-            log.debug("User added");
+            log.atInfo().addKeyValue("userId", user::getId).log("User added");
         } catch (UsersDao.Exception.UserAlreadyExists e) {
-            log.error("User already exists", e);
+            log.atWarn()
+                .addKeyValue("userId", user::getId)
+                .log("User already exists");
             throw new Exception.UserWithSameEmailAlreadyExists();
         }
     }
@@ -44,9 +46,15 @@ public class UsersRepositoryImpl implements UsersRepository {
 
         try {
             this.usersDao.update(userData);
-            log.debug("User updated");
+
+            log.atInfo()
+                .addKeyValue("userId", user::getId)
+                .log("User updated");
         } catch (UsersDao.Exception.UserNotFound e) {
-            log.error("User not found", e);
+            log.atDebug()
+                .setCause(e)
+                .addKeyValue("userId", user::getId)
+                .log("User not found");
             throw new Exception.UserNotFound(user.getId());
         }
     }
@@ -59,7 +67,10 @@ public class UsersRepositoryImpl implements UsersRepository {
             try {
                 return this.mapUserDataToDomain.map(userData);
             } catch (DomainException e) {
-                log.error("User not found", e);
+                log.atDebug()
+                    .addKeyValue("userId", id)
+                    .setCause(e)
+                    .log("User not found");
                 throw new RuntimeException(e);
             }
         });
@@ -72,7 +83,7 @@ public class UsersRepositoryImpl implements UsersRepository {
             try {
                 return this.mapUserDataToDomain.map(userData);
             } catch (DomainException e) {
-                log.error("User not found", e);
+                log.atWarn().log("User not found");
                 throw new RuntimeException(e);
             }
         });

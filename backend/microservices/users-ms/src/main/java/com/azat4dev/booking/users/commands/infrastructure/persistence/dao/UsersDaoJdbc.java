@@ -44,12 +44,12 @@ public final class UsersDaoJdbc implements UsersDao {
                 userDataToParams(userData)
             );
 
-            log.debug("User added");
+            log.atInfo().addKeyValue("userId", userData::id).log("User added");
         } catch (DuplicateKeyException e) {
-            log.error("User already exists", e);
+            log.atInfo().setCause(e).addKeyValue("userId", userData::id).log("User already exists");
             throw new Exception.UserAlreadyExists();
         } catch (JsonProcessingException e) {
-            log.error("Wrong JSON format", e);
+            log.atError().setCause(e).log("Wrong JSON format");
             throw new RuntimeException(e);
         }
     }
@@ -67,10 +67,10 @@ public final class UsersDaoJdbc implements UsersDao {
             );
 
             final var result = Optional.ofNullable(foundUser);
-            log.debug("User found by email");
+            log.atInfo().log("User found by email");
             return result;
         } catch (EmptyResultDataAccessException e) {
-            log.debug("User not found by email");
+            log.atInfo().log("User not found by email");
             return Optional.empty();
         }
     }
@@ -87,10 +87,10 @@ public final class UsersDaoJdbc implements UsersDao {
             );
 
             final var result = Optional.ofNullable(foundUser);
-            log.debug("User found by id");
+            log.atDebug().addKeyValue("id", id).log("User found by id");
             return result;
         } catch (EmptyResultDataAccessException e) {
-            log.debug("User not found by id", e);
+            log.atDebug().addKeyValue("userId", id).log("User not found by id");
             return Optional.empty();
         }
     }
@@ -143,11 +143,11 @@ public final class UsersDaoJdbc implements UsersDao {
             final var numberOfUpdatedRecords = jdbcTemplate.update(sql, params);
 
             if (numberOfUpdatedRecords == 0) {
-                log.error("User not found");
+                log.atInfo().log("User not found");
                 throw new Exception.UserNotFound();
             }
         } catch (JsonProcessingException e) {
-            log.error("Wrong JSON format", e);
+            log.atError().setCause(e).log("Wrong JSON format");
         }
 
     }
@@ -164,7 +164,7 @@ public final class UsersDaoJdbc implements UsersDao {
             try {
                 photo = encodedPhoto == null ? Optional.empty() : Optional.of(objectMapper.readValue(encodedPhoto, UserData.PhotoPath.class));
             } catch (JsonProcessingException e) {
-                log.error("Wrong JSON format", e);
+                log.atError().setCause(e).log("Wrong JSON format");
                 throw new RuntimeException(e);
             }
 

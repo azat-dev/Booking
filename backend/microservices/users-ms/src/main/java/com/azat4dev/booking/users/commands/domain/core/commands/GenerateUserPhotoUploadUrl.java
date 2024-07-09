@@ -32,7 +32,7 @@ public final class GenerateUserPhotoUploadUrl implements Command {
     ) throws Exception {
 
         if (fileSize > MAX_FILE_SIZE) {
-            log.error("File size should be less than 5MB");
+            log.atError().log("File size should be less than 5MB");
             throw new Exception.InvalidFileSize();
         }
 

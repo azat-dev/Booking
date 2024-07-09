@@ -22,16 +22,16 @@ public final class ResetPasswordByEmailHandlerImpl implements ResetPasswordByEma
             final var email = EmailAddress.checkAndMakeFromString(command.getEmail());
 
             sendResetPasswordEmail.execute(operationId, email);
-            log.debug("Reset password email sent");
+            log.atInfo().log("Reset password email sent");
 
         } catch (IdempotentOperationId.Exception e) {
-            log.debug("Invalid operation id", e);
+            log.atInfo().log("Invalid operation id");
             throw ValidationException.withPath("operationId", e);
         } catch (EmailAddress.WrongFormatException e) {
-            log.debug("Invalid email", e);
+            log.atInfo().setCause(e).log("Invalid email");
             throw ValidationException.withPath("email", e);
         } catch (SendResetPasswordEmail.Exception e) {
-            log.debug("Failed to send reset password email", e);
+            log.atError().setCause(e).log("Failed to send reset password email");
             throw new Exception.FailedToSendResetPasswordEmail();
         }
     }

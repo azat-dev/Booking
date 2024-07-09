@@ -20,18 +20,18 @@ public final class CompleteEmailVerificationHandlerImpl implements CompleteEmail
 
         try {
             verifyEmailByToken.execute(token);
-            log.info("Email verification completed");
+            log.atInfo().log("Email verification completed");
         } catch (VerifyEmailByToken.Exception.TokenIsExpired e) {
-            log.debug("Token is expired", e);
+            log.atInfo().setCause(e).log("Token is expired");
             throw new Exception.TokenIsExpired();
         } catch (VerifyEmailByToken.Exception.TokenIsNotValid e) {
-            log.debug("Token is not valid", e);
+            log.atInfo().setCause(e).log("Token is not valid");
             throw new Exception.TokenIsNotValid();
         } catch (VerifyEmailByToken.Exception.EmailNotFound e) {
-            log.debug("Email not found", e);
+            log.atInfo().setCause(e).log("Email not found");
             throw new Exception.EmailNotFound();
         } catch (VerifyEmailByToken.Exception.UserNotFound e) {
-            log.debug("User not found", e);
+            log.atError().setCause(e).log("User not found");
             throw new Exception.UserNotFound();
         }
     }

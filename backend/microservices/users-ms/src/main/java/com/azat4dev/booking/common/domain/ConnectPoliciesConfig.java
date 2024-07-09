@@ -5,13 +5,13 @@ import com.azat4dev.booking.shared.domain.events.DomainEvent;
 import com.azat4dev.booking.shared.domain.events.DomainEventPayload;
 import com.azat4dev.booking.shared.domain.interfaces.bus.DomainEventsBus;
 import jakarta.annotation.PostConstruct;
+import jakarta.annotation.PreDestroy;
 import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.springframework.context.annotation.Configuration;
 
 import java.io.Closeable;
+import java.io.IOException;
 import java.lang.reflect.ParameterizedType;
 import java.util.HashMap;
 import java.util.LinkedList;
@@ -28,6 +28,10 @@ public class ConnectPoliciesConfig {
     private final List<Closeable> cancellations = new LinkedList<>();
 
     private static Map<Class<DomainEventPayload>, List<Policy<DomainEvent<?>>>> groupPolicies(List<Policy<DomainEvent<?>>> policies) {
+
+        log.atDebug()
+                .addArgument(() -> policies.stream().map(i -> i.getClass().getSimpleName()).toList())
+                .log("Connecting policies to bus: {}");
 
         final var groupedPolicies = new HashMap<Class<DomainEventPayload>, List<Policy<DomainEvent<?>>>>();
 
@@ -66,12 +70,49 @@ public class ConnectPoliciesConfig {
             final var listeners = entry.getValue();
 
             for (var listener : listeners) {
-                final var cancellation = domainEventsBus.listen(eventType, listener::execute);
+                final var cancellation = domainEventsBus.listen(eventType, (event) -> {
+
+                    log.atDebug()
+                            .addKeyValue("event.id", event::id)
+                            .addKeyValue("policy", () -> listener.getClass().getSimpleName())
+                            .addKeyValue("eventType", eventType)
+                            .log("Executing policy");
+
+                    try {
+                        listener.execute(event);
+                    } catch (Exception e) {
+                        log.atError()
+                                .setCause(e)
+                                .addKeyValue("event.id", event::id)
+                                .addKeyValue("policy", () -> listener.getClass().getSimpleName())
+                                .addKeyValue("event.type", eventType)
+                                .addKeyValue("event.payload", () -> event.payload().toString())
+                                .log("Failed to execute policy");
+                        throw e;
+                    }
+                });
                 cancellations.add(cancellation);
             }
         }
 
-        log.info("Connected {} policies to the bus",
-            policies.stream().map(Object::getClass).map(Class::getSimpleName).toList());
+        log.atInfo()
+                .addArgument(policies.stream().map(Object::getClass).map(Class::getSimpleName).toList())
+                .log("Connected policies to the bus: {}");
+    }
+
+    @PreDestroy
+    public void disconnectHandlersFromBus() {
+        cancellations.forEach(cancellation -> {
+            try {
+                cancellation.close();
+            } catch (IOException e) {
+                log.atError()
+                        .setCause(e)
+                        .log("Can't close cancellation");
+            }
+        });
+
+        log.atInfo()
+                .log("Disconnected policies from the bus");
     }
 }

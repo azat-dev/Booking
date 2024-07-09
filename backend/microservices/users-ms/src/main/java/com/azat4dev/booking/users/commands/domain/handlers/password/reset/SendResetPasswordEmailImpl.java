@@ -24,36 +24,40 @@ public final class SendResetPasswordEmailImpl implements SendResetPasswordEmail 
     public void execute(IdempotentOperationId operationId, EmailAddress email) throws Exception {
 
         final var user = usersRepository.findByEmail(email)
-            .orElseThrow(Exception.EmailNotFound::new);
+                .orElseThrow(Exception.EmailNotFound::new);
 
         final var userId = user.getId();
         final var emailData = buildResetPasswordEmail.execute(userId, email);
 
         try {
             emailService.send(
-                email,
-                new EmailService.EmailData(
-                    emailData.fromAddress(),
-                    emailData.fromName(),
-                    emailData.subject(),
-                    emailData.body()
-                )
+                    email,
+                    new EmailService.EmailData(
+                            emailData.fromAddress(),
+                            emailData.fromName(),
+                            emailData.subject(),
+                            emailData.body()
+                    )
             );
-            log.debug("Reset password email sent");
+            log.atDebug().log("Reset password email sent");
 
             bus.publish(new SentEmailForPasswordReset(userId, email));
-            log.debug("SentEmailForPasswordReset event published");
+
+            log.atDebug().log("Success event published");
 
         } catch (java.lang.Exception e) {
-            log.debug("Failed to send reset password email");
-
+            log.atError()
+                    .setCause(e)
+                    .log("Failed to send reset password email");
             bus.publish(
-                new FailedToSendVerificationEmail(
-                    userId,
-                    email,
-                    1
-                )
+                    new FailedToSendVerificationEmail(
+                            userId,
+                            email,
+                            1
+                    )
             );
+
+            log.atDebug().log("Published failed event");
             throw new Exception.FailedToSendResetPasswordEmail();
         }
     }

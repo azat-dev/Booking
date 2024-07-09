@@ -49,11 +49,11 @@ public class UpdateUserPhotoApi implements CommandsUpdateUserPhotoApiDelegate {
                 result.formData().formData())
             );
 
-            log.debug("User photo upload url generated");
+            log.atInfo().addKeyValue("userId", userId).log("User photo upload url generated");
             return response;
 
         } catch (GenerateUserPhotoUploadUrlHandler.Exception.FailedGenerateUserPhotoUploadUrl e) {
-            log.error("Failed to generate user photo upload url", e);
+            log.atError().setCause(e).log("Failed to generate user photo upload url");
             throw ControllerException.createError(HttpStatus.INTERNAL_SERVER_ERROR, e);
         }
     }
@@ -75,10 +75,10 @@ public class UpdateUserPhotoApi implements CommandsUpdateUserPhotoApiDelegate {
         try {
             updateUserPhoto.handle(command);
             final var response = ResponseEntity.ok(UpdateUserPhoto200ResponseDTO.builder().build());
-            log.debug("User photo updated");
+            log.atInfo().addKeyValue("userId", userId).log("User photo updated");
             return response;
         } catch (UpdateUserPhotoHandler.Exception.FailedToAttachPhoto e) {
-            log.error("Failed to attach photo", e);
+            log.atError().setCause(e).log("Failed to attach photo");
             throw new ResponseStatusException(HttpStatus.INTERNAL_SERVER_ERROR, e.getMessage());
         }
     }

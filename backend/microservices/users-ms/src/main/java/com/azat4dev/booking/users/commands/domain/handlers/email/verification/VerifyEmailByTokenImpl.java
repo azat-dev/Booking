@@ -36,16 +36,16 @@ public final class VerifyEmailByTokenImpl implements VerifyEmailByToken {
                 email
             );
 
-            log.debug("Email verified");
+            log.atInfo().log("Email verified");
 
         } catch (GetInfoForEmailVerificationToken.TokenIsNotValidException e) {
-            log.debug("Token is not valid");
+            log.atInfo().setCause(e).log("Token is not valid");
             throw new Exception.TokenIsNotValid();
         } catch (Users.Exception.UserNotFound e) {
-            log.debug("User not found");
+            log.atInfo().setCause(e).log("User not found");
             throw new Exception.UserNotFound();
         } catch (Users.Exception.EmailNotFound e) {
-            log.debug("Email not found");
+            log.atInfo().setCause(e).log("Email not found");
             throw new Exception.EmailNotFound();
         }
     }

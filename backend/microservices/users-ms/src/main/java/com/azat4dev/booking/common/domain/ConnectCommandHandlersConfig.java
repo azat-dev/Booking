@@ -10,9 +10,6 @@ import jakarta.annotation.PostConstruct;
 import jakarta.annotation.PreDestroy;
 import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.annotation.Configuration;
 
@@ -36,6 +33,9 @@ public class ConnectCommandHandlersConfig {
     private static Map<Class<DomainEventPayload>, List<CommandHandler<Command>>> groupHandlersByPayload(List<CommandHandler<Command>> handlers) {
 
         final var groupedHandlers = new HashMap<Class<DomainEventPayload>, List<CommandHandler<Command>>>();
+
+        log.atInfo()
+                .log("Connection command handlers...");
 
         for (final var handler : handlers) {
 
@@ -71,7 +71,9 @@ public class ConnectCommandHandlersConfig {
             if (bean instanceof CommandHandler inst) {
                 annotatedBeans.add(inst);
             } else {
-                log.error("Bean {} is not a CommandHandler", beanName);
+                log.atError()
+                        .addArgument(beanName)
+                        .log("Bean {} is not a CommandHandler");
             }
         }
         return annotatedBeans;
@@ -89,19 +91,37 @@ public class ConnectCommandHandlersConfig {
 
             for (var listener : listeners) {
                 final var cancellation = domainEventsBus.listen(
-                    eventType,
-                    (event) -> {
-                        try {
-                            listener.handle((Command) event.payload(), event.id(), event.issuedAt());
-                        } catch (DomainException e) {
-                            throw new RuntimeException(e);
-                        }
-                    });
+                        eventType,
+                        event -> {
+                            try {
+                                log.atDebug()
+                                        .addArgument(eventType)
+                                        .addKeyValue("event.type", eventType)
+                                        .addKeyValue("event.id", event::id)
+                                        .addKeyValue("event.issuedAt", event::issuedAt)
+                                        .addKeyValue("event.payload", () -> ((Command) event.payload()).toString())
+                                        .log("Pass event into command handler: {}");
+
+                                listener.handle((Command) event.payload(), event.id(), event.issuedAt());
+                            } catch (DomainException e) {
+                                log.atDebug()
+                                        .setCause(e)
+                                        .addArgument(eventType)
+                                        .addKeyValue("event.type", eventType)
+                                        .addKeyValue("event.id", event::id)
+                                        .addKeyValue("event.issuedAt", event::issuedAt)
+                                        .addKeyValue("event.payload", () -> ((Command) event.payload()).toString())
+                                        .log("Exception during handling by command handler: {}");
+                                throw new RuntimeException(e);
+                            }
+                        });
                 cancellations.add(cancellation);
             }
         }
 
-        log.info("Connected command handlers to the bus {}", commandHandlers);
+        log.atInfo()
+                .addArgument(commandHandlers)
+                .log("Connected command handlers to the bus {}");
     }
 
     @PreDestroy
@@ -110,10 +130,13 @@ public class ConnectCommandHandlersConfig {
             try {
                 cancellation.close();
             } catch (IOException e) {
-                log.error("Can't close cancellation", e);
+                log.atError()
+                        .setCause(e)
+                        .log("Can't close cancellation");
             }
         });
 
-        log.info("Disconnected command handlers from the bus");
+        log.atInfo()
+                .log("Disconnected command handlers from the bus");
     }
 }

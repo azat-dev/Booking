@@ -13,7 +13,6 @@ import com.azat4dev.booking.users.commands.domain.core.values.user.FullName;
 import com.azat4dev.booking.users.commands.domain.core.values.user.LastName;
 import com.azat4dev.booking.users.commands.domain.handlers.users.Users;
 import com.azat4dev.booking.users.commands.domain.interfaces.services.PasswordService;
-import io.micrometer.core.annotation.Timed;
 import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 
@@ -46,29 +45,29 @@ public final class SignUpHandlerImpl implements SignUpHandler {
             );
 
             users.createNew(newUserData);
-            log.info("User signed up: {}", email);
+            log.atInfo().log("User signed up: {}", email);
             return userId;
 
         } catch (FirstName.ValidationException e) {
-            log.debug("Invalid first name", e);
+            log.atError().setCause(e).log("Invalid first name");
             throw ValidationException.withPath("firstName", e);
         } catch (LastName.ValidationException e) {
-            log.debug("Invalid last name", e);
+            log.atError().setCause(e).log("Invalid last name");
             throw ValidationException.withPath("lastName", e);
         } catch (EmailAddress.ValidationException e) {
-            log.debug("Invalid email", e);
+            log.atError().setCause(e).log("Invalid email");
             throw ValidationException.withPath("email", e);
         } catch (Password.Exception e) {
-            log.debug("Invalid password", e);
+            log.atError().setCause(e).log("Invalid password");
             throw ValidationException.withPath("password", e);
         } catch (Users.Exception.UserWithSameEmailAlreadyExists e) {
-            log.error("User with same email already exists", e);
+            log.atError().setCause(e).log("User with same email already exists");
             throw new SignUpHandler.Exception.UserWithSameEmailAlreadyExists();
         } catch (FullName.Exception e) {
-            log.debug("Invalid full name", e);
+            log.atError().setCause(e).log("Invalid full name");
             throw ValidationException.withPath("fullName", e);
         } catch (User.Exception e) {
-            log.error("Failed to create new user", e);
+            log.atError().setCause(e).log("Failed to create new user");
             throw new RuntimeException(e);
         }
     }

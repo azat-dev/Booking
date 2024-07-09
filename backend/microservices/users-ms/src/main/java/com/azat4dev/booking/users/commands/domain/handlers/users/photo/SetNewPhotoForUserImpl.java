@@ -30,9 +30,9 @@ public final class SetNewPhotoForUserImpl implements SetNewPhotoForUser {
 
         try {
             mediaObject = mediaObjectsBucket.getObject(uploadedFileData.objectName());
-            log.debug("Photo received");
+            log.atDebug().log("Photo received");
         } catch (Throwable e) {
-            log.error("Failed to get photo", e);
+            log.atError().setCause(e).log("Failed to get photo");
             bus.publish(new FailedUpdateUserPhoto(operationId, userId, uploadedFileData));
             throw new Exception.FailedToGetPhoto();
         }
@@ -43,13 +43,13 @@ public final class SetNewPhotoForUserImpl implements SetNewPhotoForUser {
                 new UserPhotoPath(mediaObject.bucketName(), mediaObject.objectName())
             );
 
-            log.debug("User photo updated");
+            log.atInfo().log("User photo updated");
         } catch (Users.Exception.FailedToUpdateUser e) {
-            log.error("Failed to save user", e);
+            log.atWarn().setCause(e).log("Failed to save user");
             bus.publish(new FailedUpdateUserPhoto(operationId, userId, uploadedFileData));
             throw new Exception.FailedToSaveUser();
         } catch (Users.Exception.UserNotFound e) {
-            log.error("User not found", e);
+            log.atWarn().setCause(e).log("User not found");
             bus.publish(new FailedUpdateUserPhoto(operationId, userId, uploadedFileData));
             throw new Exception.UserNotFound(userId);
         }

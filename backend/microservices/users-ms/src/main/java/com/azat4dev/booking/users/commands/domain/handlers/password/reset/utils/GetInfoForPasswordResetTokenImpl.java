@@ -22,10 +22,10 @@ public final class GetInfoForPasswordResetTokenImpl implements GetInfoForPasswor
                 decodedData.expiresAt()
             );
 
-            log.debug("Password reset token info extracted");
+            log.atTrace().log("Password reset token info extracted");
             return data;
         } catch (UserId.WrongFormatException e) {
-            log.debug("Token is not valid");
+            log.atWarn().log("Token is not valid");
             throw new Exception.InvalidToken();
         }
     }

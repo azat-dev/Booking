@@ -27,23 +27,23 @@ public final class GenerateUserPhotoUploadUrlHandlerImpl implements GenerateUser
             final var fileSize = command.fileSize();
 
             final var url = generateUrlForUploadUserPhoto.execute(operationId, userId, fileExtension, fileSize);
-            log.debug("Generated URL for uploading user photo");
+            log.atInfo().log("Generated URL for uploading user photo");
             return url;
 
         } catch (PhotoFileExtension.InvalidPhotoFileExtensionException e) {
-            log.debug("Invalid file extension", e);
+            log.atWarn().setCause(e).log("Invalid file extension");
             throw ValidationException.withPath("fileExtension", e);
         } catch (IdempotentOperationId.Exception e) {
-            log.debug("Invalid operation id", e);
+            log.atWarn().setCause(e).log("Invalid operation id");
             throw ValidationException.withPath("operationId", e);
         } catch (GenerateUrlForUploadUserPhoto.Exception.WrongFileSize e) {
-            log.debug("Invalid file size", e);
+            log.atError().setCause(e).log("Invalid file size");
             throw ValidationException.withPath("fileSize", e);
         } catch (GenerateUrlForUploadUserPhoto.Exception.FailedGenerateUserPhotoUploadUrl e) {
-            log.debug("Failed to generate URL for uploading user photo", e);
+            log.atError().setCause(e).log("Failed to generate URL for uploading user photo");
             throw new Exception.FailedGenerateUserPhotoUploadUrl();
         } catch (UserId.WrongFormatException e) {
-            log.debug("Invalid user ID", e);
+            log.atWarn().setCause(e).log("Invalid user ID");
             throw ValidationException.withPath("userId", e);
         }
     }

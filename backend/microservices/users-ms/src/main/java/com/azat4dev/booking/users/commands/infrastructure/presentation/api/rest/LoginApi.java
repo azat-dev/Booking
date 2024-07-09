@@ -37,7 +37,7 @@ public class LoginApi implements CommandsLoginApiDelegate {
             );
 
             final var tokens = authenticateCurrentSession.execute(user.getId(), new String[]{"ROLE_USER"});
-            log.debug("User logged in");
+            log.atInfo().addKeyValue("userId", user::getId).log("User logged in");
 
             return ResponseEntity.ok(
                 LoginByEmailResponseBodyDTO.builder()
@@ -52,7 +52,7 @@ public class LoginApi implements CommandsLoginApiDelegate {
             );
 
         } catch (LoginByEmailHandler.Exception.WrongCredentials e) {
-            log.debug("User with email {} failed to log in", loginByEmailRequestBody.getEmail());
+            log.atInfo().log("User failed to log in");
             throw new ControllerException(HttpStatus.FORBIDDEN, e);
         }
     }

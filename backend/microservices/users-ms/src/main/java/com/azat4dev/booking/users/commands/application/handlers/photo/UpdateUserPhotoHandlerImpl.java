@@ -29,19 +29,19 @@ public final class UpdateUserPhotoHandlerImpl implements UpdateUserPhotoHandler 
             final var operationId = IdempotentOperationId.checkAndMakeFrom(command.operationId());
 
             setNewPhotoForUser.execute(operationId, userId, uploadedFileData);
-            log.debug("User photo updated");
+            log.atInfo().log("User photo updated");
 
         } catch (BucketName.Exception e) {
-            log.debug("Invalid bucket name", e);
+            log.atWarn().setCause(e).log("Invalid bucket name");
             throw ValidationException.withPath("bucketName", e);
         } catch (MediaObjectName.InvalidMediaObjectNameException e) {
-            log.debug("Invalid object name", e);
+            log.atWarn().setCause(e).log("Invalid object name");
             throw ValidationException.withPath("objectName", e);
         } catch (IdempotentOperationId.Exception e) {
-            log.debug("Invalid operation id", e);
+            log.atWarn().setCause(e).log("Invalid operation id");
             throw ValidationException.withPath("operationId", e);
         } catch (SetNewPhotoForUser.Exception e) {
-            log.debug("Failed to attach photo", e);
+            log.atError().setCause(e).log("Failed to attach photo");
             throw new Exception.FailedToAttachPhoto();
         }
     }

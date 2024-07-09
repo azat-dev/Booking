@@ -39,9 +39,11 @@ public class EmailServiceImpl implements EmailService {
             helper.setFrom(data.from().getValue(), data.fromName());
             helper.setSubject(data.subject());
             helper.setText(data.body().value());
-            log.debug("Email sent");
+            log.atInfo().log("Email sent");
         } catch (MessagingException | UnsupportedEncodingException e) {
-            log.error("Failed to send email", e);
+            log.atError()
+                .setCause(e)
+                .log("Failed to send email");
             throw new RuntimeException(e);
         }
 

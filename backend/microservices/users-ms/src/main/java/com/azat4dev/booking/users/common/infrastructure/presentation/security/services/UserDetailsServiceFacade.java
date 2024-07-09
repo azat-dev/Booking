@@ -21,7 +21,7 @@ public final class UserDetailsServiceFacade implements UserDetailsService {
             try {
                 return service.loadUserByUsername(username);
             } catch (UsernameNotFoundException e) {
-                log.error("User not found: {}", username);
+                log.atError().log("User not found: {}", username);
             }
         }
 

@@ -31,10 +31,10 @@ public final class GetInfoForEmailVerificationTokenImpl implements GetInfoForEma
                 LocalDateTime.ofInstant(decoded.getExpiresAt(), ZoneOffset.UTC)
             );
 
-            log.debug("Got info for email verification token");
+            log.atDebug().log("Got info for email verification token");
             return info;
         } catch (JwtException | UserId.WrongFormatException | EmailAddress.WrongFormatException e) {
-            log.error("Token is not valid", e);
+            log.atWarn().setCause(e).log("Token is not valid");
             throw new TokenIsNotValidException();
         }
     }

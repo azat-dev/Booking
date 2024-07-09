@@ -33,6 +33,7 @@ public class UnitOfWorkImpl extends DefaultTransactionDefinition implements Unit
     @Override
     public <T> T doOrFail(Action<T> action) throws Exception {
         if (status != Status.INITIAL) {
+            log.atError().log("UnitOfWork already committed or rolled back");
             throw new IllegalStateException("UnitOfWork already committed or rolled back");
         }
 
@@ -49,14 +50,14 @@ public class UnitOfWorkImpl extends DefaultTransactionDefinition implements Unit
             return result;
 
         } catch (UndeclaredThrowableException e) {
-            log.error("UnitOfWork failed", e);
+            log.atError().setCause(e).log("UnitOfWork failed");
             this.status = Status.ROLLED_BACK;
             if (e.getUndeclaredThrowable() instanceof Exception) {
                 throw (Exception) e.getUndeclaredThrowable();
             }
             throw e;
         } catch (Throwable e) {
-            log.error("UnitOfWork failed", e);
+            log.atError().setCause(e).log("UnitOfWork failed");
             this.status = Status.ROLLED_BACK;
             throw e;
         }

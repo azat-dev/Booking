@@ -13,8 +13,6 @@ import com.azat4dev.booking.users.commands.domain.handlers.email.verification.ut
 import com.azat4dev.booking.users.commands.domain.interfaces.services.EmailService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 import java.time.LocalDateTime;
 
@@ -45,16 +43,16 @@ public class SendVerificationEmailHandler implements CommandHandler<SendVerifica
                     "Welcome to our platform",
                     new EmailBody(
                         "Hello, " + command.fullName().toString() + "!\n\n" +
-                        "Please verify your email by clicking the link below:\n\n" +
-                        "<a href=\"" + verificationLink + "\">Verify email</a>\n\n"
+                            "Please verify your email by clicking the link below:\n\n" +
+                            "<a href=\"" + verificationLink + "\">Verify email</a>\n\n"
                     )
                 )
             );
 
-            log.debug("Verification email sent");
+            log.atInfo().log("Verification email sent");
 
         } catch (Exception e) {
-            log.error("Can' send verification email", e);
+            log.atError().setCause(e).log("Can' send verification email");
 
             bus.publish(
                 new FailedToSendVerificationEmail(

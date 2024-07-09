@@ -12,8 +12,6 @@ import com.azat4dev.booking.users.commands.domain.handlers.users.UsersImpl;
 import com.azat4dev.booking.users.commands.domain.interfaces.repositories.UnitOfWorkFactory;
 import com.azat4dev.booking.shared.domain.producers.OutboxEventsPublisher;
 import com.azat4dev.booking.shared.domain.producers.OutboxEventsPublisherImpl;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 
@@ -22,7 +20,6 @@ import org.springframework.context.annotation.Configuration;
 @Configuration
 public class DomainConfig {
 
-    private static final Logger LOGGER = LoggerFactory.getLogger(DomainConfig.class);
 
     @Bean
     public UserIdFactory userIdFactory() {

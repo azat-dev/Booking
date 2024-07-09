@@ -21,15 +21,16 @@ public final class ValidateTokenForPasswordResetAndGetUserIdImpl implements Vali
             final var now = timeProvider.currentTime();
 
             if (now.isAfter(parsedData.expiresAt())) {
+                log.atDebug().log("Token is expired");
                 throw new Exception.TokenExpired();
             }
 
             final var userId = parsedData.userId();
-            log.debug("Password reset token is valid");
+            log.atDebug().log("Password reset token is valid");
             return userId;
 
         } catch (GetInfoForPasswordResetToken.Exception.InvalidToken e) {
-            log.debug("Token is not valid");
+            log.atDebug().log("Token is not valid");
             throw new Exception.InvalidToken();
         }
     }

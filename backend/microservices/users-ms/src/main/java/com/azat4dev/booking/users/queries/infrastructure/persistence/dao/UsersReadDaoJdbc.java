@@ -30,21 +30,21 @@ public class UsersReadDaoJdbc implements UsersReadDao {
     public Optional<UserRecord> getById(UUID userId) {
 
         final var sql = """
-                SELECT *
-                FROM users
-                WHERE id = :userId
-            """;
+                    SELECT *
+                    FROM users
+                    WHERE id = :userId
+                """;
 
         try {
             final var foundUser = jdbcTemplate.queryForObject(
-                sql,
-                Map.of("userId", userId),
-                personalUserInfoRowMapper
+                    sql,
+                    Map.of("userId", userId),
+                    personalUserInfoRowMapper
             );
 
             return Optional.ofNullable(foundUser);
         } catch (EmptyResultDataAccessException e) {
-            log.error("User not found: {}", userId);
+            log.atError().setCause(e).addKeyValue("userId", userId).log("User not found: {}", userId);
             return Optional.empty();
         }
     }
@@ -62,17 +62,17 @@ public class UsersReadDaoJdbc implements UsersReadDao {
             try {
                 photo = encodedPhoto == null ? Optional.empty() : Optional.of(objectMapper.readValue(encodedPhoto, UserRecord.PhotoPath.class));
             } catch (JsonProcessingException e) {
-                log.error("Failed to parse photo: {}", encodedPhoto);
+                log.atError().log("Failed to parse photo: {}", encodedPhoto);
                 throw new RuntimeException(e);
             }
 
             return new UserRecord(
-                UUID.fromString(rs.getString("id")),
-                rs.getString("email"),
-                UserRecord.EmailVerificationStatus.valueOf(rs.getString("email_verification_status")),
-                rs.getString("first_name"),
-                rs.getString("last_name"),
-                photo
+                    UUID.fromString(rs.getString("id")),
+                    rs.getString("email"),
+                    UserRecord.EmailVerificationStatus.valueOf(rs.getString("email_verification_status")),
+                    rs.getString("first_name"),
+                    rs.getString("last_name"),
+                    photo
             );
         }
     }

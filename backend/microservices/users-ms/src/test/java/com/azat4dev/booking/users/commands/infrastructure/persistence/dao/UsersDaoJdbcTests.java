@@ -1,11 +1,10 @@
 package com.azat4dev.booking.users.commands.infrastructure.persistence.dao;
 
 
-import com.azat4dev.booking.users.config.users_commands.infrastructure.persistence.dao.UsersDaoConfig;
 import com.azat4dev.booking.users.commands.domain.UserHelpers;
 import com.azat4dev.booking.users.commands.domain.core.values.user.EmailVerificationStatus;
 import com.azat4dev.booking.users.commands.infrastructure.entities.UserData;
-import com.azat4dev.booking.users.commands.infrastructure.persistence.dao.UsersDao;
+import com.azat4dev.booking.users.config.users_commands.infrastructure.persistence.dao.UsersDaoConfig;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -24,11 +23,10 @@ import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 
 @Testcontainers
-
 @Import({UsersDaoConfig.class})
 @JdbcTest(properties = {"spring.datasource.url=jdbc:tc:postgresql:15-alpine:///"})
 @AutoConfigureTestDatabase(replace = AutoConfigureTestDatabase.Replace.NONE)
-public class UsersDaoJdbcTests {
+class UsersDaoJdbcTests {
 
     @Autowired
     private UsersDao dao;
