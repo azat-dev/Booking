@@ -7,12 +7,14 @@ import com.azat4dev.booking.shared.domain.values.files.MediaObjectName;
 import com.azat4dev.booking.shared.domain.values.files.UploadedFileData;
 import com.azat4dev.booking.users.commands.application.commands.photo.UpdateUserPhoto;
 import com.azat4dev.booking.users.commands.domain.handlers.users.photo.SetNewPhotoForUser;
+import io.micrometer.observation.annotation.Observed;
 import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 
+@Observed
 @Slf4j
 @AllArgsConstructor
-public final class UpdateUserPhotoHandlerImpl implements UpdateUserPhotoHandler {
+public class UpdateUserPhotoHandlerImpl implements UpdateUserPhotoHandler {
 
     private final SetNewPhotoForUser setNewPhotoForUser;
 

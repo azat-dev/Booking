@@ -1,6 +1,5 @@
 package com.azat4dev.booking.users.commands.domain.policies;
 
-import com.azat4dev.booking.shared.domain.events.DomainEvent;
 import com.azat4dev.booking.shared.domain.interfaces.bus.DomainEventsBus;
 import com.azat4dev.booking.shared.domain.events.EventId;
 import com.azat4dev.booking.shared.domain.events.RandomEventIdGenerator;
@@ -17,7 +16,7 @@ import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.times;
 
 
-public class ProduceSendVerificationEmailCommandAfterSignUpPolicyTests {
+class ProduceSendVerificationEmailCommandAfterSignUpPolicyTests {
 
     SUT createSUT() {
         final var bus = mock(DomainEventsBus.class);
@@ -41,16 +40,15 @@ public class ProduceSendVerificationEmailCommandAfterSignUpPolicyTests {
         final var userId = UserHelpers.anyValidUserId();
         final var fullName = UserHelpers.anyFullName();
 
-        final var inputEvent = new DomainEvent<>(
-            anyEventId(),
+        final var eventId = anyEventId();
+        final var issuedAt = LocalDateTime.now();
+
+        final var event = new UserSignedUp(
             LocalDateTime.now(),
-            new UserSignedUp(
-                LocalDateTime.now(),
-                userId,
-                fullName,
-                email,
-                EmailVerificationStatus.NOT_VERIFIED
-            )
+            userId,
+            fullName,
+            email,
+            EmailVerificationStatus.NOT_VERIFIED
         );
 
         final var expectedOutput = new SendVerificationEmail(
@@ -60,7 +58,7 @@ public class ProduceSendVerificationEmailCommandAfterSignUpPolicyTests {
             0
         );
         // When
-        sut.policy.execute(inputEvent);
+        sut.policy.execute(event, eventId, issuedAt);
 
         // Then
         then(sut.bus)

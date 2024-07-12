@@ -4,13 +4,15 @@ import com.azat4dev.booking.shared.domain.values.files.MediaObjectName;
 import com.azat4dev.booking.shared.domain.values.files.PhotoFileExtension;
 import com.azat4dev.booking.shared.domain.values.user.UserId;
 import com.azat4dev.booking.shared.utils.TimeProvider;
+import io.micrometer.observation.annotation.Observed;
 import lombok.RequiredArgsConstructor;
 
 import java.time.ZoneOffset;
 
 
+@Observed
 @RequiredArgsConstructor
-public final class GenerateUserPhotoObjectNameImpl implements GenerateUserPhotoObjectName {
+public class GenerateUserPhotoObjectNameImpl implements GenerateUserPhotoObjectName {
 
     private final TimeProvider timeProvider;
 
@@ -20,8 +22,8 @@ public final class GenerateUserPhotoObjectNameImpl implements GenerateUserPhotoO
         final var timeStamp = timeProvider.currentTime().toInstant(ZoneOffset.UTC).toEpochMilli();
 
         String sb = userId.toString() +
-                    "-" +
-                    timeStamp + "." + extension.toString();
+            "-" +
+            timeStamp + "." + extension.toString();
 
         return MediaObjectName.dangerouslyMake(sb);
     }

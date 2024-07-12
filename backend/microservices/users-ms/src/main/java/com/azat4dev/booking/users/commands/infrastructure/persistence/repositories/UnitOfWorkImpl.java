@@ -3,6 +3,7 @@ package com.azat4dev.booking.users.commands.infrastructure.persistence.repositor
 import com.azat4dev.booking.shared.data.repositories.outbox.OutboxEventsRepository;
 import com.azat4dev.booking.users.commands.domain.interfaces.repositories.UnitOfWork;
 import com.azat4dev.booking.users.commands.domain.interfaces.repositories.UsersRepository;
+import io.micrometer.observation.annotation.Observed;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.transaction.support.DefaultTransactionDefinition;
@@ -10,6 +11,7 @@ import org.springframework.transaction.support.TransactionTemplate;
 
 import java.lang.reflect.UndeclaredThrowableException;
 
+@Observed
 @Slf4j
 @RequiredArgsConstructor
 public class UnitOfWorkImpl extends DefaultTransactionDefinition implements UnitOfWork {

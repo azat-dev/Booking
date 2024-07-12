@@ -4,6 +4,7 @@ import com.azat4dev.booking.shared.data.serializers.DomainEventSerializer;
 import com.azat4dev.booking.shared.domain.events.*;
 import com.azat4dev.booking.shared.domain.interfaces.bus.DomainEventsBus;
 import com.azat4dev.booking.shared.utils.TimeProvider;
+import io.micrometer.observation.annotation.Observed;
 import lombok.RequiredArgsConstructor;
 import org.apache.kafka.clients.consumer.ConsumerRecord;
 import org.springframework.kafka.core.KafkaTemplate;
@@ -16,8 +17,9 @@ import java.time.LocalDateTime;
 import java.util.function.Consumer;
 import java.util.function.Function;
 
+@Observed
 @RequiredArgsConstructor
-public final class KafkaDomainEventsBus implements DomainEventsBus {
+public class KafkaDomainEventsBus implements DomainEventsBus {
 
     private final KafkaTemplate<String, String> kafkaTemplate;
     private final DomainEventSerializer domainEventSerializer;

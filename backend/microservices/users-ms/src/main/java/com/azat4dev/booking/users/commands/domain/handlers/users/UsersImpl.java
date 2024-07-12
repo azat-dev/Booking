@@ -13,14 +13,16 @@ import com.azat4dev.booking.users.commands.domain.core.values.email.EmailAddress
 import com.azat4dev.booking.users.commands.domain.core.values.user.EmailVerificationStatus;
 import com.azat4dev.booking.users.commands.domain.interfaces.repositories.UnitOfWorkFactory;
 import com.azat4dev.booking.users.commands.domain.interfaces.repositories.UsersRepository;
+import io.micrometer.observation.annotation.Observed;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 
 import java.util.Optional;
 
+@Observed
 @Slf4j
 @RequiredArgsConstructor
-public final class UsersImpl implements Users {
+public class UsersImpl implements Users {
 
     private final TimeProvider timeProvider;
     private final MarkOutboxNeedsSynchronization markOutboxNeedsSynchronization;
@@ -65,7 +67,7 @@ public final class UsersImpl implements Users {
                 return null;
             });
 
-            log.atInfo().addKeyValue("userId", userId).log("User created2");
+            log.atInfo().addKeyValue("userId", userId).log("User created");
 
         } catch (UsersRepository.Exception.UserWithSameEmailAlreadyExists e) {
 

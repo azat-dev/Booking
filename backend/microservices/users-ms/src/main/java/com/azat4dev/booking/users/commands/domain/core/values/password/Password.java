@@ -12,9 +12,9 @@ import lombok.RequiredArgsConstructor;
 @EqualsAndHashCode(of = "value")
 public final class Password {
 
-    public final static int MIN_LENGTH = 6;
-    public final static int MAX_LENGTH = 255;
-    public final static String PATTERN = "\\S+";
+    public static final int MIN_LENGTH = 6;
+    public static final int MAX_LENGTH = 255;
+    public static final String PATTERN = "\\S+";
 
     @Getter
     private final String value;
@@ -39,8 +39,8 @@ public final class Password {
 
     // Exceptions
 
-    public static abstract class Exception extends DomainException {
-        public Exception(String message) {
+    public abstract static class Exception extends DomainException {
+        protected Exception(String message) {
             super(message);
         }
 

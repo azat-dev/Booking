@@ -42,8 +42,8 @@ public final class FirstName implements Serializable {
         return new FirstName(value);
     }
 
-    public static abstract class ValidationException extends DomainException {
-        public ValidationException(String message) {
+    public abstract static class ValidationException extends DomainException {
+        protected ValidationException(String message) {
             super(message);
         }
     }

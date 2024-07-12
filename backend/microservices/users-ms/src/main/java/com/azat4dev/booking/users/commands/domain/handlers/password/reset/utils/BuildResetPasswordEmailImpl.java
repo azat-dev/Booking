@@ -3,10 +3,12 @@ package com.azat4dev.booking.users.commands.domain.handlers.password.reset.utils
 import com.azat4dev.booking.shared.domain.values.user.UserId;
 import com.azat4dev.booking.users.commands.domain.core.values.email.EmailAddress;
 import com.azat4dev.booking.users.commands.domain.core.values.email.EmailBody;
+import io.micrometer.observation.annotation.Observed;
 import lombok.RequiredArgsConstructor;
 
+@Observed
 @RequiredArgsConstructor
-public final class BuildResetPasswordEmailImpl implements BuildResetPasswordEmail {
+public class BuildResetPasswordEmailImpl implements BuildResetPasswordEmail {
 
     private final String fromName;
     private final EmailAddress fromAddress;

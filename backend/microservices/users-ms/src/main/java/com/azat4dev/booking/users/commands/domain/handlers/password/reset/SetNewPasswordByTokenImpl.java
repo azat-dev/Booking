@@ -9,12 +9,14 @@ import com.azat4dev.booking.users.commands.domain.core.values.password.EncodedPa
 import com.azat4dev.booking.users.commands.domain.core.values.password.reset.TokenForPasswordReset;
 import com.azat4dev.booking.users.commands.domain.handlers.password.reset.utils.ValidateTokenForPasswordResetAndGetUserId;
 import com.azat4dev.booking.users.commands.domain.interfaces.repositories.UsersRepository;
+import io.micrometer.observation.annotation.Observed;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 
+@Observed
 @Slf4j
 @RequiredArgsConstructor
-public final class SetNewPasswordByTokenImpl implements SetNewPasswordByToken {
+public class SetNewPasswordByTokenImpl implements SetNewPasswordByToken {
 
     private final ValidateTokenForPasswordResetAndGetUserId validateTokenAndGetUserId;
     private final UsersRepository usersRepository;

@@ -247,7 +247,6 @@ class UsersMicroserviceApplicationTests {
             return new EmailService() {
                 @Override
                 public void send(EmailAddress email, EmailData data) {
-                    System.out.println("Sending email: " + email + " " + data);
                     emailBox.add(email, data);
                 }
             };

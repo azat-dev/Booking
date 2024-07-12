@@ -2,18 +2,19 @@ package com.azat4dev.booking.users.common.infrastructure.presentation.security.s
 
 import com.azat4dev.booking.shared.domain.values.user.UserId;
 import com.azat4dev.booking.shared.utils.TimeProvider;
+import io.micrometer.observation.annotation.Observed;
 import lombok.RequiredArgsConstructor;
 
 import java.time.Duration;
 import java.util.Map;
 
+@Observed
 @RequiredArgsConstructor
-public final class JwtServiceImpl implements JwtService {
+public class JwtServiceImpl implements JwtService {
 
     private final Duration accessTokenExpiresIn;
     private final Duration refreshTokenExpiresIn;
     private final JwtDataEncoder jwtDataEncoder;
-    private final JwtDataDecoder jwtDataDecoder;
     private final TimeProvider dateTimeProvider;
 
     @Override

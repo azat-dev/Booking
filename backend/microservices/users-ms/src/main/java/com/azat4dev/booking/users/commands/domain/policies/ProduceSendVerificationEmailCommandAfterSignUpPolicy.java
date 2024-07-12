@@ -1,30 +1,32 @@
 package com.azat4dev.booking.users.commands.domain.policies;
 
 import com.azat4dev.booking.shared.domain.Policy;
-import com.azat4dev.booking.shared.domain.events.DomainEvent;
+import com.azat4dev.booking.shared.domain.events.EventId;
 import com.azat4dev.booking.shared.domain.interfaces.bus.DomainEventsBus;
 import com.azat4dev.booking.users.commands.domain.core.commands.SendVerificationEmail;
 import com.azat4dev.booking.users.commands.domain.core.events.UserSignedUp;
 import com.azat4dev.booking.users.commands.domain.core.values.user.EmailVerificationStatus;
+import io.micrometer.observation.annotation.Observed;
 import lombok.RequiredArgsConstructor;
 
+import java.time.LocalDateTime;
+
+@Observed
 @RequiredArgsConstructor
-public final class ProduceSendVerificationEmailCommandAfterSignUpPolicy implements Policy<DomainEvent<UserSignedUp>> {
+public class ProduceSendVerificationEmailCommandAfterSignUpPolicy implements Policy<UserSignedUp> {
 
     private final DomainEventsBus bus;
 
     @Override
-    public void execute(DomainEvent<UserSignedUp> event) {
-
-        final var payload = event.payload();
-        if (payload.emailVerificationStatus() != EmailVerificationStatus.NOT_VERIFIED) {
+    public void execute(UserSignedUp event, EventId eventId, LocalDateTime issuedAt) {
+        if (event.emailVerificationStatus() != EmailVerificationStatus.NOT_VERIFIED) {
             return;
         }
 
         final var command = new SendVerificationEmail(
-            payload.userId(),
-            payload.email(),
-            payload.fullName(),
+            event.userId(),
+            event.email(),
+            event.fullName(),
             0
         );
 

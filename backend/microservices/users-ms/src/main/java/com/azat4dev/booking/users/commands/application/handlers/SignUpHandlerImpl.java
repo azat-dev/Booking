@@ -13,12 +13,14 @@ import com.azat4dev.booking.users.commands.domain.core.values.user.FullName;
 import com.azat4dev.booking.users.commands.domain.core.values.user.LastName;
 import com.azat4dev.booking.users.commands.domain.handlers.users.Users;
 import com.azat4dev.booking.users.commands.domain.interfaces.services.PasswordService;
+import io.micrometer.observation.annotation.Observed;
 import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 
+@Observed
 @Slf4j
 @AllArgsConstructor
-public final class SignUpHandlerImpl implements SignUpHandler {
+public class SignUpHandlerImpl implements SignUpHandler {
 
     private final UserIdFactory userIdFactory;
     private final PasswordService passwordService;
@@ -49,22 +51,22 @@ public final class SignUpHandlerImpl implements SignUpHandler {
             return userId;
 
         } catch (FirstName.ValidationException e) {
-            log.atError().setCause(e).log("Invalid first name");
+            log.atWarn().addKeyValue("code", e.getCode()).log("Invalid first name");
             throw ValidationException.withPath("firstName", e);
         } catch (LastName.ValidationException e) {
-            log.atError().setCause(e).log("Invalid last name");
+            log.atWarn().addKeyValue("code", e.getCode()).log("Invalid last name");
             throw ValidationException.withPath("lastName", e);
         } catch (EmailAddress.ValidationException e) {
-            log.atError().setCause(e).log("Invalid email");
+            log.atWarn().addKeyValue("code", e.getCode()).log("Invalid email");
             throw ValidationException.withPath("email", e);
         } catch (Password.Exception e) {
-            log.atError().setCause(e).log("Invalid password");
+            log.atWarn().addKeyValue("code", e.getCode()).log("Invalid password");
             throw ValidationException.withPath("password", e);
         } catch (Users.Exception.UserWithSameEmailAlreadyExists e) {
-            log.atError().setCause(e).log("User with same email already exists");
+            log.atWarn().addKeyValue("code", e.getCode()).log("User with same email already exists");
             throw new SignUpHandler.Exception.UserWithSameEmailAlreadyExists();
         } catch (FullName.Exception e) {
-            log.atError().setCause(e).log("Invalid full name");
+            log.atWarn().addKeyValue("code", e.getCode()).log("Invalid full name");
             throw ValidationException.withPath("fullName", e);
         } catch (User.Exception e) {
             log.atError().setCause(e).log("Failed to create new user");

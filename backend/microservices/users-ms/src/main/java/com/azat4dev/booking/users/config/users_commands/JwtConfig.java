@@ -32,14 +32,12 @@ public class JwtConfig {
     @Bean
     public JwtService jwtService(
         TimeProvider timeProvider,
-        JwtDataEncoder jwtDataEncoder,
-        JwtDataDecoder jwtDecoder
+        JwtDataEncoder jwtDataEncoder
     ) {
         return new JwtServiceImpl(
             jwtConfig.getAccessTokenExpiresIn(),
             jwtConfig.getRefreshTokenExpiresIn(),
             jwtDataEncoder,
-            jwtDecoder,
             timeProvider
         );
     }

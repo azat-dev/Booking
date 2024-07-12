@@ -1,6 +1,5 @@
 package com.azat4dev.booking.users.config.users_commands.domain;
 
-import com.azat4dev.booking.common.domain.annotations.CommandHandlerBean;
 import com.azat4dev.booking.shared.domain.interfaces.bus.DomainEventsBus;
 import com.azat4dev.booking.shared.utils.TimeProvider;
 import com.azat4dev.booking.users.common.infrastructure.presentation.security.services.jwt.JwtDataEncoder;
@@ -34,7 +33,7 @@ public class EmailVerificationConfig {
         };
     }
 
-    @CommandHandlerBean
+    @Bean
     SendVerificationEmailHandler sendVerificationEmailCommandHandler(
         BuildEmailVerificationLink buildEmailVerificationLink,
         EmailService emailService,

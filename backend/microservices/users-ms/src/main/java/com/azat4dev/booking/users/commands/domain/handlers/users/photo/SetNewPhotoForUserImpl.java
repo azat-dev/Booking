@@ -9,12 +9,14 @@ import com.azat4dev.booking.shared.domain.values.user.UserId;
 import com.azat4dev.booking.users.commands.domain.core.entities.UserPhotoPath;
 import com.azat4dev.booking.users.commands.domain.core.events.FailedUpdateUserPhoto;
 import com.azat4dev.booking.users.commands.domain.handlers.users.Users;
+import io.micrometer.observation.annotation.Observed;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 
+@Observed
 @Slf4j
 @RequiredArgsConstructor
-public final class SetNewPhotoForUserImpl implements SetNewPhotoForUser {
+public class SetNewPhotoForUserImpl implements SetNewPhotoForUser {
 
     private final MediaObjectsBucket mediaObjectsBucket;
     private final Users users;

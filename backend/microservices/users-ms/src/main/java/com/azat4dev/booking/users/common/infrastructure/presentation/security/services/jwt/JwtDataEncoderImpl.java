@@ -1,5 +1,6 @@
 package com.azat4dev.booking.users.common.infrastructure.presentation.security.services.jwt;
 
+import io.micrometer.observation.annotation.Observed;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.oauth2.jwt.JwtClaimsSet;
 import org.springframework.security.oauth2.jwt.JwtEncoder;
@@ -9,8 +10,9 @@ import java.time.LocalDateTime;
 import java.time.ZoneOffset;
 import java.util.Map;
 
+@Observed
 @RequiredArgsConstructor
-public final class JwtDataEncoderImpl implements JwtDataEncoder {
+public class JwtDataEncoderImpl implements JwtDataEncoder {
 
     private final JwtEncoder jwtEncoder;
 

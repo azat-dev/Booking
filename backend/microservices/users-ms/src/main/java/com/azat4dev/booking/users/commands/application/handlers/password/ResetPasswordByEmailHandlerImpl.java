@@ -5,12 +5,14 @@ import com.azat4dev.booking.shared.domain.values.IdempotentOperationId;
 import com.azat4dev.booking.users.commands.application.commands.password.ResetPasswordByEmail;
 import com.azat4dev.booking.users.commands.domain.core.values.email.EmailAddress;
 import com.azat4dev.booking.users.commands.domain.handlers.password.reset.SendResetPasswordEmail;
+import io.micrometer.observation.annotation.Observed;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 
+@Observed
 @Slf4j
 @RequiredArgsConstructor
-public final class ResetPasswordByEmailHandlerImpl implements ResetPasswordByEmailHandler {
+public class ResetPasswordByEmailHandlerImpl implements ResetPasswordByEmailHandler {
 
     private final SendResetPasswordEmail sendResetPasswordEmail;
 
@@ -25,10 +27,10 @@ public final class ResetPasswordByEmailHandlerImpl implements ResetPasswordByEma
             log.atInfo().log("Reset password email sent");
 
         } catch (IdempotentOperationId.Exception e) {
-            log.atInfo().log("Invalid operation id");
+            log.atWarn().addKeyValue("code", e.getCode()).log("Invalid operation id");
             throw ValidationException.withPath("operationId", e);
         } catch (EmailAddress.WrongFormatException e) {
-            log.atInfo().setCause(e).log("Invalid email");
+            log.atWarn().addKeyValue("code", e.getCode()).log("Invalid email");
             throw ValidationException.withPath("email", e);
         } catch (SendResetPasswordEmail.Exception e) {
             log.atError().setCause(e).log("Failed to send reset password email");

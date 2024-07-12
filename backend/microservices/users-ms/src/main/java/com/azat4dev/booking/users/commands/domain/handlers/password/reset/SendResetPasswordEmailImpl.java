@@ -8,12 +8,14 @@ import com.azat4dev.booking.users.commands.domain.core.values.email.EmailAddress
 import com.azat4dev.booking.users.commands.domain.handlers.password.reset.utils.BuildResetPasswordEmail;
 import com.azat4dev.booking.users.commands.domain.interfaces.repositories.UsersRepository;
 import com.azat4dev.booking.users.commands.domain.interfaces.services.EmailService;
+import io.micrometer.observation.annotation.Observed;
 import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 
+@Observed
 @Slf4j
 @AllArgsConstructor
-public final class SendResetPasswordEmailImpl implements SendResetPasswordEmail {
+public class SendResetPasswordEmailImpl implements SendResetPasswordEmail {
 
     private final UsersRepository usersRepository;
     private final BuildResetPasswordEmail buildResetPasswordEmail;

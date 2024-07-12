@@ -7,12 +7,14 @@ import com.azat4dev.booking.shared.domain.values.user.UserId;
 import com.azat4dev.booking.users.commands.application.commands.photo.GenerateUserPhotoUploadUrl;
 import com.azat4dev.booking.users.commands.domain.core.events.GeneratedUserPhotoUploadUrl;
 import com.azat4dev.booking.users.commands.domain.handlers.users.photo.GenerateUrlForUploadUserPhoto;
+import io.micrometer.observation.annotation.Observed;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 
+@Observed
 @Slf4j
 @RequiredArgsConstructor
-public final class GenerateUserPhotoUploadUrlHandlerImpl implements GenerateUserPhotoUploadUrlHandler {
+public class GenerateUserPhotoUploadUrlHandlerImpl implements GenerateUserPhotoUploadUrlHandler {
 
     private final GenerateUrlForUploadUserPhoto generateUrlForUploadUserPhoto;
 
@@ -43,7 +45,10 @@ public final class GenerateUserPhotoUploadUrlHandlerImpl implements GenerateUser
             log.atError().setCause(e).log("Failed to generate URL for uploading user photo");
             throw new Exception.FailedGenerateUserPhotoUploadUrl();
         } catch (UserId.WrongFormatException e) {
-            log.atWarn().setCause(e).log("Invalid user ID");
+            log.atWarn()
+                .addKeyValue("code", e.getCode())
+                .addKeyValue("errorMessage", e.getMessage())
+                .log("Invalid user ID");
             throw ValidationException.withPath("userId", e);
         }
     }

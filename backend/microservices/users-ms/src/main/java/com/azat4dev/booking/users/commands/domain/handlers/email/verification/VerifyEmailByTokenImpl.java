@@ -4,12 +4,14 @@ import com.azat4dev.booking.shared.utils.TimeProvider;
 import com.azat4dev.booking.users.commands.domain.core.values.email.verification.EmailVerificationToken;
 import com.azat4dev.booking.users.commands.domain.handlers.email.verification.utils.GetInfoForEmailVerificationToken;
 import com.azat4dev.booking.users.commands.domain.handlers.users.Users;
+import io.micrometer.observation.annotation.Observed;
 import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 
+@Observed
 @Slf4j
 @AllArgsConstructor
-public final class VerifyEmailByTokenImpl implements VerifyEmailByToken {
+public class VerifyEmailByTokenImpl implements VerifyEmailByToken {
 
     private final GetInfoForEmailVerificationToken getTokenInfo;
     private final Users users;

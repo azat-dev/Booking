@@ -4,6 +4,7 @@ import com.azat4dev.booking.users.commands.domain.core.values.user.EmailVerifica
 import com.azat4dev.booking.users.commands.infrastructure.entities.UserData;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import io.micrometer.observation.annotation.Observed;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.dao.DuplicateKeyException;
@@ -19,9 +20,10 @@ import java.util.Map;
 import java.util.Optional;
 import java.util.UUID;
 
+@Observed
 @Slf4j
 @RequiredArgsConstructor
-public final class UsersDaoJdbc implements UsersDao {
+public class UsersDaoJdbc implements UsersDao {
 
     private final ObjectMapper objectMapper;
     private final NamedParameterJdbcTemplate jdbcTemplate;

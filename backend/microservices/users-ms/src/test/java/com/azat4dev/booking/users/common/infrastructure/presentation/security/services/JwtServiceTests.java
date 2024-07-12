@@ -33,19 +33,16 @@ class JwtServiceTests {
             .willReturn(timeProvider.currentTime());
 
         final var encoder = Mockito.mock(JwtDataEncoder.class);
-        final var decoder = Mockito.mock(JwtDataDecoder.class);
 
         return new SUT(
             new JwtServiceImpl(
                 Duration.ofSeconds(10),
                 Duration.ofSeconds(10),
                 encoder,
-                decoder,
                 dateTimeProvider
             ),
             dateTimeProvider,
-            encoder,
-            decoder
+            encoder
         );
     }
 
@@ -120,8 +117,7 @@ class JwtServiceTests {
     private record SUT(
         JwtService service,
         TimeProvider dateTimeProvider,
-        JwtDataEncoder encoder,
-        JwtDataDecoder decoder
+        JwtDataEncoder encoder
     ) {
     }
 }

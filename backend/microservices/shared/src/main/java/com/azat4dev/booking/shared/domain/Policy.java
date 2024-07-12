@@ -1,8 +1,11 @@
 package com.azat4dev.booking.shared.domain;
 
-import com.azat4dev.booking.shared.domain.events.DomainEvent;
+import com.azat4dev.booking.shared.domain.events.DomainEventPayload;
+import com.azat4dev.booking.shared.domain.events.EventId;
 
-public interface Policy<E extends DomainEvent> {
+import java.time.LocalDateTime;
 
-    void execute(E event);
+public interface Policy<E extends DomainEventPayload> {
+
+    void execute(E event, EventId eventId, LocalDateTime issuedAt);
 }

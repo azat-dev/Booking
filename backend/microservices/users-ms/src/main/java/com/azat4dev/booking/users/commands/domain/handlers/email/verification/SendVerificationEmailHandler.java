@@ -11,11 +11,13 @@ import com.azat4dev.booking.users.commands.domain.core.values.email.EmailBody;
 import com.azat4dev.booking.users.commands.domain.handlers.email.verification.utils.BuildEmailVerificationLink;
 import com.azat4dev.booking.users.commands.domain.handlers.email.verification.utils.ProvideEmailVerificationToken;
 import com.azat4dev.booking.users.commands.domain.interfaces.services.EmailService;
+import io.micrometer.observation.annotation.Observed;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 
 import java.time.LocalDateTime;
 
+@Observed
 @Slf4j
 @RequiredArgsConstructor
 public class SendVerificationEmailHandler implements CommandHandler<SendVerificationEmail> {

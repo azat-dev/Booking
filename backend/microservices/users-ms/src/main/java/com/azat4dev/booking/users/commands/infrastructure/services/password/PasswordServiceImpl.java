@@ -3,11 +3,13 @@ package com.azat4dev.booking.users.commands.infrastructure.services.password;
 import com.azat4dev.booking.users.commands.domain.core.values.password.EncodedPassword;
 import com.azat4dev.booking.users.commands.domain.core.values.password.Password;
 import com.azat4dev.booking.users.commands.domain.interfaces.services.PasswordService;
+import io.micrometer.observation.annotation.Observed;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.crypto.password.PasswordEncoder;
 
+@Observed
 @RequiredArgsConstructor
-public final class PasswordServiceImpl implements PasswordService {
+public class PasswordServiceImpl implements PasswordService {
 
     private final PasswordEncoder passwordEncoder;
 

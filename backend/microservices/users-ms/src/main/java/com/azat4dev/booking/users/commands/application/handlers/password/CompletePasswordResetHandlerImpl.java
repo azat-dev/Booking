@@ -7,12 +7,14 @@ import com.azat4dev.booking.users.commands.domain.core.values.password.Password;
 import com.azat4dev.booking.users.commands.domain.core.values.password.reset.TokenForPasswordReset;
 import com.azat4dev.booking.users.commands.domain.handlers.password.reset.SetNewPasswordByToken;
 import com.azat4dev.booking.users.commands.domain.interfaces.services.PasswordService;
+import io.micrometer.observation.annotation.Observed;
 import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 
+@Observed
 @Slf4j
 @AllArgsConstructor
-public final class CompletePasswordResetHandlerImpl implements CompletePasswordResetHandler {
+public class CompletePasswordResetHandlerImpl implements CompletePasswordResetHandler {
 
     private final SetNewPasswordByToken setNewPasswordByToken;
     private final PasswordService passwordService;

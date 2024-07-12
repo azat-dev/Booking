@@ -2,6 +2,7 @@ package com.azat4dev.booking.users.commands.infrastructure.presentation.api.rest
 
 import com.azat4dev.booking.shared.domain.values.user.UserId;
 import com.azat4dev.booking.users.common.infrastructure.presentation.security.services.jwt.JwtService;
+import io.micrometer.observation.annotation.Observed;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import lombok.AllArgsConstructor;
@@ -13,9 +14,10 @@ import org.springframework.security.web.context.SecurityContextRepository;
 
 import java.util.function.Supplier;
 
+@Observed
 @Slf4j
 @AllArgsConstructor
-public final class AuthenticateCurrentSessionImpl implements AuthenticateCurrentSession {
+public class AuthenticateCurrentSessionImpl implements AuthenticateCurrentSession {
 
     private final SecurityContextHolderStrategy securityContextHolderStrategy = SecurityContextHolder
         .getContextHolderStrategy();

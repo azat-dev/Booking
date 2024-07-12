@@ -7,12 +7,14 @@ import com.azat4dev.booking.users.commands.domain.core.values.email.EmailAddress
 import com.azat4dev.booking.users.commands.domain.core.values.password.Password;
 import com.azat4dev.booking.users.commands.domain.handlers.users.Users;
 import com.azat4dev.booking.users.commands.domain.interfaces.services.PasswordService;
+import io.micrometer.observation.annotation.Observed;
 import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 
+@Observed
 @Slf4j
 @AllArgsConstructor
-public final class LoginByEmailHandlerImpl implements LoginByEmailHandler {
+public class LoginByEmailHandlerImpl implements LoginByEmailHandler {
 
     private final PasswordService passwordService;
     private final Users users;

@@ -3,12 +3,14 @@ package com.azat4dev.booking.users.commands.domain.handlers.password.reset.utils
 import com.azat4dev.booking.shared.domain.values.user.UserId;
 import com.azat4dev.booking.shared.utils.TimeProvider;
 import com.azat4dev.booking.users.commands.domain.core.values.password.reset.TokenForPasswordReset;
+import io.micrometer.observation.annotation.Observed;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 
+@Observed
 @Slf4j
 @RequiredArgsConstructor
-public final class ValidateTokenForPasswordResetAndGetUserIdImpl implements ValidateTokenForPasswordResetAndGetUserId {
+public class ValidateTokenForPasswordResetAndGetUserIdImpl implements ValidateTokenForPasswordResetAndGetUserId {
 
     private final GetInfoForPasswordResetToken getTokenInfo;
     private final TimeProvider timeProvider;

@@ -4,14 +4,15 @@ import com.azat4dev.booking.shared.domain.values.user.UserId;
 import com.azat4dev.booking.shared.utils.TimeProvider;
 import com.azat4dev.booking.users.commands.domain.core.values.password.reset.TokenForPasswordReset;
 import com.azat4dev.booking.users.common.infrastructure.presentation.security.services.jwt.JwtDataEncoder;
+import io.micrometer.observation.annotation.Observed;
 import lombok.RequiredArgsConstructor;
 
 import java.time.Duration;
 import java.util.Map;
 
-
+@Observed
 @RequiredArgsConstructor
-public final class ProvideResetPasswordTokenImpl implements ProvideResetPasswordToken {
+public class ProvideResetPasswordTokenImpl implements ProvideResetPasswordToken {
 
     public static String TYPE = "password_reset";
 

@@ -17,7 +17,6 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Component;
 
 @Slf4j
-@Observed
 @Component
 @AllArgsConstructor
 public class SignUpApi implements CommandsSignUpApiDelegate {
@@ -26,6 +25,7 @@ public class SignUpApi implements CommandsSignUpApiDelegate {
     private final AuthenticateCurrentSession authenticateCurrentSession;
 
 
+    @Observed(name = "sign-up-api", contextualName = "signing-up-by-email")
     @Override
     public ResponseEntity<SignUpByEmailResponseBodyDTO> signUpByEmail(SignUpByEmailRequestBodyDTO requestBody) throws Exception {
 
