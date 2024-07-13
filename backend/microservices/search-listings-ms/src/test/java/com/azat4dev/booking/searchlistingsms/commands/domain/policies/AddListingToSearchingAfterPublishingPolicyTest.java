@@ -76,7 +76,7 @@ class AddListingToSearchingAfterPublishingPolicyTest {
             .willReturn(existingDetails);
 
         // When
-        sut.policy.execute(event);
+        sut.policy.execute(event.payload(), event.id(), event.issuedAt());
 
         // Then
         then(sut.listingsSearchRepository).should(times(1))
@@ -98,7 +98,7 @@ class AddListingToSearchingAfterPublishingPolicyTest {
             .addNew(any(), any(), any(), any());
 
         // When
-        sut.policy.execute(event);
+        sut.policy.execute(event.payload(), event.id(), event.issuedAt());
 
         // Then
         then(sut.bus).should(times(1))

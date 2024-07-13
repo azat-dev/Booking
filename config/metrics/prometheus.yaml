@@ -19,3 +19,8 @@ scrape_configs:
     metrics_path: '/actuator/prometheus'
     static_configs:
       - targets: [ 'listings-ms:8080' ]
+  - job_name: 'search-listings-ms'
+    scrape_interval: 2s
+    metrics_path: '/actuator/prometheus'
+    static_configs:
+      - targets: [ 'search-listings-ms:8080' ]

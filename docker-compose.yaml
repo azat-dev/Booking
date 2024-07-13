@@ -133,6 +133,36 @@ services:
       - LISTINGS_MS_LOKI_URL=${LOKI_URL}
       - LISTINGS_MS_ZIPKIN_ENDPOINT=${ZIPKIN_ENDPOINT}
 
+  search-listings-db:
+    image: postgres:16.3-alpine
+    environment:
+      POSTGRES_DB: ${SEARCH_LISTINGS_DB_NAME}
+      POSTGRES_USER: ${SEARCH_LISTINGS_DB_USERNAME}
+      POSTGRES_PASSWORD: ${SEARCH_LISTINGS_DB_PASSWORD}
+
+  search-listings-ms:
+    image: booking-demo/search-listings-ms:0.0.1-SNAPSHOT
+    depends_on:
+      - search-listings-db
+      - objects-storage
+      - broker
+      - eureka
+    environment:
+      - SEARCH_LISTINGS_MS_PORT=${SEARCH_LISTINGS_MS_PORT}
+      - SEARCH_LISTINGS_MS_EUREKA=http://eureka:${EUREKA_SERVER_PORT}/eureka/
+
+      - SEARCH_LISTINGS_MS_DB_HOST=search-listings-db
+      - SEARCH_LISTINGS_MS_DB_PORT=${SEARCH_LISTINGS_DB_PORT}
+      - SEARCH_LISTINGS_MS_DB_NAME=${SEARCH_LISTINGS_DB_NAME}
+      - SEARCH_LISTINGS_MS_DB_USERNAME=${SEARCH_LISTINGS_DB_USERNAME}
+      - SEARCH_LISTINGS_MS_DB_PASSWORD=${SEARCH_LISTINGS_DB_PASSWORD}
+      - SEARCH_LISTINGS_MS_LOKI_URL=${LOKI_URL}
+      - SEARCH_LISTINGS_MS_KAFKA_SERVER=broker:${BROKER_PORT}
+      - SEARCH_LISTINGS_MS_KAFKA_CONSUMER_GROUP_ID=search-listings-ms-group
+
+      - SEARCH_LISTINGS_MS_LOKI_URL=${LOKI_URL}
+      - SEARCH_LISTINGS_MS_ZIPKIN_ENDPOINT=${ZIPKIN_ENDPOINT}
+
   objects-storage:
     image: minio/minio:latest
     environment:
@@ -213,6 +243,8 @@ services:
     volumes:
       - ./config/metrics/prometheus.yaml:/etc/prometheus/prometheus.yml:ro
     environment:
+      - SEARCH_LISTINGS_MS_PROMETHEUS_USER=${SEARCH_LISTINGS_MS_PROMETHEUS_USERNAME}
+      - SEARCH_LISTINGS_MS_PROMETHEUS_PASSWORD=${SEARCH_LISTINGS_MS_PROMETHEUS_PASSWORD}
       - LISTINGS_MS_PROMETHEUS_USER=${LISTINGS_MS_PROMETHEUS_USERNAME}
       - LISTINGS_MS_PROMETHEUS_PASSWORD=${LISTINGS_MS_PROMETHEUS_PASSWORD}
       - USERS_MS_PROMETHEUS_USER=${USERS_MS_PROMETHEUS_USERNAME}
