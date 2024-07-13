@@ -54,7 +54,7 @@ public class AuthenticateCurrentSessionImpl implements AuthenticateCurrentSessio
                 currentResponseSupplier.get()
             );
 
-            log.atInfo().log("User authenticated");
+            log.atInfo().addArgument(userId).log("User authenticated: {}");
             return tokens;
 
         } catch (Exception e) {

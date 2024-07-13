@@ -7,5 +7,6 @@ CREATE TABLE IF NOT EXISTS outbox_events
     event_type     VARCHAR(50)  NOT NULL,
     payload        TEXT         NOT NULL,
     is_published   BOOLEAN      NOT NULL,
+    tracing_info   JSON NULL,
     PRIMARY KEY (event_id, event_type)
 );

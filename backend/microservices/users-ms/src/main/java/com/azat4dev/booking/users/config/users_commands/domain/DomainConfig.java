@@ -1,25 +1,26 @@
 package com.azat4dev.booking.users.config.users_commands.domain;
 
 import com.azat4dev.booking.common.domain.AutoConnectCommandHandlersToBus;
-import com.azat4dev.booking.shared.data.repositories.outbox.OutboxEventsRepository;
-import com.azat4dev.booking.shared.domain.events.*;
-import com.azat4dev.booking.shared.domain.interfaces.bus.DomainEventsBus;
+import com.azat4dev.booking.shared.domain.interfaces.tracing.ExtractTraceContext;
+import com.azat4dev.booking.shared.domain.producers.OutboxEventsReader;
 import com.azat4dev.booking.shared.domain.values.user.UserIdFactory;
 import com.azat4dev.booking.shared.domain.values.user.UserIdFactoryImpl;
 import com.azat4dev.booking.shared.utils.TimeProvider;
 import com.azat4dev.booking.users.commands.domain.handlers.users.Users;
 import com.azat4dev.booking.users.commands.domain.handlers.users.UsersImpl;
 import com.azat4dev.booking.users.commands.domain.interfaces.repositories.UnitOfWorkFactory;
-import com.azat4dev.booking.shared.domain.producers.OutboxEventsPublisher;
-import com.azat4dev.booking.shared.domain.producers.OutboxEventsPublisherImpl;
+import lombok.AllArgsConstructor;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 
-
+@AllArgsConstructor
 @AutoConnectCommandHandlersToBus
 @Configuration
 public class DomainConfig {
 
+    private final TimeProvider timeProvider;
+    private final ExtractTraceContext extractTraceContext;
+    private final UnitOfWorkFactory unitOfWorkFactory;
 
     @Bean
     public UserIdFactory userIdFactory() {
@@ -27,36 +28,12 @@ public class DomainConfig {
     }
 
     @Bean
-    EventIdGenerator eventIdGenerator() {
-        return new RandomEventIdGenerator();
-    }
-
-    @Bean
-    DomainEventsFactory domainEventsFactory(
-        EventIdGenerator eventIdGenerator,
-        TimeProvider timeProvider
-    ) {
-        return new DomainEventsFactoryImpl(eventIdGenerator, timeProvider);
-    }
-
-    @Bean
-    public Users usersService(
-        TimeProvider timeProvider,
-        UnitOfWorkFactory unitOfWorkFactory,
-        OutboxEventsPublisher outboxEventsPublisher
-    ) {
+    public Users usersService(OutboxEventsReader outboxEventsReader) {
         return new UsersImpl(
             timeProvider,
-            outboxEventsPublisher::publishEvents,
-            unitOfWorkFactory
+            outboxEventsReader::trigger,
+            unitOfWorkFactory,
+            extractTraceContext
         );
-    }
-
-    @Bean
-    public OutboxEventsPublisher outboxEventsPublisher(
-        OutboxEventsRepository outboxEventsRepository,
-        DomainEventsBus domainEventsBus
-    ) {
-        return new OutboxEventsPublisherImpl(outboxEventsRepository, domainEventsBus);
     }
 }

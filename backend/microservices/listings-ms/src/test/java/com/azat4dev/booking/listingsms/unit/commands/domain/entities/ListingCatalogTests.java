@@ -8,7 +8,8 @@ import com.azat4dev.booking.listingsms.commands.domain.interfaces.repositories.L
 import com.azat4dev.booking.listingsms.commands.domain.interfaces.repositories.UnitOfWork;
 import com.azat4dev.booking.listingsms.commands.domain.interfaces.repositories.UnitOfWorkFactory;
 import com.azat4dev.booking.shared.data.repositories.outbox.OutboxEventsRepository;
-import com.azat4dev.booking.shared.domain.producers.OutboxEventsPublisher;
+import com.azat4dev.booking.shared.domain.interfaces.tracing.ExtractTraceContext;
+import com.azat4dev.booking.shared.domain.producers.OutboxEventsReader;
 import com.azat4dev.booking.shared.utils.TimeProvider;
 import org.junit.jupiter.api.Test;
 
@@ -43,18 +44,21 @@ public class ListingCatalogTests {
         given(unitOfWorkFactory.make())
             .willReturn(unitOfWork);
 
-        final var eventsPublisher = mock(OutboxEventsPublisher.class);
+        final var extractTraceContext = mock(ExtractTraceContext.class);
+        final var outboxEventsReader = mock(OutboxEventsReader.class);
 
         return new SUT(
             new ListingsCatalogImpl(
                 unitOfWorkFactory,
-                eventsPublisher::publishEvents,
-                timeProvider
+                outboxEventsReader::trigger,
+                timeProvider,
+                extractTraceContext
             ),
             unitOfWork,
             listingsRepository,
             outboxRepository,
-            timeProvider
+            timeProvider,
+            extractTraceContext
         );
     }
 
@@ -66,11 +70,15 @@ public class ListingCatalogTests {
         final var listingId = anyListingId();
         final var hostId = anyHostId();
         final var title = anyListingTitle();
+        final var tracingInfo = "tracingInfo";
 
         final var now = LocalDateTime.now();
 
         given(sut.timeProvider.currentTime())
             .willReturn(now);
+
+        given(sut.extractTraceContext.execute())
+            .willReturn(tracingInfo);
 
         // When
         sut.listingsCatalog.addNew(
@@ -97,7 +105,7 @@ public class ListingCatalogTests {
         );
 
         then(sut.outboxRepository).should(times(1))
-            .publish(expectedEvent);
+            .publish(expectedEvent, tracingInfo);
 
         then(sut.unitOfWork).should(times(1))
             .save();
@@ -115,7 +123,7 @@ public class ListingCatalogTests {
 
         willThrow(new RuntimeException())
             .given(sut.outboxRepository)
-            .publish(any());
+            .publish(any(), any());
 
         // When
 
@@ -128,7 +136,6 @@ public class ListingCatalogTests {
         });
 
         // Then
-
         then(sut.unitOfWork).should(times(1))
             .rollback();
 
@@ -140,7 +147,8 @@ public class ListingCatalogTests {
         UnitOfWork unitOfWork,
         ListingsRepository listingsRepository,
         OutboxEventsRepository outboxRepository,
-        TimeProvider timeProvider
+        TimeProvider timeProvider,
+        ExtractTraceContext extractTraceContext
     ) {
     }
 }

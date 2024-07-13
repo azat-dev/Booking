@@ -1,5 +1,6 @@
 package com.azat4dev.booking.shared.domain.values.user;
 
+import java.lang.reflect.UndeclaredThrowableException;
 import java.util.UUID;
 
 public class UserIdFactoryImpl implements UserIdFactory {
@@ -9,7 +10,7 @@ public class UserIdFactoryImpl implements UserIdFactory {
         try {
             return UserId.fromUUID(UUID.randomUUID());
         } catch (UserId.WrongFormatException e) {
-            throw new RuntimeException(e);
+            throw new UndeclaredThrowableException(e);
         }
     }
 }

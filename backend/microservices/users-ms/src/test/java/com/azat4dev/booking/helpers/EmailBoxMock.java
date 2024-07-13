@@ -18,15 +18,15 @@ public class EmailBoxMock {
 
     private final List<EmailBoxItem> items = new ArrayList<>();
 
-    public void add(EmailAddress email, EmailService.EmailData body) {
+    public synchronized void add(EmailAddress email, EmailService.EmailData body) {
         items.add(new EmailBoxItem(LocalDateTime.now(), email, body));
     }
 
-    public EmailBoxItem last() {
+    public synchronized EmailBoxItem last() {
         return items.get(items.size() - 1);
     }
 
-    public void clear() {
+    public synchronized void clear() {
         items.clear();
     }
 
@@ -34,7 +34,7 @@ public class EmailBoxMock {
         items.removeIf(item -> item.email().equals(email));
     }
 
-    public Optional<EmailBoxItem> lastFor(Predicate<EmailBoxItem> predicate) {
+    public synchronized Optional<EmailBoxItem> lastFor(Predicate<EmailBoxItem> predicate) {
         for (int i = items.size() - 1; i >= 0; i--) {
 
             final var item = items.get(i);
@@ -51,10 +51,7 @@ public class EmailBoxMock {
             .pollInterval(Duration.ofMillis(200))
             .atMost(seconds, SECONDS)
             .until(() -> {
-                final var isPresent = lastFor(predicate).isPresent();
-                System.out.println("Waiting for email: " + isPresent);
-                System.out.println(this.items);
-                return isPresent;
+                return lastFor(predicate).isPresent();
             });
 
         return lastFor(predicate);

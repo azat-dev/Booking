@@ -10,19 +10,25 @@ import com.azat4dev.booking.listingsms.commands.domain.values.ListingId;
 import com.azat4dev.booking.listingsms.commands.domain.values.ListingPhoto;
 import com.azat4dev.booking.listingsms.commands.domain.values.ListingTitle;
 import com.azat4dev.booking.shared.domain.events.DomainEventPayload;
+import com.azat4dev.booking.shared.domain.interfaces.tracing.ExtractTraceContext;
 import com.azat4dev.booking.shared.utils.TimeProvider;
+import io.micrometer.observation.annotation.Observed;
 import lombok.AllArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 
 import java.util.LinkedList;
 import java.util.List;
 import java.util.stream.Collectors;
 
+@Slf4j
+@Observed
 @AllArgsConstructor
 public class ListingsCatalogImpl implements ListingsCatalog {
 
     private final UnitOfWorkFactory unitOfWorkFactory;
     private final MarkOutboxNeedsSynchronization markOutboxNeedsSynchronization;
     private final TimeProvider timeProvider;
+    private final ExtractTraceContext extractTraceContext;
 
     @Override
     public void addNew(
@@ -52,12 +58,20 @@ public class ListingsCatalogImpl implements ListingsCatalog {
                     listingId,
                     hostId,
                     title
-                )
+                ),
+                extractTraceContext.execute()
             );
 
             unitOfWork.save();
+
+            log.atInfo()
+                .addKeyValue("listingId", listingId::getValue)
+                .log("New listing added");
         } catch (Throwable e) {
             unitOfWork.rollback();
+            log.atError()
+                .setCause(e)
+                .log("Failed to add new listing");
             throw e;
         } finally {
             markOutboxNeedsSynchronization.execute();
@@ -118,7 +132,9 @@ public class ListingsCatalogImpl implements ListingsCatalog {
             listingsRepository.update(listing);
 
             final var events = getEventsAfterUpdate(prevListingState, listing);
-            events.forEach(outbox::publish);
+
+            final var traceInfo = extractTraceContext.execute();
+            events.forEach(event -> outbox.publish(event, traceInfo));
 
             unitOfWork.save();
         } catch (ListingsRepository.Exception.ListingNotFound e) {

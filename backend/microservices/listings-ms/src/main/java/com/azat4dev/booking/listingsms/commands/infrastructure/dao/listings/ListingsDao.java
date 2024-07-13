@@ -17,7 +17,7 @@ public interface ListingsDao {
     // Exceptions
 
     class Exception extends DomainException {
-        public Exception(String message) {
+        protected Exception(String message) {
             super(message);
         }
 

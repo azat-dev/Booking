@@ -4,13 +4,20 @@ import com.azat4dev.booking.shared.domain.events.DomainEvent;
 import com.azat4dev.booking.shared.domain.events.DomainEventPayload;
 import com.azat4dev.booking.shared.domain.events.EventId;
 
+import javax.annotation.Nullable;
 import java.util.List;
 
 public interface OutboxEventsRepository {
 
-    void publish(DomainEventPayload event);
+    void publish(DomainEventPayload event, @Nullable String tracingInfo);
 
     void markAsPublished(List<EventId> eventId);
 
-    List<? extends DomainEvent<?>> getNotPublishedEvents(int limit);
+    List<Item> getNotPublishedItems(int limit);
+
+    record Item(
+        DomainEvent<?> event,
+        @Nullable String tracingInfo
+    ) {
+    }
 }

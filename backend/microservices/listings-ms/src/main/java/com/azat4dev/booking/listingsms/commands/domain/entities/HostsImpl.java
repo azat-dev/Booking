@@ -1,11 +1,13 @@
 package com.azat4dev.booking.listingsms.commands.domain.entities;
 
 import com.azat4dev.booking.listingsms.commands.domain.values.HostId;
+import io.micrometer.observation.annotation.Observed;
 import lombok.AllArgsConstructor;
 
 
+@Observed
 @AllArgsConstructor
-public final class HostsImpl implements Hosts {
+public class HostsImpl implements Hosts {
 
     private final HostListingsFactory hostListingsFactory;
 

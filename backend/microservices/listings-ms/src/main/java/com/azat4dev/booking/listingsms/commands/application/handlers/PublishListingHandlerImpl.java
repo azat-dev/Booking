@@ -7,10 +7,14 @@ import com.azat4dev.booking.listingsms.commands.domain.entities.ListingsCatalog;
 import com.azat4dev.booking.listingsms.commands.domain.values.HostId;
 import com.azat4dev.booking.listingsms.commands.domain.values.ListingId;
 import com.azat4dev.booking.shared.application.ValidationException;
+import io.micrometer.observation.annotation.Observed;
 import lombok.AllArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 
+@Slf4j
+@Observed
 @AllArgsConstructor
-public final class PublishListingHandlerImpl implements PublishListingHandler {
+public class PublishListingHandlerImpl implements PublishListingHandler {
 
     private final Hosts hosts;
     private final ListingsCatalog listingsCatalog;
@@ -30,11 +34,34 @@ public final class PublishListingHandlerImpl implements PublishListingHandler {
             listing.publish();
             listingsCatalog.update(listing);
 
+            log.atInfo()
+                .addKeyValue("userId", command::userId)
+                .addKeyValue("listingId", command::listingId)
+                .log("Listing published");
+
         } catch (Listing.Exception.Publishing e) {
+
+            log.atError()
+                .addKeyValue("userId", command::userId)
+                .addKeyValue("listingId", command::listingId)
+                .addKeyValue("errorMessage", e::getMessage)
+                .log("Failed to publish listing");
+
             throw new Exception.FailedToPublish();
         } catch (ListingId.Exception.WrongFormat e) {
+
+            log.atWarn()
+                .addKeyValue("listingId", command::listingId)
+                .addKeyValue("errorMessage", e::getMessage)
+                .log("Wrong listing ID format");
+
             throw ValidationException.withPath("listingId", e);
         } catch (ListingsCatalog.Exception.ListingNotFound e) {
+
+            log.atWarn()
+                .addKeyValue("listingId", command::listingId)
+                .addKeyValue("errorMessage", e::getMessage)
+                .log("Listing not found");
             throw new Exception.ListingNotFoundException(command.listingId());
         }
     }

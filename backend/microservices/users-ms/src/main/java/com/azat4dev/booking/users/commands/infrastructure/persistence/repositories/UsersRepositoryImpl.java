@@ -30,7 +30,12 @@ public class UsersRepositoryImpl implements UsersRepository {
 
         try {
             this.usersDao.addNew(userData);
-            log.atInfo().addKeyValue("userId", user::getId).log("User added");
+
+            log.atInfo()
+                .addKeyValue("userId", user::getId)
+                .addArgument(user::getId)
+                .log("User added: {}");
+
         } catch (UsersDao.Exception.UserAlreadyExists e) {
             log.atWarn()
                 .addKeyValue("userId", user::getId)

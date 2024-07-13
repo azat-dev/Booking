@@ -4,21 +4,21 @@ import com.azat4dev.booking.users.commands.application.commands.email.verificati
 import com.azat4dev.booking.users.commands.domain.core.commands.SendVerificationEmail;
 import com.azat4dev.booking.users.commands.domain.core.events.*;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.apache.kafka.clients.admin.NewTopic;
 import org.apache.kafka.clients.producer.ProducerConfig;
 import org.apache.kafka.common.serialization.StringSerializer;
 import org.springframework.boot.autoconfigure.kafka.KafkaProperties;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.kafka.config.ConcurrentKafkaListenerContainerFactory;
 import org.springframework.kafka.core.*;
-import org.springframework.kafka.listener.ConcurrentMessageListenerContainer;
-import org.springframework.kafka.listener.ContainerProperties;
 
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.function.Function;
 
+@Slf4j
 @Configuration
 @RequiredArgsConstructor
 public class KafkaConfig {
@@ -30,8 +30,6 @@ public class KafkaConfig {
         Map<String, Object> props = new HashMap<>(kafkaProperties.buildProducerProperties(null));
         props.put(ProducerConfig.KEY_SERIALIZER_CLASS_CONFIG, StringSerializer.class);
         props.put(ProducerConfig.VALUE_SERIALIZER_CLASS_CONFIG, StringSerializer.class);
-
-        System.out.println("Using Kafka properties: " + props);
         return props;
     }
 
@@ -44,12 +42,14 @@ public class KafkaConfig {
 
     @Bean
     public ProducerFactory<String, String> producerFactory() {
-        return new DefaultKafkaProducerFactory<String, String>(producerConfigs());
+        return new DefaultKafkaProducerFactory<>(producerConfigs());
     }
 
     @Bean
     KafkaTemplate<String, String> kafkaTemplate(ProducerFactory<String, String> producerFactory) {
-        return new KafkaTemplate<>(producerFactory);
+        final var template = new KafkaTemplate<>(producerFactory);
+        template.setObservationEnabled(true);
+        return template;
     }
 
     @Bean
@@ -84,11 +84,38 @@ public class KafkaConfig {
         return new DefaultKafkaConsumerFactory<>(consumerConfigs());
     }
 
+//    @Bean
+//    ConcurrentKafkaListenerContainerFactory<Integer, String>
+//    kafkaListenerContainerFactory(ConsumerFactory<Integer, String> consumerFactory) {
+//        ConcurrentKafkaListenerContainerFactory<Integer, String> factory =
+//            new ConcurrentKafkaListenerContainerFactory<>();
+//
+//        factory.getContainerProperties().setObservationEnabled(true);
+//        factory.setConsumerFactory(consumerFactory);
+//        return factory;
+//    }
+
     @Bean
-    public Function<String, ConcurrentMessageListenerContainer<String, String>> containerFactory() {
-        return (String topic) -> new ConcurrentMessageListenerContainer<>(
-            consumerFactory(),
-            new ContainerProperties(topic)
-        );
+    ConcurrentKafkaListenerContainerFactory<String, String> kafkaListenerContainerFactory(ConsumerFactory<String, String> cf) {
+
+        ConcurrentKafkaListenerContainerFactory<String, String> factory = new ConcurrentKafkaListenerContainerFactory<>();
+        factory.setConsumerFactory(cf);
+        factory.getContainerProperties().setObservationEnabled(true);
+
+        return factory;
     }
+
+
+//    @Bean
+//    public Function<String, ConcurrentMessageListenerContainer<String, String>> containerFactory(ConsumerFactory<String, String> consumerFactory) {
+//        return (String topic) -> {
+//            final var  props = new ContainerProperties(topic);
+//            props.setObservationEnabled(true);
+//
+//            return new ConcurrentMessageListenerContainer<>(
+//                consumerFactory,
+//                props
+//            );
+//        };
+//    }
 }

@@ -16,10 +16,14 @@ import com.azat4dev.booking.listingsms.common.domain.values.address.ListingAddre
 import com.azat4dev.booking.listingsms.common.domain.values.address.Street;
 import com.azat4dev.booking.shared.application.ValidationException;
 import com.azat4dev.booking.shared.domain.DomainException;
+import io.micrometer.observation.annotation.Observed;
 import lombok.AllArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 
 import java.util.Optional;
 
+@Slf4j
+@Observed
 @AllArgsConstructor
 public class UpdateListingDetailsHandlerImpl implements UpdateListingDetailsHandler {
 
@@ -101,18 +105,39 @@ public class UpdateListingDetailsHandlerImpl implements UpdateListingDetailsHand
 
         switch (e) {
             case ListingId.Exception inst:
+                log.atWarn()
+                    .addKeyValue("errorMessage", inst.getMessage())
+                    .addKeyValue("errorCode", inst.getCode())
+                    .log("Invalid listingId");
+
                 throw ValidationException.withPath("listingId", inst);
 
             case ListingTitle.Exception inst:
+                log.atWarn()
+                    .addKeyValue("errorMessage", inst.getMessage())
+                    .addKeyValue("errorCode", inst.getCode())
+                    .log("Invalid title");
                 throw ValidationException.withPath("title", inst);
 
             case ListingDescription.Exception inst:
+                log.atWarn()
+                    .addKeyValue("errorMessage", inst.getMessage())
+                    .addKeyValue("errorCode", inst.getCode())
+                    .log("Invalid description");
+
                 throw ValidationException.withPath("description", inst);
 
             case ListingsCatalog.Exception.ListingNotFound inst:
+
+                log.atError()
+                    .addKeyValue("errorMessage", inst.getMessage())
+                    .log("Listing not found");
                 throw new Exception.ListingNotFound();
 
             default:
+                log.atError()
+                    .setCause(e)
+                    .log("Failed to update listing details");
                 throw new RuntimeException(e);
         }
     }

@@ -1,6 +1,7 @@
 package com.azat4dev.booking.users.commands.domain.handlers.users;
 
 
+import com.azat4dev.booking.shared.domain.interfaces.tracing.ExtractTraceContext;
 import com.azat4dev.booking.shared.domain.values.user.UserId;
 import com.azat4dev.booking.shared.utils.TimeProvider;
 import com.azat4dev.booking.users.commands.domain.core.commands.NewUserData;
@@ -27,6 +28,7 @@ public class UsersImpl implements Users {
     private final TimeProvider timeProvider;
     private final MarkOutboxNeedsSynchronization markOutboxNeedsSynchronization;
     private final UnitOfWorkFactory unitOfWorkFactory;
+    private final ExtractTraceContext extractTraceContext;
 
     @Override
     public void createNew(NewUserData newUserData) throws Exception.UserWithSameEmailAlreadyExists, User.Exception {
@@ -61,13 +63,17 @@ public class UsersImpl implements Users {
                         newUserData.fullName(),
                         newUserData.email(),
                         EmailVerificationStatus.NOT_VERIFIED
-                    )
+                    ),
+                    extractTraceContext.execute()
                 );
 
                 return null;
             });
 
-            log.atInfo().addKeyValue("userId", userId).log("User created");
+            log.atInfo()
+                .addKeyValue("userId", userId)
+                .addArgument(userId)
+                .log("User created: {}");
 
         } catch (UsersRepository.Exception.UserWithSameEmailAlreadyExists e) {
 
@@ -98,8 +104,10 @@ public class UsersImpl implements Users {
                 user.verifyEmail(email);
                 usersRepository.update(user);
 
-                outboxEventsRepository.publish(new UserVerifiedEmail(userId, email));
-
+                outboxEventsRepository.publish(
+                    new UserVerifiedEmail(userId, email),
+                    extractTraceContext.execute()
+                );
                 return null;
             });
 
@@ -169,7 +177,10 @@ public class UsersImpl implements Users {
                     prevPhoto
                 );
 
-                outboxRepository.publish(event);
+                outboxRepository.publish(
+                    event,
+                    extractTraceContext.execute()
+                );
                 return null;
             });
 

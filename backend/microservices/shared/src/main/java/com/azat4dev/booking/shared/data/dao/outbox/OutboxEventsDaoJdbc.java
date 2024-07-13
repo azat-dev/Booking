@@ -18,8 +18,8 @@ public final class OutboxEventsDaoJdbc implements OutboxEventsDao {
     public void put(OutboxEventData event) {
 
         final var sql = """
-                INSERT INTO outbox_events (event_id, event_type, payload, created_at, created_at_nano, is_published)
-                VALUES (:event_id, :event_type, :payload, :created_at, :created_at_nano, :is_published)
+                INSERT INTO outbox_events (event_id, event_type, payload, created_at, created_at_nano, is_published, tracing_info)
+                VALUES (:event_id, :event_type, :payload, :created_at, :created_at_nano, :is_published, :tracing_info::jsonb)
             """;
         final var values = Map.of(
             "event_id", event.eventId(),
@@ -27,7 +27,8 @@ public final class OutboxEventsDaoJdbc implements OutboxEventsDao {
             "payload", event.payload(),
             "created_at", Timestamp.valueOf(event.createdAt().withNano(0)),
             "created_at_nano", event.createdAt().getNano(),
-            "is_published", false
+            "is_published", false,
+            "tracing_info", event.tracingInfo()
         );
 
         jdbcTemplate.update(

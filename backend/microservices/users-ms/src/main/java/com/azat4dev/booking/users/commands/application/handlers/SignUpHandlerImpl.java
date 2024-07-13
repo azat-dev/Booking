@@ -47,7 +47,7 @@ public class SignUpHandlerImpl implements SignUpHandler {
             );
 
             users.createNew(newUserData);
-            log.atInfo().log("User signed up: {}", email);
+            log.atInfo().addArgument(userId).log("User signed up: {}");
             return userId;
 
         } catch (FirstName.ValidationException e) {

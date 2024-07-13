@@ -1,6 +1,7 @@
 package com.azat4dev.booking.users.commands.domain.services;
 
 import com.azat4dev.booking.shared.data.repositories.outbox.OutboxEventsRepository;
+import com.azat4dev.booking.shared.domain.interfaces.tracing.ExtractTraceContext;
 import com.azat4dev.booking.shared.utils.TimeProvider;
 import com.azat4dev.booking.users.commands.domain.UserHelpers;
 import com.azat4dev.booking.users.commands.domain.core.commands.NewUserData;
@@ -49,7 +50,7 @@ class MockUnitOfWork implements UnitOfWork {
     }
 }
 
-public class UsersImplTests {
+class UsersImplTests {
 
     SUT createSUT() {
 
@@ -63,18 +64,21 @@ public class UsersImplTests {
 
         final var markOutboxNeedsSynchronization = mock(UsersImpl.MarkOutboxNeedsSynchronization.class);
         final var timeProvider = mock(TimeProvider.class);
+        final var extractTraceInfo = mock(ExtractTraceContext.class);
 
         return new SUT(
             new UsersImpl(
                 timeProvider,
                 markOutboxNeedsSynchronization,
-                unitOfWorkFactory
+                unitOfWorkFactory,
+                extractTraceInfo
             ),
             unitOfWork,
             outboxEventsRepository,
             usersRepository,
             timeProvider,
-            markOutboxNeedsSynchronization
+            markOutboxNeedsSynchronization,
+            extractTraceInfo
         );
     }
 
@@ -107,11 +111,15 @@ public class UsersImplTests {
         final var currentTime = anyDateTime();
         final var sut = createSUT();
         final var newUserData = anyNewUserData();
+        final var traceInfo = "traceInfo";
 
-        willDoNothing().given(sut.outboxEventsRepository).publish(any());
+        willDoNothing().given(sut.outboxEventsRepository).publish(any(), any());
 
         given(sut.timeProvider.currentTime())
             .willReturn(currentTime);
+
+        given(sut.extractTraceContext.execute())
+            .willReturn(traceInfo);
 
         // When
         try {
@@ -143,7 +151,8 @@ public class UsersImplTests {
 
         then(sut.outboxEventsRepository).should(times(1))
             .publish(
-                assertArg(assertUserSignedUpEvent)
+                assertArg(assertUserSignedUpEvent),
+                eq(traceInfo)
             );
 
         then(sut.markOutboxNeedsSynchronization).should(times(1))
@@ -179,6 +188,10 @@ public class UsersImplTests {
         // Given
         final var sut = createSUT();
         final var user = UserHelpers.anyUser();
+        final var traceInfo = "traceInfo";
+
+        given(sut.extractTraceContext.execute())
+            .willReturn(traceInfo);
 
         given(sut.usersRepository.findById(user.getId()))
             .willReturn(Optional.of(user));
@@ -200,7 +213,7 @@ public class UsersImplTests {
         );
 
         then(sut.outboxEventsRepository).should(times(1))
-            .publish(expectedEvent);
+            .publish(expectedEvent, traceInfo);
     }
 
     record SUT(
@@ -209,7 +222,8 @@ public class UsersImplTests {
         OutboxEventsRepository outboxEventsRepository,
         UsersRepository usersRepository,
         TimeProvider timeProvider,
-        UsersImpl.MarkOutboxNeedsSynchronization markOutboxNeedsSynchronization
+        UsersImpl.MarkOutboxNeedsSynchronization markOutboxNeedsSynchronization,
+        ExtractTraceContext extractTraceContext
     ) {
     }
 }

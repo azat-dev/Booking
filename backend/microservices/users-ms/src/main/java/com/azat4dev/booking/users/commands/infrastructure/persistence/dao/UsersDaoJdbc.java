@@ -46,7 +46,11 @@ public class UsersDaoJdbc implements UsersDao {
                 userDataToParams(userData)
             );
 
-            log.atInfo().addKeyValue("userId", userData::id).log("User added");
+            log.atInfo()
+                .addKeyValue("userId", userData::id)
+                .addArgument(userData::id)
+                .log("User added: {}");
+
         } catch (DuplicateKeyException e) {
             log.atInfo().setCause(e).addKeyValue("userId", userData::id).log("User already exists");
             throw new Exception.UserAlreadyExists();

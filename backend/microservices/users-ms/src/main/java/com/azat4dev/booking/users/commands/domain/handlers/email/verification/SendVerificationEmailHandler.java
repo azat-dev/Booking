@@ -51,10 +51,15 @@ public class SendVerificationEmailHandler implements CommandHandler<SendVerifica
                 )
             );
 
-            log.atInfo().log("Verification email sent");
+            log.atInfo()
+                .addArgument(command::userId)
+                .log("Verification email sent: userId={}");
 
         } catch (Exception e) {
-            log.atError().setCause(e).log("Can' send verification email");
+            log.atError()
+                .setCause(e)
+                .addArgument(command::userId)
+                .log("Can' send verification email: userId={}");
 
             bus.publish(
                 new FailedToSendVerificationEmail(

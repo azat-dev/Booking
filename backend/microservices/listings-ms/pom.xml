@@ -22,7 +22,7 @@
         <mainClass>com.azat4dev.booking.ListingsMicroserviceApplication</mainClass>
         <default.package>com.azat4dev.booking.listingsms</default.package>
 
-        <!--        JOOQ properties-->
+        <!-- JOOQ properties -->
         <db.url>jdbc:tc:postgresql:16:///listingsdb?TC_TMPFS=/testtmpfs:rw&amp;TC_INITSCRIPT=file:${basedir}/src/main/resources/db/schema.sql</db.url>
         <db.username>postgres</db.username>
         <db.password>postgres</db.password>
@@ -33,6 +33,13 @@
             <groupId>com.azat4dev.booking.shared</groupId>
             <artifactId>shared</artifactId>
             <version>1.0-SNAPSHOT</version>
+        </dependency>
+
+        <!-- For Observation AOP -->
+        <dependency>
+            <groupId>org.springframework.boot</groupId>
+            <artifactId>spring-boot-starter-aop</artifactId>
+            <version>${spring-boot.version}</version>
         </dependency>
 
         <!-- Spring Boot -->
@@ -203,6 +210,40 @@
             <groupId>jakarta.validation</groupId>
             <artifactId>jakarta.validation-api</artifactId>
             <version>3.1.0</version>
+        </dependency>
+
+
+        <!-- For Metrics -->
+        <dependency>
+            <groupId>io.micrometer</groupId>
+            <artifactId>micrometer-registry-prometheus</artifactId>
+            <version>1.13.2</version>
+        </dependency>
+        <!-- Brave version -->
+        <!-- For Tracing -->
+        <dependency>
+            <groupId>io.micrometer</groupId>
+            <artifactId>micrometer-tracing-bridge-brave</artifactId>
+        </dependency>
+        <!-- For Latency Visualization -->
+        <dependency>
+            <groupId>io.zipkin.reporter2</groupId>
+            <artifactId>zipkin-reporter-brave</artifactId>
+        </dependency>
+
+        <!-- For pushing logs out -->
+        <dependency>
+            <groupId>com.github.loki4j</groupId>
+            <artifactId>loki-logback-appender</artifactId>
+            <version>1.5.2</version>
+            <scope>runtime</scope>
+        </dependency>
+
+        <!-- For console logs -->
+        <dependency>
+            <groupId>net.logstash.logback</groupId>
+            <artifactId>logstash-logback-encoder</artifactId>
+            <version>7.4</version>
         </dependency>
     </dependencies>
 

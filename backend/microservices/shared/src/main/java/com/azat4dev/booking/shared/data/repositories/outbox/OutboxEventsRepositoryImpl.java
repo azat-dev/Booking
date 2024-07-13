@@ -7,10 +7,12 @@ import com.azat4dev.booking.shared.domain.events.DomainEvent;
 import com.azat4dev.booking.shared.domain.events.DomainEventPayload;
 import com.azat4dev.booking.shared.domain.events.DomainEventsFactory;
 import com.azat4dev.booking.shared.domain.events.EventId;
+import io.micrometer.observation.annotation.Observed;
 import lombok.AllArgsConstructor;
 
 import java.util.List;
 
+@Observed
 @AllArgsConstructor
 public class OutboxEventsRepositoryImpl implements OutboxEventsRepository {
 
@@ -19,13 +21,15 @@ public class OutboxEventsRepositoryImpl implements OutboxEventsRepository {
     private final DomainEventsFactory domainEventsFactory;
 
     @Override
-    public void publish(DomainEventPayload event) {
+    public void publish(DomainEventPayload event, String tracingInfo) {
 
-        final var eventRecord = OutboxEventData.makeFromDomain(
+        final var data = OutboxEventData.makeFromDomain(
             domainEventsFactory.issue(event),
+            tracingInfo,
             this.domainEventSerializer
         );
-        this.outboxEventsDao.put(eventRecord);
+
+        this.outboxEventsDao.put(data);
     }
 
     @Override
@@ -34,11 +38,15 @@ public class OutboxEventsRepositoryImpl implements OutboxEventsRepository {
     }
 
     @Override
-    public List<? extends DomainEvent<?>> getNotPublishedEvents(int limit) {
+    public List<Item> getNotPublishedItems(int limit) {
 
         return this.outboxEventsDao.findNotPublishedEvents(limit)
             .stream()
-            .map(rc -> this.domainEventSerializer.deserialize(rc.payload()))
-            .toList();
+            .map(rc -> {
+                return new Item(
+                    this.domainEventSerializer.deserialize(rc.payload()),
+                    rc.tracingInfo()
+                );
+            }).toList();
     }
 }

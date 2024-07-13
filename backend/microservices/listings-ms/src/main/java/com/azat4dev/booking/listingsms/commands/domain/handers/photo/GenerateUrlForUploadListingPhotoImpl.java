@@ -9,13 +9,17 @@ import com.azat4dev.booking.shared.domain.interfaces.files.MediaObjectsBucket;
 import com.azat4dev.booking.shared.domain.values.IdempotentOperationId;
 import com.azat4dev.booking.shared.domain.values.files.PhotoFileExtension;
 import com.azat4dev.booking.shared.domain.values.user.UserId;
+import io.micrometer.observation.annotation.Observed;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 
 import java.time.Duration;
 import java.util.Optional;
 
+@Slf4j
+@Observed
 @RequiredArgsConstructor
-public final class GenerateUrlForUploadListingPhotoImpl implements GenerateUrlForUploadListingPhoto {
+public class GenerateUrlForUploadListingPhotoImpl implements GenerateUrlForUploadListingPhoto {
 
     private final Duration expiresIn;
     private final GenerateObjectNameForListingPhoto generateObjectNameForListingPhoto;

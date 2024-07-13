@@ -3,12 +3,14 @@ package com.azat4dev.booking.listingsms.commands.domain.entities;
 import com.azat4dev.booking.listingsms.commands.domain.interfaces.repositories.ListingsRepository;
 import com.azat4dev.booking.listingsms.commands.domain.values.HostId;
 import com.azat4dev.booking.listingsms.commands.domain.values.ListingId;
+import io.micrometer.observation.annotation.Observed;
 import lombok.AllArgsConstructor;
 
 import java.util.Optional;
 
+@Observed
 @AllArgsConstructor
-public final class HostListingsImpl implements HostListings {
+public class HostListingsImpl implements HostListings {
 
     private final HostId hostId;
     private final ListingsRepository repository;
@@ -19,8 +21,7 @@ public final class HostListingsImpl implements HostListings {
         final var foundListing = repository.findById(listingId);
 
         return foundListing.map(listing -> {
-            final var hostId = listing.getHostId();
-            if (!hostId.equals(hostId)) {
+            if (!hostId.equals(listing.getHostId())) {
                 return null;
             }
 

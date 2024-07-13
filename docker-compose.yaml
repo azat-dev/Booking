@@ -81,6 +81,7 @@ services:
       - USERS_MS_MAIL_SERVER_PROTOCOL=${MAIL_SERVER_PROTOCOL}
       - USERS_MS_KAFKA_SERVER=broker:${BROKER_PORT}
       - USERS_MS_KAFKA_CONSUMER_GROUP_ID=users-ms-group
+
       - USERS_MS_LOKI_URL=${LOKI_URL}
       - USERS_MS_ZIPKIN_ENDPOINT=${ZIPKIN_ENDPOINT}
     ports:
@@ -128,6 +129,9 @@ services:
       - LISTINGS_MS_MAIL_SERVER_PROTOCOL=${MAIL_SERVER_PROTOCOL}
       - LISTINGS_MS_KAFKA_SERVER=broker:${BROKER_PORT}
       - LISTINGS_MS_KAFKA_CONSUMER_GROUP_ID=listings-ms-group
+
+      - LISTINGS_MS_LOKI_URL=${LOKI_URL}
+      - LISTINGS_MS_ZIPKIN_ENDPOINT=${ZIPKIN_ENDPOINT}
 
   objects-storage:
     image: minio/minio:latest
@@ -181,11 +185,11 @@ services:
   grafana-loki:
     image: grafana/loki
     extra_hosts: [ 'host.docker.internal:host-gateway' ]
-    command: [ "-config.file=/etc/loki/local-config.yaml" ]
+    command: [ "-config.file=/etc/loki/local-config.yaml", "-ingester.max-global-streams-per-user=10000" ]
     ports:
       - "3100:3100"                                   # loki needs to be exposed so it receives logs
     environment:
-      - JAEGER_AGENT_HOST=tempo
+      - JAEGER_AGENT_HOST=grafana-tempo
       - JAEGER_ENDPOINT=http://grafana-tempo:14268/api/traces # send traces to Tempo
       - JAEGER_SAMPLER_TYPE=const
       - JAEGER_SAMPLER_PARAM=1
@@ -219,64 +223,8 @@ services:
     ports:
       - "9090:9090"
 
-  search-listings-db:
-    image: elasticsearch:8.14.1
-    environment:
-      - discovery.type=single-node
-      - "ES_JAVA_OPTS=-Xms512m -Xmx512m"
-      - xpack.security.enabled=false
-#      - ELASTICSEARCH_USERNAME=${SEARCH_LISTINGS_DB_USERNAME}
-#      - ELASTICSEARCH_PASSWORD=${SEARCH_LISTINGS_DB_PASSWORD}
-    volumes:
-      - search-listings-db-data:/usr/share/elasticsearch/data
-    ports:
-      - "9200:9200"
-      - "9300:9300"
-
-  kibana:
-    image: kibana:8.14.1
-    depends_on:
-      - search-listings-db
-    ports:
-      - "5601:5601"
-    expose:
-      - "5601"
-    environment:
-      ELASTICSEARCH_URL: http://search-listings-db:9200
-      ELASTICSEARCH_HOSTS: http://search-listings-db:9200
-
-  search-listings-ms:
-    image: booking-demo/search-listings-ms:0.0.1-SNAPSHOT
-    depends_on:
-      - search-listings-db
-      - broker
-      - eureka
-    environment:
-      - SEARCH_LISTINGS_MS_PORT=${SEARCH_LISTINGS_MS_PORT}
-      - SEARCH_LISTINGS_MS_SECURITY_USER_NAME=${SEARCH_LISTINGS_MS_SECURITY_USER_NAME}
-      - SEARCH_LISTINGS_MS_SECURITY_USER_PASSWORD=${SEARCH_LISTINGS_MS_SECURITY_USER_PASSWORD}
-      - SEARCH_LISTINGS_MS_PROMETHEUS_USERNAME=${SEARCH_LISTINGS_MS_PROMETHEUS_USERNAME}
-      - SEARCH_LISTINGS_MS_PROMETHEUS_PASSWORD=${SEARCH_LISTINGS_MS_PROMETHEUS_PASSWORD}
-      - SEARCH_LISTINGS_MS_EUREKA=http://eureka:${EUREKA_SERVER_PORT}/eureka/
-      - SEARCH_LISTINGS_MS_DB_HOST=search-listings-db
-      - SEARCH_LISTINGS_MS_DB_PORT=${SEARCH_LISTINGS_DB_PORT}
-      - SEARCH_LISTINGS_MS_DB_NAME=${SEARCH_LISTINGS_DB_NAME}
-      - SEARCH_LISTINGS_MS_DB_USERNAME=${SEARCH_LISTINGS_DB_USERNAME}
-      - SEARCH_LISTINGS_MS_DB_PASSWORD=${SEARCH_LISTINGS_DB_PASSWORD}
-      - SEARCH_LISTINGS_MS_MAIL_SERVER_USERNAME=${MAIL_SERVER_USERNAME}
-      - SEARCH_LISTINGS_MS_MAIL_SERVER_PASSWORD=${MAIL_SERVER_PASSWORD}
-      - SEARCH_LISTINGS_MS_MAIL_SERVER_HOST=debug-email
-      - SEARCH_LISTINGS_MS_MAIL_SERVER_PORT=${MAIL_SERVER_PORT}
-      - SEARCH_LISTINGS_MS_MAIL_SERVER_PROTOCOL=${MAIL_SERVER_PROTOCOL}
-      - SEARCH_LISTINGS_MS_KAFKA_SERVER=broker:${BROKER_PORT}
-      - SEARCH_LISTINGS_MS_KAFKA_CONSUMER_GROUP_ID=search-listings-ms-group
-      - SEARCH_LISTINGS_MS_LOKI_URL=${LOKI_URL}
-      - SEARCH_LISTINGS_MS_ZIPKIN_ENDPOINT=${ZIPKIN_ENDPOINT}
-
 volumes:
   kafka_data:
     driver: local
   minio-data:
-    driver: local
-  search-listings-db-data:
     driver: local

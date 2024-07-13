@@ -6,7 +6,9 @@ import com.azat4dev.booking.shared.domain.interfaces.bus.DomainEventsBus;
 import com.azat4dev.booking.shared.utils.TimeProvider;
 import io.micrometer.observation.annotation.Observed;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.apache.kafka.clients.consumer.ConsumerRecord;
+import org.springframework.kafka.config.ConcurrentKafkaListenerContainerFactory;
 import org.springframework.kafka.core.KafkaTemplate;
 import org.springframework.kafka.listener.AcknowledgingMessageListener;
 import org.springframework.kafka.listener.ConcurrentMessageListenerContainer;
@@ -15,22 +17,22 @@ import org.springframework.kafka.support.Acknowledgment;
 import java.io.Closeable;
 import java.time.LocalDateTime;
 import java.util.function.Consumer;
-import java.util.function.Function;
 
+@Slf4j
 @Observed
 @RequiredArgsConstructor
 public class KafkaDomainEventsBus implements DomainEventsBus {
 
     private final KafkaTemplate<String, String> kafkaTemplate;
     private final DomainEventSerializer domainEventSerializer;
-    private final Function<String, ConcurrentMessageListenerContainer<String, String>> containerFactory;
+    private final ConcurrentKafkaListenerContainerFactory<String, String> containerFactory;
     private final TimeProvider timeProvider;
     private final EventIdGenerator eventIdGenerator;
 
     @Override
     public void publish(DomainEventPayload event, LocalDateTime time, EventId eventId) {
 
-        final  String serializedEvent = domainEventSerializer.serialize(
+        final String serializedEvent = domainEventSerializer.serialize(
             new DomainEvent<>(
                 eventId,
                 time,
@@ -58,12 +60,14 @@ public class KafkaDomainEventsBus implements DomainEventsBus {
     public Closeable listen(Class<DomainEventPayload> eventType, Consumer<DomainEvent<?>> listener) {
 
         final var topic = eventType.getSimpleName();
-        final var container = containerFactory.apply(topic);
+        final var container = containerFactory.createContainer(topic);
+        container.getContainerProperties().setObservationEnabled(true);
 
         container.setupMessageListener(new AcknowledgingMessageListener<>() {
 
             @Override
             public void onMessage(ConsumerRecord<Object, Object> data, Acknowledgment acknowledgment) {
+
                 listener.accept(domainEventSerializer.deserialize((String) data.value()));
                 if (acknowledgment != null) {
                     acknowledgment.acknowledge();

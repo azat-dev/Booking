@@ -2,8 +2,6 @@ package com.azat4dev.booking.users.config.users_commands.domain;
 
 import com.azat4dev.booking.shared.domain.interfaces.bus.DomainEventsBus;
 import com.azat4dev.booking.shared.utils.TimeProvider;
-import com.azat4dev.booking.users.common.infrastructure.presentation.security.services.jwt.JwtDataEncoder;
-import com.azat4dev.booking.users.config.users_commands.properties.EmailVerificationProperties;
 import com.azat4dev.booking.users.commands.domain.core.values.email.EmailAddress;
 import com.azat4dev.booking.users.commands.domain.handlers.email.verification.SendVerificationEmailHandler;
 import com.azat4dev.booking.users.commands.domain.handlers.email.verification.VerifyEmailByToken;
@@ -11,6 +9,8 @@ import com.azat4dev.booking.users.commands.domain.handlers.email.verification.Ve
 import com.azat4dev.booking.users.commands.domain.handlers.email.verification.utils.*;
 import com.azat4dev.booking.users.commands.domain.handlers.users.Users;
 import com.azat4dev.booking.users.commands.domain.interfaces.services.EmailService;
+import com.azat4dev.booking.users.common.infrastructure.presentation.security.services.jwt.JwtDataEncoder;
+import com.azat4dev.booking.users.config.users_commands.properties.EmailVerificationProperties;
 import lombok.AllArgsConstructor;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -25,6 +25,12 @@ import java.nio.charset.StandardCharsets;
 public class EmailVerificationConfig {
 
     private final EmailVerificationProperties emailVerificationProperties;
+    private final JwtDataEncoder jwtDataEncoder;
+    private final JwtDecoder jwtDecoder;
+    private final TimeProvider timeProvider;
+    private final Users users;
+    private final EmailService emailService;
+    private final DomainEventsBus domainEventsBus;
 
     @Bean
     BuildEmailVerificationLink buildVerificationLink() {
@@ -36,9 +42,7 @@ public class EmailVerificationConfig {
     @Bean
     SendVerificationEmailHandler sendVerificationEmailCommandHandler(
         BuildEmailVerificationLink buildEmailVerificationLink,
-        EmailService emailService,
-        ProvideEmailVerificationToken provideEmailVerificationToken,
-        DomainEventsBus domainEventsBus
+        ProvideEmailVerificationToken provideEmailVerificationToken
     ) throws EmailAddress.WrongFormatException {
         return new SendVerificationEmailHandler(
             buildEmailVerificationLink,
@@ -51,10 +55,7 @@ public class EmailVerificationConfig {
     }
 
     @Bean
-    public ProvideEmailVerificationToken emailVerificationTokenProvider(
-        JwtDataEncoder jwtDataEncoder,
-        TimeProvider timeProvider
-    ) {
+    public ProvideEmailVerificationToken emailVerificationTokenProvider() {
         return new ProvideEmailVerificationTokenImpl(
             emailVerificationProperties.getTokenExpiresIn(),
             jwtDataEncoder,
@@ -64,9 +65,7 @@ public class EmailVerificationConfig {
 
     @Bean
     public VerifyEmailByToken verifyEmailByToken(
-        GetInfoForEmailVerificationToken emailVerificationTokenInfoProvider,
-        Users users,
-        TimeProvider timeProvider
+        GetInfoForEmailVerificationToken emailVerificationTokenInfoProvider
     ) {
         return new VerifyEmailByTokenImpl(
             emailVerificationTokenInfoProvider,
@@ -76,7 +75,7 @@ public class EmailVerificationConfig {
     }
 
     @Bean
-    public GetInfoForEmailVerificationToken emailVerificationTokenInfoProvider(JwtDecoder jwtDecoder) {
+    public GetInfoForEmailVerificationToken emailVerificationTokenInfoProvider() {
         return new GetInfoForEmailVerificationTokenImpl(jwtDecoder);
     }
 }

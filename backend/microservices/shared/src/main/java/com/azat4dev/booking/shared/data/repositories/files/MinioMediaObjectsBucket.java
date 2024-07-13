@@ -1,6 +1,5 @@
 package com.azat4dev.booking.shared.data.repositories.files;
 
-import com.azat4dev.booking.shared.domain.interfaces.files.FileKey;
 import com.azat4dev.booking.shared.domain.interfaces.files.MediaObject;
 import com.azat4dev.booking.shared.domain.interfaces.files.MediaObjectsBucket;
 import com.azat4dev.booking.shared.domain.values.BaseUrl;

@@ -24,7 +24,6 @@ import java.util.stream.Collectors;
 public class ConnectPoliciesConfig {
 
     private final ApplicationContext applicationContext;
-    private final List<Policy<DomainEventPayload>> policies;
     private final DomainEventsBus domainEventsBus;
     private final List<Closeable> cancellations = new LinkedList<>();
 
@@ -79,13 +78,16 @@ public class ConnectPoliciesConfig {
 
             for (var listener : listeners) {
                 final var policyName = ClassUtils.getUserClass(listener).getSimpleName();
-                final var cancellation = domainEventsBus.listen(eventType, (event) -> {
+                final var cancellation = domainEventsBus.listen(eventType, event -> {
 
-                    log.atDebug()
+                    log.atInfo()
                         .addKeyValue("event.id", event::id)
                         .addKeyValue("policy", policyName)
                         .addKeyValue("eventType", eventType)
-                        .log("Executing policy");
+                        .addArgument(policyName)
+                        .addArgument(eventType)
+                        .addArgument(event::id)
+                        .log("Executing policy: policy={}, eventType={}, event.id={}");
 
                     try {
                         listener.execute(event.payload(), event.id(), event.issuedAt());

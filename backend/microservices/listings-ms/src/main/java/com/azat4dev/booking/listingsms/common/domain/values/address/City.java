@@ -34,7 +34,7 @@ public class City {
     // Exceptions
 
     public static abstract class Exception extends DomainException {
-        public Exception(String message) {
+        protected Exception(String message) {
             super(message);
         }
 

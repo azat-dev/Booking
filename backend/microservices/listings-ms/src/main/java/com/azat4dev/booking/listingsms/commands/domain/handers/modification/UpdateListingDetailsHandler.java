@@ -10,7 +10,7 @@ public interface UpdateListingDetailsHandler {
 
     // Exceptions
     abstract class Exception extends DomainException {
-        public Exception(String message) {
+        protected Exception(String message) {
             super(message);
         }
 

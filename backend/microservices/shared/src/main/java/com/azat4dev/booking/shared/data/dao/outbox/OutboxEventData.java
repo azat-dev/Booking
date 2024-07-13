@@ -3,6 +3,7 @@ package com.azat4dev.booking.shared.data.dao.outbox;
 import com.azat4dev.booking.shared.data.serializers.DomainEventSerializer;
 import com.azat4dev.booking.shared.domain.events.DomainEvent;
 
+import javax.annotation.Nullable;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.time.LocalDateTime;
@@ -13,15 +14,21 @@ public record OutboxEventData(
     LocalDateTime createdAt,
     String eventType,
     String payload,
+    @Nullable String tracingInfo,
     boolean isPublished) {
 
-    public static OutboxEventData makeFromDomain(DomainEvent<?> event, DomainEventSerializer serializer) {
+    public static OutboxEventData makeFromDomain(
+        DomainEvent<?> event,
+        @Nullable String tracingInfo,
+        DomainEventSerializer serializer
+    ) {
 
         return new OutboxEventData(
             event.id().getValue(),
             event.issuedAt(),
             event.payload().getClass().getSimpleName(),
             serializer.serialize(event),
+            tracingInfo,
             false
         );
     }
@@ -33,6 +40,7 @@ public record OutboxEventData(
                 .withNano(rs.getInt("created_at_nano")),
             rs.getString("event_type"),
             rs.getString("payload"),
+            rs.getString("tracing_info"),
             rs.getBoolean("is_published")
         );
     }

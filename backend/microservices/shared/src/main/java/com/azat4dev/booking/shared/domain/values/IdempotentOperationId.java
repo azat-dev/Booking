@@ -30,7 +30,7 @@ public record IdempotentOperationId(
     // Exceptions
 
     public static sealed class Exception extends DomainException {
-        public Exception(String message) {
+        protected Exception(String message) {
             super(message);
         }
 

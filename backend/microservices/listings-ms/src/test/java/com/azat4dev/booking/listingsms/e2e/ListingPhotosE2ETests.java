@@ -86,7 +86,7 @@ class ListingPhotosE2ETests {
         final var userId = USER1;
         final var listingId = givenExistingListing(userId);
 
-        final var result = givenUploadedListingPhoto(
+        final var ignored = givenUploadedListingPhoto(
             listingId,
             apiClient(CommandsListingsPhotoApi::new, userId),
             testImageFile

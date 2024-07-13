@@ -44,7 +44,8 @@ public class UsersReadDaoJdbc implements UsersReadDao {
 
             return Optional.ofNullable(foundUser);
         } catch (EmptyResultDataAccessException e) {
-            log.atError().setCause(e).addKeyValue("userId", userId).log("User not found: {}", userId);
+            log.atError().setCause(e).addKeyValue("userId", userId)
+                .log("User not found: {}", userId);
             return Optional.empty();
         }
     }

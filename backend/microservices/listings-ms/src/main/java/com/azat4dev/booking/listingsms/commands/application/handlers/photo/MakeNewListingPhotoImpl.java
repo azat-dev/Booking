@@ -4,12 +4,14 @@ import com.azat4dev.booking.listingsms.commands.domain.values.ListingPhoto;
 import com.azat4dev.booking.shared.domain.interfaces.files.MediaObjectsBucket;
 import com.azat4dev.booking.shared.domain.values.files.BucketName;
 import com.azat4dev.booking.shared.domain.values.files.UploadedFileData;
+import io.micrometer.observation.annotation.Observed;
 import lombok.AllArgsConstructor;
 
 import java.util.UUID;
 
+@Observed
 @AllArgsConstructor
-public final class MakeNewListingPhotoImpl implements MakeNewListingPhoto {
+public class MakeNewListingPhotoImpl implements MakeNewListingPhoto {
 
     private final BucketName bucketName;
     private final MediaObjectsBucket bucket;

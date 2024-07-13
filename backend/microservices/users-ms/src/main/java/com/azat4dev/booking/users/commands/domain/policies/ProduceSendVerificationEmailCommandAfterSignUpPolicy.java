@@ -8,9 +8,11 @@ import com.azat4dev.booking.users.commands.domain.core.events.UserSignedUp;
 import com.azat4dev.booking.users.commands.domain.core.values.user.EmailVerificationStatus;
 import io.micrometer.observation.annotation.Observed;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 
 import java.time.LocalDateTime;
 
+@Slf4j
 @Observed
 @RequiredArgsConstructor
 public class ProduceSendVerificationEmailCommandAfterSignUpPolicy implements Policy<UserSignedUp> {
@@ -31,5 +33,10 @@ public class ProduceSendVerificationEmailCommandAfterSignUpPolicy implements Pol
         );
 
         bus.publish(command);
+        log.atInfo()
+            .addKeyValue("userId", event::userId)
+            .addArgument(event::userId)
+            .addArgument(eventId::getValue)
+            .log("SendVerificationEmail command produced after UserSignedUp event: userId={}, eventId={}");
     }
 }

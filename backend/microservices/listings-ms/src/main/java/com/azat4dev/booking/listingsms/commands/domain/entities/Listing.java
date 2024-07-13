@@ -203,7 +203,7 @@ public class Listing {
     // Exceptions
 
     public static class Exception extends DomainException {
-        public Exception(String message) {
+        protected Exception(String message) {
             super(message);
         }
 
