@@ -302,11 +302,11 @@ components:
           - title
         properties:
           operationId:
-            $ref: "/Users/azat/dev/my/projects/demo-booking/backend/specs/asyncapi/common/values.yaml#/components/schemas/OperationId"
+            $ref: "./common/values.yaml#/components/schemas/OperationId"
           hostId:
-            $ref: "/Users/azat/dev/my/projects/demo-booking/backend/specs/asyncapi/common/values.yaml#/components/schemas/HostId"
+            $ref: "./common/values.yaml#/components/schemas/HostId"
           listingId:
-            $ref: "/Users/azat/dev/my/projects/demo-booking/backend/specs/asyncapi/common/values.yaml#/components/schemas/ListingId"
+            $ref: "./common/values.yaml#/components/schemas/ListingId"
           title:
             type: string
 
@@ -320,9 +320,9 @@ components:
           - title
         properties:
           hostId:
-            $ref: "/Users/azat/dev/my/projects/demo-booking/backend/specs/asyncapi/common/values.yaml#/components/schemas/HostId"
+            $ref: "./common/values.yaml#/components/schemas/HostId"
           listingId:
-            $ref: "/Users/azat/dev/my/projects/demo-booking/backend/specs/asyncapi/common/values.yaml#/components/schemas/ListingId"
+            $ref: "./common/values.yaml#/components/schemas/ListingId"
           title:
             type: string
 
@@ -336,11 +336,11 @@ components:
           - formData
         properties:
           operationId:
-            $ref: "/Users/azat/dev/my/projects/demo-booking/backend/specs/asyncapi/common/values.yaml#/components/schemas/OperationId"
+            $ref: "./common/values.yaml#/components/schemas/OperationId"
           userId:
-            $ref: "/Users/azat/dev/my/projects/demo-booking/backend/specs/asyncapi/common/values.yaml#/components/schemas/UserId"
+            $ref: "./common/values.yaml#/components/schemas/UserId"
           listingId:
-            $ref: "/Users/azat/dev/my/projects/demo-booking/backend/specs/asyncapi/common/values.yaml#/components/schemas/ListingId"
+            $ref: "./common/values.yaml#/components/schemas/ListingId"
           formData:
             $ref: "#/components/schemas/values/UploadFileFormData"
 
@@ -356,11 +356,11 @@ components:
           - fileSize
         properties:
           operationId:
-            $ref: "/Users/azat/dev/my/projects/demo-booking/backend/specs/asyncapi/common/values.yaml#/components/schemas/OperationId"
+            $ref: "./common/values.yaml#/components/schemas/OperationId"
           userId:
-            $ref: "/Users/azat/dev/my/projects/demo-booking/backend/specs/asyncapi/common/values.yaml#/components/schemas/UserId"
+            $ref: "./common/values.yaml#/components/schemas/UserId"
           listingId:
-            $ref: "/Users/azat/dev/my/projects/demo-booking/backend/specs/asyncapi/common/values.yaml#/components/schemas/ListingId"
+            $ref: "./common/values.yaml#/components/schemas/ListingId"
           fileExtension:
             type: string
           fileSize:
@@ -375,7 +375,7 @@ components:
           - photo
         properties:
           listingId:
-            $ref: "/Users/azat/dev/my/projects/demo-booking/backend/specs/asyncapi/common/values.yaml#/components/schemas/ListingId"
+            $ref: "./common/values.yaml#/components/schemas/ListingId"
           photo:
             $ref: "#/components/schemas/values/ListingPhoto"
 
@@ -388,7 +388,7 @@ components:
           - publishedAt
         properties:
           listingId:
-            $ref: "/Users/azat/dev/my/projects/demo-booking/backend/specs/asyncapi/common/values.yaml#/components/schemas/ListingId"
+            $ref: "./common/values.yaml#/components/schemas/ListingId"
           publishedAt:
             type: string
             format: date-time
@@ -404,7 +404,7 @@ components:
           - newValues
         properties:
           listingId:
-            $ref: "/Users/azat/dev/my/projects/demo-booking/backend/specs/asyncapi/common/values.yaml#/components/schemas/ListingId"
+            $ref: "./common/values.yaml#/components/schemas/ListingId"
           updatedAt:
             type: string
             format: date-time
@@ -412,3 +412,14 @@ components:
             $ref: "#/components/schemas/values/ListingDetailsFields"
           newValues:
             $ref: "#/components/schemas/values/ListingDetailsFields"
+            
+    queries:
+      GetListingById:
+        title: GetListingById
+        type: object
+        additionalProperties: false
+        required:
+          - listingId
+        properties:
+          listingId:
+            $ref: "./common/values.yaml#/components/schemas/ListingId"

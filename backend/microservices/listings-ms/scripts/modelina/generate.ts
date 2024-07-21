@@ -138,8 +138,10 @@ const generator = new JavaFileGenerator({
 // Here we just use a local AsyncAPI file
 
 const input = yaml.load(fs.readFileSync(INPUT_FILE, 'utf8'));
+const inputDir = path.resolve(path.dirname(INPUT_FILE));
 console.log("Starting model generation...");
 
+process.chdir(inputDir);
 generator.generateToFiles(input, FINAL_OUTPUT_PATH, {
     packageName: PACKAGE_NAME
 })
