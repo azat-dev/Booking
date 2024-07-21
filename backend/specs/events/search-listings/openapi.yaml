@@ -1,6 +1,6 @@
 openapi: 3.0.3
 info:
-  title: Listings Microservice Domain Events API
+  title: Search Listings Microservice Domain Events API
   version: 1.0.0
 paths:
   /do_nothing:
@@ -15,7 +15,7 @@ paths:
                 type: string
 components:
   schemas:
-    ListingsDomainEvent:
+    SearchListingsDomainEvent:
       type: object
       required:
         - domain
@@ -27,35 +27,30 @@ components:
         domain:
           type: string
           enum:
-            - LISTINGS
-          default: LISTINGS
+            - SEARCH_LISTINGS
+          default: SEARCH_LISTINGS
         eventId:
           type: string
         occurredAt:
           type: integer
           format: int64
         payload:
-          $ref: '#/components/schemas/ListingsDomainEventPayload'
+          $ref: '#/components/schemas/SearchListingsDomainEventPayload'
 
-    ListingsDomainEventPayload:
+    SearchListingsDomainEventPayload:
       discriminator:
         propertyName: type
       oneOf:
-        - $ref: "#/components/schemas/NewListingAdded"
-        - $ref: "#/components/schemas/FailedToAddNewListing"
-        - $ref: "#/components/schemas/ListingDetailsUpdated"
-        - $ref: "#/components/schemas/ListingPublished"
+        - $ref: "#/components/schemas/NewListingPublished"
 
-        - $ref: "#/components/schemas/GeneratedUrlForUploadListingPhoto"
-        - $ref: "#/components/schemas/FailedGenerateUrlForUploadListingPhoto"
-        - $ref: "#/components/schemas/AddedNewPhotoToListing"
-
-    NewListingAdded:
+    NewListingPublished:
       type: object
       required:
         - hostId
         - listingId
         - title
+        - description
+        - address
       properties:
         operationId:
           $ref: "../common/models/OperationId.yaml"
@@ -65,78 +60,32 @@ components:
           $ref: "#/components/schemas/ListingId"
         title:
           type: string
+        description:
+          type: string
+        address:
+            $ref: "#/components/schemas/Address"
+        guestCapacity:
+          nullable: true
+          allOf:
+            - $ref: "#/components/schemas/GuestsCapacity"
+        propertyType:
+          nullable: true
+          allOf:
+            - $ref: "../../listings/common/models/PropertyType.yaml"
+        roomType:
+          nullable: true
+          allOf:
+            - $ref: "../../listings/common/models/RoomType.yaml"
 
-    FailedToAddNewListing:
+    FailedToAddPublishedListingToSearch:
       type: object
       required:
-        - hostId
         - listingId
-        - title
       properties:
-        hostId:
-          $ref: "#/components/schemas/HostId"
         listingId:
           $ref: "#/components/schemas/ListingId"
-        title:
-          type: string
 
-    GeneratedUrlForUploadListingPhoto:
-      type: object
-      required:
-        - userId
-        - listingId
-        - formData
-      properties:
-        operationId:
-          $ref: "../common/models/OperationId.yaml"
-        userId:
-          $ref: "#/components/schemas/UserId"
-        listingId:
-          $ref: "#/components/schemas/ListingId"
-        formData:
-          $ref: "#/components/schemas/UploadFileFormData"
-
-    UploadFileFormData:
-      type: object
-      required:
-        - url
-        - bucketName
-        - objectName
-        - fields
-      properties:
-        url:
-          type: string
-          format: uri
-        bucketName:
-          type: string
-        objectName:
-          type: string
-        fields:
-          type: object
-          additionalProperties:
-            type: string
-
-    FailedGenerateUrlForUploadListingPhoto:
-      type: object
-      required:
-        - operationId
-        - userId
-        - listingId
-        - fileExtension
-        - fileSize
-      properties:
-        operationId:
-          $ref: "../common/models/OperationId.yaml"
-        userId:
-          $ref: "#/components/schemas/UserId"
-        listingId:
-          $ref: "#/components/schemas/ListingId"
-        fileExtension:
-          type: string
-        fileSize:
-          type: integer
-
-    AddedNewPhotoToListing:
+    UpdatedPhotosOfListing:
       type: object
       required:
         - listingId
