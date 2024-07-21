@@ -427,50 +427,6 @@
                         </configuration>
                     </execution>
 
-
-<!--                    <execution>-->
-<!--                        <id>generateDomainEventsDTO</id>-->
-<!--                        <goals>-->
-<!--                            <goal>generate</goal>-->
-<!--                        </goals>-->
-<!--                        <configuration>-->
-<!--                            <generatorName>spring</generatorName>-->
-<!--                            <library>spring-boot</library>-->
-<!--                            <inputSpec>${project.basedir}/../../specs/events/listings/openapi.yaml</inputSpec>-->
-<!--                            <modelPackage>${default.package}.generated.events.dto</modelPackage>-->
-<!--                            <ignoreFileOverride>.openapi-generator-ignore</ignoreFileOverride>-->
-<!--                            <output>${project.basedir}/target/generated-sources/events</output>-->
-<!--                            <templateDirectory>${project.basedir}/../../specs/custom_templates/spring</templateDirectory>-->
-<!--                            <modelNameSuffix>DTO</modelNameSuffix>-->
-<!--                            <configOptions>-->
-<!--                                <useOptional>true</useOptional>-->
-<!--                                <openApiNullable>true</openApiNullable>-->
-<!--                                <useTags>true</useTags>-->
-<!--                                <interfaceOnly>true</interfaceOnly>-->
-<!--                                <additionalModelTypeAnnotations>@lombok.Builder(toBuilder = true)-->
-<!--                                    @lombok.AllArgsConstructor-->
-<!--                                    @lombok.NoArgsConstructor-->
-<!--                                    @com.fasterxml.jackson.annotation.JsonIgnoreProperties(ignoreUnknown=true)-->
-<!--                                </additionalModelTypeAnnotations>-->
-<!--                                <generatedConstructorWithRequiredArgs>false</generatedConstructorWithRequiredArgs>-->
-<!--                                <generateSupportingFiles>true</generateSupportingFiles>-->
-
-<!--                                <dateLibrary>java8-localdatetime</dateLibrary>-->
-<!--                                <generateConstructorWithAllArgs>false</generateConstructorWithAllArgs>-->
-
-<!--                                <serializationLibrary>jackson</serializationLibrary>-->
-<!--                                <generateBuilders>false</generateBuilders>-->
-<!--                                <useSpringController>false</useSpringController>-->
-<!--                                <useJakartaEe>true</useJakartaEe>-->
-<!--                                <useSpringBoot3>true</useSpringBoot3>-->
-<!--                                <lombok>true</lombok>-->
-<!--                                <useBeanValidation>true</useBeanValidation>-->
-<!--                                <hideGenerationTimestamp>true</hideGenerationTimestamp>-->
-<!--                            </configOptions>-->
-<!--                        </configuration>-->
-<!--                    </execution>-->
-
-
                     <execution>
                         <id>generateApiClient</id>
                         <goals>
