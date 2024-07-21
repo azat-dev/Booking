@@ -31,7 +31,7 @@ public class SignUpHandlerImpl implements SignUpHandler {
         try {
             final var firstName = FirstName.checkAndMakeFromString(command.fullName().firstName());
             final var lastName = LastName.checkAndMakeFromString(command.fullName().lastName());
-            final var fullName = new FullName(firstName, lastName);
+            final var fullName = FullName.makeWithChecks(firstName, lastName);
             final var email = EmailAddress.checkAndMakeFromString(command.email());
 
             final var password = Password.checkAndMakeFromString(command.password());

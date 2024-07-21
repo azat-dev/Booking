@@ -1,11 +1,14 @@
 package com.azat4dev.booking.shared.data.serializers;
 
-import com.azat4dev.booking.shared.domain.events.DomainEvent;
+import com.azat4dev.booking.shared.domain.events.DomainEventPayload;
 
 
 public interface DomainEventSerializer {
 
-    String serialize(DomainEvent<?> event);
+    <E extends DomainEventPayload> String serialize(E event);
 
-    DomainEvent<?> deserialize(String event);
+    <T extends DomainEventPayload> T deserialize(
+        Class<T> payloadClass,
+        String payload
+    );
 }

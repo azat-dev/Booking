@@ -26,7 +26,7 @@ public class MapUserRecordToPersonalInfoImpl implements MapUserRecordToPersonalI
                         PersonalUserInfo.EmailVerificationStatus.NOT_VERIFIED;
                     default -> throw new RuntimeException("Unknown email verification status");
                 },
-                new FullName(
+                FullName.makeWithChecks(
                     FirstName.dangerMakeFromStringWithoutCheck(userRecord.firstName()),
                     LastName.dangerMakeFromStringWithoutCheck(userRecord.lastName())
                 ),

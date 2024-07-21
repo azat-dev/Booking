@@ -9,9 +9,12 @@ import com.azat4dev.booking.shared.domain.events.DomainEventsFactory;
 import com.azat4dev.booking.shared.domain.events.EventId;
 import io.micrometer.observation.annotation.Observed;
 import lombok.AllArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 
 import java.util.List;
+import java.util.function.Function;
 
+@Slf4j
 @Observed
 @AllArgsConstructor
 public class OutboxEventsRepositoryImpl implements OutboxEventsRepository {
@@ -19,6 +22,8 @@ public class OutboxEventsRepositoryImpl implements OutboxEventsRepository {
     private final DomainEventSerializer domainEventSerializer;
     private final OutboxEventsDao outboxEventsDao;
     private final DomainEventsFactory domainEventsFactory;
+
+    private final Function<String, Class<? extends DomainEventPayload>> getPayloadClass;
 
     @Override
     public void publish(DomainEventPayload event, String tracingInfo) {
@@ -43,8 +48,20 @@ public class OutboxEventsRepositoryImpl implements OutboxEventsRepository {
         return this.outboxEventsDao.findNotPublishedEvents(limit)
             .stream()
             .map(rc -> {
+                final var payloadClass = getPayloadClass.apply(rc.eventType());
+                log.atError()
+                    .addArgument(rc.eventType())
+                    .log("Can't get payload class for: eventType={}");
+
                 return new Item(
-                    this.domainEventSerializer.deserialize(rc.payload()),
+                    new DomainEvent<>(
+                        EventId.dangerouslyCreateFrom(rc.eventId()),
+                        rc.createdAt(),
+                        this.domainEventSerializer.deserialize(
+                            payloadClass,
+                            rc.payload()
+                        )
+                    ),
                     rc.tracingInfo()
                 );
             }).toList();

@@ -3,6 +3,7 @@ package com.azat4dev.booking.users.config.users_commands.infrastructure.bus;
 import com.azat4dev.booking.users.commands.application.commands.email.verification.CompleteEmailVerification;
 import com.azat4dev.booking.users.commands.domain.core.commands.SendVerificationEmail;
 import com.azat4dev.booking.users.commands.domain.core.events.*;
+import com.azat4dev.booking.users.config.common.properties.BusProperties;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.kafka.clients.admin.NewTopic;
@@ -23,6 +24,7 @@ import java.util.Map;
 @RequiredArgsConstructor
 public class KafkaConfig {
 
+    private final BusProperties busProperties;
     private final KafkaProperties kafkaProperties;
 
     public Map<String, Object> producerConfigs() {
@@ -72,10 +74,16 @@ public class KafkaConfig {
             FailedUpdateUserPhoto.class
         );
 
-        final var topics = events.stream().map(
-            clazz -> new NewTopic(clazz.getSimpleName(), 1, (short) 1)
-        ).toList().toArray(new NewTopic[0]);
+        final var topics = events.stream()
+            .map(clazz -> busProperties.getEventsTopicPrefix() + "." + clazz.getSimpleName())
+            .map(topic -> new NewTopic(topic, 1, (short) 1))
+            .toList()
+            .toArray(new NewTopic[0]);
 
+        log.atInfo()
+            .addArgument(topics)
+            .log("Created topics: {}");
+        
         return new KafkaAdmin.NewTopics(topics);
     }
 
@@ -83,17 +91,6 @@ public class KafkaConfig {
     public ConsumerFactory<String, String> consumerFactory() {
         return new DefaultKafkaConsumerFactory<>(consumerConfigs());
     }
-
-//    @Bean
-//    ConcurrentKafkaListenerContainerFactory<Integer, String>
-//    kafkaListenerContainerFactory(ConsumerFactory<Integer, String> consumerFactory) {
-//        ConcurrentKafkaListenerContainerFactory<Integer, String> factory =
-//            new ConcurrentKafkaListenerContainerFactory<>();
-//
-//        factory.getContainerProperties().setObservationEnabled(true);
-//        factory.setConsumerFactory(consumerFactory);
-//        return factory;
-//    }
 
     @Bean
     ConcurrentKafkaListenerContainerFactory<String, String> kafkaListenerContainerFactory(ConsumerFactory<String, String> cf) {
@@ -104,18 +101,4 @@ public class KafkaConfig {
 
         return factory;
     }
-
-
-//    @Bean
-//    public Function<String, ConcurrentMessageListenerContainer<String, String>> containerFactory(ConsumerFactory<String, String> consumerFactory) {
-//        return (String topic) -> {
-//            final var  props = new ContainerProperties(topic);
-//            props.setObservationEnabled(true);
-//
-//            return new ConcurrentMessageListenerContainer<>(
-//                consumerFactory,
-//                props
-//            );
-//        };
-//    }
 }

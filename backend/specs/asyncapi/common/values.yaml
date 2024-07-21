@@ -1,0 +1,18 @@
+asyncapi: 3.0.0
+info:
+  title: Common Values
+  version: 1.0.0
+components:
+  schemas:
+    OperationId:
+      type: string
+      format: uuid
+    ListingId:
+      type: string
+      format: uuid
+    HostId:
+      type: string
+      format: uuid
+    UserId:
+      type: string
+      format: uuid

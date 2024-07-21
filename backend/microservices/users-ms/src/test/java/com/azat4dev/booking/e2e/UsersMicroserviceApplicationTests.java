@@ -15,7 +15,6 @@ import org.jsoup.nodes.Element;
 import org.jsoup.select.Elements;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.test.autoconfigure.actuate.observability.AutoConfigureObservability;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.context.TestConfiguration;
@@ -27,7 +26,6 @@ import org.springframework.http.HttpStatus;
 import org.springframework.test.context.jdbc.Sql;
 import org.springframework.web.util.UriComponentsBuilder;
 
-import java.util.LinkedList;
 import java.util.UUID;
 
 import static com.azat4dev.booking.helpers.ApiHelpers.apiClient;
@@ -70,40 +68,6 @@ class UsersMicroserviceApplicationTests {
 
     @Test
     void test_verifyEmail() throws Exception {
-        // Given
-        final var user = givenAnyConfirmedUser();
-
-        // Then
-        assertThat(user).isNotNull();
-    }
-
-
-    @Test
-    void test_something() throws Exception {
-
-        final var users = new LinkedList<SignedUpUser>();
-        final var threads = new LinkedList<Thread>();
-
-        for (int i = 0; i < 3; i++) {
-            final var th = new Thread(() -> {
-                try {
-                    final var user = givenAnyConfirmedUser();
-
-                    synchronized (users) {
-                        users.add(user);
-                    }
-                } catch (Exception e) {
-                    e.printStackTrace();
-                }
-            });
-            th.start();
-            threads.add(th);
-        }
-
-        for (final var th : threads) {
-            th.join();
-        }
-
         // Given
         final var user = givenAnyConfirmedUser();
 

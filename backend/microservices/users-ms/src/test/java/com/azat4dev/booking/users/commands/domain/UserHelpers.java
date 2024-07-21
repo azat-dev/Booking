@@ -30,7 +30,7 @@ public class UserHelpers {
 
     public static FullName anyFullName() {
         try {
-            return new FullName(
+            return FullName.makeWithChecks(
                 FirstName.checkAndMakeFromString(faker.name().firstName()),
                 LastName.dangerMakeFromStringWithoutCheck(faker.name().lastName())
             );

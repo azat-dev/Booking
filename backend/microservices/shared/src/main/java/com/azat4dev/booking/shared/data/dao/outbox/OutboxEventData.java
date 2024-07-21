@@ -27,7 +27,7 @@ public record OutboxEventData(
             event.id().getValue(),
             event.issuedAt(),
             event.payload().getClass().getSimpleName(),
-            serializer.serialize(event),
+            serializer.serialize(event.payload()),
             tracingInfo,
             false
         );
@@ -43,11 +43,5 @@ public record OutboxEventData(
             rs.getString("tracing_info"),
             rs.getBoolean("is_published")
         );
-    }
-
-    public enum EventType {
-        USER_CREATED,
-        UPDATED_USER_PHOTO,
-        USER_VERIFIED_EMAIL
     }
 }

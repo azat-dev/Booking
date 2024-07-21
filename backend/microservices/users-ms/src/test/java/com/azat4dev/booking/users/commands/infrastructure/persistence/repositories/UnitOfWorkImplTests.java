@@ -62,10 +62,8 @@ public class UnitOfWorkImplTests {
     @Sql("/db/schema.sql")
     void test_doOrFail_givenWriteOperation_thenRollbackAllWrites() {
         // Given
-
         var sut = createSUT();
         final var newUser = UserHelpers.anyUser();
-
         final var usersRepository = sut.getUsersRepository();
 
         // When

@@ -1,0 +1,58 @@
+package com.azat4dev.booking.users.commands.infrastructure.persistence.repositories.serializer.mappers;
+
+import com.azat4dev.booking.shared.data.serializers.MapPayload;
+import com.azat4dev.booking.shared.domain.values.IdempotentOperationId;
+import com.azat4dev.booking.shared.domain.values.files.BucketName;
+import com.azat4dev.booking.shared.domain.values.files.MediaObjectName;
+import com.azat4dev.booking.shared.domain.values.files.UploadedFileData;
+import com.azat4dev.booking.shared.domain.values.user.UserId;
+import com.azat4dev.booking.users.commands.domain.core.events.FailedUpdateUserPhoto;
+import com.azat4dev.booking.usersms.generated.events.dto.FailedUpdateUserPhotoDTO;
+import com.azat4dev.booking.usersms.generated.events.dto.UploadedFileDataDTO;
+import lombok.AllArgsConstructor;
+
+@AllArgsConstructor
+public final class MapFailedUpdateUserPhoto implements MapPayload<FailedUpdateUserPhoto, FailedUpdateUserPhotoDTO> {
+
+    @Override
+    public FailedUpdateUserPhotoDTO toDTO(FailedUpdateUserPhoto dm) {
+        return FailedUpdateUserPhotoDTO.builder()
+            .operationId(dm.operationId().toString())
+            .userId(dm.userId().toString())
+            .uploadedFileData(toDTO(dm.uploadedFileData()))
+            .build();
+    }
+
+    @Override
+    public FailedUpdateUserPhoto toDomain(FailedUpdateUserPhotoDTO dto) {
+        return new FailedUpdateUserPhoto(
+            IdempotentOperationId.dangerouslyMakeFrom(dto.getOperationId()),
+            UserId.dangerouslyMakeFrom(dto.getUserId()),
+            toDomain(dto.getUploadedFileData())
+        );
+    }
+
+    private static UploadedFileData toDomain(UploadedFileDataDTO dto) {
+        return new UploadedFileData(
+            BucketName.makeWithoutChecks(dto.getBucketName()),
+            MediaObjectName.dangerouslyMake(dto.getObjectName())
+        );
+    }
+
+    private static UploadedFileDataDTO toDTO(UploadedFileData dm) {
+        return UploadedFileDataDTO.builder()
+            .bucketName(dm.bucketName().getValue())
+            .objectName(dm.objectName().getValue())
+            .build();
+    }
+
+    @Override
+    public Class<FailedUpdateUserPhoto> getDomainClass() {
+        return FailedUpdateUserPhoto.class;
+    }
+
+    @Override
+    public Class<FailedUpdateUserPhotoDTO> getDTOClass() {
+        return com.azat4dev.booking.usersms.generated.events.dto.FailedUpdateUserPhotoDTO.class;
+    }
+}

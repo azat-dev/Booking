@@ -1,0 +1,40 @@
+package com.azat4dev.booking.users.commands.infrastructure.persistence.repositories.serializer.mappers;
+
+import com.azat4dev.booking.shared.data.serializers.MapPayload;
+import com.azat4dev.booking.shared.domain.values.user.UserId;
+import com.azat4dev.booking.users.commands.domain.core.events.FailedToSendVerificationEmail;
+import com.azat4dev.booking.users.commands.domain.core.values.email.EmailAddress;
+import com.azat4dev.booking.usersms.generated.events.dto.FailedToSendVerificationEmailDTO;
+import lombok.AllArgsConstructor;
+
+@AllArgsConstructor
+public final class MapFailedToSendVerificationEmail implements MapPayload<FailedToSendVerificationEmail, FailedToSendVerificationEmailDTO> {
+
+    @Override
+    public FailedToSendVerificationEmailDTO toDTO(FailedToSendVerificationEmail dm) {
+        return FailedToSendVerificationEmailDTO.builder()
+            .userId(dm.userId().toString())
+            .email(dm.email().getValue())
+            .attempts(dm.attempts())
+            .build();
+    }
+
+    @Override
+    public FailedToSendVerificationEmail toDomain(FailedToSendVerificationEmailDTO dto) {
+        return new FailedToSendVerificationEmail(
+            UserId.dangerouslyMakeFrom(dto.getUserId()),
+            EmailAddress.dangerMakeWithoutChecks(dto.getEmail()),
+            dto.getAttempts()
+        );
+    }
+
+    @Override
+    public Class<FailedToSendVerificationEmail> getDomainClass() {
+        return FailedToSendVerificationEmail.class;
+    }
+
+    @Override
+    public Class<FailedToSendVerificationEmailDTO> getDTOClass() {
+        return FailedToSendVerificationEmailDTO.class;
+    }
+}

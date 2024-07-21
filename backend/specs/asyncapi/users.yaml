@@ -1,0 +1,539 @@
+asyncapi: 3.0.0
+info:
+  title: Users Microservice Kafka API
+  version: 1.0.0
+defaultContentType: application/json
+channels:
+  UserSignedUp:
+    address: 'com.azat4dev.booking.users.1.0.event.UserSignedUp'
+    messages:
+      UserSignedUp:
+        $ref: '#/components/messages/UserSignedUp'
+
+  UserVerifiedEmail:
+    address: 'com.azat4dev.booking.users.1.0.event.UserVerifiedEmail'
+    messages:
+      UserVerifiedEmail:
+        $ref: '#/components/messages/UserVerifiedEmail'
+
+  VerificationEmailSent:
+    address: 'com.azat4dev.booking.users.1.0.event.VerificationEmailSent'
+    messages:
+      VerificationEmailSent:
+        $ref: '#/components/messages/VerificationEmailSent'
+
+  FailedToSendVerificationEmail:
+    address: 'com.azat4dev.booking.users.1.0.event.FailedToSendVerificationEmail'
+    messages:
+      FailedToSendVerificationEmail:
+        $ref: '#/components/messages/FailedToSendVerificationEmail'
+
+  CompleteEmailVerification:
+    address: 'com.azat4dev.booking.users.1.0.event.CompleteEmailVerification'
+    messages:
+      CompleteEmailVerification:
+        $ref: '#/components/messages/CompleteEmailVerification'
+
+  SendVerificationEmail:
+    address: 'com.azat4dev.booking.users.1.0.event.SendVerificationEmail'
+    messages:
+      SendVerificationEmail:
+        $ref: '#/components/messages/SendVerificationEmail'
+
+  SentEmailForPasswordReset:
+    address: 'com.azat4dev.booking.users.1.0.event.SentEmailForPasswordReset'
+    messages:
+      SentEmailForPasswordReset:
+        $ref: '#/components/messages/SentEmailForPasswordReset'
+
+  CompletePasswordReset:
+    address: 'com.azat4dev.booking.users.1.0.event.CompletePasswordReset'
+    messages:
+      CompletePasswordReset:
+        $ref: '#/components/messages/CompletePasswordReset'
+
+  UserDidResetPassword:
+    address: 'com.azat4dev.booking.users.1.0.event.UserDidResetPassword'
+    messages:
+      UserDidResetPassword:
+        $ref: '#/components/messages/UserDidResetPassword'
+
+  GeneratedUserPhotoUploadUrl:
+    address: 'com.azat4dev.booking.users.1.0.event.GeneratedUserPhotoUploadUrl'
+    messages:
+      GeneratedUserPhotoUploadUrl:
+        $ref: '#/components/messages/GeneratedUserPhotoUploadUrl'
+
+  UpdatedUserPhoto:
+    address: 'com.azat4dev.booking.users.1.0.event.UpdatedUserPhoto'
+    messages:
+      UpdatedUserPhoto:
+        $ref: '#/components/messages/UpdatedUserPhoto'
+
+  FailedUpdateUserPhoto:
+    address: 'com.azat4dev.booking.users.1.0.event.FailedUpdateUserPhoto'
+    messages:
+      FailedUpdateUserPhoto:
+        $ref: '#/components/messages/FailedUpdateUserPhoto'
+
+  FailedGenerateUserPhotoUploadUrl:
+    address: 'com.azat4dev.booking.users.1.0.event.FailedGenerateUserPhotoUploadUrl'
+    messages:
+      FailedGenerateUserPhotoUploadUrl:
+        $ref: '#/components/messages/FailedGenerateUserPhotoUploadUrl'
+operations:
+  sendUserSignedUp:
+    action: send
+    channel:
+      $ref: '#/channels/UserSignedUp'
+    messages:
+      - $ref: '#/channels/UserSignedUp/messages/UserSignedUp'
+        
+  sendUserVerifiedEmail:
+    action: send
+    channel:
+      $ref: '#/channels/UserVerifiedEmail'
+    messages:
+      - $ref: '#/channels/UserVerifiedEmail/messages/UserVerifiedEmail'
+  
+  sendVerificationEmailSent:
+    action: send
+    channel:
+      $ref: '#/channels/VerificationEmailSent'
+    messages:
+      - $ref: '#/channels/VerificationEmailSent/messages/VerificationEmailSent'
+
+  sendFailedToSendVerificationEmail:
+    action: send
+    channel:
+      $ref: '#/channels/FailedToSendVerificationEmail'
+    messages:
+      - $ref: '#/channels/FailedToSendVerificationEmail/messages/FailedToSendVerificationEmail'
+
+  sendCompleteEmailVerification:
+    action: send
+    channel:
+      $ref: '#/channels/CompleteEmailVerification'
+    messages:
+      - $ref: '#/channels/CompleteEmailVerification/messages/CompleteEmailVerification'
+
+  sendSendVerificationEmail:
+    action: send
+    channel:
+      $ref: '#/channels/SendVerificationEmail'
+    messages:
+      - $ref: '#/channels/SendVerificationEmail/messages/SendVerificationEmail'
+
+  receiveSendVerificationEmail:
+    action: receive
+    channel:
+      $ref: '#/channels/SendVerificationEmail'
+    messages:
+      - $ref: '#/channels/SendVerificationEmail/messages/SendVerificationEmail'
+    reply:
+      messages:
+        - $ref: "#/channels/VerificationEmailSent/messages/VerificationEmailSent"
+        - $ref: "#/channels/FailedToSendVerificationEmail/messages/FailedToSendVerificationEmail"
+
+  sendSentEmailForPasswordReset:
+    action: send
+    channel:
+      $ref: '#/channels/SentEmailForPasswordReset'
+    messages:
+      - $ref: '#/channels/SentEmailForPasswordReset/messages/SentEmailForPasswordReset'
+
+  sendCompletePasswordReset:
+    action: send
+    channel:
+      $ref: '#/channels/CompletePasswordReset'
+    messages:
+      - $ref: '#/channels/CompletePasswordReset/messages/CompletePasswordReset'
+
+  sendUserDidResetPassword:
+    action: send
+    channel:
+      $ref: '#/channels/UserDidResetPassword'
+    messages:
+      - $ref: '#/channels/UserDidResetPassword/messages/UserDidResetPassword'
+
+  sendGeneratedUserPhotoUploadUrl:
+    action: send
+    channel:
+      $ref: '#/channels/GeneratedUserPhotoUploadUrl'
+    messages:
+      - $ref: '#/channels/GeneratedUserPhotoUploadUrl/messages/GeneratedUserPhotoUploadUrl'
+
+  sendUpdatedUserPhoto:
+    action: send
+    channel:
+      $ref: '#/channels/UpdatedUserPhoto'
+    messages:
+      - $ref: '#/channels/UpdatedUserPhoto/messages/UpdatedUserPhoto'
+
+  sendFailedUpdateUserPhoto:
+    action: send
+    channel:
+      $ref: '#/channels/FailedUpdateUserPhoto'
+    messages:
+      - $ref: '#/channels/FailedUpdateUserPhoto/messages/FailedUpdateUserPhoto'
+
+  sendFailedGenerateUserPhotoUploadUrl:
+    action: send
+    channel:
+      $ref: '#/channels/FailedGenerateUserPhotoUploadUrl'
+    messages:
+      - $ref: '#/channels/FailedGenerateUserPhotoUploadUrl/messages/FailedGenerateUserPhotoUploadUrl'
+
+components:
+  messages:
+    UserSignedUp:
+      name: UserSignedUp
+      payload:
+        $ref: '#/components/schemas/payloads/UserSignedUp'
+
+    UserVerifiedEmail:
+      name: UserVerifiedEmail
+      payload:
+        $ref: '#/components/schemas/payloads/UserVerifiedEmail'
+
+    VerificationEmailSent:
+      name: VerificationEmailSent
+      payload:
+        $ref: '#/components/schemas/payloads/VerificationEmailSent'
+
+    FailedToSendVerificationEmail:
+      name: FailedToSendVerificationEmail
+      payload:
+        $ref: '#/components/schemas/payloads/FailedToSendVerificationEmail'
+
+    CompleteEmailVerification:
+      name: CompleteEmailVerification
+      payload:
+        $ref: '#/components/schemas/payloads/CompleteEmailVerification'
+
+    SendVerificationEmail:
+      name: SendVerificationEmail
+      payload:
+        $ref: '#/components/schemas/payloads/SendVerificationEmail'
+
+    SentEmailForPasswordReset:
+      name: SentEmailForPasswordReset
+      payload:
+        $ref: '#/components/schemas/payloads/SentEmailForPasswordReset'
+
+    CompletePasswordReset:
+      name: CompletePasswordReset
+      payload:
+        $ref: '#/components/schemas/payloads/CompletePasswordReset'
+
+    UserDidResetPassword:
+      name: UserDidResetPassword
+      payload:
+        $ref: '#/components/schemas/payloads/UserDidResetPassword'
+
+    GeneratedUserPhotoUploadUrl:
+      name: GeneratedUserPhotoUploadUrl
+      payload:
+        $ref: '#/components/schemas/payloads/GeneratedUserPhotoUploadUrl'
+
+    UpdatedUserPhoto:
+      name: UpdatedUserPhoto
+      payload:
+        $ref: '#/components/schemas/payloads/UpdatedUserPhoto'
+
+    FailedUpdateUserPhoto:
+      name: FailedUpdateUserPhoto
+      payload:
+        $ref: '#/components/schemas/payloads/FailedUpdateUserPhoto'
+
+    FailedGenerateUserPhotoUploadUrl:
+      name: FailedGenerateUserPhotoUploadUrl
+      payload:
+        $ref: '#/components/schemas/payloads/FailedGenerateUserPhotoUploadUrl'
+
+  schemas:
+    common:
+      values:
+        UserId:
+          title: UserId
+          type: string
+          format: uuid
+        FullName:
+          title: FullName
+          type: object
+          required:
+            - firstName
+            - lastName
+          properties:
+            firstName:
+              type: string
+            lastName:
+              type: string
+
+    values:
+      UploadedFileData:
+        title: UploadedFileData
+        additionalProperties: false
+        type: object
+        required:
+          - bucketName
+          - objectName
+        properties:
+          bucketName:
+            type: string
+          objectName:
+            type: string
+
+      UserPhotoPath:
+        title: UserPhotoPath
+        type: object
+        additionalProperties: false
+        required:
+          - bucketName
+          - objectName
+        properties:
+          bucketName:
+            type: string
+          objectName:
+            type: string
+
+      UploadedFileFormData:
+        title: UploadedFileFormData
+        type: object
+        additionalProperties: false
+        required:
+          - url
+          - bucketName
+          - objectName
+          - formData
+        properties:
+          url:
+            type: string
+            format: uri
+          bucketName:
+            type: string
+          objectName:
+            type: string
+          formData:
+            type: object
+            additionalProperties:
+              type: string
+    payloads:
+      UserSignedUp:
+        title: UserSignedUp
+        additionalProperties: false
+        type: object
+        required:
+          - createdAt
+          - userId
+          - fullName
+          - email
+          - emailVerificationStatus
+        properties:
+          createdAt:
+            type: string
+          userId:
+            type: string
+          fullName:
+            $ref: '#/components/schemas/common/values/FullName'
+          email:
+            type: string
+          emailVerificationStatus:
+            type: string
+
+      SendVerificationEmail:
+        title: SendVerificationEmail
+        additionalProperties: false
+        type: object
+        required:
+          - userId
+          - email
+          - fullName
+          - attempt
+        properties:
+          userId:
+            type: string
+          email:
+            type: string
+          fullName:
+            $ref: '#/components/schemas/common/values/FullName'
+          attempt:
+            type: integer
+
+      VerificationEmailSent:
+        title: VerificationEmailSent
+        additionalProperties: false
+        type: object
+        required:
+          - userId
+          - email
+        properties:
+          userId:
+            type: string
+          email:
+            type: string
+
+      UserVerifiedEmail:
+        title: UserVerifiedEmail
+        additionalProperties: false
+        type: object
+        required:
+          - userId
+          - email
+        properties:
+          userId:
+            type: string
+          email:
+            type: string
+
+      FailedToSendVerificationEmail:
+        title: FailedToSendVerificationEmail
+        additionalProperties: false
+        type: object
+        required:
+          - userId
+          - email
+          - attempts
+        properties:
+          userId:
+            type: string
+          email:
+            type: string
+          attempts:
+            type: integer
+
+      CompleteEmailVerification:
+        title: CompleteEmailVerification
+        type: object
+        required:
+          - emailVerificationToken
+        properties:
+          emailVerificationToken:
+            type: string
+
+      UpdatedUserPhoto:
+        title: UpdatedUserPhoto
+        additionalProperties: false
+        type: object
+        required:
+          - userId
+          - newPhotoPath
+          - prevPhotoPath
+        properties:
+          userId:
+            type: string
+          newPhotoPath:
+            $ref: '#/components/schemas/values/UserPhotoPath'
+          prevPhotoPath:
+            anyOf:
+              - type: 'null'
+              - $ref: '#/components/schemas/values/UserPhotoPath'
+
+      GenerateUserPhotoUploadUrl:
+        title: GenerateUserPhotoUploadUrl
+        additionalProperties: false
+        type: object
+        required:
+          - userId
+          - fileExtension
+          - fileSize
+          - operationId
+          - requestedAt
+        properties:
+          userId:
+            type: string
+          fileExtension:
+            type: string
+          fileSize:
+            type: integer
+          operationId:
+            type: string
+          requestedAt:
+            type: string
+
+      GeneratedUserPhotoUploadUrl:
+        title: GeneratedUserPhotoUploadUrl
+        additionalProperties: false
+        type: object
+        required:
+          - userId
+          - formData
+        properties:
+          userId:
+            type: string
+          formData:
+            $ref: '#/components/schemas/values/UploadedFileFormData'
+
+      FailedUpdateUserPhoto:
+        title: FailedUpdateUserPhoto
+        additionalProperties: false
+        type: object
+        required:
+          - operationId
+          - userId
+          - uploadedFileData
+        properties:
+          operationId:
+            type: string
+          userId:
+            type: string
+          uploadedFileData:
+            $ref: '#/components/schemas/values/UploadedFileData'
+
+      FailedGenerateUserPhotoUploadUrl:
+        title: FailedGenerateUserPhotoUploadUrl
+        additionalProperties: false
+        type: object
+        required:
+          - userId
+          - fileExtension
+          - fileSize
+          - operationId
+        properties:
+          userId:
+            type: string
+          fileExtension:
+            type: string
+          fileSize:
+            type: integer
+          operationId:
+            type: string
+
+      UserDidResetPassword:
+        title: UserDidResetPassword
+        additionalProperties: false
+        type: object
+        required:
+          - userId
+        properties:
+          userId:
+            type: string
+
+      SentEmailForPasswordReset:
+        title: SentEmailForPasswordReset
+        additionalProperties: false
+        type: object
+        required:
+          - userId
+          - email
+        properties:
+          userId:
+            type: string
+          email:
+            type: string
+
+      CompletePasswordReset:
+        title: CompletePasswordReset
+        additionalProperties: false
+        type: object
+        required:
+          - operationId
+          - newPassword
+          - passwordResetToken
+        properties:
+          operationId:
+            type: string
+          newPassword:
+            type: string
+          passwordResetToken:
+            type: string

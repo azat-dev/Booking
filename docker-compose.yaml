@@ -84,6 +84,8 @@ services:
 
       - USERS_MS_LOKI_URL=${LOKI_URL}
       - USERS_MS_ZIPKIN_ENDPOINT=${ZIPKIN_ENDPOINT}
+
+      - USERS_MS_BUS_EVENTS_TOPIC_PREFIX=${USERS_MS_BUS_EVENTS_TOPIC_PREFIX}
     ports:
       - "8081:${USERS_MS_PORT}"
 
@@ -133,6 +135,8 @@ services:
       - LISTINGS_MS_LOKI_URL=${LOKI_URL}
       - LISTINGS_MS_ZIPKIN_ENDPOINT=${ZIPKIN_ENDPOINT}
 
+      - LISTINGS_MS_BUS_EVENTS_TOPIC_PREFIX=${LISTINGS_MS_BUS_EVENTS_TOPIC_PREFIX}
+
   search-listings-db:
     image: postgres:16.3-alpine
     environment:
@@ -162,6 +166,8 @@ services:
 
       - SEARCH_LISTINGS_MS_LOKI_URL=${LOKI_URL}
       - SEARCH_LISTINGS_MS_ZIPKIN_ENDPOINT=${ZIPKIN_ENDPOINT}
+
+      - SEARCH_LISTINGS_MS_BUS_EVENTS_TOPIC_PREFIX=${SEARCH_LISTINGS_MS_BUS_EVENTS_TOPIC_PREFIX}
 
   objects-storage:
     image: minio/minio:latest

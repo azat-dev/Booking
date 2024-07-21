@@ -1,0 +1,414 @@
+asyncapi: 3.0.0
+info:
+  title: Listings Microservice Kafka API
+  version: 1.0.0
+defaultContentType: application/json
+channels:
+  NewListingAdded:
+    address: 'com.azat4dev.booking.listings.1.0.event.NewListingAdded'
+    messages:
+      NewListingAdded:
+        $ref: '#/components/messages/NewListingAdded'
+
+  FailedToAddNewListing:
+    address: 'com.azat4dev.booking.listings.1.0.event.FailedToAddNewListing'
+    messages:
+      FailedToAddNewListing:
+        $ref: '#/components/messages/FailedToAddNewListing'
+
+  ListingDetailsUpdated:
+    address: 'com.azat4dev.booking.listings.1.0.event.ListingDetailsUpdated'
+    messages:
+      ListingDetailsUpdated:
+        $ref: '#/components/messages/ListingDetailsUpdated'
+
+  ListingPublished:
+    address: 'com.azat4dev.booking.listings.1.0.event.ListingPublished'
+    messages:
+      ListingPublished:
+        $ref: '#/components/messages/ListingPublished'
+
+  GeneratedUrlForUploadListingPhoto:
+    address: 'com.azat4dev.booking.listings.1.0.event.GeneratedUrlForUploadListingPhoto'
+    messages:
+      GeneratedUrlForUploadListingPhoto:
+        $ref: '#/components/messages/GeneratedUrlForUploadListingPhoto'
+
+  FailedGenerateUrlForUploadListingPhoto:
+    address: 'com.azat4dev.booking.listings.1.0.event.FailedGenerateUrlForUploadListingPhoto'
+    messages:
+      FailedGenerateUrlForUploadListingPhoto:
+        $ref: '#/components/messages/FailedGenerateUrlForUploadListingPhoto'
+
+  AddedNewPhotoToListing:
+    address: 'com.azat4dev.booking.listings.1.0.event.AddedNewPhotoToListing'
+    messages:
+      AddedNewPhotoToListing:
+        $ref: '#/components/messages/AddedNewPhotoToListing'
+
+operations:
+  sendNewListingAdded:
+    action: send
+    channel:
+      $ref: '#/channels/NewListingAdded'
+    messages:
+      - $ref: '#/channels/NewListingAdded/messages/NewListingAdded'
+
+  sendFailedToAddNewListing:
+    action: send
+    channel:
+      $ref: '#/channels/FailedToAddNewListing'
+    messages:
+      - $ref: '#/channels/FailedToAddNewListing/messages/FailedToAddNewListing'
+
+  sendListingDetailsUpdated:
+    action: send
+    channel:
+      $ref: '#/channels/ListingDetailsUpdated'
+    messages:
+      - $ref: '#/channels/ListingDetailsUpdated/messages/ListingDetailsUpdated'
+
+  sendListingPublished:
+    action: send
+    channel:
+      $ref: '#/channels/ListingPublished'
+    messages:
+      - $ref: '#/channels/ListingPublished/messages/ListingPublished'
+
+  sendGeneratedUrlForUploadListingPhoto:
+    action: send
+    channel:
+      $ref: '#/channels/GeneratedUrlForUploadListingPhoto'
+    messages:
+      - $ref: '#/channels/GeneratedUrlForUploadListingPhoto/messages/GeneratedUrlForUploadListingPhoto'
+
+  sendFailedGenerateUrlForUploadListingPhoto:
+    action: send
+    channel:
+      $ref: '#/channels/FailedGenerateUrlForUploadListingPhoto'
+    messages:
+      - $ref: '#/channels/FailedGenerateUrlForUploadListingPhoto/messages/FailedGenerateUrlForUploadListingPhoto'
+
+  sendAddedNewPhotoToListing:
+    action: send
+    channel:
+      $ref: '#/channels/AddedNewPhotoToListing'
+    messages:
+      - $ref: '#/channels/AddedNewPhotoToListing/messages/AddedNewPhotoToListing'
+
+components:
+  messages:
+    NewListingAdded:
+      name: NewListingAdded
+      payload:
+        $ref: '#/components/schemas/payloads/NewListingAdded'
+
+    FailedToAddNewListing:
+      name: FailedToAddNewListing
+      payload:
+        $ref: '#/components/schemas/payloads/FailedToAddNewListing'
+
+    ListingDetailsUpdated:
+      name: ListingDetailsUpdated
+      payload:
+        $ref: '#/components/schemas/payloads/ListingDetailsUpdated'
+
+    ListingPublished:
+      name: ListingPublished
+      payload:
+        $ref: '#/components/schemas/payloads/ListingPublished'
+
+    GeneratedUrlForUploadListingPhoto:
+      name: GeneratedUrlForUploadListingPhoto
+      payload:
+        $ref: '#/components/schemas/payloads/GeneratedUrlForUploadListingPhoto'
+
+    FailedGenerateUrlForUploadListingPhoto:
+      name: FailedGenerateUrlForUploadListingPhoto
+      payload:
+        $ref: '#/components/schemas/payloads/FailedGenerateUrlForUploadListingPhoto'
+
+    AddedNewPhotoToListing:
+      name: AddedNewPhotoToListing
+      payload:
+        $ref: '#/components/schemas/payloads/AddedNewPhotoToListing'
+
+  schemas:
+    values:
+      UserId:
+        title: UserId
+        type: string
+        format: uuid
+      FullName:
+        title: FullName
+        type: object
+        required:
+          - firstName
+          - lastName
+        properties:
+          firstName:
+            type: string
+          lastName:
+            type: string
+
+      ListingStatus:
+        title: ListingStatus
+        type: string
+        enum:
+          - PUBLISHED
+          - DRAFT
+          - READY_FOR_PUBLISHING
+
+      RoomType:
+        title: RoomType
+        type: string
+        enum:
+          - ENTIRE_PLACE
+          - PRIVATE_ROOM
+          - SHARED_ROOM
+
+      PropertyType:
+        title: PropertyType
+        type: string
+        additionalProperties: false
+        enum:
+            - APARTMENT
+            - HOUSE
+            - VILLA
+            - CABIN
+            - COTTAGE
+            - CHALET
+            - BUNGALOW
+            - TOWNHOUSE
+            - GUESTHOUSE
+            - LOFT
+            - HOSTEL
+            - BOAT
+            - BED_AND_BREAKFAST
+            - OTHER
+
+      UploadFileFormData:
+        title: UploadFileFormData
+        type: object
+        additionalProperties: false
+        required:
+          - url
+          - bucketName
+          - objectName
+          - fields
+        properties:
+          url:
+            type: string
+            format: uri
+          bucketName:
+            type: string
+          objectName:
+            type: string
+          fields:
+            type: object
+            additionalProperties:
+              type: string
+      Address:
+        title: Address
+        type: object
+        additionalProperties: false
+        required:
+          - country
+          - city
+          - street
+        properties:
+          street:
+            type: string
+          city:
+            type: string
+          state:
+            type: string
+          country:
+            type: string
+
+      GuestsCapacity:
+        title: GuestsCapacity
+        type: object
+        additionalProperties: false
+        required:
+          - adults
+          - children
+          - infants
+        properties:
+          adults:
+            type: integer
+          children:
+            type: integer
+          infants:
+            type: integer
+
+      ListingDetailsFields:
+        title: ListingDetailsFields
+        type: object
+        additionalProperties: false
+        properties:
+          status:
+            $ref: "#/components/schemas/values/ListingStatus"
+          title:
+            type: string
+          description:
+            type: string
+          guestCapacity:
+            $ref: "#/components/schemas/values/GuestsCapacity"
+          propertyType:
+            $ref: "#/components/schemas/values/PropertyType"
+          roomType:
+            $ref: "#/components/schemas/values/RoomType"
+          address:
+            $ref: "#/components/schemas/values/Address"
+
+      UploadedFileData:
+        title: UploadedFileData
+        type: object
+        additionalProperties: false
+        required:
+          - bucketName
+          - objectName
+        properties:
+          bucketName:
+            type: string
+          objectName:
+            type: string
+
+      ListingPhoto:
+        title: ListingPhoto
+        type: object
+        additionalProperties: false
+        required:
+          - id
+          - bucketName
+          - objectName
+        properties:
+          id:
+            type: string
+          bucketName:
+            type: string
+          objectName:
+            type: string
+
+    payloads:
+      NewListingAdded:
+        title: NewListingAdded
+        type: object
+        additionalProperties: false
+        required:
+          - hostId
+          - listingId
+          - title
+        properties:
+          operationId:
+            $ref: "/Users/azat/dev/my/projects/demo-booking/backend/specs/asyncapi/common/values.yaml#/components/schemas/OperationId"
+          hostId:
+            $ref: "/Users/azat/dev/my/projects/demo-booking/backend/specs/asyncapi/common/values.yaml#/components/schemas/HostId"
+          listingId:
+            $ref: "/Users/azat/dev/my/projects/demo-booking/backend/specs/asyncapi/common/values.yaml#/components/schemas/ListingId"
+          title:
+            type: string
+
+      FailedToAddNewListing:
+        title: FailedToAddNewListing
+        type: object
+        additionalProperties: false
+        required:
+          - hostId
+          - listingId
+          - title
+        properties:
+          hostId:
+            $ref: "/Users/azat/dev/my/projects/demo-booking/backend/specs/asyncapi/common/values.yaml#/components/schemas/HostId"
+          listingId:
+            $ref: "/Users/azat/dev/my/projects/demo-booking/backend/specs/asyncapi/common/values.yaml#/components/schemas/ListingId"
+          title:
+            type: string
+
+      GeneratedUrlForUploadListingPhoto:
+        title: GeneratedUrlForUploadListingPhoto
+        type: object
+        additionalProperties: false
+        required:
+          - userId
+          - listingId
+          - formData
+        properties:
+          operationId:
+            $ref: "/Users/azat/dev/my/projects/demo-booking/backend/specs/asyncapi/common/values.yaml#/components/schemas/OperationId"
+          userId:
+            $ref: "/Users/azat/dev/my/projects/demo-booking/backend/specs/asyncapi/common/values.yaml#/components/schemas/UserId"
+          listingId:
+            $ref: "/Users/azat/dev/my/projects/demo-booking/backend/specs/asyncapi/common/values.yaml#/components/schemas/ListingId"
+          formData:
+            $ref: "#/components/schemas/values/UploadFileFormData"
+
+      FailedGenerateUrlForUploadListingPhoto:
+        title: FailedGenerateUrlForUploadListingPhoto
+        type: object
+        additionalProperties: false
+        required:
+          - operationId
+          - userId
+          - listingId
+          - fileExtension
+          - fileSize
+        properties:
+          operationId:
+            $ref: "/Users/azat/dev/my/projects/demo-booking/backend/specs/asyncapi/common/values.yaml#/components/schemas/OperationId"
+          userId:
+            $ref: "/Users/azat/dev/my/projects/demo-booking/backend/specs/asyncapi/common/values.yaml#/components/schemas/UserId"
+          listingId:
+            $ref: "/Users/azat/dev/my/projects/demo-booking/backend/specs/asyncapi/common/values.yaml#/components/schemas/ListingId"
+          fileExtension:
+            type: string
+          fileSize:
+            type: integer
+
+      AddedNewPhotoToListing:
+        title: AddedNewPhotoToListing
+        type: object
+        additionalProperties: false
+        required:
+          - listingId
+          - photo
+        properties:
+          listingId:
+            $ref: "/Users/azat/dev/my/projects/demo-booking/backend/specs/asyncapi/common/values.yaml#/components/schemas/ListingId"
+          photo:
+            $ref: "#/components/schemas/values/ListingPhoto"
+
+      ListingPublished:
+        title: ListingPublished
+        type: object
+        additionalProperties: false
+        required:
+          - listingId
+          - publishedAt
+        properties:
+          listingId:
+            $ref: "/Users/azat/dev/my/projects/demo-booking/backend/specs/asyncapi/common/values.yaml#/components/schemas/ListingId"
+          publishedAt:
+            type: string
+            format: date-time
+
+      ListingDetailsUpdated:
+        title: ListingDetailsUpdated
+        type: object
+        additionalProperties: false
+        required:
+          - listingId
+          - updatedAt
+          - prevValues
+          - newValues
+        properties:
+          listingId:
+            $ref: "/Users/azat/dev/my/projects/demo-booking/backend/specs/asyncapi/common/values.yaml#/components/schemas/ListingId"
+          updatedAt:
+            type: string
+            format: date-time
+          prevValues:
+            $ref: "#/components/schemas/values/ListingDetailsFields"
+          newValues:
+            $ref: "#/components/schemas/values/ListingDetailsFields"

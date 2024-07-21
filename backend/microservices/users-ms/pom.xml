@@ -27,7 +27,7 @@
         <dependency>
             <groupId>com.azat4dev.booking.shared</groupId>
             <artifactId>shared</artifactId>
-            <version>1.0-SNAPSHOT</version>
+            <version>1.2-SNAPSHOT</version>
         </dependency>
 
         <!-- For Observation AOP -->
@@ -236,6 +236,69 @@
             </plugin>
 
             <plugin>
+                <groupId>com.github.eirslett</groupId>
+                <artifactId>frontend-maven-plugin</artifactId>
+                <version>1.12.1</version>
+                <configuration>
+                    <workingDirectory>./scripts/modelina</workingDirectory>
+                    <installDirectory>java_runtime_node</installDirectory>
+                </configuration>
+                <executions>
+                    <!-- It will install nodejs and npm -->
+                    <execution>
+                        <id>install node and npm</id>
+                        <phase>generate-sources</phase>
+                        <goals>
+                            <goal>install-node-and-npm</goal>
+                        </goals>
+                        <configuration>
+                            <nodeVersion>v18.15.0</nodeVersion>
+                        </configuration>
+                    </execution>
+                    <execution>
+                        <id>Dependencies</id>
+                        <phase>generate-sources</phase>
+                        <goals>
+                            <goal>npm</goal>
+                        </goals>
+                        <configuration>
+                            <arguments>install</arguments>
+                        </configuration>
+                    </execution>
+                    <execution>
+                        <id>Generate sources</id>
+                        <phase>generate-sources</phase>
+                        <goals>
+                            <goal>npm</goal>
+                        </goals>
+                        <configuration>
+                            <arguments>run generate -- --package com.azat4dev.booking.usersms.generated.events.dto --input ../../../../specs/asyncapi/users.yaml --output ../../target/generated-sources/events/src/main/java/</arguments>
+                        </configuration>
+                    </execution>
+                </executions>
+            </plugin>
+
+            <plugin>
+                <groupId>org.codehaus.mojo</groupId>
+                <artifactId>build-helper-maven-plugin</artifactId>
+                <version>3.6.0</version>
+                <executions>
+                    <execution>
+                        <id>add-source</id>
+                        <phase>generate-sources</phase>
+                        <goals>
+                            <goal>add-source</goal>
+                        </goals>
+                        <configuration>
+                            <sources>
+                                <source>${project.basedir}/target/generated-sources/events</source>
+                            </sources>
+                        </configuration>
+                    </execution>
+                </executions>
+            </plugin>
+
+            <plugin>
                 <groupId>org.openapitools</groupId>
                 <artifactId>openapi-generator-maven-plugin</artifactId>
                 <version>7.6.0</version>
@@ -278,50 +341,6 @@
                             </configOptions>
                         </configuration>
                     </execution>
-
-
-                    <execution>
-                        <id>generateDomainEventsDTO</id>
-                        <goals>
-                            <goal>generate</goal>
-                        </goals>
-                        <configuration>
-                            <generatorName>spring</generatorName>
-                            <library>spring-boot</library>
-                            <inputSpec>${project.basedir}/../../specs/events/users/openapi.yaml</inputSpec>
-                            <modelPackage>${default.package}.generated.events.dto</modelPackage>
-                            <ignoreFileOverride>.openapi-generator-ignore</ignoreFileOverride>
-                            <output>${project.basedir}/target/generated-sources/events</output>
-                            <templateDirectory>${project.basedir}/../../specs/custom_templates/spring
-                            </templateDirectory>
-                            <modelNameSuffix>DTO</modelNameSuffix>
-                            <configOptions>
-                                <useOptional>true</useOptional>
-                                <openApiNullable>true</openApiNullable>
-                                <useTags>true</useTags>
-                                <interfaceOnly>true</interfaceOnly>
-                                <additionalModelTypeAnnotations>@lombok.Builder(toBuilder = true)
-                                    @lombok.AllArgsConstructor
-                                    @com.fasterxml.jackson.annotation.JsonIgnoreProperties(ignoreUnknown=true)
-                                </additionalModelTypeAnnotations>
-                                <generatedConstructorWithRequiredArgs>false</generatedConstructorWithRequiredArgs>
-                                <generateSupportingFiles>true</generateSupportingFiles>
-
-                                <dateLibrary>java8-localdatetime</dateLibrary>
-                                <generateConstructorWithAllArgs>false</generateConstructorWithAllArgs>
-
-                                <serializationLibrary>jackson</serializationLibrary>
-                                <generateBuilders>false</generateBuilders>
-                                <useSpringController>false</useSpringController>
-                                <useJakartaEe>true</useJakartaEe>
-                                <useSpringBoot3>true</useSpringBoot3>
-                                <lombok>true</lombok>
-                                <useBeanValidation>true</useBeanValidation>
-                                <hideGenerationTimestamp>true</hideGenerationTimestamp>
-                            </configOptions>
-                        </configuration>
-                    </execution>
-
 
                     <execution>
                         <id>generateApiClient</id>

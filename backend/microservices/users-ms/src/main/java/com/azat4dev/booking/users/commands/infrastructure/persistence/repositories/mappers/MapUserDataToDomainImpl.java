@@ -20,7 +20,7 @@ public class MapUserDataToDomainImpl implements MapUserDataToDomain {
             userData.createdAt(),
             userData.updatedAt(),
             EmailAddress.dangerMakeWithoutChecks(userData.email()),
-            new FullName(
+            FullName.makeWithoutChecks(
                 FirstName.dangerMakeFromStringWithoutCheck(userData.firstName()),
                 LastName.dangerMakeFromStringWithoutCheck(userData.lastName())
             ),

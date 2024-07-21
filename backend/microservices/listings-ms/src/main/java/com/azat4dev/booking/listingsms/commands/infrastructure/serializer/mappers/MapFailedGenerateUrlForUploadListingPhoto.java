@@ -1,0 +1,48 @@
+package com.azat4dev.booking.listingsms.commands.infrastructure.serializer.mappers;
+
+import com.azat4dev.booking.listingsms.commands.domain.events.FailedGenerateUrlForUploadListingPhoto;
+import com.azat4dev.booking.listingsms.commands.domain.values.ListingId;
+import com.azat4dev.booking.listingsms.generated.events.dto.FailedGenerateUrlForUploadListingPhotoDTO;
+import com.azat4dev.booking.shared.data.serializers.MapPayload;
+import com.azat4dev.booking.shared.domain.values.IdempotentOperationId;
+import com.azat4dev.booking.shared.domain.values.files.PhotoFileExtension;
+import com.azat4dev.booking.shared.domain.values.user.UserId;
+import lombok.AllArgsConstructor;
+
+import java.util.UUID;
+
+@AllArgsConstructor
+public final class MapFailedGenerateUrlForUploadListingPhoto implements MapPayload<FailedGenerateUrlForUploadListingPhoto, FailedGenerateUrlForUploadListingPhotoDTO> {
+
+    @Override
+    public FailedGenerateUrlForUploadListingPhotoDTO toDTO(FailedGenerateUrlForUploadListingPhoto dm) {
+        return FailedGenerateUrlForUploadListingPhotoDTO.builder()
+            .operationId(UUID.fromString(dm.operationId().value()))
+            .userId(dm.userId().value())
+            .listingId(dm.listingId().getValue())
+            .fileExtension(dm.fileExtension().toString())
+            .fileSize(dm.fileSize())
+            .build();
+    }
+
+    @Override
+    public FailedGenerateUrlForUploadListingPhoto toDomain(FailedGenerateUrlForUploadListingPhotoDTO dto) {
+        return new FailedGenerateUrlForUploadListingPhoto(
+            IdempotentOperationId.dangerouslyMakeFrom(dto.getOperationId().toString()),
+            UserId.dangerouslyMakeFrom(dto.getUserId().toString()),
+            ListingId.dangerouslyMakeFrom(dto.getListingId().toString()),
+            PhotoFileExtension.dangerouslyMakeFrom(dto.getFileExtension()),
+            dto.getFileSize()
+        );
+    }
+
+    @Override
+    public Class<FailedGenerateUrlForUploadListingPhoto> getDomainClass() {
+        return FailedGenerateUrlForUploadListingPhoto.class;
+    }
+
+    @Override
+    public Class<FailedGenerateUrlForUploadListingPhotoDTO> getDTOClass() {
+        return FailedGenerateUrlForUploadListingPhotoDTO.class;
+    }
+}
