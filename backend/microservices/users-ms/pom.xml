@@ -272,7 +272,7 @@
                             <goal>npm</goal>
                         </goals>
                         <configuration>
-                            <arguments>run generate -- --package com.azat4dev.booking.usersms.generated.events.dto --input ../../../../specs/asyncapi/users.yaml --output ../../target/generated-sources/events/src/main/java/</arguments>
+                            <arguments>run generate -- --package com.azat4dev.booking.usersms.generated.events.dto --input ../../../../specs/asyncapi/users.yaml --output ../../target/generated-sources/events</arguments>
                         </configuration>
                     </execution>
                 </executions>

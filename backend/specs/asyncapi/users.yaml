@@ -28,7 +28,7 @@ channels:
       FailedGenerateUserPhotoUploadUrl:
         $ref: '#/components/messages/FailedGenerateUserPhotoUploadUrl'
 
-  send_verification_email:
+  sendSendVerificationEmail:
     address: 'com.azat4dev.booking.users.commands.internal.send_verification_email'
     x-private: true
     messages:
