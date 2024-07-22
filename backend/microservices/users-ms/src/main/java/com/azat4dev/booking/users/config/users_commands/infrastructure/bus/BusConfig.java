@@ -6,9 +6,9 @@ import com.azat4dev.booking.shared.data.serializers.Mapper;
 import com.azat4dev.booking.shared.domain.events.*;
 import com.azat4dev.booking.shared.domain.interfaces.bus.DomainEventsBus;
 import com.azat4dev.booking.shared.utils.TimeProvider;
+import com.azat4dev.booking.users.commands.domain.core.commands.SendVerificationEmail;
 import com.azat4dev.booking.users.config.common.properties.BusProperties;
 import lombok.AllArgsConstructor;
-import lombok.extern.slf4j.Slf4j;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -53,8 +53,12 @@ public class BusConfig {
             return classesByNames.get(eventType);
         };
 
-        final KafkaDomainEventsBus.GetTopic getTopic = event -> {
-            return busProperties.getEventsTopicPrefix() + "." + event.getSimpleName();
+        final KafkaDomainEventsBus.GetTopic getTopic = messageClass -> {
+            if (messageClass.equals(SendVerificationEmail.class)) {
+                return busProperties.getPrefixForInternalCommandsTopic() + "send_verification_email";
+            }
+
+            return busProperties.getUserEventsTopic() + ".events.user_events_stream";
         };
 
         return new KafkaDomainEventsBus(

@@ -75,7 +75,7 @@ public class KafkaConfig {
         );
 
         final var topics = events.stream()
-            .map(clazz -> busProperties.getEventsTopicPrefix() + "." + clazz.getSimpleName())
+            .map(clazz -> busProperties.getUserEventsTopic() + "." + clazz.getSimpleName())
             .map(topic -> new NewTopic(topic, 1, (short) 1))
             .toList()
             .toArray(new NewTopic[0]);

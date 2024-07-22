@@ -13,5 +13,9 @@ public class BusProperties {
 
     @NotBlank
     @NotNull
-    private final String eventsTopicPrefix;
+    private final String userEventsTopic;
+
+    @NotBlank
+    @NotNull
+    private final String prefixForInternalCommandsTopic;
 }

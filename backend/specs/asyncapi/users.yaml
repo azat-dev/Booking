@@ -4,125 +4,53 @@ info:
   version: 1.0.0
 defaultContentType: application/json
 channels:
-  UserSignedUp:
-    address: 'com.azat4dev.booking.users.1.0.event.UserSignedUp'
+  userEventsStream:
+    address: 'com.azat4dev.booking.users.events.user_events_stream'
     messages:
       UserSignedUp:
         $ref: '#/components/messages/UserSignedUp'
-
-  UserVerifiedEmail:
-    address: 'com.azat4dev.booking.users.1.0.event.UserVerifiedEmail'
-    messages:
       UserVerifiedEmail:
         $ref: '#/components/messages/UserVerifiedEmail'
-
-  VerificationEmailSent:
-    address: 'com.azat4dev.booking.users.1.0.event.VerificationEmailSent'
-    messages:
       VerificationEmailSent:
         $ref: '#/components/messages/VerificationEmailSent'
-
-  FailedToSendVerificationEmail:
-    address: 'com.azat4dev.booking.users.1.0.event.FailedToSendVerificationEmail'
-    messages:
       FailedToSendVerificationEmail:
         $ref: '#/components/messages/FailedToSendVerificationEmail'
+      SentEmailForPasswordReset:
+        $ref: '#/components/messages/SentEmailForPasswordReset'
+      UserDidResetPassword:
+        $ref: '#/components/messages/UserDidResetPassword'
+      GeneratedUserPhotoUploadUrl:
+        $ref: '#/components/messages/GeneratedUserPhotoUploadUrl'
+      UpdatedUserPhoto:
+        $ref: '#/components/messages/UpdatedUserPhoto'
+      FailedUpdateUserPhoto:
+        $ref: '#/components/messages/FailedUpdateUserPhoto'
+      FailedGenerateUserPhotoUploadUrl:
+        $ref: '#/components/messages/FailedGenerateUserPhotoUploadUrl'
 
-  CompleteEmailVerification:
-    address: 'com.azat4dev.booking.users.1.0.event.CompleteEmailVerification'
-    messages:
-      CompleteEmailVerification:
-        $ref: '#/components/messages/CompleteEmailVerification'
-
-  SendVerificationEmail:
-    address: 'com.azat4dev.booking.users.1.0.event.SendVerificationEmail'
+  send_verification_email:
+    address: 'com.azat4dev.booking.users.commands.internal.send_verification_email'
+    x-private: true
     messages:
       SendVerificationEmail:
         $ref: '#/components/messages/SendVerificationEmail'
 
-  SentEmailForPasswordReset:
-    address: 'com.azat4dev.booking.users.1.0.event.SentEmailForPasswordReset'
-    messages:
-      SentEmailForPasswordReset:
-        $ref: '#/components/messages/SentEmailForPasswordReset'
-
-  CompletePasswordReset:
-    address: 'com.azat4dev.booking.users.1.0.event.CompletePasswordReset'
-    messages:
-      CompletePasswordReset:
-        $ref: '#/components/messages/CompletePasswordReset'
-
-  UserDidResetPassword:
-    address: 'com.azat4dev.booking.users.1.0.event.UserDidResetPassword'
-    messages:
-      UserDidResetPassword:
-        $ref: '#/components/messages/UserDidResetPassword'
-
-  GeneratedUserPhotoUploadUrl:
-    address: 'com.azat4dev.booking.users.1.0.event.GeneratedUserPhotoUploadUrl'
-    messages:
-      GeneratedUserPhotoUploadUrl:
-        $ref: '#/components/messages/GeneratedUserPhotoUploadUrl'
-
-  UpdatedUserPhoto:
-    address: 'com.azat4dev.booking.users.1.0.event.UpdatedUserPhoto'
-    messages:
-      UpdatedUserPhoto:
-        $ref: '#/components/messages/UpdatedUserPhoto'
-
-  FailedUpdateUserPhoto:
-    address: 'com.azat4dev.booking.users.1.0.event.FailedUpdateUserPhoto'
-    messages:
-      FailedUpdateUserPhoto:
-        $ref: '#/components/messages/FailedUpdateUserPhoto'
-
-  FailedGenerateUserPhotoUploadUrl:
-    address: 'com.azat4dev.booking.users.1.0.event.FailedGenerateUserPhotoUploadUrl'
-    messages:
-      FailedGenerateUserPhotoUploadUrl:
-        $ref: '#/components/messages/FailedGenerateUserPhotoUploadUrl'
 operations:
-  sendUserSignedUp:
+  sendUserEvents:
     action: send
     channel:
-      $ref: '#/channels/UserSignedUp'
+      $ref: '#/channels/users_events_stream'
     messages:
-      - $ref: '#/channels/UserSignedUp/messages/UserSignedUp'
-        
-  sendUserVerifiedEmail:
-    action: send
-    channel:
-      $ref: '#/channels/UserVerifiedEmail'
-    messages:
-      - $ref: '#/channels/UserVerifiedEmail/messages/UserVerifiedEmail'
-  
-  sendVerificationEmailSent:
-    action: send
-    channel:
-      $ref: '#/channels/VerificationEmailSent'
-    messages:
-      - $ref: '#/channels/VerificationEmailSent/messages/VerificationEmailSent'
-
-  sendFailedToSendVerificationEmail:
-    action: send
-    channel:
-      $ref: '#/channels/FailedToSendVerificationEmail'
-    messages:
-      - $ref: '#/channels/FailedToSendVerificationEmail/messages/FailedToSendVerificationEmail'
-
-  sendCompleteEmailVerification:
-    action: send
-    channel:
-      $ref: '#/channels/CompleteEmailVerification'
-    messages:
-      - $ref: '#/channels/CompleteEmailVerification/messages/CompleteEmailVerification'
-
-  sendSendVerificationEmail:
-    action: send
-    channel:
-      $ref: '#/channels/SendVerificationEmail'
-    messages:
-      - $ref: '#/channels/SendVerificationEmail/messages/SendVerificationEmail'
+      - $ref: '#/channels/userEventsStream/messages/UserSignedUp'
+      - $ref: '#/channels/userEventsStream/messages/UserVerifiedEmail'
+      - $ref: '#/channels/userEventsStream/messages/VerificationEmailSent'
+      - $ref: '#/channels/userEventsStream/messages/FailedToSendVerificationEmail'
+      - $ref: '#/channels/userEventsStream/messages/SentEmailForPasswordReset'
+      - $ref: '#/channels/userEventsStream/messages/UserDidResetPassword'
+      - $ref: '#/channels/userEventsStream/messages/GeneratedUserPhotoUploadUrl'
+      - $ref: '#/channels/userEventsStream/messages/UpdatedUserPhoto'
+      - $ref: '#/channels/userEventsStream/messages/FailedUpdateUserPhoto'
+      - $ref: '#/channels/userEventsStream/messages/FailedGenerateUserPhotoUploadUrl'
 
   receiveSendVerificationEmail:
     action: receive
@@ -135,119 +63,278 @@ operations:
         - $ref: "#/channels/VerificationEmailSent/messages/VerificationEmailSent"
         - $ref: "#/channels/FailedToSendVerificationEmail/messages/FailedToSendVerificationEmail"
 
-  sendSentEmailForPasswordReset:
-    action: send
-    channel:
-      $ref: '#/channels/SentEmailForPasswordReset'
-    messages:
-      - $ref: '#/channels/SentEmailForPasswordReset/messages/SentEmailForPasswordReset'
-
-  sendCompletePasswordReset:
-    action: send
-    channel:
-      $ref: '#/channels/CompletePasswordReset'
-    messages:
-      - $ref: '#/channels/CompletePasswordReset/messages/CompletePasswordReset'
-
-  sendUserDidResetPassword:
-    action: send
-    channel:
-      $ref: '#/channels/UserDidResetPassword'
-    messages:
-      - $ref: '#/channels/UserDidResetPassword/messages/UserDidResetPassword'
-
-  sendGeneratedUserPhotoUploadUrl:
-    action: send
-    channel:
-      $ref: '#/channels/GeneratedUserPhotoUploadUrl'
-    messages:
-      - $ref: '#/channels/GeneratedUserPhotoUploadUrl/messages/GeneratedUserPhotoUploadUrl'
-
-  sendUpdatedUserPhoto:
-    action: send
-    channel:
-      $ref: '#/channels/UpdatedUserPhoto'
-    messages:
-      - $ref: '#/channels/UpdatedUserPhoto/messages/UpdatedUserPhoto'
-
-  sendFailedUpdateUserPhoto:
-    action: send
-    channel:
-      $ref: '#/channels/FailedUpdateUserPhoto'
-    messages:
-      - $ref: '#/channels/FailedUpdateUserPhoto/messages/FailedUpdateUserPhoto'
-
-  sendFailedGenerateUserPhotoUploadUrl:
-    action: send
-    channel:
-      $ref: '#/channels/FailedGenerateUserPhotoUploadUrl'
-    messages:
-      - $ref: '#/channels/FailedGenerateUserPhotoUploadUrl/messages/FailedGenerateUserPhotoUploadUrl'
-
 components:
   messages:
     UserSignedUp:
       name: UserSignedUp
+      headers:
+        type: object
+        required:
+          - event_id
+          - event_type
+          - issued_at
+        properties:
+          event_id:
+            type: string
+          event_type:
+            type: string
+            enum:
+              - UserSignedUp
+          issued_at:
+            type: string
+            format: date-time
       payload:
         $ref: '#/components/schemas/payloads/UserSignedUp'
 
     UserVerifiedEmail:
       name: UserVerifiedEmail
+      headers:
+        type: object
+        required:
+          - event_id
+          - event_type
+          - issued_at
+        properties:
+          event_id:
+            type: string
+          event_type:
+            type: string
+            enum:
+              - UserVerifiedEmail
+          issued_at:
+            type: string
+            format: date-time
       payload:
         $ref: '#/components/schemas/payloads/UserVerifiedEmail'
 
     VerificationEmailSent:
       name: VerificationEmailSent
+      headers:
+        type: object
+        required:
+          - event_id
+          - event_type
+          - issued_at
+        properties:
+          event_id:
+            type: string
+          event_type:
+            type: string
+            enum:
+              - VerificationEmailSent
+          issued_at:
+            type: string
+            format: date-time
       payload:
         $ref: '#/components/schemas/payloads/VerificationEmailSent'
 
     FailedToSendVerificationEmail:
       name: FailedToSendVerificationEmail
+      headers:
+        type: object
+        required:
+          - event_id
+          - event_type
+          - issued_at
+        properties:
+          event_id:
+            type: string
+          event_type:
+            type: string
+            enum:
+              - FailedToSendVerificationEmail
+          issued_at:
+            type: string
+            format: date-time
       payload:
         $ref: '#/components/schemas/payloads/FailedToSendVerificationEmail'
 
     CompleteEmailVerification:
       name: CompleteEmailVerification
+      headers:
+        type: object
+        required:
+          - event_id
+          - event_type
+          - issued_at
+        properties:
+          event_id:
+            type: string
+          event_type:
+            type: string
+            enum:
+              - CompleteEmailVerification
+          issued_at:
+            type: string
+            format: date-time
       payload:
         $ref: '#/components/schemas/payloads/CompleteEmailVerification'
 
     SendVerificationEmail:
       name: SendVerificationEmail
+      headers:
+        type: object
+        required:
+          - event_id
+          - event_type
+          - issued_at
+        properties:
+          event_id:
+            type: string
+          event_type:
+            type: string
+            enum:
+              - SendVerificationEmail
+          issued_at:
+            type: string
+            format: date-time
       payload:
         $ref: '#/components/schemas/payloads/SendVerificationEmail'
 
     SentEmailForPasswordReset:
       name: SentEmailForPasswordReset
+      headers:
+        type: object
+        required:
+          - event_id
+          - event_type
+          - issued_at
+        properties:
+          event_id:
+            type: string
+          event_type:
+            type: string
+            enum:
+              - SentEmailForPasswordReset
+          issued_at:
+            type: string
+            format: date-time
       payload:
         $ref: '#/components/schemas/payloads/SentEmailForPasswordReset'
 
     CompletePasswordReset:
       name: CompletePasswordReset
+      headers:
+        type: object
+        required:
+          - event_id
+          - event_type
+          - issued_at
+        properties:
+          event_id:
+            type: string
+          event_type:
+            type: string
+            enum:
+              - CompletePasswordReset
+          issued_at:
+            type: string
+            format: date-time
       payload:
         $ref: '#/components/schemas/payloads/CompletePasswordReset'
 
     UserDidResetPassword:
       name: UserDidResetPassword
+      headers:
+        type: object
+        required:
+          - event_id
+          - event_type
+          - issued_at
+        properties:
+          event_id:
+            type: string
+          event_type:
+            type: string
+            enum:
+              - UserDidResetPassword
+          issued_at:
+            type: string
+            format: date-time
       payload:
         $ref: '#/components/schemas/payloads/UserDidResetPassword'
 
     GeneratedUserPhotoUploadUrl:
       name: GeneratedUserPhotoUploadUrl
+      headers:
+        type: object
+        required:
+          - event_id
+          - event_type
+          - issued_at
+        properties:
+          event_id:
+            type: string
+          event_type:
+            type: string
+            enum:
+              - GeneratedUserPhotoUploadUrl
+          issued_at:
+            type: string
+            format: date-time
       payload:
         $ref: '#/components/schemas/payloads/GeneratedUserPhotoUploadUrl'
 
     UpdatedUserPhoto:
       name: UpdatedUserPhoto
+      headers:
+        type: object
+        required:
+          - event_id
+          - event_type
+          - issued_at
+        properties:
+          event_id:
+            type: string
+          event_type:
+            type: string
+            enum:
+              - UpdatedUserPhoto
+          issued_at:
+            type: string
+            format: date-time
       payload:
         $ref: '#/components/schemas/payloads/UpdatedUserPhoto'
 
     FailedUpdateUserPhoto:
       name: FailedUpdateUserPhoto
+      headers:
+        type: object
+        required:
+          - event_id
+          - event_type
+          - issued_at
+        properties:
+          event_id:
+            type: string
+          event_type:
+            type: string
+            enum:
+              - FailedUpdateUserPhoto
+          issued_at:
+            type: string
+            format: date-time
       payload:
         $ref: '#/components/schemas/payloads/FailedUpdateUserPhoto'
 
     FailedGenerateUserPhotoUploadUrl:
       name: FailedGenerateUserPhotoUploadUrl
+      headers:
+        type: object
+        required:
+          - event_id
+          - event_type
+          - issued_at
+        properties:
+          event_id:
+            type: string
+          event_type:
+            type: string
+            enum:
+              - FailedGenerateUserPhotoUploadUrl
+          issued_at:
+            type: string
+            format: date-time
       payload:
         $ref: '#/components/schemas/payloads/FailedGenerateUserPhotoUploadUrl'
 
