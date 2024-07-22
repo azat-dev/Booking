@@ -147,8 +147,8 @@ generator.generateToFiles(input, FINAL_OUTPUT_PATH, {
 })
     .then((result) => {
         console.log("Model generation completed successfully.");
-        console.log("Generated files:", result);
     })
     .catch((error) => {
         console.error("Model generation failed:", error);
+        throw error;
     });
