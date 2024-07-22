@@ -296,7 +296,7 @@
                             <goal>npm</goal>
                         </goals>
                         <configuration>
-                            <arguments>run generate -- --package com.azat4dev.booking.listingsms.generated.events.dto --input ../../../../specs/asyncapi/listings.yaml --output ../../target/generated-sources/events/src/main/java/</arguments>
+                            <arguments>run generate -- --package com.azat4dev.booking.listingsms.generated.events.dto --input ../../../../specs/asyncapi/listings.yaml --output ../../target/generated-sources/events</arguments>
                         </configuration>
                     </execution>
                 </executions>

@@ -4,131 +4,98 @@ info:
   version: 1.0.0
 defaultContentType: application/json
 channels:
-  NewListingAdded:
-    address: 'com.azat4dev.booking.listings.1.0.event.NewListingAdded'
+  listingEventsStream:
+    address: 'com.azat4dev.booking.listings.events.listing_events_stream'
     messages:
       NewListingAdded:
-        $ref: '#/components/messages/NewListingAdded'
-
-  FailedToAddNewListing:
-    address: 'com.azat4dev.booking.listings.1.0.event.FailedToAddNewListing'
-    messages:
+        $ref: '#/components/messages/events~1NewListingAdded'
       FailedToAddNewListing:
-        $ref: '#/components/messages/FailedToAddNewListing'
-
-  ListingDetailsUpdated:
-    address: 'com.azat4dev.booking.listings.1.0.event.ListingDetailsUpdated'
-    messages:
+        $ref: '#/components/messages/events~1FailedToAddNewListing'
       ListingDetailsUpdated:
-        $ref: '#/components/messages/ListingDetailsUpdated'
-
-  ListingPublished:
-    address: 'com.azat4dev.booking.listings.1.0.event.ListingPublished'
-    messages:
+        $ref: '#/components/messages/events~1ListingDetailsUpdated'
       ListingPublished:
-        $ref: '#/components/messages/ListingPublished'
-
-  GeneratedUrlForUploadListingPhoto:
-    address: 'com.azat4dev.booking.listings.1.0.event.GeneratedUrlForUploadListingPhoto'
-    messages:
+        $ref: '#/components/messages/events~1ListingPublished'
       GeneratedUrlForUploadListingPhoto:
-        $ref: '#/components/messages/GeneratedUrlForUploadListingPhoto'
-
-  FailedGenerateUrlForUploadListingPhoto:
-    address: 'com.azat4dev.booking.listings.1.0.event.FailedGenerateUrlForUploadListingPhoto'
-    messages:
+        $ref: '#/components/messages/events~1GeneratedUrlForUploadListingPhoto'
       FailedGenerateUrlForUploadListingPhoto:
-        $ref: '#/components/messages/FailedGenerateUrlForUploadListingPhoto'
-
-  AddedNewPhotoToListing:
-    address: 'com.azat4dev.booking.listings.1.0.event.AddedNewPhotoToListing'
-    messages:
+        $ref: '#/components/messages/events~1FailedGenerateUrlForUploadListingPhoto'
       AddedNewPhotoToListing:
-        $ref: '#/components/messages/AddedNewPhotoToListing'
+        $ref: '#/components/messages/events~1AddedNewPhotoToListing'
+
+  queriesGetPublicListingDetailsById:
+    address: 'com.azat4dev.booking.listings.1.0.queries.get_public_listing_details_by_id'
+    messages:
+      queriesGet:
+        $ref: '#/components/messages/queries~1GetPublicListingDetailsById'
 
 operations:
-  sendNewListingAdded:
-    action: send
+  receiveGetPublicListingDetailsById:
+    action: receive
     channel:
-      $ref: '#/channels/NewListingAdded'
-    messages:
-      - $ref: '#/channels/NewListingAdded/messages/NewListingAdded'
+      $ref: '#/channels/queriesGetPublicListingDetailsById'
+    reply:
+      messages:
+        - $ref: '#/components/messages/queries~1GetPublicListingDetailsByIdResponse'
+      channel:
+        $ref: '#/channels/queriesGetPublicListingDetailsById'
 
-  sendFailedToAddNewListing:
+  sendListingEvents:
     action: send
     channel:
-      $ref: '#/channels/FailedToAddNewListing'
+      $ref: '#/channels/listingEventsStream'
     messages:
-      - $ref: '#/channels/FailedToAddNewListing/messages/FailedToAddNewListing'
-
-  sendListingDetailsUpdated:
-    action: send
-    channel:
-      $ref: '#/channels/ListingDetailsUpdated'
-    messages:
-      - $ref: '#/channels/ListingDetailsUpdated/messages/ListingDetailsUpdated'
-
-  sendListingPublished:
-    action: send
-    channel:
-      $ref: '#/channels/ListingPublished'
-    messages:
-      - $ref: '#/channels/ListingPublished/messages/ListingPublished'
-
-  sendGeneratedUrlForUploadListingPhoto:
-    action: send
-    channel:
-      $ref: '#/channels/GeneratedUrlForUploadListingPhoto'
-    messages:
-      - $ref: '#/channels/GeneratedUrlForUploadListingPhoto/messages/GeneratedUrlForUploadListingPhoto'
-
-  sendFailedGenerateUrlForUploadListingPhoto:
-    action: send
-    channel:
-      $ref: '#/channels/FailedGenerateUrlForUploadListingPhoto'
-    messages:
-      - $ref: '#/channels/FailedGenerateUrlForUploadListingPhoto/messages/FailedGenerateUrlForUploadListingPhoto'
-
-  sendAddedNewPhotoToListing:
-    action: send
-    channel:
-      $ref: '#/channels/AddedNewPhotoToListing'
-    messages:
-      - $ref: '#/channels/AddedNewPhotoToListing/messages/AddedNewPhotoToListing'
+      - $ref: '#/channels/listingEventsStream/messages/NewListingAdded'
+      - $ref: '#/channels/listingEventsStream/messages/FailedToAddNewListing'
+      - $ref: '#/channels/listingEventsStream/messages/ListingDetailsUpdated'
+      - $ref: '#/channels/listingEventsStream/messages/ListingPublished'
+      - $ref: '#/channels/listingEventsStream/messages/GeneratedUrlForUploadListingPhoto'
+      - $ref: '#/channels/listingEventsStream/messages/FailedGenerateUrlForUploadListingPhoto'
+      - $ref: '#/channels/listingEventsStream/messages/AddedNewPhotoToListing'
 
 components:
   messages:
-    NewListingAdded:
+    
+    queries/GetPublicListingDetailsById:
+      name: GetPublicListingDetailsById
+      payload:
+        $ref: '#/components/schemas/queries/GetPublicListingDetailsById'
+        
+    queries/GetPublicListingDetailsByIdResponse:
+      name: GetPublicListingDetailsById
+      payload:
+        $ref: '#/components/schemas/queries/GetPublicListingDetailsById'
+
+    events/NewListingAdded:
       name: NewListingAdded
       payload:
         $ref: '#/components/schemas/payloads/NewListingAdded'
 
-    FailedToAddNewListing:
+    events/FailedToAddNewListing:
       name: FailedToAddNewListing
       payload:
         $ref: '#/components/schemas/payloads/FailedToAddNewListing'
 
-    ListingDetailsUpdated:
+    events/ListingDetailsUpdated:
       name: ListingDetailsUpdated
       payload:
         $ref: '#/components/schemas/payloads/ListingDetailsUpdated'
 
-    ListingPublished:
+    events/ListingPublished:
       name: ListingPublished
       payload:
         $ref: '#/components/schemas/payloads/ListingPublished'
 
-    GeneratedUrlForUploadListingPhoto:
+    events/GeneratedUrlForUploadListingPhoto:
       name: GeneratedUrlForUploadListingPhoto
       payload:
         $ref: '#/components/schemas/payloads/GeneratedUrlForUploadListingPhoto'
 
-    FailedGenerateUrlForUploadListingPhoto:
+    events/FailedGenerateUrlForUploadListingPhoto:
       name: FailedGenerateUrlForUploadListingPhoto
       payload:
         $ref: '#/components/schemas/payloads/FailedGenerateUrlForUploadListingPhoto'
 
-    AddedNewPhotoToListing:
+    events/AddedNewPhotoToListing:
       name: AddedNewPhotoToListing
       payload:
         $ref: '#/components/schemas/payloads/AddedNewPhotoToListing'
@@ -172,20 +139,20 @@ components:
         type: string
         additionalProperties: false
         enum:
-            - APARTMENT
-            - HOUSE
-            - VILLA
-            - CABIN
-            - COTTAGE
-            - CHALET
-            - BUNGALOW
-            - TOWNHOUSE
-            - GUESTHOUSE
-            - LOFT
-            - HOSTEL
-            - BOAT
-            - BED_AND_BREAKFAST
-            - OTHER
+          - APARTMENT
+          - HOUSE
+          - VILLA
+          - CABIN
+          - COTTAGE
+          - CHALET
+          - BUNGALOW
+          - TOWNHOUSE
+          - GUESTHOUSE
+          - LOFT
+          - HOSTEL
+          - BOAT
+          - BED_AND_BREAKFAST
+          - OTHER
 
       UploadFileFormData:
         title: UploadFileFormData
@@ -412,10 +379,25 @@ components:
             $ref: "#/components/schemas/values/ListingDetailsFields"
           newValues:
             $ref: "#/components/schemas/values/ListingDetailsFields"
-            
+
     queries:
-      GetListingById:
-        title: GetListingById
+      GetPublicListingDetailsById:
+        title: GetPublicListingDetailsById
+        type: object
+        additionalProperties: false
+        required:
+          - correlationId
+          - replyTopic
+          - params
+        properties:
+          correlationId:
+            type: string
+          replyTopic:
+            type: string
+          params:
+            $ref: "#/components/schemas/queries/GetPublicListingDetailsByIdParams"
+      GetPublicListingDetailsByIdParams:
+        title: GetPublicListingDetailsByIdParams
         type: object
         additionalProperties: false
         required:
@@ -423,3 +405,55 @@ components:
         properties:
           listingId:
             $ref: "./common/values.yaml#/components/schemas/ListingId"
+
+      GetPublicListingDetailsByIdResponse:
+        title: GetPublicListingDetailsByIdResponse
+        type: object
+        additionalProperties: false
+        required:
+          - correlationId
+          - listingId
+          - data
+        properties:
+          correlationId:
+            type: string
+          params:
+            $ref: "#/components/schemas/queries/GetPublicListingDetailsByIdParams"
+          data:
+            $ref: "#/components/schemas/queries/GetPublicListingDetailsByIdResponseData"
+
+      GetPublicListingDetailsByIdResponseData:
+        title: GetPublicListingDetailsByIdResponseData
+        type: object
+        additionalProperties: false
+        required:
+          - listingId
+          - title
+          - description
+          - address
+          - roomType
+          - propertyType
+          - guestCapacity
+          - photos
+          - status
+        properties:
+          listingId:
+            $ref: "./common/values.yaml#/components/schemas/ListingId"
+          title:
+            type: string
+          description:
+            type: string
+          address:
+            $ref: "#/components/schemas/values/Address"
+          roomType:
+            $ref: "#/components/schemas/values/RoomType"
+          propertyType:
+            $ref: "#/components/schemas/values/PropertyType"
+          guestCapacity:
+            $ref: "#/components/schemas/values/GuestsCapacity"
+          photos:
+            type: array
+            items:
+              $ref: "#/components/schemas/values/ListingPhoto"
+          status:
+            $ref: "#/components/schemas/values/ListingStatus"

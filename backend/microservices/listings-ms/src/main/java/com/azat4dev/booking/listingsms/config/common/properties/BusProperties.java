@@ -13,5 +13,5 @@ public class BusProperties {
 
     @NotBlank
     @NotNull
-    private final String eventsTopicPrefix;
+    private final String listingEventsStreamTopic;
 }

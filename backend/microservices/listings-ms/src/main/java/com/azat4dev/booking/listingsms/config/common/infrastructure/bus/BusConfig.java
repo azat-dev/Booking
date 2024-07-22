@@ -43,8 +43,8 @@ public class BusConfig {
             return classesByNames.get(eventType);
         };
 
-        final KafkaDomainEventsBus.GetTopic getTopic = event -> {
-            return busProperties.getEventsTopicPrefix() + "." + event.getSimpleName();
+        final KafkaDomainEventsBus.GetTopic getTopic = messageClass -> {
+            return busProperties.getListingEventsStreamTopic();
         };
 
         return new KafkaDomainEventsBus(
