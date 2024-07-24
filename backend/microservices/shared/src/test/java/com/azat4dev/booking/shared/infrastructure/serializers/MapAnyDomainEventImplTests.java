@@ -1,8 +1,8 @@
-package data.serializers;
+package com.azat4dev.booking.shared.infrastructure.serializers;
 
-import com.azat4dev.booking.shared.data.serializers.DomainEventSerializer;
-import com.azat4dev.booking.shared.data.serializers.DomainEventsSerializerJson;
-import com.azat4dev.booking.shared.data.serializers.MapPayload;
+import com.azat4dev.booking.shared.data.serializers.MapAnyDomainEvent;
+import com.azat4dev.booking.shared.data.serializers.MapAnyDomainEventImpl;
+import com.azat4dev.booking.shared.data.serializers.MapDomainEvent;
 import com.azat4dev.booking.shared.domain.events.DomainEventPayload;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -12,9 +12,11 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 import org.junit.jupiter.api.Test;
 
+import java.util.List;
+
 import static org.assertj.core.api.Assertions.assertThat;
 
-class DomainEventSerializerJsonTests {
+class MapAnyDomainEventImplTests {
 
     @AllArgsConstructor
     @NoArgsConstructor
@@ -32,39 +34,37 @@ class DomainEventSerializerJsonTests {
         private String value;
     }
 
-    private static class MapTestDomainEvent implements MapPayload<TestDomainEvent, TestDomainEventDTO> {
+    private static class MapTestDomainEvent implements MapDomainEvent<TestDomainEvent, TestDomainEventDTO> {
 
         @Override
-        public TestDomainEventDTO toDTO(TestDomainEvent dm) {
+        public TestDomainEventDTO serialize(TestDomainEvent dm) {
             return new TestDomainEventDTO(dm.getValue());
         }
 
+
         @Override
-        public TestDomainEvent toDomain(TestDomainEventDTO dto) {
+        public TestDomainEvent deserialize(TestDomainEventDTO dto) {
             return new TestDomainEvent(dto.getValue());
         }
 
         @Override
-        public Class getDomainClass() {
+        public Class getOriginalClass() {
             return TestDomainEvent.class;
         }
 
         @Override
-        public Class getDTOClass() {
+        public Class getSerializedClass() {
             return TestDomainEventDTO.class;
         }
     }
 
-    DomainEventSerializer createSUT() {
+    MapAnyDomainEvent createSUT() {
         final var objectMapper = new ObjectMapper();
         // Register the Jdk8Module to handle Optional
         objectMapper.registerModule(new Jdk8Module());
 
-        return new DomainEventsSerializerJson(
-            objectMapper,
-            new MapPayload[]{
-                new MapTestDomainEvent(),
-            }
+        return new MapAnyDomainEventImpl(
+            List.of(new MapTestDomainEvent())
         );
     }
 
@@ -78,8 +78,8 @@ class DomainEventSerializerJsonTests {
         );
 
         // When
-        final var serialized = sut.serialize(event);
-        final var deserializedValue = sut.deserialize(event.getClass(), serialized);
+        final var serialized = sut.toDTO(event);
+        final var deserializedValue = sut.fromDTO(serialized);
 
         // Then
         assertThat(serialized).isNotNull();

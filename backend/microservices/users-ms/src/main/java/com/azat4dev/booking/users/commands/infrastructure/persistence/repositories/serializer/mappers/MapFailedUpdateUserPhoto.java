@@ -1,6 +1,6 @@
 package com.azat4dev.booking.users.commands.infrastructure.persistence.repositories.serializer.mappers;
 
-import com.azat4dev.booking.shared.data.serializers.MapPayload;
+import com.azat4dev.booking.shared.data.serializers.MapDomainEvent;
 import com.azat4dev.booking.shared.domain.values.IdempotentOperationId;
 import com.azat4dev.booking.shared.domain.values.files.BucketName;
 import com.azat4dev.booking.shared.domain.values.files.MediaObjectName;
@@ -12,10 +12,10 @@ import com.azat4dev.booking.usersms.generated.events.dto.UploadedFileDataDTO;
 import lombok.AllArgsConstructor;
 
 @AllArgsConstructor
-public final class MapFailedUpdateUserPhoto implements MapPayload<FailedUpdateUserPhoto, FailedUpdateUserPhotoDTO> {
+public final class MapFailedUpdateUserPhoto implements MapDomainEvent<FailedUpdateUserPhoto, FailedUpdateUserPhotoDTO> {
 
     @Override
-    public FailedUpdateUserPhotoDTO toDTO(FailedUpdateUserPhoto dm) {
+    public FailedUpdateUserPhotoDTO serialize(FailedUpdateUserPhoto dm) {
         return FailedUpdateUserPhotoDTO.builder()
             .operationId(dm.operationId().toString())
             .userId(dm.userId().toString())
@@ -24,7 +24,7 @@ public final class MapFailedUpdateUserPhoto implements MapPayload<FailedUpdateUs
     }
 
     @Override
-    public FailedUpdateUserPhoto toDomain(FailedUpdateUserPhotoDTO dto) {
+    public FailedUpdateUserPhoto deserialize(FailedUpdateUserPhotoDTO dto) {
         return new FailedUpdateUserPhoto(
             IdempotentOperationId.dangerouslyMakeFrom(dto.getOperationId()),
             UserId.dangerouslyMakeFrom(dto.getUserId()),
@@ -47,12 +47,12 @@ public final class MapFailedUpdateUserPhoto implements MapPayload<FailedUpdateUs
     }
 
     @Override
-    public Class<FailedUpdateUserPhoto> getDomainClass() {
+    public Class<FailedUpdateUserPhoto> getOriginalClass() {
         return FailedUpdateUserPhoto.class;
     }
 
     @Override
-    public Class<FailedUpdateUserPhotoDTO> getDTOClass() {
+    public Class<FailedUpdateUserPhotoDTO> getSerializedClass() {
         return com.azat4dev.booking.usersms.generated.events.dto.FailedUpdateUserPhotoDTO.class;
     }
 }

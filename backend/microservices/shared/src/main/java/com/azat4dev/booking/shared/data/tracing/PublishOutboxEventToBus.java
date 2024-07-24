@@ -19,12 +19,12 @@ public class PublishOutboxEventToBus implements PublishOutboxEvent {
     private final ExecuteWithTraceContext executeWithTraceContext;
 
     @Override
-    public void execute(DomainEventPayload event, LocalDateTime issuedAt, EventId eventId, String tracingInfo) {
+    public void execute(DomainEventPayload event, EventId eventId, String tracingInfo) {
         try {
             final var traceInfo = parseTracingInfo.execute(tracingInfo);
             executeWithTraceContext.run(
                 traceInfo,
-                () -> bus.publish(event, issuedAt, eventId)
+                () -> bus.publish(event, eventId)
             );
         } catch (Exception e) {
             throw new RuntimeException(e);

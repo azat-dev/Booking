@@ -1,4 +1,4 @@
-package com.azat4dev.booking.common.domain;
+package com.azat4dev.booking.shared.config.domain;
 
 import com.azat4dev.booking.shared.domain.Policy;
 import com.azat4dev.booking.shared.domain.events.DomainEventPayload;
@@ -13,9 +13,10 @@ import org.springframework.util.ClassUtils;
 
 import java.io.Closeable;
 import java.io.IOException;
-import java.lang.reflect.ParameterizedType;
-import java.lang.reflect.Type;
-import java.util.*;
+import java.util.Arrays;
+import java.util.LinkedList;
+import java.util.List;
+import java.util.Map;
 import java.util.stream.Collectors;
 
 @Slf4j
@@ -27,29 +28,12 @@ public class ConnectPoliciesConfig {
     private final DomainEventsBus domainEventsBus;
     private final List<Closeable> cancellations = new LinkedList<>();
 
-    private static Type getEventType(Class<?> clazz) {
-
-        final var handlerClass = ClassUtils.getUserClass(clazz);
-
-        return Arrays.stream(handlerClass.getGenericInterfaces())
-            .flatMap(pi -> {
-                if (pi instanceof ParameterizedType inst && inst.getRawType().equals(Policy.class)) {
-                    return Arrays.stream(inst.getActualTypeArguments());
-                }
-
-                return null;
-            })
-            .filter(Objects::nonNull)
-            .findFirst()
-            .orElseThrow(() -> new RuntimeException("Can't find event class for " + clazz));
-    }
-
     private static Map<Class<DomainEventPayload>, List<Policy<DomainEventPayload>>> groupPoliciesByEventType(List<Policy<DomainEventPayload>> policies) {
 
         return policies.stream()
             .collect(
                 Collectors.groupingBy(
-                    i -> (Class<DomainEventPayload>) getEventType(i.getClass()),
+                    Policy::getEventClass,
                     Collectors.toList()
                 )
             );

@@ -10,5 +10,5 @@ public record FailedGenerateUserPhotoUploadUrl(
     PhotoFileExtension fileExtension,
     int fileSize,
     IdempotentOperationId operationId
-) implements DomainEventPayload {
+) implements DomainEventPayload, EventWithUserId {
 }

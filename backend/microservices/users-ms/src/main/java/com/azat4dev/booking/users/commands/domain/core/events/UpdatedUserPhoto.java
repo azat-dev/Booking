@@ -10,5 +10,5 @@ public record UpdatedUserPhoto(
     UserId userId,
     UserPhotoPath newPhotoPath,
     Optional<UserPhotoPath> prevPhotoPath
-) implements DomainEventPayload {
+) implements DomainEventPayload, EventWithUserId {
 }

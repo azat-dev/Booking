@@ -4,14 +4,14 @@ import com.azat4dev.booking.shared.application.ValidationException;
 import com.azat4dev.booking.shared.domain.DomainException;
 import com.azat4dev.booking.users.commands.application.commands.email.verification.CompleteEmailVerification;
 
-public interface CompleteEmailVerificationHandler {
+public interface CompleteEmailVerificationHandler  {
 
     void handle(CompleteEmailVerification command) throws Exception, ValidationException;
 
     // Exceptions
 
     abstract class Exception extends DomainException {
-        public Exception(String message) {
+        protected Exception(String message) {
             super(message);
         }
 

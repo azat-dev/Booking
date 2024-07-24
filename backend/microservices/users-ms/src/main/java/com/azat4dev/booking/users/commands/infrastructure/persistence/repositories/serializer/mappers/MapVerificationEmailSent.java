@@ -3,15 +3,15 @@ package com.azat4dev.booking.users.commands.infrastructure.persistence.repositor
 import com.azat4dev.booking.shared.domain.values.user.UserId;
 import com.azat4dev.booking.users.commands.domain.core.events.VerificationEmailSent;
 import com.azat4dev.booking.users.commands.domain.core.values.email.EmailAddress;
-import com.azat4dev.booking.shared.data.serializers.MapPayload;
+import com.azat4dev.booking.shared.data.serializers.MapDomainEvent;
 import com.azat4dev.booking.usersms.generated.events.dto.VerificationEmailSentDTO;
 import lombok.AllArgsConstructor;
 
 @AllArgsConstructor
-public final class MapVerificationEmailSent implements MapPayload<VerificationEmailSent, VerificationEmailSentDTO> {
+public final class MapVerificationEmailSent implements MapDomainEvent<VerificationEmailSent, VerificationEmailSentDTO> {
 
     @Override
-    public VerificationEmailSentDTO toDTO(VerificationEmailSent dm) {
+    public VerificationEmailSentDTO serialize(VerificationEmailSent dm) {
         return VerificationEmailSentDTO.builder()
             .userId(dm.userId().toString())
             .email(dm.emailAddress().getValue())
@@ -19,7 +19,7 @@ public final class MapVerificationEmailSent implements MapPayload<VerificationEm
     }
 
     @Override
-    public VerificationEmailSent toDomain(VerificationEmailSentDTO dto) {
+    public VerificationEmailSent deserialize(VerificationEmailSentDTO dto) {
         return new VerificationEmailSent(
             UserId.dangerouslyMakeFrom(dto.getUserId()),
             EmailAddress.dangerMakeWithoutChecks(dto.getEmail())
@@ -27,12 +27,12 @@ public final class MapVerificationEmailSent implements MapPayload<VerificationEm
     }
 
     @Override
-    public Class<VerificationEmailSent> getDomainClass() {
+    public Class<VerificationEmailSent> getOriginalClass() {
         return VerificationEmailSent.class;
     }
 
     @Override
-    public Class<VerificationEmailSentDTO> getDTOClass() {
+    public Class<VerificationEmailSentDTO> getSerializedClass() {
         return VerificationEmailSentDTO.class;
     }
 }

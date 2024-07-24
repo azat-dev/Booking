@@ -3,15 +3,15 @@ package com.azat4dev.booking.users.commands.infrastructure.persistence.repositor
 import com.azat4dev.booking.shared.domain.values.user.UserId;
 import com.azat4dev.booking.users.commands.domain.core.events.UserVerifiedEmail;
 import com.azat4dev.booking.users.commands.domain.core.values.email.EmailAddress;
-import com.azat4dev.booking.shared.data.serializers.MapPayload;
+import com.azat4dev.booking.shared.data.serializers.MapDomainEvent;
 import com.azat4dev.booking.usersms.generated.events.dto.UserVerifiedEmailDTO;
 import lombok.AllArgsConstructor;
 
 @AllArgsConstructor
-public final class MapUserVerifiedEmail implements MapPayload<UserVerifiedEmail, UserVerifiedEmailDTO> {
+public final class MapUserVerifiedEmail implements MapDomainEvent<UserVerifiedEmail, UserVerifiedEmailDTO> {
 
     @Override
-    public UserVerifiedEmailDTO toDTO(UserVerifiedEmail dm) {
+    public UserVerifiedEmailDTO serialize(UserVerifiedEmail dm) {
         return UserVerifiedEmailDTO.builder()
             .userId(dm.userId().toString())
             .email(dm.emailAddress().getValue())
@@ -19,7 +19,7 @@ public final class MapUserVerifiedEmail implements MapPayload<UserVerifiedEmail,
     }
 
     @Override
-    public UserVerifiedEmail toDomain(UserVerifiedEmailDTO dto) {
+    public UserVerifiedEmail deserialize(UserVerifiedEmailDTO dto) {
         return new UserVerifiedEmail(
             UserId.dangerouslyMakeFrom(dto.getUserId()),
             EmailAddress.dangerMakeWithoutChecks(dto.getEmail())
@@ -27,12 +27,12 @@ public final class MapUserVerifiedEmail implements MapPayload<UserVerifiedEmail,
     }
 
     @Override
-    public Class<UserVerifiedEmail> getDomainClass() {
+    public Class<UserVerifiedEmail> getOriginalClass() {
         return UserVerifiedEmail.class;
     }
 
     @Override
-    public Class<UserVerifiedEmailDTO> getDTOClass() {
+    public Class<UserVerifiedEmailDTO> getSerializedClass() {
         return UserVerifiedEmailDTO.class;
     }
 }

@@ -1,6 +1,6 @@
 package com.azat4dev.booking.users.config.users_commands.domain;
 
-import com.azat4dev.booking.common.domain.AutoConnectCommandHandlersToBus;
+import com.azat4dev.booking.shared.config.domain.AutoConnectCommandHandlersToBus;
 import com.azat4dev.booking.shared.domain.interfaces.tracing.ExtractTraceContext;
 import com.azat4dev.booking.shared.domain.producers.OutboxEventsReader;
 import com.azat4dev.booking.shared.domain.values.user.UserIdFactory;

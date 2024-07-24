@@ -7,5 +7,5 @@ import com.azat4dev.booking.shared.domain.values.user.UserId;
 public record GeneratedUserPhotoUploadUrl(
     UserId userId,
     UploadFileFormData formData
-) implements DomainEventPayload {
+) implements DomainEventPayload, EventWithUserId {
 }

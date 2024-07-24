@@ -7,4 +7,8 @@ public record DomainEvent<P extends DomainEventPayload>(
     LocalDateTime issuedAt,
     P payload
 ) {
+
+    public <T> T payload(Class<T> clazz) {
+        return clazz.cast(payload);
+    }
 }

@@ -3,15 +3,15 @@ package com.azat4dev.booking.users.commands.infrastructure.persistence.repositor
 import com.azat4dev.booking.users.commands.domain.core.values.user.FirstName;
 import com.azat4dev.booking.users.commands.domain.core.values.user.FullName;
 import com.azat4dev.booking.users.commands.domain.core.values.user.LastName;
-import com.azat4dev.booking.shared.data.serializers.Mapper;
+import com.azat4dev.booking.shared.data.serializers.Serializer;
 import com.azat4dev.booking.usersms.generated.events.dto.FullNameDTO;
 import lombok.AllArgsConstructor;
 
 @AllArgsConstructor
-public final class MapFullName implements Mapper<FullName, FullNameDTO> {
+public final class MapFullName implements Serializer<FullName, FullNameDTO> {
 
     @Override
-    public FullNameDTO toDTO(FullName dm) {
+    public FullNameDTO serialize(FullName dm) {
         return FullNameDTO.builder()
             .firstName(dm.getFirstName().getValue())
             .lastName(dm.getLastName().getValue())
@@ -19,7 +19,7 @@ public final class MapFullName implements Mapper<FullName, FullNameDTO> {
     }
 
     @Override
-    public FullName toDomain(FullNameDTO dto) {
+    public FullName deserialize(FullNameDTO dto) {
         return FullName.makeWithoutChecks(
             FirstName.dangerMakeFromStringWithoutCheck(dto.getFirstName()),
             LastName.dangerMakeFromStringWithoutCheck(dto.getLastName())
@@ -27,12 +27,12 @@ public final class MapFullName implements Mapper<FullName, FullNameDTO> {
     }
 
     @Override
-    public Class<FullName> getDomainClass() {
+    public Class<FullName> getOriginalClass() {
         return FullName.class;
     }
 
     @Override
-    public Class<FullNameDTO> getDTOClass() {
+    public Class<FullNameDTO> getSerializedClass() {
         return FullNameDTO.class;
     }
 }

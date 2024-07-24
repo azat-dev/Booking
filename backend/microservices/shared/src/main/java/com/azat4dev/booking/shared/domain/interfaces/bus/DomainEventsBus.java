@@ -6,17 +6,16 @@ import com.azat4dev.booking.shared.domain.events.DomainEventPayload;
 import com.azat4dev.booking.shared.domain.events.EventId;
 
 import java.io.Closeable;
-import java.time.LocalDateTime;
 import java.util.function.Consumer;
 
 
 public interface DomainEventsBus {
 
-    void publish(DomainEventPayload event, LocalDateTime time, EventId eventId);
+    void publish(DomainEventPayload event, EventId eventId);
 
     void publish(Command command);
 
     void publish(DomainEventPayload event);
 
-    Closeable listen(Class<DomainEventPayload> eventType, Consumer<DomainEvent<?>> listener);
+    <T extends DomainEventPayload> Closeable listen(Class<T> eventClass, Consumer<DomainEvent<T>> listener);
 }

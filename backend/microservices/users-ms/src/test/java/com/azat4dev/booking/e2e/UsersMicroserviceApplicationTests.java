@@ -146,7 +146,7 @@ class UsersMicroserviceApplicationTests {
 
         final var token = parseParamFromLink(signedUpUser.verificationLink, "token");
         // When
-        final var response = apiClient(CommandsEmailVerificationApi::new, port)
+        apiClient(CommandsEmailVerificationApi::new, port)
             .verifyEmail(token);
 
         // Then

@@ -3,15 +3,15 @@ package com.azat4dev.booking.users.commands.infrastructure.persistence.repositor
 import com.azat4dev.booking.shared.domain.values.user.UserId;
 import com.azat4dev.booking.users.commands.domain.core.events.SentEmailForPasswordReset;
 import com.azat4dev.booking.users.commands.domain.core.values.email.EmailAddress;
-import com.azat4dev.booking.shared.data.serializers.MapPayload;
+import com.azat4dev.booking.shared.data.serializers.MapDomainEvent;
 import com.azat4dev.booking.usersms.generated.events.dto.SentEmailForPasswordResetDTO;
 import lombok.AllArgsConstructor;
 
 @AllArgsConstructor
-public final class MapSentEmailForPasswordReset implements MapPayload<SentEmailForPasswordReset, SentEmailForPasswordResetDTO> {
+public final class MapSentEmailForPasswordReset implements MapDomainEvent<SentEmailForPasswordReset, SentEmailForPasswordResetDTO> {
 
     @Override
-    public SentEmailForPasswordResetDTO toDTO(SentEmailForPasswordReset dm) {
+    public SentEmailForPasswordResetDTO serialize(SentEmailForPasswordReset dm) {
         return SentEmailForPasswordResetDTO.builder()
             .userId(dm.userId().toString())
             .email(dm.email().getValue())
@@ -19,7 +19,7 @@ public final class MapSentEmailForPasswordReset implements MapPayload<SentEmailF
     }
 
     @Override
-    public SentEmailForPasswordReset toDomain(SentEmailForPasswordResetDTO dto) {
+    public SentEmailForPasswordReset deserialize(SentEmailForPasswordResetDTO dto) {
         return new SentEmailForPasswordReset(
             UserId.dangerouslyMakeFrom(dto.getUserId()),
             EmailAddress.dangerMakeWithoutChecks(dto.getEmail())
@@ -27,12 +27,12 @@ public final class MapSentEmailForPasswordReset implements MapPayload<SentEmailF
     }
 
     @Override
-    public Class<SentEmailForPasswordReset> getDomainClass() {
+    public Class<SentEmailForPasswordReset> getOriginalClass() {
         return SentEmailForPasswordReset.class;
     }
 
     @Override
-    public Class<SentEmailForPasswordResetDTO> getDTOClass() {
+    public Class<SentEmailForPasswordResetDTO> getSerializedClass() {
         return SentEmailForPasswordResetDTO.class;
     }
 }

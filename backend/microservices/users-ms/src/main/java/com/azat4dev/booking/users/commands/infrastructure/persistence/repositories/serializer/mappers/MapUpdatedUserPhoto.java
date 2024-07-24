@@ -5,13 +5,13 @@ import com.azat4dev.booking.shared.domain.values.files.MediaObjectName;
 import com.azat4dev.booking.shared.domain.values.user.UserId;
 import com.azat4dev.booking.users.commands.domain.core.entities.UserPhotoPath;
 import com.azat4dev.booking.users.commands.domain.core.events.UpdatedUserPhoto;
-import com.azat4dev.booking.shared.data.serializers.MapPayload;
+import com.azat4dev.booking.shared.data.serializers.MapDomainEvent;
 import com.azat4dev.booking.usersms.generated.events.dto.UpdatedUserPhotoDTO;
 import com.azat4dev.booking.usersms.generated.events.dto.UserPhotoPathDTO;
 import lombok.AllArgsConstructor;
 
 @AllArgsConstructor
-public final class MapUpdatedUserPhoto implements MapPayload<UpdatedUserPhoto, UpdatedUserPhotoDTO> {
+public final class MapUpdatedUserPhoto implements MapDomainEvent<UpdatedUserPhoto, UpdatedUserPhotoDTO> {
 
     private static UserPhotoPathDTO toDTO(UserPhotoPath dm) {
         return UserPhotoPathDTO.builder()
@@ -21,7 +21,7 @@ public final class MapUpdatedUserPhoto implements MapPayload<UpdatedUserPhoto, U
     }
 
     @Override
-    public UpdatedUserPhotoDTO toDTO(UpdatedUserPhoto dm) {
+    public UpdatedUserPhotoDTO serialize(UpdatedUserPhoto dm) {
         return UpdatedUserPhotoDTO.builder()
             .userId(dm.userId().toString())
             .newPhotoPath(toDTO(dm.newPhotoPath()))
@@ -37,7 +37,7 @@ public final class MapUpdatedUserPhoto implements MapPayload<UpdatedUserPhoto, U
     }
 
     @Override
-    public UpdatedUserPhoto toDomain(UpdatedUserPhotoDTO dto) {
+    public UpdatedUserPhoto deserialize(UpdatedUserPhotoDTO dto) {
         return new UpdatedUserPhoto(
             UserId.dangerouslyMakeFrom(dto.getUserId()),
             toDomain(dto.getNewPhotoPath()),
@@ -46,12 +46,12 @@ public final class MapUpdatedUserPhoto implements MapPayload<UpdatedUserPhoto, U
     }
 
     @Override
-    public Class<UpdatedUserPhoto> getDomainClass() {
+    public Class<UpdatedUserPhoto> getOriginalClass() {
         return UpdatedUserPhoto.class;
     }
 
     @Override
-    public Class<UpdatedUserPhotoDTO> getDTOClass() {
+    public Class<UpdatedUserPhotoDTO> getSerializedClass() {
         return UpdatedUserPhotoDTO.class;
     }
 }

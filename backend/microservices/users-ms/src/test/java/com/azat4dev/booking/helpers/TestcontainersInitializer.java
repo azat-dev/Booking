@@ -1,5 +1,6 @@
 package com.azat4dev.booking.helpers;
 
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.boot.test.util.TestPropertyValues;
 import org.springframework.context.ApplicationContextInitializer;
 import org.springframework.context.ConfigurableApplicationContext;
@@ -10,6 +11,7 @@ import org.testcontainers.containers.wait.strategy.ShellStrategy;
 import org.testcontainers.lifecycle.Startables;
 import org.testcontainers.utility.DockerImageName;
 
+@Slf4j
 class TestcontainersInitializer implements ApplicationContextInitializer<ConfigurableApplicationContext> {
 
     static PostgreSQLContainer<?> postgres = new PostgreSQLContainer<>(DockerImageName.parse("postgres:15.1"));
@@ -25,6 +27,10 @@ class TestcontainersInitializer implements ApplicationContextInitializer<Configu
 
     @Override
     public void initialize(ConfigurableApplicationContext ctx) {
+
+        log.atInfo()
+            .addArgument(kafka.getBootstrapServers())
+            .log("Kafka bootstrap servers: {}");
 
         TestPropertyValues.of(
             "spring.kafka.bootstrap-servers=" + kafka.getBootstrapServers(),

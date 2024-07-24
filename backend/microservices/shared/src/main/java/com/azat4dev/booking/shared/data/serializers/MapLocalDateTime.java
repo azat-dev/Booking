@@ -6,27 +6,27 @@ import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 
 @AllArgsConstructor
-public final class MapLocalDateTime implements Mapper<LocalDateTime, String> {
+public final class MapLocalDateTime implements Serializer<LocalDateTime, String> {
 
     private final DateTimeFormatter df = DateTimeFormatter.ISO_LOCAL_DATE_TIME;
 
     @Override
-    public String toDTO(LocalDateTime domain) {
+    public String serialize(LocalDateTime domain) {
         return domain.format(df);
     }
 
     @Override
-    public LocalDateTime toDomain(String dto) {
+    public LocalDateTime deserialize(String dto) {
         return LocalDateTime.parse(dto, df);
     }
 
     @Override
-    public Class<LocalDateTime> getDomainClass() {
+    public Class<LocalDateTime> getOriginalClass() {
         return LocalDateTime.class;
     }
 
     @Override
-    public Class<String> getDTOClass() {
+    public Class<String> getSerializedClass() {
         return String.class;
     }
 }

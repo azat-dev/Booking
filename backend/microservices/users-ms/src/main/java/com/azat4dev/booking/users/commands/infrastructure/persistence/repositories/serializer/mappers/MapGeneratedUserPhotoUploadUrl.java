@@ -5,7 +5,7 @@ import com.azat4dev.booking.shared.domain.values.files.MediaObjectName;
 import com.azat4dev.booking.shared.domain.values.files.UploadFileFormData;
 import com.azat4dev.booking.shared.domain.values.user.UserId;
 import com.azat4dev.booking.users.commands.domain.core.events.GeneratedUserPhotoUploadUrl;
-import com.azat4dev.booking.shared.data.serializers.MapPayload;
+import com.azat4dev.booking.shared.data.serializers.MapDomainEvent;
 import com.azat4dev.booking.usersms.generated.events.dto.GeneratedUserPhotoUploadUrlDTO;
 import com.azat4dev.booking.usersms.generated.events.dto.UploadedFileFormDataDTO;
 import lombok.AllArgsConstructor;
@@ -14,10 +14,10 @@ import java.net.MalformedURLException;
 import java.net.URI;
 
 @AllArgsConstructor
-public final class MapGeneratedUserPhotoUploadUrl implements MapPayload<GeneratedUserPhotoUploadUrl, GeneratedUserPhotoUploadUrlDTO> {
+public final class MapGeneratedUserPhotoUploadUrl implements MapDomainEvent<GeneratedUserPhotoUploadUrl, GeneratedUserPhotoUploadUrlDTO> {
 
     @Override
-    public GeneratedUserPhotoUploadUrlDTO toDTO(GeneratedUserPhotoUploadUrl dm) {
+    public GeneratedUserPhotoUploadUrlDTO serialize(GeneratedUserPhotoUploadUrl dm) {
         return GeneratedUserPhotoUploadUrlDTO.builder()
             .userId(dm.userId().toString())
             .formData(toDTO(dm.formData()))
@@ -35,7 +35,7 @@ public final class MapGeneratedUserPhotoUploadUrl implements MapPayload<Generate
     }
 
     @Override
-    public GeneratedUserPhotoUploadUrl toDomain(GeneratedUserPhotoUploadUrlDTO dto) {
+    public GeneratedUserPhotoUploadUrl deserialize(GeneratedUserPhotoUploadUrlDTO dto) {
         return new GeneratedUserPhotoUploadUrl(
             UserId.dangerouslyMakeFrom(dto.getUserId()),
             toDomain(dto.getFormData())
@@ -57,12 +57,12 @@ public final class MapGeneratedUserPhotoUploadUrl implements MapPayload<Generate
     }
 
     @Override
-    public Class<GeneratedUserPhotoUploadUrl> getDomainClass() {
+    public Class<GeneratedUserPhotoUploadUrl> getOriginalClass() {
         return GeneratedUserPhotoUploadUrl.class;
     }
 
     @Override
-    public Class<GeneratedUserPhotoUploadUrlDTO> getDTOClass() {
+    public Class<GeneratedUserPhotoUploadUrlDTO> getSerializedClass() {
         return com.azat4dev.booking.usersms.generated.events.dto.GeneratedUserPhotoUploadUrlDTO.class;
     }
 }

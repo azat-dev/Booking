@@ -1,6 +1,5 @@
 package com.azat4dev.booking.shared.data.repositories.outbox;
 
-import com.azat4dev.booking.shared.data.serializers.DomainEventSerializer;
 import com.azat4dev.booking.shared.data.dao.outbox.OutboxEventData;
 import com.azat4dev.booking.shared.data.dao.outbox.OutboxEventsDao;
 import com.azat4dev.booking.shared.domain.events.DomainEvent;
@@ -12,29 +11,31 @@ import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 
 import java.util.List;
-import java.util.function.Function;
 
 @Slf4j
 @Observed
 @AllArgsConstructor
 public class OutboxEventsRepositoryImpl implements OutboxEventsRepository {
 
-    private final DomainEventSerializer domainEventSerializer;
+    private final OutboxEventSerializer eventSerializer;
     private final OutboxEventsDao outboxEventsDao;
     private final DomainEventsFactory domainEventsFactory;
-
-    private final Function<String, Class<? extends DomainEventPayload>> getPayloadClass;
 
     @Override
     public void publish(DomainEventPayload event, String tracingInfo) {
 
-        final var data = OutboxEventData.makeFromDomain(
-            domainEventsFactory.issue(event),
-            tracingInfo,
-            this.domainEventSerializer
-        );
+        final var wrappedEvent = domainEventsFactory.issue(event);
 
-        this.outboxEventsDao.put(data);
+        this.outboxEventsDao.put(
+            new OutboxEventData(
+                wrappedEvent.id().getValue(),
+                wrappedEvent.issuedAt(),
+                wrappedEvent.payload().getClass().getSimpleName(),
+                eventSerializer.serialize(wrappedEvent.payload()),
+                tracingInfo,
+                false
+            )
+        );
     }
 
     @Override
@@ -48,18 +49,13 @@ public class OutboxEventsRepositoryImpl implements OutboxEventsRepository {
         return this.outboxEventsDao.findNotPublishedEvents(limit)
             .stream()
             .map(rc -> {
-                final var payloadClass = getPayloadClass.apply(rc.eventType());
-                log.atError()
-                    .addArgument(rc.eventType())
-                    .log("Can't get payload class for: eventType={}");
-
                 return new Item(
                     new DomainEvent<>(
                         EventId.dangerouslyCreateFrom(rc.eventId()),
                         rc.createdAt(),
-                        this.domainEventSerializer.deserialize(
-                            payloadClass,
-                            rc.payload()
+                        this.eventSerializer.deserialize(
+                            rc.payload(),
+                            rc.eventType()
                         )
                     ),
                     rc.tracingInfo()

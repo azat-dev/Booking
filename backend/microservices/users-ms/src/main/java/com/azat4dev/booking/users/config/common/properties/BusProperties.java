@@ -1,5 +1,6 @@
 package com.azat4dev.booking.users.config.common.properties;
 
+import jakarta.validation.constraints.Min;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
 import lombok.Data;
@@ -13,9 +14,23 @@ public class BusProperties {
 
     @NotBlank
     @NotNull
-    private final String userEventsTopic;
+    private final String prefixForEventsTopics;
 
     @NotBlank
     @NotNull
-    private final String prefixForInternalCommandsTopic;
+    private final String userEventsTopicName;
+
+    @Min(1)
+    private final Integer userEventsTopicPartitions;
+    private final Short userEventsTopicReplicationFactor;
+    private final Integer userEventsTopicNumberOfConsumers;
+
+    @NotBlank
+    @NotNull
+    private final String internalCommandsTopicPrefix;
+
+    @Min(1)
+    private final Integer internalCommandsTopicPartitions;
+    private final Short internalCommandsTopicReplicationFactor;
+    private final Integer internalCommandsTopicNumberOfConsumers;
 }

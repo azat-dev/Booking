@@ -8,5 +8,5 @@ public record FailedToSendVerificationEmail(
     UserId userId,
     EmailAddress email,
     int attempts
-) implements DomainEventPayload {
+) implements DomainEventPayload, EventWithUserId {
 }

@@ -4,7 +4,8 @@ info:
   version: 1.0.0
 defaultContentType: application/json
 channels:
-  userEventsStream:
+  events/userEventsStream:
+    title: UserEvent
     address: 'com.azat4dev.booking.users.events.user_events_stream'
     messages:
       UserSignedUp:
@@ -28,8 +29,9 @@ channels:
       FailedGenerateUserPhotoUploadUrl:
         $ref: '#/components/messages/FailedGenerateUserPhotoUploadUrl'
 
-  sendSendVerificationEmail:
-    address: 'com.azat4dev.booking.users.commands.internal.send_verification_email'
+  commands/SendVerificationEmail:
+    title: SendVerificationEmail
+    address: 'com.azat4dev.booking.users.commands.internal.SendVerificationEmail'
     x-private: true
     messages:
       SendVerificationEmail:
@@ -39,29 +41,31 @@ operations:
   sendUserEvents:
     action: send
     channel:
-      $ref: '#/channels/users_events_stream'
+      $ref: '#/channels/events~1userEventsStream'
     messages:
-      - $ref: '#/channels/userEventsStream/messages/UserSignedUp'
-      - $ref: '#/channels/userEventsStream/messages/UserVerifiedEmail'
-      - $ref: '#/channels/userEventsStream/messages/VerificationEmailSent'
-      - $ref: '#/channels/userEventsStream/messages/FailedToSendVerificationEmail'
-      - $ref: '#/channels/userEventsStream/messages/SentEmailForPasswordReset'
-      - $ref: '#/channels/userEventsStream/messages/UserDidResetPassword'
-      - $ref: '#/channels/userEventsStream/messages/GeneratedUserPhotoUploadUrl'
-      - $ref: '#/channels/userEventsStream/messages/UpdatedUserPhoto'
-      - $ref: '#/channels/userEventsStream/messages/FailedUpdateUserPhoto'
-      - $ref: '#/channels/userEventsStream/messages/FailedGenerateUserPhotoUploadUrl'
+      - $ref: '#/channels/events~1userEventsStream/messages/UserSignedUp'
+      - $ref: '#/channels/events~1userEventsStream/messages/UserVerifiedEmail'
+      - $ref: '#/channels/events~1userEventsStream/messages/VerificationEmailSent'
+      - $ref: '#/channels/events~1userEventsStream/messages/FailedToSendVerificationEmail'
+      - $ref: '#/channels/events~1userEventsStream/messages/SentEmailForPasswordReset'
+      - $ref: '#/channels/events~1userEventsStream/messages/UserDidResetPassword'
+      - $ref: '#/channels/events~1userEventsStream/messages/GeneratedUserPhotoUploadUrl'
+      - $ref: '#/channels/events~1userEventsStream/messages/UpdatedUserPhoto'
+      - $ref: '#/channels/events~1userEventsStream/messages/FailedUpdateUserPhoto'
+      - $ref: '#/channels/events~1userEventsStream/messages/FailedGenerateUserPhotoUploadUrl'
 
   receiveSendVerificationEmail:
     action: receive
     channel:
-      $ref: '#/channels/SendVerificationEmail'
+      $ref: '#/channels/commands~1SendVerificationEmail'
     messages:
-      - $ref: '#/channels/SendVerificationEmail/messages/SendVerificationEmail'
+      - $ref: '#/channels/commands~1SendVerificationEmail/messages/SendVerificationEmail'
     reply:
+      channel:
+        $ref: '#/channels/events~1userEventsStream'
       messages:
-        - $ref: "#/channels/VerificationEmailSent/messages/VerificationEmailSent"
-        - $ref: "#/channels/FailedToSendVerificationEmail/messages/FailedToSendVerificationEmail"
+        - $ref: "#/channels/events~1userEventsStream/messages/VerificationEmailSent"
+        - $ref: "#/channels/events~1userEventsStream/messages/FailedToSendVerificationEmail"
 
 components:
   messages:

@@ -39,4 +39,9 @@ public class ProduceSendVerificationEmailCommandAfterSignUpPolicy implements Pol
             .addArgument(eventId::getValue)
             .log("SendVerificationEmail command produced after UserSignedUp event: userId={}, eventId={}");
     }
+
+    @Override
+    public Class<UserSignedUp> getEventClass() {
+        return UserSignedUp.class;
+    }
 }

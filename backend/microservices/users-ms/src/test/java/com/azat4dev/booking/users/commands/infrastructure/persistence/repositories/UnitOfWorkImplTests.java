@@ -34,7 +34,7 @@ import static org.junit.jupiter.api.Assertions.assertThrows;
     OutboxEventsRepositoryConfig.class, OutboxEventsRepositoryConfig.class, OutboxEventsDaoConfig.class})
 @JdbcTest(properties = {"spring.datasource.url=jdbc:tc:postgresql:15-alpine:///"})
 @AutoConfigureTestDatabase(replace = AutoConfigureTestDatabase.Replace.NONE)
-public class UnitOfWorkImplTests {
+class UnitOfWorkImplTests {
 
     @Autowired
     UsersRepository usersRepository;

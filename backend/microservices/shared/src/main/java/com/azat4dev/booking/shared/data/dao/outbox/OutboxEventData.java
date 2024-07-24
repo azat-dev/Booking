@@ -1,6 +1,6 @@
 package com.azat4dev.booking.shared.data.dao.outbox;
 
-import com.azat4dev.booking.shared.data.serializers.DomainEventSerializer;
+import com.azat4dev.booking.shared.data.serializers.MapAnyDomainEvent;
 import com.azat4dev.booking.shared.domain.events.DomainEvent;
 
 import javax.annotation.Nullable;
@@ -20,14 +20,14 @@ public record OutboxEventData(
     public static OutboxEventData makeFromDomain(
         DomainEvent<?> event,
         @Nullable String tracingInfo,
-        DomainEventSerializer serializer
+        MapAnyDomainEvent mapEvent
     ) {
 
         return new OutboxEventData(
             event.id().getValue(),
             event.issuedAt(),
             event.payload().getClass().getSimpleName(),
-            serializer.serialize(event.payload()),
+            mapEvent.toDTO(event.payload()),
             tracingInfo,
             false
         );

@@ -1,6 +1,6 @@
 package com.azat4dev.booking.users.commands.infrastructure.persistence.repositories.serializer.mappers;
 
-import com.azat4dev.booking.shared.data.serializers.MapPayload;
+import com.azat4dev.booking.shared.data.serializers.MapDomainEvent;
 import com.azat4dev.booking.shared.domain.values.IdempotentOperationId;
 import com.azat4dev.booking.shared.domain.values.files.PhotoFileExtension;
 import com.azat4dev.booking.shared.domain.values.user.UserId;
@@ -9,10 +9,10 @@ import com.azat4dev.booking.usersms.generated.events.dto.FailedGenerateUserPhoto
 import lombok.AllArgsConstructor;
 
 @AllArgsConstructor
-public final class MapFailedGenerateUserPhotoUploadUrl implements MapPayload<FailedGenerateUserPhotoUploadUrl, FailedGenerateUserPhotoUploadUrlDTO> {
+public final class MapFailedGenerateUserPhotoUploadUrl implements MapDomainEvent<FailedGenerateUserPhotoUploadUrl, FailedGenerateUserPhotoUploadUrlDTO> {
 
     @Override
-    public FailedGenerateUserPhotoUploadUrlDTO toDTO(FailedGenerateUserPhotoUploadUrl dm) {
+    public FailedGenerateUserPhotoUploadUrlDTO serialize(FailedGenerateUserPhotoUploadUrl dm) {
         return FailedGenerateUserPhotoUploadUrlDTO.builder()
             .userId(dm.userId().toString())
             .operationId(dm.operationId().toString())
@@ -22,7 +22,7 @@ public final class MapFailedGenerateUserPhotoUploadUrl implements MapPayload<Fai
     }
 
     @Override
-    public FailedGenerateUserPhotoUploadUrl toDomain(FailedGenerateUserPhotoUploadUrlDTO dto) {
+    public FailedGenerateUserPhotoUploadUrl deserialize(FailedGenerateUserPhotoUploadUrlDTO dto) {
         return new FailedGenerateUserPhotoUploadUrl(
             UserId.dangerouslyMakeFrom(dto.getUserId()),
             PhotoFileExtension.dangerouslyMakeFrom(dto.getFileExtension()),
@@ -32,12 +32,12 @@ public final class MapFailedGenerateUserPhotoUploadUrl implements MapPayload<Fai
     }
 
     @Override
-    public Class<FailedGenerateUserPhotoUploadUrl> getDomainClass() {
+    public Class<FailedGenerateUserPhotoUploadUrl> getOriginalClass() {
         return FailedGenerateUserPhotoUploadUrl.class;
     }
 
     @Override
-    public Class<FailedGenerateUserPhotoUploadUrlDTO> getDTOClass() {
+    public Class<FailedGenerateUserPhotoUploadUrlDTO> getSerializedClass() {
         return FailedGenerateUserPhotoUploadUrlDTO.class;
     }
 }

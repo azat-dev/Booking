@@ -8,4 +8,6 @@ import java.time.LocalDateTime;
 public interface Policy<E extends DomainEventPayload> {
 
     void execute(E event, EventId eventId, LocalDateTime issuedAt);
+
+    Class<E> getEventClass();
 }

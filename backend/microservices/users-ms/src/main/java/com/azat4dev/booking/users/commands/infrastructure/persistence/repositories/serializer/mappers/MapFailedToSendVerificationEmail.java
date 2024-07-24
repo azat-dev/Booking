@@ -1,6 +1,6 @@
 package com.azat4dev.booking.users.commands.infrastructure.persistence.repositories.serializer.mappers;
 
-import com.azat4dev.booking.shared.data.serializers.MapPayload;
+import com.azat4dev.booking.shared.data.serializers.MapDomainEvent;
 import com.azat4dev.booking.shared.domain.values.user.UserId;
 import com.azat4dev.booking.users.commands.domain.core.events.FailedToSendVerificationEmail;
 import com.azat4dev.booking.users.commands.domain.core.values.email.EmailAddress;
@@ -8,10 +8,10 @@ import com.azat4dev.booking.usersms.generated.events.dto.FailedToSendVerificatio
 import lombok.AllArgsConstructor;
 
 @AllArgsConstructor
-public final class MapFailedToSendVerificationEmail implements MapPayload<FailedToSendVerificationEmail, FailedToSendVerificationEmailDTO> {
+public final class MapFailedToSendVerificationEmail implements MapDomainEvent<FailedToSendVerificationEmail, FailedToSendVerificationEmailDTO> {
 
     @Override
-    public FailedToSendVerificationEmailDTO toDTO(FailedToSendVerificationEmail dm) {
+    public FailedToSendVerificationEmailDTO serialize(FailedToSendVerificationEmail dm) {
         return FailedToSendVerificationEmailDTO.builder()
             .userId(dm.userId().toString())
             .email(dm.email().getValue())
@@ -20,7 +20,7 @@ public final class MapFailedToSendVerificationEmail implements MapPayload<Failed
     }
 
     @Override
-    public FailedToSendVerificationEmail toDomain(FailedToSendVerificationEmailDTO dto) {
+    public FailedToSendVerificationEmail deserialize(FailedToSendVerificationEmailDTO dto) {
         return new FailedToSendVerificationEmail(
             UserId.dangerouslyMakeFrom(dto.getUserId()),
             EmailAddress.dangerMakeWithoutChecks(dto.getEmail()),
@@ -29,12 +29,12 @@ public final class MapFailedToSendVerificationEmail implements MapPayload<Failed
     }
 
     @Override
-    public Class<FailedToSendVerificationEmail> getDomainClass() {
+    public Class<FailedToSendVerificationEmail> getOriginalClass() {
         return FailedToSendVerificationEmail.class;
     }
 
     @Override
-    public Class<FailedToSendVerificationEmailDTO> getDTOClass() {
+    public Class<FailedToSendVerificationEmailDTO> getSerializedClass() {
         return FailedToSendVerificationEmailDTO.class;
     }
 }

@@ -1,4 +1,4 @@
-package com.azat4dev.booking.common.domain;
+package com.azat4dev.booking.shared.config.domain;
 
 import org.springframework.context.annotation.Import;
 
@@ -9,6 +9,6 @@ import java.lang.annotation.Target;
 
 @Target(ElementType.TYPE)
 @Retention(RetentionPolicy.RUNTIME)
-@Import(ConnectPoliciesConfig.class)
-public @interface AutoConnectPoliciesToBus {
+@Import(ConnectCommandHandlersConfig.class)
+public @interface AutoConnectCommandHandlersToBus {
 }

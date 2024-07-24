@@ -14,5 +14,5 @@ public record UserSignedUp(
     FullName fullName,
     EmailAddress email,
     EmailVerificationStatus emailVerificationStatus
-) implements DomainEventPayload {
+) implements DomainEventPayload, EventWithUserId {
 }

@@ -1,8 +1,8 @@
 package com.azat4dev.booking.users.commands.domain.handlers.email.verification;
 
 import com.azat4dev.booking.shared.domain.CommandHandler;
-import com.azat4dev.booking.shared.domain.interfaces.bus.DomainEventsBus;
 import com.azat4dev.booking.shared.domain.events.EventId;
+import com.azat4dev.booking.shared.domain.interfaces.bus.DomainEventsBus;
 import com.azat4dev.booking.users.commands.domain.core.commands.SendVerificationEmail;
 import com.azat4dev.booking.users.commands.domain.core.events.FailedToSendVerificationEmail;
 import com.azat4dev.booking.users.commands.domain.core.events.VerificationEmailSent;
@@ -77,5 +77,10 @@ public class SendVerificationEmailHandler implements CommandHandler<SendVerifica
                 command.email()
             )
         );
+    }
+
+    @Override
+    public Class<SendVerificationEmail> getCommandClass() {
+        return SendVerificationEmail.class;
     }
 }

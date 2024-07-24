@@ -25,7 +25,7 @@ public class OutboxEventsReaderImpl implements OutboxEventsReader {
             items.forEach(item -> {
                 final var event = item.event();
                 final var eventId = event.id();
-                publishOutboxEvent.execute(event.payload(), event.issuedAt(), eventId, item.tracingInfo());
+                publishOutboxEvent.execute(event.payload(), eventId, item.tracingInfo());
                 outboxEventsRepository.markAsPublished(List.of(eventId));
             });
         }

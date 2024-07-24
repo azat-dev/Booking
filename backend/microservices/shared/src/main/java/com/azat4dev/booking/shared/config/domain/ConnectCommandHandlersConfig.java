@@ -1,9 +1,8 @@
-package com.azat4dev.booking.common.domain;
+package com.azat4dev.booking.shared.config.domain;
 
 import com.azat4dev.booking.shared.domain.CommandHandler;
 import com.azat4dev.booking.shared.domain.DomainException;
 import com.azat4dev.booking.shared.domain.events.Command;
-import com.azat4dev.booking.shared.domain.events.DomainEventPayload;
 import com.azat4dev.booking.shared.domain.interfaces.bus.DomainEventsBus;
 import jakarta.annotation.PostConstruct;
 import jakarta.annotation.PreDestroy;
@@ -15,9 +14,10 @@ import org.springframework.util.ClassUtils;
 
 import java.io.Closeable;
 import java.io.IOException;
-import java.lang.reflect.ParameterizedType;
-import java.lang.reflect.Type;
-import java.util.*;
+import java.util.Arrays;
+import java.util.LinkedList;
+import java.util.List;
+import java.util.Map;
 import java.util.stream.Collectors;
 
 @Slf4j
@@ -29,28 +29,12 @@ public class ConnectCommandHandlersConfig {
     private final ApplicationContext applicationContext;
     private final DomainEventsBus domainEventsBus;
 
-    private static Type getPayloadType(Class<?> clazz) {
 
-        final var handlerClass = ClassUtils.getUserClass(clazz);
-
-        return Arrays.stream(handlerClass.getGenericInterfaces())
-            .flatMap(pi -> {
-                if (pi instanceof ParameterizedType handlerInterface && handlerInterface.getRawType().equals(CommandHandler.class)) {
-                    return Arrays.stream(handlerInterface.getActualTypeArguments());
-                }
-
-                return null;
-            })
-            .filter(Objects::nonNull)
-            .findFirst()
-            .orElseThrow(() -> new RuntimeException("Can't find payload class for " + clazz));
-    }
-
-    private static Map<Class<DomainEventPayload>, List<CommandHandler<Command>>> groupHandlersByPayload(List<CommandHandler<Command>> handlers) {
+    private static Map<Class<Command>, List<CommandHandler<Command>>> groupHandlersByPayload(List<CommandHandler<Command>> handlers) {
         return handlers.stream()
             .collect(
                 Collectors.groupingBy(
-                    handler -> (Class<DomainEventPayload>) getPayloadType(handler.getClass()),
+                    CommandHandler::getCommandClass,
                     Collectors.toList()
                 )
             );
@@ -83,10 +67,10 @@ public class ConnectCommandHandlersConfig {
                                 .addKeyValue("event.type", eventType)
                                 .addKeyValue("event.id", event::id)
                                 .addKeyValue("event.issuedAt", event::issuedAt)
-                                .addKeyValue("event.payload", () -> ((Command) event.payload()).toString())
+                                .addKeyValue("event.payload", () -> event.payload().toString())
                                 .log("Pass event into command handler: {}");
 
-                            handler.handle((Command) event.payload(), event.id(), event.issuedAt());
+                            handler.handle(event.payload(), event.id(), event.issuedAt());
                         } catch (DomainException e) {
                             log.atDebug()
                                 .setCause(e)
@@ -94,9 +78,9 @@ public class ConnectCommandHandlersConfig {
                                 .addKeyValue("event.type", eventType)
                                 .addKeyValue("event.id", event::id)
                                 .addKeyValue("event.issuedAt", event::issuedAt)
-                                .addKeyValue("event.payload", () -> ((Command) event.payload()).toString())
+                                .addKeyValue("event.payload", () -> event.payload().toString())
                                 .log("Exception during handling by command handler: {}");
-                            throw new RuntimeException(e);
+                            throw new FailedToExecuteCommandHandler(e);
                         }
                     });
                 cancellations.add(cancellation);
@@ -123,5 +107,11 @@ public class ConnectCommandHandlersConfig {
 
         log.atInfo()
             .log("Disconnected command handlers from the bus");
+    }
+
+    public static class FailedToExecuteCommandHandler extends RuntimeException {
+        public FailedToExecuteCommandHandler(Throwable e) {
+            super(e);
+        }
     }
 }
