@@ -3,7 +3,7 @@ package com.azat4dev.booking.listingsms.commands.infrastructure.serializer.mappe
 import com.azat4dev.booking.listingsms.commands.domain.events.FailedGenerateUrlForUploadListingPhoto;
 import com.azat4dev.booking.listingsms.commands.domain.values.ListingId;
 import com.azat4dev.booking.listingsms.generated.events.dto.FailedGenerateUrlForUploadListingPhotoDTO;
-import com.azat4dev.booking.shared.data.serializers.MapPayload;
+import com.azat4dev.booking.shared.data.serializers.MapDomainEvent;
 import com.azat4dev.booking.shared.domain.values.IdempotentOperationId;
 import com.azat4dev.booking.shared.domain.values.files.PhotoFileExtension;
 import com.azat4dev.booking.shared.domain.values.user.UserId;
@@ -12,10 +12,10 @@ import lombok.AllArgsConstructor;
 import java.util.UUID;
 
 @AllArgsConstructor
-public final class MapFailedGenerateUrlForUploadListingPhoto implements MapPayload<FailedGenerateUrlForUploadListingPhoto, FailedGenerateUrlForUploadListingPhotoDTO> {
+public final class MapFailedGenerateUrlForUploadListingPhoto implements MapDomainEvent<FailedGenerateUrlForUploadListingPhoto, FailedGenerateUrlForUploadListingPhotoDTO> {
 
     @Override
-    public FailedGenerateUrlForUploadListingPhotoDTO toDTO(FailedGenerateUrlForUploadListingPhoto dm) {
+    public FailedGenerateUrlForUploadListingPhotoDTO serialize(FailedGenerateUrlForUploadListingPhoto dm) {
         return FailedGenerateUrlForUploadListingPhotoDTO.builder()
             .operationId(UUID.fromString(dm.operationId().value()))
             .userId(dm.userId().value())
@@ -26,7 +26,7 @@ public final class MapFailedGenerateUrlForUploadListingPhoto implements MapPaylo
     }
 
     @Override
-    public FailedGenerateUrlForUploadListingPhoto toDomain(FailedGenerateUrlForUploadListingPhotoDTO dto) {
+    public FailedGenerateUrlForUploadListingPhoto deserialize(FailedGenerateUrlForUploadListingPhotoDTO dto) {
         return new FailedGenerateUrlForUploadListingPhoto(
             IdempotentOperationId.dangerouslyMakeFrom(dto.getOperationId().toString()),
             UserId.dangerouslyMakeFrom(dto.getUserId().toString()),
@@ -37,12 +37,12 @@ public final class MapFailedGenerateUrlForUploadListingPhoto implements MapPaylo
     }
 
     @Override
-    public Class<FailedGenerateUrlForUploadListingPhoto> getDomainClass() {
+    public Class<FailedGenerateUrlForUploadListingPhoto> getOriginalClass() {
         return FailedGenerateUrlForUploadListingPhoto.class;
     }
 
     @Override
-    public Class<FailedGenerateUrlForUploadListingPhotoDTO> getDTOClass() {
+    public Class<FailedGenerateUrlForUploadListingPhotoDTO> getSerializedClass() {
         return FailedGenerateUrlForUploadListingPhotoDTO.class;
     }
 }

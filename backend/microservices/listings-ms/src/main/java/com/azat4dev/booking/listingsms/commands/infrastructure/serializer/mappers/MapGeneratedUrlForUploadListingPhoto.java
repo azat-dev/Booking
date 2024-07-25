@@ -5,7 +5,7 @@ import com.azat4dev.booking.listingsms.commands.domain.events.GeneratedUrlForUpl
 import com.azat4dev.booking.listingsms.commands.domain.values.ListingId;
 import com.azat4dev.booking.listingsms.generated.events.dto.GeneratedUrlForUploadListingPhotoDTO;
 import com.azat4dev.booking.listingsms.generated.events.dto.UploadFileFormDataDTO;
-import com.azat4dev.booking.shared.data.serializers.MapPayload;
+import com.azat4dev.booking.shared.data.serializers.MapDomainEvent;
 import com.azat4dev.booking.shared.domain.values.files.BucketName;
 import com.azat4dev.booking.shared.domain.values.files.MediaObjectName;
 import com.azat4dev.booking.shared.domain.values.files.UploadFileFormData;
@@ -16,27 +16,27 @@ import java.net.MalformedURLException;
 import java.net.URISyntaxException;
 
 @AllArgsConstructor
-public final class MapGeneratedUrlForUploadListingPhoto implements MapPayload<GeneratedUrlForUploadListingPhoto, GeneratedUrlForUploadListingPhotoDTO> {
+public final class MapGeneratedUrlForUploadListingPhoto implements MapDomainEvent<GeneratedUrlForUploadListingPhoto, GeneratedUrlForUploadListingPhotoDTO> {
 
     @Override
-    public GeneratedUrlForUploadListingPhotoDTO toDTO(GeneratedUrlForUploadListingPhoto dm) {
+    public GeneratedUrlForUploadListingPhotoDTO serialize(GeneratedUrlForUploadListingPhoto dm) {
         return GeneratedUrlForUploadListingPhotoDTO.builder()
             .userId(dm.userId().value())
             .listingId(dm.listingId().getValue())
-            .formData(toDTO(dm.formData()))
+            .formData(serialize(dm.formData()))
             .build();
     }
 
     @Override
-    public GeneratedUrlForUploadListingPhoto toDomain(GeneratedUrlForUploadListingPhotoDTO dto) {
+    public GeneratedUrlForUploadListingPhoto deserialize(GeneratedUrlForUploadListingPhotoDTO dto) {
         return new GeneratedUrlForUploadListingPhoto(
             UserId.dangerouslyMakeFrom(dto.getUserId().toString()),
             ListingId.dangerouslyMakeFrom(dto.getListingId().toString()),
-            toDomain(dto.getFormData())
+            deserialize(dto.getFormData())
         );
     }
 
-    private static UploadFileFormDataDTO toDTO(UploadFileFormData formData) {
+    private static UploadFileFormDataDTO serialize(UploadFileFormData formData) {
         try {
             return UploadFileFormDataDTO.builder()
                 .url(formData.url().toURI())
@@ -49,7 +49,7 @@ public final class MapGeneratedUrlForUploadListingPhoto implements MapPayload<Ge
         }
     }
 
-    private static UploadFileFormData toDomain(UploadFileFormDataDTO formData) {
+    private static UploadFileFormData deserialize(UploadFileFormDataDTO formData) {
         try {
             return new UploadFileFormData(
                 formData.getUrl().toURL(),
@@ -63,12 +63,12 @@ public final class MapGeneratedUrlForUploadListingPhoto implements MapPayload<Ge
     }
 
     @Override
-    public Class<GeneratedUrlForUploadListingPhoto> getDomainClass() {
+    public Class<GeneratedUrlForUploadListingPhoto> getOriginalClass() {
         return GeneratedUrlForUploadListingPhoto.class;
     }
 
     @Override
-    public Class<GeneratedUrlForUploadListingPhotoDTO> getDTOClass() {
+    public Class<GeneratedUrlForUploadListingPhotoDTO> getSerializedClass() {
         return GeneratedUrlForUploadListingPhotoDTO.class;
     }
 }

@@ -4,11 +4,14 @@ import com.azat4dev.booking.listingsms.commands.domain.interfaces.repositories.L
 import com.azat4dev.booking.listingsms.commands.domain.interfaces.repositories.UnitOfWork;
 import com.azat4dev.booking.listingsms.commands.domain.interfaces.repositories.UnitOfWorkFactory;
 import com.azat4dev.booking.listingsms.commands.infrastructure.repositories.UnitOfWorkImpl;
+import com.azat4dev.booking.shared.config.infrastracture.persistence.repositories.outbox.OutboxEventsRepositoryConfig;
 import com.azat4dev.booking.shared.data.repositories.outbox.OutboxEventsRepository;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.context.annotation.Import;
 import org.springframework.transaction.PlatformTransactionManager;
 
+@Import(OutboxEventsRepositoryConfig.class)
 @Configuration
 public class UnitOfWorkConfig {
 

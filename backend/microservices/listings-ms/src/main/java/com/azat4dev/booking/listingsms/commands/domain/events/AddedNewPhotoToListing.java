@@ -7,5 +7,5 @@ import com.azat4dev.booking.shared.domain.events.DomainEventPayload;
 public record AddedNewPhotoToListing(
     ListingId listingId,
     ListingPhoto photo
-) implements DomainEventPayload {
+) implements DomainEventPayload, EventWithListingId {
 }

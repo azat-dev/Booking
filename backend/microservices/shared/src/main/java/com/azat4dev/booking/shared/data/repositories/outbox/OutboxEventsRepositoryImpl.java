@@ -4,8 +4,9 @@ import com.azat4dev.booking.shared.data.dao.outbox.OutboxEventData;
 import com.azat4dev.booking.shared.data.dao.outbox.OutboxEventsDao;
 import com.azat4dev.booking.shared.domain.events.DomainEvent;
 import com.azat4dev.booking.shared.domain.events.DomainEventPayload;
-import com.azat4dev.booking.shared.domain.events.DomainEventsFactory;
 import com.azat4dev.booking.shared.domain.events.EventId;
+import com.azat4dev.booking.shared.domain.events.EventIdGenerator;
+import com.azat4dev.booking.shared.utils.TimeProvider;
 import io.micrometer.observation.annotation.Observed;
 import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -19,19 +20,21 @@ public class OutboxEventsRepositoryImpl implements OutboxEventsRepository {
 
     private final OutboxEventSerializer eventSerializer;
     private final OutboxEventsDao outboxEventsDao;
-    private final DomainEventsFactory domainEventsFactory;
+    private final EventIdGenerator eventIdGenerator;
+    private final TimeProvider timeProvider;
 
     @Override
     public void publish(DomainEventPayload event, String tracingInfo) {
 
-        final var wrappedEvent = domainEventsFactory.issue(event);
+        final var eventId = eventIdGenerator.generate();
+        final var time = timeProvider.currentTime();
 
         this.outboxEventsDao.put(
             new OutboxEventData(
-                wrappedEvent.id().getValue(),
-                wrappedEvent.issuedAt(),
-                wrappedEvent.payload().getClass().getSimpleName(),
-                eventSerializer.serialize(wrappedEvent.payload()),
+                eventId.getValue(),
+                time,
+                event.getClass().getSimpleName(),
+                eventSerializer.serialize(event),
                 tracingInfo,
                 false
             )

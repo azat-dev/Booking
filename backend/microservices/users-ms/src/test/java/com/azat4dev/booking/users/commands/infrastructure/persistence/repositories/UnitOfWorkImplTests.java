@@ -1,18 +1,14 @@
 package com.azat4dev.booking.users.commands.infrastructure.persistence.repositories;
 
+import com.azat4dev.booking.shared.config.infrastracture.bus.RandomEventIdGeneratorConfig;
+import com.azat4dev.booking.shared.config.infrastracture.persistence.repositories.outbox.OutboxEventsRepositoryConfig;
 import com.azat4dev.booking.shared.data.repositories.outbox.OutboxEventsRepository;
-import com.azat4dev.booking.shared.domain.events.DomainEventsFactory;
-import com.azat4dev.booking.shared.domain.events.DomainEventsFactoryImpl;
-import com.azat4dev.booking.shared.domain.events.RandomEventIdGenerator;
-import com.azat4dev.booking.shared.utils.SystemTimeProvider;
 import com.azat4dev.booking.users.commands.domain.UserHelpers;
 import com.azat4dev.booking.users.commands.domain.interfaces.repositories.UnitOfWork;
 import com.azat4dev.booking.users.commands.domain.interfaces.repositories.UsersRepository;
 import com.azat4dev.booking.users.common.infrastructure.presentation.security.services.jwt.JwtDataEncoder;
 import com.azat4dev.booking.users.config.users_commands.infrastructure.CommonBeansConfig;
-import com.azat4dev.booking.users.config.users_commands.infrastructure.persistence.dao.OutboxEventsDaoConfig;
 import com.azat4dev.booking.users.config.users_commands.infrastructure.persistence.dao.UsersDaoConfig;
-import com.azat4dev.booking.users.config.users_commands.infrastructure.persistence.repositories.OutboxEventsRepositoryConfig;
 import com.azat4dev.booking.users.config.users_commands.infrastructure.persistence.repositories.UsersRepositoryConfig;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.junit.jupiter.api.Test;
@@ -31,7 +27,7 @@ import static org.junit.jupiter.api.Assertions.assertThrows;
 
 
 @Import({CommonBeansConfig.class, UsersDaoConfig.class, UsersRepositoryConfig.class,
-    OutboxEventsRepositoryConfig.class, OutboxEventsRepositoryConfig.class, OutboxEventsDaoConfig.class})
+    OutboxEventsRepositoryConfig.class, RandomEventIdGeneratorConfig.class})
 @JdbcTest(properties = {"spring.datasource.url=jdbc:tc:postgresql:15-alpine:///"})
 @AutoConfigureTestDatabase(replace = AutoConfigureTestDatabase.Replace.NONE)
 class UnitOfWorkImplTests {
@@ -100,21 +96,8 @@ class UnitOfWorkImplTests {
         assertThat(usersRepository.findById(newUser.getId())).isNotEmpty();
     }
 
-    record SUT(
-        UnitOfWork unitOfWork
-    ) {
-    }
-
     @TestConfiguration
     public static class Config {
-
-        @Bean
-        DomainEventsFactory domainEventsFactory() {
-            return new DomainEventsFactoryImpl(
-                new RandomEventIdGenerator(),
-                new SystemTimeProvider()
-            );
-        }
 
         @Bean
         public ObjectMapper objectMapper() {

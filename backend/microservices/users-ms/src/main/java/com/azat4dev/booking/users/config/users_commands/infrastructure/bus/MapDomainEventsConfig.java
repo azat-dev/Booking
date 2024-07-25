@@ -15,7 +15,7 @@ import java.util.Set;
 
 @Configuration
 @AllArgsConstructor
-public class DomainEventsMappersConfig {
+public class MapDomainEventsConfig {
 
     private final Serializer<LocalDateTime, String> mapDateTime;
 

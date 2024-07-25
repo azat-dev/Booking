@@ -10,24 +10,24 @@ import com.azat4dev.booking.listingsms.common.domain.values.PropertyType;
 import com.azat4dev.booking.listingsms.common.domain.values.RoomType;
 import com.azat4dev.booking.listingsms.common.domain.values.address.ListingAddress;
 import com.azat4dev.booking.listingsms.generated.events.dto.*;
-import com.azat4dev.booking.shared.data.serializers.Mapper;
+import com.azat4dev.booking.shared.data.serializers.Serializer;
 import lombok.AllArgsConstructor;
 import org.openapitools.jackson.nullable.JsonNullable;
 
 import java.util.Optional;
 
 @AllArgsConstructor
-public final class MapListingDetailsUpdatedChange implements Mapper<ListingDetailsUpdated.Change, ListingDetailsFieldsDTO> {
+public final class MapListingDetailsUpdatedChange implements Serializer<ListingDetailsUpdated.Change, ListingDetailsFieldsDTO> {
 
-    private final Mapper<GuestsCapacity, GuestsCapacityDTO> mapGuestCapacity;
-    private final Mapper<ListingAddress, AddressDTO> mapAddress;
+    private final Serializer<GuestsCapacity, GuestsCapacityDTO> mapGuestCapacity;
+    private final Serializer<ListingAddress, AddressDTO> mapAddress;
 
     private <T> JsonNullable<T> toNullable(OptionalField<T> field) {
         return field.isMissed() ? JsonNullable.undefined() : JsonNullable.of(field.get());
     }
 
     @Override
-    public ListingDetailsFieldsDTO toDTO(ListingDetailsUpdated.Change change) {
+    public ListingDetailsFieldsDTO serialize(ListingDetailsUpdated.Change change) {
         final var title = change.title().map(ListingTitle::getValue);
 
         final var status = change.status()
@@ -45,10 +45,10 @@ public final class MapListingDetailsUpdatedChange implements Mapper<ListingDetai
                 .map(RoomTypeDTO::valueOf));
 
         final var guestsCapacity = change.guestsCapacity()
-            .map(mapGuestCapacity::toDTO);
+            .map(mapGuestCapacity::serialize);
 
         final var address = change.address()
-            .map(v -> v.map(mapAddress::toDTO));
+            .map(v -> v.map(mapAddress::serialize));
 
         return ListingDetailsFieldsDTO.builder()
             .status(toNullable(status))
@@ -66,25 +66,25 @@ public final class MapListingDetailsUpdatedChange implements Mapper<ListingDetai
     }
 
     @Override
-    public ListingDetailsUpdated.Change toDomain(ListingDetailsFieldsDTO dto) {
+    public ListingDetailsUpdated.Change deserialize(ListingDetailsFieldsDTO dto) {
         return new ListingDetailsUpdated.Change(
             OptionalField.from(dto.getStatus()).map(Enum::name).map(ListingStatus::valueOf),
             OptionalField.from(dto.getTitle()).map(ListingTitle::dangerouslyMakeFrom),
             OptionalField.fromNullable(dto.getDescription()).map(v -> v.map(ListingDescription::dangerouslyMakeFrom)),
             OptionalField.fromNullable(dto.getPropertyType(), v -> PropertyType.valueOf(v.name())),
             OptionalField.fromNullable(dto.getRoomType(), v -> RoomType.valueOf(v.name())),
-            OptionalField.from(dto.getGuestCapacity()).map(mapGuestCapacity::toDomain),
-            OptionalField.fromNullable(dto.getAddress(), mapAddress::toDomain)
+            OptionalField.from(dto.getGuestCapacity()).map(mapGuestCapacity::deserialize),
+            OptionalField.fromNullable(dto.getAddress(), mapAddress::deserialize)
         );
     }
 
     @Override
-    public Class<ListingDetailsUpdated.Change> getDomainClass() {
+    public Class<ListingDetailsUpdated.Change> getOriginalClass() {
         return ListingDetailsUpdated.Change.class;
     }
 
     @Override
-    public Class<ListingDetailsFieldsDTO> getDTOClass() {
+    public Class<ListingDetailsFieldsDTO> getSerializedClass() {
         return ListingDetailsFieldsDTO.class;
     }
 }

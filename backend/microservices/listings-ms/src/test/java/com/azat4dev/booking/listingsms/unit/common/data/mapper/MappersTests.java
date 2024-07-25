@@ -10,9 +10,9 @@ import com.azat4dev.booking.listingsms.common.domain.values.address.City;
 import com.azat4dev.booking.listingsms.common.domain.values.address.Country;
 import com.azat4dev.booking.listingsms.common.domain.values.address.ListingAddress;
 import com.azat4dev.booking.listingsms.common.domain.values.address.Street;
+import com.azat4dev.booking.shared.data.serializers.MapDomainEvent;
 import com.azat4dev.booking.shared.data.serializers.MapLocalDateTime;
-import com.azat4dev.booking.shared.data.serializers.MapPayload;
-import com.azat4dev.booking.shared.data.serializers.Mapper;
+import com.azat4dev.booking.shared.data.serializers.Serializer;
 import com.azat4dev.booking.shared.domain.events.DomainEventPayload;
 import com.azat4dev.booking.shared.domain.values.IdempotentOperationId;
 import com.azat4dev.booking.shared.domain.values.files.BucketName;
@@ -32,6 +32,7 @@ import static com.azat4dev.booking.listingsms.unit.helpers.ListingHelpers.anyHos
 import static com.azat4dev.booking.listingsms.unit.helpers.ListingHelpers.anyUserId;
 import static org.assertj.core.api.Assertions.assertThat;
 
+
 class MappersTests {
 
     IdempotentOperationId anyIdempotentOperationId() throws IdempotentOperationId.Exception {
@@ -42,6 +43,7 @@ class MappersTests {
     void test_mappers() throws Exception {
 
         // Given
+
         final var mapDateTime = new MapLocalDateTime();
         final var mapGuestCapacity = new MapGuestsCapacity();
         final var mapAddress = new MapListingAddress();
@@ -51,7 +53,7 @@ class MappersTests {
             mapAddress
         );
 
-        final var mappers = new MapPayload[]{
+        final var mappers = new MapDomainEvent[]{
             new MapNewListingAdded(),
             new MapFailedToAddNewListing(),
             new MapListingDetailsUpdated(mapListingChange, mapDateTime),
@@ -60,6 +62,7 @@ class MappersTests {
             new MapFailedGenerateUrlForUploadListingPhoto(),
             new MapAddedNewPhotoToListing(),
         };
+
         final var now = LocalDateTime.now();
 
         final var events = new DomainEventPayload[]{
@@ -141,7 +144,7 @@ class MappersTests {
 
         for (final var mapper : mappers) {
             final var event = Arrays.stream(events).filter(e -> e.getClass()
-                    .equals(mapper.getDomainClass()))
+                    .equals(mapper.getOriginalClass()))
                 .findFirst().get();
 
             // When
@@ -149,13 +152,13 @@ class MappersTests {
         }
     }
 
-    <E extends DomainEventPayload, D> void test_mapping(Mapper<E, D> mapper, E event) {
+    <E extends DomainEventPayload, D> void test_mapping(Serializer<E, D> serializer, E event) {
 
         // Given
 
         // When
-        final var dto = mapper.toDTO(event);
-        final var deserializedEvent = mapper.toDomain(dto);
+        final var dto = serializer.serialize(event);
+        final var deserializedEvent = serializer.deserialize(dto);
 
         // Then
         assertThat(deserializedEvent).isEqualTo(event);

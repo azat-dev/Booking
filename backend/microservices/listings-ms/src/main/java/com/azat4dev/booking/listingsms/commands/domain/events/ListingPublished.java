@@ -8,5 +8,5 @@ import java.time.LocalDateTime;
 public record ListingPublished(
     ListingId listingId,
     LocalDateTime publishedAt
-) implements DomainEventPayload {
+) implements DomainEventPayload, EventWithListingId {
 }

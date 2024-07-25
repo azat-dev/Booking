@@ -2,13 +2,13 @@ package com.azat4dev.booking.listingsms.commands.infrastructure.serializer.mappe
 
 import com.azat4dev.booking.listingsms.common.domain.values.GuestsCapacity;
 import com.azat4dev.booking.listingsms.generated.events.dto.GuestsCapacityDTO;
-import com.azat4dev.booking.shared.data.serializers.Mapper;
+import com.azat4dev.booking.shared.data.serializers.Serializer;
 import lombok.AllArgsConstructor;
 
 @AllArgsConstructor
-public final class MapGuestsCapacity implements Mapper<GuestsCapacity, GuestsCapacityDTO> {
+public final class MapGuestsCapacity implements Serializer<GuestsCapacity, GuestsCapacityDTO> {
     @Override
-    public GuestsCapacityDTO toDTO(GuestsCapacity dm) {
+    public GuestsCapacityDTO serialize(GuestsCapacity dm) {
         return GuestsCapacityDTO.builder()
             .adults(dm.getAdults())
             .children(dm.getChildren())
@@ -17,7 +17,7 @@ public final class MapGuestsCapacity implements Mapper<GuestsCapacity, GuestsCap
     }
 
     @Override
-    public GuestsCapacity toDomain(GuestsCapacityDTO dto) {
+    public GuestsCapacity deserialize(GuestsCapacityDTO dto) {
         return GuestsCapacity.dangerouslyMake(
             dto.getAdults(),
             dto.getChildren(),
@@ -26,12 +26,12 @@ public final class MapGuestsCapacity implements Mapper<GuestsCapacity, GuestsCap
     }
 
     @Override
-    public Class<GuestsCapacity> getDomainClass() {
+    public Class<GuestsCapacity> getOriginalClass() {
         return GuestsCapacity.class;
     }
 
     @Override
-    public Class<GuestsCapacityDTO> getDTOClass() {
+    public Class<GuestsCapacityDTO> getSerializedClass() {
         return GuestsCapacityDTO.class;
     }
 }

@@ -1,4 +1,4 @@
-package com.azat4dev.booking.users.config.users_commands.infrastructure;
+package com.azat4dev.booking.listingsms.config.common.infrastructure;
 
 import com.azat4dev.booking.shared.config.infrastracture.serializers.DefaultTimeSerializerConfig;
 import com.azat4dev.booking.shared.config.infrastracture.services.DefaultTimeProviderConfig;

@@ -9,5 +9,5 @@ public record GeneratedUrlForUploadListingPhoto(
     UserId userId,
     ListingId listingId,
     UploadFileFormData formData
-) implements DomainEventPayload {
+) implements DomainEventPayload, EventWithListingId {
 }

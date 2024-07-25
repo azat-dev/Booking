@@ -1,4 +1,9 @@
-import {JAVA_JACKSON_PRESET, JavaFileGenerator} from '@asyncapi/modelina';
+import {
+    ConstrainedObjectModel,
+    ConstrainedReferenceModel,
+    JAVA_JACKSON_PRESET,
+    JavaFileGenerator
+} from '@asyncapi/modelina';
 import path from 'path';
 import yaml from 'js-yaml';
 import * as fs from "node:fs";
@@ -98,11 +103,86 @@ const generator = new JavaFileGenerator({
                 }
             }
         },
-        JAVA_JACKSON_PRESET,
+        {
+            ...JAVA_JACKSON_PRESET,
+            union: {
+                additionalContent: ({renderer, model}) => {
+
+                    const JACKSON_ANNOTATION_DEPENDENCY =
+                        'import com.fasterxml.jackson.annotation.*;';
+
+                    renderer.dependencyManager.addDependency(JACKSON_ANNOTATION_DEPENDENCY);
+
+                    const blocks: string[] = [];
+
+                    if (model.options.discriminator) {
+                        const { discriminator } = model.options;
+                        blocks.push(
+                            renderer.renderAnnotation('JsonTypeInfo', {
+                                use: 'JsonTypeInfo.Id.NAME',
+                                include: 'JsonTypeInfo.As.EXISTING_PROPERTY',
+                                property: `"${discriminator.discriminator}"`,
+                                visible: 'true'
+                            })
+                        );
+
+                        const types = model.union
+                            .map((union) => {
+                                if (
+                                    union instanceof ConstrainedReferenceModel &&
+                                    union.ref instanceof ConstrainedObjectModel
+                                ) {
+                                    const discriminatorProp = Object.values(
+                                        union.ref.properties
+                                    ).find(
+                                        (model) =>
+                                            model.unconstrainedPropertyName ===
+                                            discriminator.discriminator
+                                    );
+
+                                    if (discriminatorProp?.property.options.const) {
+                                        return `  @JsonSubTypes.Type(value = ${union.name}.class, name = "${discriminatorProp.property.options.const.originalInput}")`;
+                                    }
+                                }
+
+                                return `  @JsonSubTypes.Type(value = ${union.name}.class, name = "${union.name}")`;
+                            })
+                            .join(',\n');
+
+                        blocks.push(
+                            renderer.renderAnnotation('JsonSubTypes', `{\n${types}\n}`)
+                        );
+                    } else {
+                        blocks.push(
+                            renderer.renderAnnotation('JsonTypeInfo', {
+                                use: 'JsonTypeInfo.Id.DEDUCTION'
+                            })
+                        );
+
+                        const types = model.union
+                            .map(
+                                (union) =>
+                                    `  @JsonSubTypes.Type(value = ${union.name}.class, name = "${union.name}")`
+                            )
+                            .join(',\n');
+
+                        blocks.push(
+                            renderer.renderAnnotation('JsonSubTypes', `{\n${types}\n}`)
+                        );
+                    }
+
+                    const content = "public static interface TypeInfo {}"
+                    return renderer.renderBlock([...blocks, content]);
+                }
+            }
+        },
     ],
     constraints: {
         modelName: (options) => {
-            return options.modelName + "DTO";
+            const capitalized = options.modelName.charAt(0).toUpperCase() + options.modelName.slice(1);
+            return capitalized
+                .replace("/", "")
+                .replace("\\", "") + "DTO";
         }
     },
     typeMapping: {
@@ -130,7 +210,7 @@ const generator = new JavaFileGenerator({
             }
 
             return "Integer";
-        },
+        }
     }
 });
 
@@ -149,6 +229,6 @@ generator.generateToFiles(input, FINAL_OUTPUT_PATH, {
         console.log("Model generation completed successfully.");
     })
     .catch((error) => {
-        console.error("Model generation failed:", error);
+        console.error("Model generation failed:", JSON.stringify(error, null, 2));
         throw error;
     });

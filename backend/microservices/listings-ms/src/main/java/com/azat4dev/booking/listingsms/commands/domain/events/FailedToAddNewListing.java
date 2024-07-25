@@ -9,5 +9,5 @@ public record FailedToAddNewListing(
     ListingId listingId,
     HostId hostId,
     ListingTitle title
-) implements DomainEventPayload {
+) implements DomainEventPayload, EventWithListingId {
 }

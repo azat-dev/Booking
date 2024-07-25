@@ -5,14 +5,14 @@ import com.azat4dev.booking.listingsms.commands.domain.values.HostId;
 import com.azat4dev.booking.listingsms.commands.domain.values.ListingId;
 import com.azat4dev.booking.listingsms.commands.domain.values.ListingTitle;
 import com.azat4dev.booking.listingsms.generated.events.dto.FailedToAddNewListingDTO;
-import com.azat4dev.booking.shared.data.serializers.MapPayload;
+import com.azat4dev.booking.shared.data.serializers.MapDomainEvent;
 import lombok.AllArgsConstructor;
 
 @AllArgsConstructor
-public final class MapFailedToAddNewListing implements MapPayload<FailedToAddNewListing, FailedToAddNewListingDTO> {
+public final class MapFailedToAddNewListing implements MapDomainEvent<FailedToAddNewListing, FailedToAddNewListingDTO> {
 
     @Override
-    public FailedToAddNewListingDTO toDTO(FailedToAddNewListing dm) {
+    public FailedToAddNewListingDTO serialize(FailedToAddNewListing dm) {
         return FailedToAddNewListingDTO.builder()
             .listingId(dm.listingId().getValue())
             .hostId(dm.hostId().getValue())
@@ -21,7 +21,7 @@ public final class MapFailedToAddNewListing implements MapPayload<FailedToAddNew
     }
 
     @Override
-    public FailedToAddNewListing toDomain(FailedToAddNewListingDTO dto) {
+    public FailedToAddNewListing deserialize(FailedToAddNewListingDTO dto) {
         return new FailedToAddNewListing(
             ListingId.dangerouslyMakeFrom(dto.getListingId().toString()),
             HostId.dangerouslyMakeFrom(dto.getHostId().toString()),
@@ -30,12 +30,12 @@ public final class MapFailedToAddNewListing implements MapPayload<FailedToAddNew
     }
 
     @Override
-    public Class<FailedToAddNewListing> getDomainClass() {
+    public Class<FailedToAddNewListing> getOriginalClass() {
         return FailedToAddNewListing.class;
     }
 
     @Override
-    public Class<FailedToAddNewListingDTO> getDTOClass() {
+    public Class<FailedToAddNewListingDTO> getSerializedClass() {
         return FailedToAddNewListingDTO.class;
     }
 }

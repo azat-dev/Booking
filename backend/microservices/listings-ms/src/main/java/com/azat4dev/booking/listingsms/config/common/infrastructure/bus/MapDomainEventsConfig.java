@@ -1,28 +1,26 @@
 package com.azat4dev.booking.listingsms.config.common.infrastructure.bus;
 
 import com.azat4dev.booking.listingsms.commands.infrastructure.serializer.mappers.*;
-import com.azat4dev.booking.shared.data.serializers.*;
+import com.azat4dev.booking.shared.data.serializers.MapDomainEvent;
+import com.azat4dev.booking.shared.data.serializers.Serializer;
 import com.azat4dev.booking.shared.domain.events.DomainEventPayload;
-import com.fasterxml.jackson.databind.ObjectMapper;
 import lombok.AllArgsConstructor;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 
 import java.time.LocalDateTime;
-import java.util.Arrays;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 
-@AllArgsConstructor
 @Configuration
-public class CommonBeansConfig {
+@AllArgsConstructor
+public class MapDomainEventsConfig {
+
+    private final Serializer<LocalDateTime, String> mapDateTime;
 
     @Bean
-    Mapper<LocalDateTime, String> mapLocalDateTime() {
-        return new MapLocalDateTime();
-    }
-
-    @Bean
-    MapPayload[] eventMappers(Mapper<LocalDateTime, String> mapDateTime) {
+    List<MapDomainEvent<?, ?>> domainEventsMappers() {
 
         final var mapGuestCapacity = new MapGuestsCapacity();
         final var mapAddress = new MapListingAddress();
@@ -32,34 +30,24 @@ public class CommonBeansConfig {
             mapAddress
         );
 
-        return new MapPayload[]{
+        return List.of(
             new MapNewListingAdded(),
             new MapFailedToAddNewListing(),
             new MapListingDetailsUpdated(mapListingChange, mapDateTime),
             new MapListingPublished(mapDateTime),
             new MapGeneratedUrlForUploadListingPhoto(),
             new MapFailedGenerateUrlForUploadListingPhoto(),
-            new MapAddedNewPhotoToListing(),
-        };
-    }
-
-    @Bean
-    List<Class<DomainEventPayload>> domainEventPayload(
-        MapPayload[] mappers
-    ) {
-        return Arrays.stream(mappers)
-            .map(v -> (Class<DomainEventPayload>) v.getDomainClass())
-            .toList();
-    }
-
-    @Bean
-    DomainEventSerializer domainEventSerializer(
-        ObjectMapper objectMapper,
-        MapPayload[] mappers
-    ) {
-        return new DomainEventsSerializerJson(
-            objectMapper,
-            mappers
+            new MapAddedNewPhotoToListing()
         );
+    }
+
+    @Bean
+    Set<Class<? extends DomainEventPayload>> domainEventsClasses(List<MapDomainEvent<?, ?>> mappers) {
+        Set<Class<? extends DomainEventPayload>> result = new HashSet<>();
+        for (MapDomainEvent<?, ?> mapper : mappers) {
+            result.add(mapper.getOriginalClass());
+        }
+
+        return result;
     }
 }

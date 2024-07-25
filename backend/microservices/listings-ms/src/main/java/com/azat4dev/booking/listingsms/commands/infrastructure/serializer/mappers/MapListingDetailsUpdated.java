@@ -5,45 +5,45 @@ import com.azat4dev.booking.listingsms.commands.domain.events.ListingDetailsUpda
 import com.azat4dev.booking.listingsms.commands.domain.values.ListingId;
 import com.azat4dev.booking.listingsms.generated.events.dto.ListingDetailsFieldsDTO;
 import com.azat4dev.booking.listingsms.generated.events.dto.ListingDetailsUpdatedDTO;
-import com.azat4dev.booking.shared.data.serializers.MapPayload;
-import com.azat4dev.booking.shared.data.serializers.Mapper;
+import com.azat4dev.booking.shared.data.serializers.MapDomainEvent;
+import com.azat4dev.booking.shared.data.serializers.Serializer;
 import lombok.AllArgsConstructor;
 
 import java.time.LocalDateTime;
 
 @AllArgsConstructor
-public final class MapListingDetailsUpdated implements MapPayload<ListingDetailsUpdated, ListingDetailsUpdatedDTO> {
+public final class MapListingDetailsUpdated implements MapDomainEvent<ListingDetailsUpdated, ListingDetailsUpdatedDTO> {
 
-    private final Mapper<ListingDetailsUpdated.Change, ListingDetailsFieldsDTO> mapListingChange;
-    private final Mapper<LocalDateTime, String> mapLocalDateTime;
+    private final Serializer<ListingDetailsUpdated.Change, ListingDetailsFieldsDTO> mapListingChange;
+    private final Serializer<LocalDateTime, String> mapLocalDateTime;
 
     @Override
-    public ListingDetailsUpdatedDTO toDTO(ListingDetailsUpdated dm) {
+    public ListingDetailsUpdatedDTO serialize(ListingDetailsUpdated dm) {
         return ListingDetailsUpdatedDTO.builder()
-            .updatedAt(mapLocalDateTime.toDTO(dm.updatedAt()))
+            .updatedAt(mapLocalDateTime.serialize(dm.updatedAt()))
             .listingId(dm.listingId().getValue())
-            .newValues(mapListingChange.toDTO(dm.newState()))
-            .prevValues(mapListingChange.toDTO(dm.previousState()))
+            .newValues(mapListingChange.serialize(dm.newState()))
+            .prevValues(mapListingChange.serialize(dm.previousState()))
             .build();
     }
 
     @Override
-    public ListingDetailsUpdated toDomain(ListingDetailsUpdatedDTO dto) {
+    public ListingDetailsUpdated deserialize(ListingDetailsUpdatedDTO dto) {
         return new ListingDetailsUpdated(
             ListingId.dangerouslyMakeFrom(dto.getListingId().toString()),
-            mapLocalDateTime.toDomain(dto.getUpdatedAt()),
-            mapListingChange.toDomain(dto.getPrevValues()),
-            mapListingChange.toDomain(dto.getNewValues())
+            mapLocalDateTime.deserialize(dto.getUpdatedAt()),
+            mapListingChange.deserialize(dto.getPrevValues()),
+            mapListingChange.deserialize(dto.getNewValues())
         );
     }
 
     @Override
-    public Class<ListingDetailsUpdated> getDomainClass() {
+    public Class<ListingDetailsUpdated> getOriginalClass() {
         return ListingDetailsUpdated.class;
     }
 
     @Override
-    public Class<ListingDetailsUpdatedDTO> getDTOClass() {
+    public Class<ListingDetailsUpdatedDTO> getSerializedClass() {
         return ListingDetailsUpdatedDTO.class;
     }
 }

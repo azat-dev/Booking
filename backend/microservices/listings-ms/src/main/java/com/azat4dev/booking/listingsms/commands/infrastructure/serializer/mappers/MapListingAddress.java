@@ -5,14 +5,14 @@ import com.azat4dev.booking.listingsms.common.domain.values.address.Country;
 import com.azat4dev.booking.listingsms.common.domain.values.address.ListingAddress;
 import com.azat4dev.booking.listingsms.common.domain.values.address.Street;
 import com.azat4dev.booking.listingsms.generated.events.dto.AddressDTO;
-import com.azat4dev.booking.shared.data.serializers.Mapper;
+import com.azat4dev.booking.shared.data.serializers.Serializer;
 import lombok.AllArgsConstructor;
 
 @AllArgsConstructor
-public final class MapListingAddress implements Mapper<ListingAddress, AddressDTO> {
+public final class MapListingAddress implements Serializer<ListingAddress, AddressDTO> {
 
     @Override
-    public AddressDTO toDTO(ListingAddress dm) {
+    public AddressDTO serialize(ListingAddress dm) {
         return AddressDTO.builder()
             .country(dm.getCountry().getValue())
             .city(dm.getCity().getValue())
@@ -21,7 +21,7 @@ public final class MapListingAddress implements Mapper<ListingAddress, AddressDT
     }
 
     @Override
-    public ListingAddress toDomain(AddressDTO dto) {
+    public ListingAddress deserialize(AddressDTO dto) {
         return ListingAddress.dangerouslyMakeFrom(
             Country.dangerouslyMakeFrom(dto.getCountry()),
             City.dangerouslyMakeFrom(dto.getCity()),
@@ -30,12 +30,12 @@ public final class MapListingAddress implements Mapper<ListingAddress, AddressDT
     }
 
     @Override
-    public Class<ListingAddress> getDomainClass() {
+    public Class<ListingAddress> getOriginalClass() {
         return ListingAddress.class;
     }
 
     @Override
-    public Class<AddressDTO> getDTOClass() {
+    public Class<AddressDTO> getSerializedClass() {
         return AddressDTO.class;
     }
 }

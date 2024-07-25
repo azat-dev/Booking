@@ -16,7 +16,7 @@ public record ListingDetailsUpdated(
     LocalDateTime updatedAt,
     Change previousState,
     Change newState
-) implements DomainEventPayload {
+) implements DomainEventPayload, EventWithListingId {
 
     public record Change(
         OptionalField<ListingStatus> status,

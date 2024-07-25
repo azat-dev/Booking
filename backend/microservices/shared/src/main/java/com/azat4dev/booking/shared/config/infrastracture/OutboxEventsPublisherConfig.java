@@ -1,4 +1,4 @@
-package com.azat4dev.booking.listingsms.config.commands.infrastructure;
+package com.azat4dev.booking.shared.config.infrastracture;
 
 import com.azat4dev.booking.shared.data.repositories.outbox.OutboxEventsRepository;
 import com.azat4dev.booking.shared.data.tracing.ParseTracingInfo;
@@ -11,15 +11,17 @@ import com.azat4dev.booking.shared.domain.producers.OutboxEventsReaderOneAtTime;
 import com.azat4dev.booking.shared.domain.producers.PublishOutboxEvent;
 import jakarta.annotation.PreDestroy;
 import lombok.AllArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 
 import java.io.IOException;
 
+@Slf4j
 @AllArgsConstructor
 @Configuration
-public class OutboxConfig {
+public class OutboxEventsPublisherConfig {
 
     private final ApplicationContext context;
     private final DomainEventsBus bus;
@@ -44,7 +46,9 @@ public class OutboxConfig {
             publishOutboxEvent
         );
 
-        return new OutboxEventsReaderOneAtTime(reader);
+        final var readerOneAtTime = new OutboxEventsReaderOneAtTime(reader);
+        readerOneAtTime.trigger();
+        return readerOneAtTime;
     }
 
     @PreDestroy
@@ -52,12 +56,17 @@ public class OutboxConfig {
 
         final var reader = context.getBean(OutboxEventsReader.class);
         if (reader == null) {
+            log.atError()
+                .log("Outbox reader not found");
             return;
         }
 
         try {
             reader.close();
         } catch (IOException e) {
+            log.atError()
+                .setCause(e)
+                .log("Error closing outbox reader");
             throw new RuntimeException(e);
         }
     }

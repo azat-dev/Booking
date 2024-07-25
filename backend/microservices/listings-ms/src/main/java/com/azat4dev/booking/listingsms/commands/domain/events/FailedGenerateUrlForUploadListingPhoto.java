@@ -12,5 +12,5 @@ public record FailedGenerateUrlForUploadListingPhoto(
     ListingId listingId,
     PhotoFileExtension fileExtension,
     int fileSize
-) implements DomainEventPayload {
+) implements DomainEventPayload, EventWithListingId {
 }

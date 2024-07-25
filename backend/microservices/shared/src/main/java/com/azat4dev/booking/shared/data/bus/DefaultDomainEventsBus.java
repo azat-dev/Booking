@@ -13,7 +13,7 @@ import java.util.function.Consumer;
 @Slf4j
 @Observed
 @AllArgsConstructor
-public class KafkaDomainEventsBus<PARTITION_KEY> implements DomainEventsBus {
+public class DefaultDomainEventsBus<PARTITION_KEY> implements DomainEventsBus {
 
     private final MessageBus<PARTITION_KEY> messageBus;
     private final GetInputTopicForEvent getInputTopicForEvent;

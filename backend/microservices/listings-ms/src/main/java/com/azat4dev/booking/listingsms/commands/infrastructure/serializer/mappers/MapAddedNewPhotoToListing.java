@@ -6,16 +6,16 @@ import com.azat4dev.booking.listingsms.commands.domain.values.ListingId;
 import com.azat4dev.booking.listingsms.commands.domain.values.ListingPhoto;
 import com.azat4dev.booking.listingsms.generated.events.dto.AddedNewPhotoToListingDTO;
 import com.azat4dev.booking.listingsms.generated.events.dto.ListingPhotoDTO;
-import com.azat4dev.booking.shared.data.serializers.MapPayload;
+import com.azat4dev.booking.shared.data.serializers.MapDomainEvent;
 import com.azat4dev.booking.shared.domain.values.files.BucketName;
 import com.azat4dev.booking.shared.domain.values.files.MediaObjectName;
 import lombok.AllArgsConstructor;
 
 @AllArgsConstructor
-public final class MapAddedNewPhotoToListing implements MapPayload<AddedNewPhotoToListing, AddedNewPhotoToListingDTO> {
+public final class MapAddedNewPhotoToListing implements MapDomainEvent<AddedNewPhotoToListing, AddedNewPhotoToListingDTO> {
 
     @Override
-    public AddedNewPhotoToListingDTO toDTO(AddedNewPhotoToListing dm) {
+    public AddedNewPhotoToListingDTO serialize(AddedNewPhotoToListing dm) {
         return AddedNewPhotoToListingDTO.builder()
             .listingId(dm.listingId().getValue())
             .photo(ListingPhotoDTO.builder()
@@ -27,7 +27,7 @@ public final class MapAddedNewPhotoToListing implements MapPayload<AddedNewPhoto
     }
 
     @Override
-    public AddedNewPhotoToListing toDomain(AddedNewPhotoToListingDTO dto) {
+    public AddedNewPhotoToListing deserialize(AddedNewPhotoToListingDTO dto) {
         return new AddedNewPhotoToListing(
             ListingId.dangerouslyMakeFrom(dto.getListingId().toString()),
             new ListingPhoto(
@@ -39,12 +39,12 @@ public final class MapAddedNewPhotoToListing implements MapPayload<AddedNewPhoto
     }
 
     @Override
-    public Class<AddedNewPhotoToListing> getDomainClass() {
+    public Class<AddedNewPhotoToListing> getOriginalClass() {
         return AddedNewPhotoToListing.class;
     }
 
     @Override
-    public Class<AddedNewPhotoToListingDTO> getDTOClass() {
+    public Class<AddedNewPhotoToListingDTO> getSerializedClass() {
         return AddedNewPhotoToListingDTO.class;
     }
 }

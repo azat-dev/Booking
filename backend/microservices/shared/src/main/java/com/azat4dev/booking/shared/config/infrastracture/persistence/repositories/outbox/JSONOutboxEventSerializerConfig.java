@@ -1,45 +1,36 @@
-package com.azat4dev.booking.users.config.users_commands.infrastructure.persistence.repositories;
+package com.azat4dev.booking.shared.config.infrastracture.persistence.repositories.outbox;
 
-import com.azat4dev.booking.shared.data.dao.outbox.OutboxEventsDao;
+import com.azat4dev.booking.shared.config.infrastracture.bus.DefaultMapAnyDomainEventConfig;
 import com.azat4dev.booking.shared.data.repositories.outbox.OutboxEventSerializer;
 import com.azat4dev.booking.shared.data.repositories.outbox.OutboxEventSerializerJSON;
-import com.azat4dev.booking.shared.data.repositories.outbox.OutboxEventsRepository;
-import com.azat4dev.booking.shared.data.repositories.outbox.OutboxEventsRepositoryImpl;
 import com.azat4dev.booking.shared.data.serializers.MapAnyDomainEvent;
 import com.azat4dev.booking.shared.data.serializers.MapDomainEvent;
-import com.azat4dev.booking.shared.domain.events.DomainEventsFactory;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.context.annotation.Import;
 
 import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
 
 @Slf4j
+@Import(DefaultMapAnyDomainEventConfig.class)
 @Configuration
-public class OutboxEventsRepositoryConfig {
+public class JSONOutboxEventSerializerConfig {
 
     private final ObjectMapper objectMapper;
     private final MapAnyDomainEvent mapEvent;
-    private final OutboxEventsDao outboxEventsDao;
-    private final DomainEventsFactory domainEventsFactory;
-
     private final Map<String, Class<?>> dtoClassesByNames;
 
-    public OutboxEventsRepositoryConfig(
-        List<MapDomainEvent<?, ?>> domainEventsMappers,
+    public JSONOutboxEventSerializerConfig(
         ObjectMapper objectMapper,
         MapAnyDomainEvent mapEvent,
-        OutboxEventsDao outboxEventsDao,
-        DomainEventsFactory domainEventsFactory
+        List<MapDomainEvent<?, ?>> domainEventsMappers
     ) {
-
         this.objectMapper = objectMapper;
         this.mapEvent = mapEvent;
-        this.outboxEventsDao = outboxEventsDao;
-        this.domainEventsFactory = domainEventsFactory;
 
         this.dtoClassesByNames = domainEventsMappers.stream()
             .collect(Collectors.toMap(v -> v.getOriginalClass().getSimpleName(),
@@ -67,12 +58,4 @@ public class OutboxEventsRepositoryConfig {
             });
     }
 
-    @Bean
-    OutboxEventsRepository outboxEventsRepository(OutboxEventSerializer serializer) {
-        return new OutboxEventsRepositoryImpl(
-            serializer,
-            outboxEventsDao,
-            domainEventsFactory
-        );
-    }
 }
