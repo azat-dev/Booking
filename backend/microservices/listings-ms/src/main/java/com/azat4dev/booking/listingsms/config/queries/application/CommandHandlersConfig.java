@@ -1,9 +1,6 @@
 package com.azat4dev.booking.listingsms.config.queries.application;
 
-import com.azat4dev.booking.listingsms.queries.application.handlers.GetOwnListingsHandlerImpl;
-import com.azat4dev.booking.listingsms.queries.application.handlers.GetListingPrivateDetailsHandler;
-import com.azat4dev.booking.listingsms.queries.application.handlers.GetListingPrivateDetailsHandlerImpl;
-import com.azat4dev.booking.listingsms.queries.application.handlers.GetOwnListingsHandler;
+import com.azat4dev.booking.listingsms.queries.application.handlers.*;
 import com.azat4dev.booking.listingsms.queries.domain.entities.Hosts;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -19,5 +16,10 @@ public class CommandHandlersConfig {
     @Bean
     GetOwnListingsHandler getOwnListingsHandler(Hosts hosts) {
         return new GetOwnListingsHandlerImpl(hosts);
+    }
+
+    @Bean
+    GetPublicListingDetailsHandler getPublicListingDetailsHandler() {
+        return new GetPublicListingDetailsHandlerImpl();
     }
 }

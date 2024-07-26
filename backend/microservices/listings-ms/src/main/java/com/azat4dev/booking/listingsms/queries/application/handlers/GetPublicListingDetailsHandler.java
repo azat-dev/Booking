@@ -7,13 +7,25 @@ import com.azat4dev.booking.shared.domain.DomainException;
 
 public interface GetPublicListingDetailsHandler {
 
-    ListingPublicDetails handle(GetPublicListingDetails command) throws ListingNotFoundException;
+    ListingPublicDetails handle(GetPublicListingDetails command) throws Exception;
 
     // Exceptions
 
-    class ListingNotFoundException extends DomainException {
-        public ListingNotFoundException(ListingId id) {
-            super("Listing with id " + id.getValue() + " not found");
+    abstract class Exception extends DomainException {
+        protected Exception(String message) {
+            super(message);
+        }
+
+        public static class Forbidden extends Exception {
+            public Forbidden() {
+                super("Forbidden");
+            }
+        }
+
+        public static class ListingNotFound extends Exception {
+            public ListingNotFound(ListingId id) {
+                super("Listing with id " + id.getValue() + " not found");
+            }
         }
     }
 }
