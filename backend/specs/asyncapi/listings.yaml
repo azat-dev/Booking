@@ -31,8 +31,10 @@ channels:
   queries/responses/GetPublicListingDetailsById:
     address: 'com.azat4dev.booking.listings.responses.get_public_listing_details_by_id'
     messages:
-      GetPublicListingDetailsById:
-        $ref: '#/components/messages/queries~1responses~1GetPublicListingDetailsById'
+      GetPublicListingDetailsByIdResponse:
+        $ref: '#/components/messages/queries~1responses~1GetPublicListingDetailsByIdResponse'
+      FailedGetPublicListingDetailsById:
+        $ref: '#/components/messages/queries~1responses~1FailedGetPublicListingDetailsById'
 
 operations:
   queriesGetPublicListingDetailsById:
@@ -43,7 +45,8 @@ operations:
       channel:
         $ref: '#/channels/queries~1responses~1GetPublicListingDetailsById'
       messages:
-        - $ref: '#/components/messages/queries~1responses~1GetPublicListingDetailsById'
+        - $ref: '#/components/messages/queries~1responses~1GetPublicListingDetailsByIdResponse'
+        - $ref: '#/components/messages/queries~1responses~1FailedGetPublicListingDetailsById'
 
   sendListingEvents:
     action: send
@@ -83,8 +86,8 @@ components:
       payload:
         $ref: '#/components/schemas/queries/GetPublicListingDetailsById'
 
-    queries/responses/GetPublicListingDetailsById:
-      name: GetPublicListingDetailsById
+    queries/responses/GetPublicListingDetailsByIdResponse:
+      name: GetPublicListingDetailsByIdResponse
       headers:
         type: object
         required:
@@ -105,6 +108,29 @@ components:
             format: date-time
       payload:
         $ref: '#/components/schemas/queries/GetPublicListingDetailsByIdResponse'
+
+    queries/responses/FailedGetPublicListingDetailsById:
+      name: FailedGetPublicListingDetailsById
+      headers:
+        type: object
+        required:
+          - x-message-id
+          - x-message-type
+          - x-message-sent-at
+        properties:
+          x-message-id:
+            type: string
+          x-correlation-id:
+            type: string
+          x-message-type:
+            type: string
+            enum:
+              - FailedGetPublicListingDetailsById
+          x-message-sent-at:
+            type: string
+            format: date-time
+      payload:
+        $ref: '#/components/schemas/queries/FailedGetPublicListingDetailsById'
 
     events/NewListingAdded:
       name: NewListingAdded
@@ -608,33 +634,27 @@ components:
             $ref: "./common/values.yaml#/components/schemas/ListingId"
 
       GetPublicListingDetailsByIdResponse:
-        title: GetPublicListingDetailsById
+        title: GetPublicListingDetailsByIdResponse
         type: object
         additionalProperties: false
         required:
-          - correlationId
           - params
           - data
         properties:
-          correlationId:
-            type: string
           params:
             $ref: "#/components/schemas/queries/GetPublicListingDetailsByIdParams"
           data:
             $ref: "#/components/schemas/values/PublicListingDetails"
 
       FailedGetPublicListingDetailsById:
-        title: GetPublicListingDetailsByIdResponse
+        title: FailedGetPublicListingDetailsById
         type: object
         additionalProperties: false
         required:
-          - correlationId
           - params
-          - data
+          - error
         properties:
-          correlationId:
-            type: string
           params:
             $ref: "#/components/schemas/queries/GetPublicListingDetailsByIdParams"
-          data:
-            $ref: "#/components/schemas/values/PublicListingDetails"
+          error:
+            $ref: "./common/values.yaml#/components/schemas/Error"

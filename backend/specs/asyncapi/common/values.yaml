@@ -5,14 +5,40 @@ info:
 components:
   schemas:
     OperationId:
+      title: OperationId
       type: string
       format: uuid
     ListingId:
+      title: ListingId
       type: string
       format: uuid
     HostId:
+      title: HostId
       type: string
       format: uuid
     UserId:
+      title: UserId
       type: string
       format: uuid
+    ErrorCode:
+      title: ErrorCode
+      type: string
+      enum:
+        - NOT_FOUND
+        - UNAUTHORIZED
+        - FORBIDDEN
+        - INVALID_ARGUMENT
+        - INTERNAL_SERVER_ERROR
+        - SERVICE_UNAVAILABLE
+        - UNIMPLEMENTED
+    Error:
+      title: Error
+      type: object
+      required:
+        - code
+        - message
+      properties:
+        code:
+          $ref: "#/components/schemas/ErrorCode"
+        message:
+          type: string
