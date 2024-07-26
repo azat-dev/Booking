@@ -2,7 +2,7 @@ package com.azat4dev.booking.listingsms.config.commands.infrastructure.persisten
 
 
 import com.azat4dev.booking.listingsms.config.commands.infrastructure.persistence.files.properties.ListingsPhotoBucketConfigProperties;
-import com.azat4dev.booking.shared.data.repositories.files.MinioMediaObjectsBucket;
+import com.azat4dev.booking.shared.infrastructure.persistence.repositories.files.MinioMediaObjectsBucket;
 import com.azat4dev.booking.shared.domain.interfaces.files.MediaObjectsBucket;
 import io.minio.MinioClient;
 import org.springframework.beans.factory.annotation.Qualifier;

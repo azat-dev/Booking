@@ -1,7 +1,7 @@
 package com.azat4dev.booking.users.config.users_commands.infrastructure.persistence.repositories;
 
 import com.azat4dev.booking.shared.config.infrastracture.persistence.repositories.outbox.OutboxEventsRepositoryConfig;
-import com.azat4dev.booking.shared.data.repositories.outbox.OutboxEventsRepository;
+import com.azat4dev.booking.shared.infrastructure.persistence.repositories.outbox.OutboxEventsRepository;
 import com.azat4dev.booking.users.commands.domain.interfaces.repositories.UnitOfWork;
 import com.azat4dev.booking.users.commands.domain.interfaces.repositories.UnitOfWorkFactory;
 import com.azat4dev.booking.users.commands.domain.interfaces.repositories.UsersRepository;

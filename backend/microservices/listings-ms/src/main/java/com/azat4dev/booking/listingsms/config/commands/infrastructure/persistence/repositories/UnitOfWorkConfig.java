@@ -3,9 +3,9 @@ package com.azat4dev.booking.listingsms.config.commands.infrastructure.persisten
 import com.azat4dev.booking.listingsms.commands.domain.interfaces.repositories.ListingsRepository;
 import com.azat4dev.booking.listingsms.commands.domain.interfaces.repositories.UnitOfWork;
 import com.azat4dev.booking.listingsms.commands.domain.interfaces.repositories.UnitOfWorkFactory;
-import com.azat4dev.booking.listingsms.commands.infrastructure.repositories.UnitOfWorkImpl;
+import com.azat4dev.booking.listingsms.commands.infrastructure.persistence.repositories.UnitOfWorkImpl;
 import com.azat4dev.booking.shared.config.infrastracture.persistence.repositories.outbox.OutboxEventsRepositoryConfig;
-import com.azat4dev.booking.shared.data.repositories.outbox.OutboxEventsRepository;
+import com.azat4dev.booking.shared.infrastructure.persistence.repositories.outbox.OutboxEventsRepository;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.Import;

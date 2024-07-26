@@ -1,7 +1,7 @@
 package com.azat4dev.booking.users.config.users_queries.infrastracture.presentation;
 
-import com.azat4dev.booking.shared.presentation.CurrentAuthenticatedUserIdProvider;
-import com.azat4dev.booking.shared.presentation.JwtCurrentAuthenticatedUserIdProvider;
+import com.azat4dev.booking.shared.infrastructure.api.CurrentAuthenticatedUserIdProvider;
+import com.azat4dev.booking.shared.infrastructure.api.JwtCurrentAuthenticatedUserIdProvider;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 

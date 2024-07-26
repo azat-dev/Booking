@@ -1,10 +1,10 @@
 package com.azat4dev.booking.shared.config.infrastracture.bus;
 
-import com.azat4dev.booking.shared.data.bus.MessageSerializer;
-import com.azat4dev.booking.shared.data.bus.MessageSerializerJSON;
-import com.azat4dev.booking.shared.data.bus.MessageSerializerJSONWithDomainEvents;
-import com.azat4dev.booking.shared.data.serializers.MapAnyDomainEvent;
-import com.azat4dev.booking.shared.data.serializers.MapDomainEvent;
+import com.azat4dev.booking.shared.infrastructure.bus.MessageSerializer;
+import com.azat4dev.booking.shared.infrastructure.bus.MessageSerializerJSON;
+import com.azat4dev.booking.shared.infrastructure.bus.MessageSerializerJSONWithDomainEvents;
+import com.azat4dev.booking.shared.infrastructure.serializers.MapAnyDomainEvent;
+import com.azat4dev.booking.shared.infrastructure.serializers.MapDomainEvent;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.context.annotation.Bean;

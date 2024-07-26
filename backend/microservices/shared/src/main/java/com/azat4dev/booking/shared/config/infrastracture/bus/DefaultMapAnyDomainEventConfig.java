@@ -1,8 +1,8 @@
 package com.azat4dev.booking.shared.config.infrastracture.bus;
 
-import com.azat4dev.booking.shared.data.serializers.MapAnyDomainEvent;
-import com.azat4dev.booking.shared.data.serializers.MapAnyDomainEventImpl;
-import com.azat4dev.booking.shared.data.serializers.MapDomainEvent;
+import com.azat4dev.booking.shared.infrastructure.serializers.MapAnyDomainEvent;
+import com.azat4dev.booking.shared.infrastructure.serializers.MapAnyDomainEventImpl;
+import com.azat4dev.booking.shared.infrastructure.serializers.MapDomainEvent;
 import lombok.AllArgsConstructor;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;

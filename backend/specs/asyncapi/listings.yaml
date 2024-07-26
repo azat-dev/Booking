@@ -22,22 +22,28 @@ channels:
       AddedNewPhotoToListing:
         $ref: '#/components/messages/events~1AddedNewPhotoToListing'
 
-  queriesGetPublicListingDetailsById:
+  queries/requests/GetPublicListingDetailsById:
     address: 'com.azat4dev.booking.listings.1.0.queries.get_public_listing_details_by_id'
     messages:
-      queriesGet:
-        $ref: '#/components/messages/queries~1GetPublicListingDetailsById'
+      GetPublicListingDetailsById:
+        $ref: '#/components/messages/queries~1requests~1GetPublicListingDetailsById'
+
+  queries/responses/GetPublicListingDetailsById:
+    address: 'com.azat4dev.booking.listings.1.0.queries.get_public_listing_details_by_id'
+    messages:
+      GetPublicListingDetailsById:
+        $ref: '#/components/messages/queries~1responses~1GetPublicListingDetailsById'
 
 operations:
-  receiveGetPublicListingDetailsById:
+  queriesGetPublicListingDetailsById:
     action: receive
     channel:
-      $ref: '#/channels/queriesGetPublicListingDetailsById'
+      $ref: '#/channels/queries~1requests~1GetPublicListingDetailsById'
     reply:
-      messages:
-        - $ref: '#/components/messages/queries~1GetPublicListingDetailsByIdResponse'
       channel:
-        $ref: '#/channels/queriesGetPublicListingDetailsById'
+        $ref: '#/channels/queries~1responses~1GetPublicListingDetailsById'
+      messages:
+        - $ref: '#/components/messages/queries~1responses~1GetPublicListingDetailsById'
 
   sendListingEvents:
     action: send
@@ -45,7 +51,7 @@ operations:
       $ref: '#/channels/listingEventsStream'
     messages:
       - $ref: '#/channels/listingEventsStream/messages/NewListingAdded'
-      - $ref: '#/channels/listingEventsStream/messages/FailedToAddNewListing'
+      - $ref: '#/channels/listingEventsStream/messages/FailedToAddNewLitest: sting'
       - $ref: '#/channels/listingEventsStream/messages/ListingDetailsUpdated'
       - $ref: '#/channels/listingEventsStream/messages/ListingPublished'
       - $ref: '#/channels/listingEventsStream/messages/GeneratedUrlForUploadListingPhoto'
@@ -54,16 +60,15 @@ operations:
 
 components:
   messages:
-    
-    queries/GetPublicListingDetailsById:
+    queries/requests/GetPublicListingDetailsById:
       name: GetPublicListingDetailsById
       payload:
         $ref: '#/components/schemas/queries/GetPublicListingDetailsById'
-        
-    queries/GetPublicListingDetailsByIdResponse:
+
+    queries/responses/GetPublicListingDetailsById:
       name: GetPublicListingDetailsById
       payload:
-        $ref: '#/components/schemas/queries/GetPublicListingDetailsById'
+        $ref: '#/components/schemas/queries/GetPublicListingDetailsByIdResponse'
 
     events/NewListingAdded:
       name: NewListingAdded
@@ -258,6 +263,42 @@ components:
           objectName:
             type: string
 
+      PublicListingDetails:
+        title: PublicListingDetails
+        type: object
+        additionalProperties: false
+        required:
+          - listingId
+          - title
+          - description
+          - address
+          - roomType
+          - propertyType
+          - guestCapacity
+          - photos
+          - status
+        properties:
+          listingId:
+            $ref: "./common/values.yaml#/components/schemas/ListingId"
+          title:
+            type: string
+          description:
+            type: string
+          address:
+            $ref: "#/components/schemas/values/Address"
+          roomType:
+            $ref: "#/components/schemas/values/RoomType"
+          propertyType:
+            $ref: "#/components/schemas/values/PropertyType"
+          guestCapacity:
+            $ref: "#/components/schemas/values/GuestsCapacity"
+          photos:
+            type: array
+            items:
+              $ref: "#/components/schemas/values/ListingPhoto"
+          status:
+            $ref: "#/components/schemas/values/ListingStatus"
+
     payloads:
       NewListingAdded:
         title: NewListingAdded
@@ -387,15 +428,13 @@ components:
         additionalProperties: false
         required:
           - correlationId
-          - replyTopic
           - params
         properties:
           correlationId:
             type: string
-          replyTopic:
-            type: string
           params:
             $ref: "#/components/schemas/queries/GetPublicListingDetailsByIdParams"
+
       GetPublicListingDetailsByIdParams:
         title: GetPublicListingDetailsByIdParams
         type: object
@@ -412,7 +451,7 @@ components:
         additionalProperties: false
         required:
           - correlationId
-          - listingId
+          - params
           - data
         properties:
           correlationId:
@@ -420,40 +459,4 @@ components:
           params:
             $ref: "#/components/schemas/queries/GetPublicListingDetailsByIdParams"
           data:
-            $ref: "#/components/schemas/queries/GetPublicListingDetailsByIdResponseData"
-
-      GetPublicListingDetailsByIdResponseData:
-        title: GetPublicListingDetailsByIdResponseData
-        type: object
-        additionalProperties: false
-        required:
-          - listingId
-          - title
-          - description
-          - address
-          - roomType
-          - propertyType
-          - guestCapacity
-          - photos
-          - status
-        properties:
-          listingId:
-            $ref: "./common/values.yaml#/components/schemas/ListingId"
-          title:
-            type: string
-          description:
-            type: string
-          address:
-            $ref: "#/components/schemas/values/Address"
-          roomType:
-            $ref: "#/components/schemas/values/RoomType"
-          propertyType:
-            $ref: "#/components/schemas/values/PropertyType"
-          guestCapacity:
-            $ref: "#/components/schemas/values/GuestsCapacity"
-          photos:
-            type: array
-            items:
-              $ref: "#/components/schemas/values/ListingPhoto"
-          status:
-            $ref: "#/components/schemas/values/ListingStatus"
+            $ref: "#/components/schemas/values/PublicListingDetails"

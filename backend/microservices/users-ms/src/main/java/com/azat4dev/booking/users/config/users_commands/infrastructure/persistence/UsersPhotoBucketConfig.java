@@ -1,7 +1,7 @@
 package com.azat4dev.booking.users.config.users_commands.infrastructure.persistence;
 
 
-import com.azat4dev.booking.shared.data.repositories.files.MinioMediaObjectsBucket;
+import com.azat4dev.booking.shared.infrastructure.persistence.repositories.files.MinioMediaObjectsBucket;
 import com.azat4dev.booking.shared.domain.interfaces.files.MediaObjectsBucket;
 import com.azat4dev.booking.users.config.users_commands.properties.UsersPhotoBucketConfigProperties;
 import io.minio.MinioClient;

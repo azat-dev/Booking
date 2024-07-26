@@ -1,6 +1,6 @@
 package com.azat4dev.booking.users.commands.domain.services;
 
-import com.azat4dev.booking.shared.data.repositories.outbox.OutboxEventsRepository;
+import com.azat4dev.booking.shared.infrastructure.persistence.repositories.outbox.OutboxEventsRepository;
 import com.azat4dev.booking.shared.domain.interfaces.tracing.ExtractTraceContext;
 import com.azat4dev.booking.shared.utils.TimeProvider;
 import com.azat4dev.booking.users.commands.domain.UserHelpers;

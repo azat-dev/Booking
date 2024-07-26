@@ -1,18 +1,23 @@
 package com.azat4dev.booking.listingsms.e2e.api.bus.queries;
 
 import com.azat4dev.booking.listingsms.commands.domain.entities.Listing;
+import com.azat4dev.booking.listingsms.config.common.properties.BusProperties;
 import com.azat4dev.booking.listingsms.e2e.helpers.AccessTokenConfig;
 import com.azat4dev.booking.listingsms.e2e.helpers.ApiHelpers;
 import com.azat4dev.booking.listingsms.e2e.helpers.EnableTestcontainers;
 import com.azat4dev.booking.listingsms.e2e.helpers.GenerateAccessToken;
+import com.azat4dev.booking.listingsms.generated.api.bus.Channels;
 import com.azat4dev.booking.listingsms.generated.client.api.CommandsListingsPhotoApi;
 import com.azat4dev.booking.listingsms.generated.client.api.CommandsModificationsApi;
 import com.azat4dev.booking.listingsms.generated.client.api.QueriesPrivateApi;
 import com.azat4dev.booking.listingsms.generated.client.base.ApiClient;
 import com.azat4dev.booking.listingsms.generated.client.model.*;
+import com.azat4dev.booking.listingsms.generated.events.dto.GetPublicListingDetailsByIdDTO;
+import com.azat4dev.booking.listingsms.generated.events.dto.GetPublicListingDetailsByIdParamsDTO;
 import com.azat4dev.booking.shared.domain.values.user.UserId;
-import com.fasterxml.jackson.databind.ObjectMapper;
+import com.azat4dev.booking.shared.infrastructure.bus.MessageBus;
 import net.datafaker.Faker;
+import org.awaitility.Awaitility;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
@@ -20,12 +25,16 @@ import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.web.server.LocalServerPort;
 import org.springframework.core.io.Resource;
 import org.springframework.http.HttpStatus;
-import org.springframework.kafka.core.KafkaTemplate;
 import org.springframework.test.context.jdbc.Sql;
 import org.springframework.web.client.RestClientResponseException;
 
 import java.io.IOException;
+import java.time.Duration;
+import java.time.temporal.ChronoUnit;
+import java.util.Optional;
+import java.util.Set;
 import java.util.UUID;
+import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.function.Function;
 
 import static com.azat4dev.booking.listingsms.e2e.helpers.PhotoHelpers.givenAllPhotosUploaded;
@@ -41,6 +50,12 @@ class ListingE2ETests {
 
     @Autowired
     private GenerateAccessToken generateAccessToken;
+
+    @Autowired
+    private MessageBus<String> messageBus;
+
+    @Autowired
+    private BusProperties busProperties;
 
     @Value("classpath:test_image.jpg")
     private Resource testImageFile;
@@ -87,7 +102,7 @@ class ListingE2ETests {
     }
 
     @Test
-    void test_getOnlyOwnListingDetails()  {
+    void test_getOnlyOwnListingDetails() {
 
         // Given
         final var currentUserListing = givenExistingListing(USER1);
@@ -261,6 +276,55 @@ class ListingE2ETests {
         assertThat(listingDetails.getPropertyType()).isEqualTo(updateData.getPropertyType());
         assertThat(listingDetails.getRoomType()).isEqualTo(updateData.getRoomType());
         assertThat(listingDetails.getAddress()).isEqualTo(updateData.getAddress());
+    }
+
+    @Test
+    void test_getPublicListingData_givenExistingListing_thenPublishResponse() throws IOException {
+
+        // Given
+        final var eventId = UUID.randomUUID().toString();
+        final var listingId = givenExistingListing(USER1);
+        givenExistingListing(USER2);
+
+        // When
+        messageBus.publish(
+            Channels.QUERIES_REQUESTS__GET_PUBLIC_LISTING_DETAILS_BY_ID.getValue(),
+            Optional.empty(),
+            Optional.empty(),
+            eventId,
+            "GetPublicListingDetailsById",
+            GetPublicListingDetailsByIdDTO.builder()
+                .params(
+                    GetPublicListingDetailsByIdParamsDTO.builder()
+                        .listingId(listingId)
+                        .build()
+                ).build()
+        );
+
+        // Then
+        final var completed = new AtomicBoolean(false);
+
+        final var listener = messageBus.listen(
+            Channels.QUERIES_RESPONSES__GET_PUBLIC_LISTING_DETAILS_BY_ID.getValue(),
+            Set.of("GetPublicListingDetailsByIdResponse"),
+            (message) -> {
+                if (message.correlationId().isEmpty()) {
+                    return;
+                }
+
+                final var receivedCorrelationId = message.correlationId().get();
+                if (!receivedCorrelationId.equals(eventId)) {
+                    return;
+                }
+
+                completed.set(true);
+            }
+        );
+
+        Awaitility.await()
+            .atLeast(Duration.of(5, ChronoUnit.SECONDS))
+            .untilTrue(completed);
+        listener.close();
     }
 
     private <T> T apiClient(Function<ApiClient, T> factory, UserId userId) {

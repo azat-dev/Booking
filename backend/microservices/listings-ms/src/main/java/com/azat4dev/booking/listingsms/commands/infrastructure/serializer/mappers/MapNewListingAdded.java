@@ -5,7 +5,7 @@ import com.azat4dev.booking.listingsms.commands.domain.values.HostId;
 import com.azat4dev.booking.listingsms.commands.domain.values.ListingId;
 import com.azat4dev.booking.listingsms.commands.domain.values.ListingTitle;
 import com.azat4dev.booking.listingsms.generated.events.dto.NewListingAddedDTO;
-import com.azat4dev.booking.shared.data.serializers.MapDomainEvent;
+import com.azat4dev.booking.shared.infrastructure.serializers.MapDomainEvent;
 import lombok.AllArgsConstructor;
 
 @AllArgsConstructor

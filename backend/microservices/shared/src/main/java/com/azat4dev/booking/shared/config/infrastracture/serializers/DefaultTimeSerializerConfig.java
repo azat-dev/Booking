@@ -1,7 +1,7 @@
 package com.azat4dev.booking.shared.config.infrastracture.serializers;
 
-import com.azat4dev.booking.shared.data.serializers.MapLocalDateTime;
-import com.azat4dev.booking.shared.data.serializers.Serializer;
+import com.azat4dev.booking.shared.infrastructure.serializers.MapLocalDateTime;
+import com.azat4dev.booking.shared.infrastructure.serializers.Serializer;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 

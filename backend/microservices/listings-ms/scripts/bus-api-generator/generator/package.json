@@ -1,0 +1,27 @@
+{
+  "name": "bus-api-generator",
+  "version": "0.0.1",
+  "description": "A generator for generating bus API code from AsyncAPI documents.",
+  "generator": {
+    "renderer": "react",
+    "apiVersion": "v3",
+    "generator": ">=1.10.0 <=3.0.0",
+    "supportedProtocols": ["mqtt"],
+    "parameters": {
+      "package": {
+        "description": "The name of the package.",
+        "required": true
+      },
+      "dtoPackage": {
+        "description": "The name of the DTO package.",
+        "required": true
+      }
+    }
+  },
+  "dependencies": {
+    "@asyncapi/generator-react-sdk": "^1.0.20"
+  },
+  "devDependencies": {
+    "rimraf": "^5.0.0"
+  }
+}

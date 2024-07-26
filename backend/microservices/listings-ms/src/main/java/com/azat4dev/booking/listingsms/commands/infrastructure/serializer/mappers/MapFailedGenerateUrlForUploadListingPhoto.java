@@ -3,7 +3,7 @@ package com.azat4dev.booking.listingsms.commands.infrastructure.serializer.mappe
 import com.azat4dev.booking.listingsms.commands.domain.events.FailedGenerateUrlForUploadListingPhoto;
 import com.azat4dev.booking.listingsms.commands.domain.values.ListingId;
 import com.azat4dev.booking.listingsms.generated.events.dto.FailedGenerateUrlForUploadListingPhotoDTO;
-import com.azat4dev.booking.shared.data.serializers.MapDomainEvent;
+import com.azat4dev.booking.shared.infrastructure.serializers.MapDomainEvent;
 import com.azat4dev.booking.shared.domain.values.IdempotentOperationId;
 import com.azat4dev.booking.shared.domain.values.files.PhotoFileExtension;
 import com.azat4dev.booking.shared.domain.values.user.UserId;

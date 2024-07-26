@@ -5,7 +5,7 @@ import com.azat4dev.booking.shared.domain.values.files.MediaObjectName;
 import com.azat4dev.booking.shared.domain.values.files.UploadFileFormData;
 import com.azat4dev.booking.shared.domain.values.user.UserId;
 import com.azat4dev.booking.users.commands.domain.core.events.GeneratedUserPhotoUploadUrl;
-import com.azat4dev.booking.shared.data.serializers.MapDomainEvent;
+import com.azat4dev.booking.shared.infrastructure.serializers.MapDomainEvent;
 import com.azat4dev.booking.usersms.generated.events.dto.GeneratedUserPhotoUploadUrlDTO;
 import com.azat4dev.booking.usersms.generated.events.dto.UploadedFileFormDataDTO;
 import lombok.AllArgsConstructor;

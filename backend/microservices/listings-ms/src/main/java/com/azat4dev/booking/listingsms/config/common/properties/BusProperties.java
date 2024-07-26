@@ -43,4 +43,10 @@ public class BusProperties {
     @Min(1)
     @NotNull
     private final Integer internalCommandsTopicNumberOfConsumers;
+
+    @NotBlank
+    public final String publicCommandsTopicPrefix;
+
+    @NotBlank
+    public final String publicCommandsGetListingPublicDetailsByIdTopicName;
 }

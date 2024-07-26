@@ -1,8 +1,8 @@
 package com.azat4dev.booking.listingsms.config.common.infrastructure.bus;
 
 import com.azat4dev.booking.listingsms.commands.infrastructure.serializer.mappers.*;
-import com.azat4dev.booking.shared.data.serializers.MapDomainEvent;
-import com.azat4dev.booking.shared.data.serializers.Serializer;
+import com.azat4dev.booking.shared.infrastructure.serializers.MapDomainEvent;
+import com.azat4dev.booking.shared.infrastructure.serializers.Serializer;
 import com.azat4dev.booking.shared.domain.events.DomainEventPayload;
 import lombok.AllArgsConstructor;
 import org.springframework.context.annotation.Bean;

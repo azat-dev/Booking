@@ -7,7 +7,7 @@ import com.azat4dev.booking.listingsms.commands.domain.events.NewListingAdded;
 import com.azat4dev.booking.listingsms.commands.domain.interfaces.repositories.ListingsRepository;
 import com.azat4dev.booking.listingsms.commands.domain.interfaces.repositories.UnitOfWork;
 import com.azat4dev.booking.listingsms.commands.domain.interfaces.repositories.UnitOfWorkFactory;
-import com.azat4dev.booking.shared.data.repositories.outbox.OutboxEventsRepository;
+import com.azat4dev.booking.shared.infrastructure.persistence.repositories.outbox.OutboxEventsRepository;
 import com.azat4dev.booking.shared.domain.interfaces.tracing.ExtractTraceContext;
 import com.azat4dev.booking.shared.domain.producers.OutboxEventsReader;
 import com.azat4dev.booking.shared.utils.TimeProvider;

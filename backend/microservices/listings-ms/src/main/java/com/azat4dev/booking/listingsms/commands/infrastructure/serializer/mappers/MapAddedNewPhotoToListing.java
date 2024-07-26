@@ -6,7 +6,7 @@ import com.azat4dev.booking.listingsms.commands.domain.values.ListingId;
 import com.azat4dev.booking.listingsms.commands.domain.values.ListingPhoto;
 import com.azat4dev.booking.listingsms.generated.events.dto.AddedNewPhotoToListingDTO;
 import com.azat4dev.booking.listingsms.generated.events.dto.ListingPhotoDTO;
-import com.azat4dev.booking.shared.data.serializers.MapDomainEvent;
+import com.azat4dev.booking.shared.infrastructure.serializers.MapDomainEvent;
 import com.azat4dev.booking.shared.domain.values.files.BucketName;
 import com.azat4dev.booking.shared.domain.values.files.MediaObjectName;
 import lombok.AllArgsConstructor;

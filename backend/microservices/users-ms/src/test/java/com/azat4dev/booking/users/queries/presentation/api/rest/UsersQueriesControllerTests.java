@@ -1,7 +1,7 @@
 package com.azat4dev.booking.users.queries.presentation.api.rest;
 
 import com.azat4dev.booking.shared.application.ControllerException;
-import com.azat4dev.booking.shared.presentation.CurrentAuthenticatedUserIdProvider;
+import com.azat4dev.booking.shared.infrastructure.api.CurrentAuthenticatedUserIdProvider;
 import com.azat4dev.booking.users.commands.domain.UserHelpers;
 import com.azat4dev.booking.users.queries.domain.services.UsersQueryService;
 import com.azat4dev.booking.users.queries.infrastructure.presentation.api.rest.CurrentUserApi;

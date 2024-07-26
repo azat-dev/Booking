@@ -1,6 +1,6 @@
 package com.azat4dev.booking.users.commands.infrastructure.persistence.repositories.serializer.mappers;
 
-import com.azat4dev.booking.shared.data.serializers.MapDomainEvent;
+import com.azat4dev.booking.shared.infrastructure.serializers.MapDomainEvent;
 import com.azat4dev.booking.shared.domain.values.IdempotentOperationId;
 import com.azat4dev.booking.shared.domain.values.files.BucketName;
 import com.azat4dev.booking.shared.domain.values.files.MediaObjectName;

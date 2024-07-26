@@ -1,8 +1,8 @@
 package com.azat4dev.booking.shared.config.infrastracture;
 
-import com.azat4dev.booking.shared.data.repositories.outbox.OutboxEventsRepository;
-import com.azat4dev.booking.shared.data.tracing.ParseTracingInfo;
-import com.azat4dev.booking.shared.data.tracing.PublishOutboxEventToBus;
+import com.azat4dev.booking.shared.infrastructure.persistence.repositories.outbox.OutboxEventsRepository;
+import com.azat4dev.booking.shared.infrastructure.tracing.ParseTracingInfo;
+import com.azat4dev.booking.shared.infrastructure.tracing.PublishOutboxEventToBus;
 import com.azat4dev.booking.shared.domain.interfaces.bus.DomainEventsBus;
 import com.azat4dev.booking.shared.domain.interfaces.tracing.ExecuteWithTraceContext;
 import com.azat4dev.booking.shared.domain.producers.OutboxEventsReader;

@@ -1,7 +1,7 @@
 package com.azat4dev.booking.users.config.users_commands.infrastructure.bus;
 
-import com.azat4dev.booking.shared.data.serializers.MapDomainEvent;
-import com.azat4dev.booking.shared.data.serializers.Serializer;
+import com.azat4dev.booking.shared.infrastructure.serializers.MapDomainEvent;
+import com.azat4dev.booking.shared.infrastructure.serializers.Serializer;
 import com.azat4dev.booking.shared.domain.events.DomainEventPayload;
 import com.azat4dev.booking.users.commands.infrastructure.persistence.repositories.serializer.mappers.*;
 import lombok.AllArgsConstructor;

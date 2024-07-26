@@ -35,7 +35,6 @@ const argv = yargs(hideBin(process.argv))
 
 const replaceSeparator = (filepath: string) => {
     return filepath.replace("/", path.sep).replace("\\", path.sep);
-
 }
 
 const INPUT_FILE = replaceSeparator((argv as any).input);

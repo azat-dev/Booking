@@ -1,9 +1,9 @@
 package com.azat4dev.booking.users.config.users_commands.infrastructure.bus;
 
 import com.azat4dev.booking.shared.config.infrastracture.bus.DefaultDomainEventsBusConfig;
-import com.azat4dev.booking.shared.data.bus.GetInputTopicForEvent;
-import com.azat4dev.booking.shared.data.bus.GetOutputTopicForEvent;
-import com.azat4dev.booking.shared.data.bus.GetPartitionKeyForEvent;
+import com.azat4dev.booking.shared.infrastructure.bus.GetInputTopicForEvent;
+import com.azat4dev.booking.shared.infrastructure.bus.GetOutputTopicForEvent;
+import com.azat4dev.booking.shared.infrastructure.bus.GetPartitionKeyForEvent;
 import com.azat4dev.booking.shared.domain.events.Command;
 import com.azat4dev.booking.shared.domain.events.DomainEventPayload;
 import com.azat4dev.booking.users.commands.domain.core.events.EventWithUserId;

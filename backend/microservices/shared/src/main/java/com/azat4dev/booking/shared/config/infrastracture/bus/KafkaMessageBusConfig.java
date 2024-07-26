@@ -1,10 +1,10 @@
 package com.azat4dev.booking.shared.config.infrastracture.bus;
 
-import com.azat4dev.booking.shared.data.bus.GetNumberOfConsumersForTopic;
-import com.azat4dev.booking.shared.data.bus.KafkaMessageBus;
-import com.azat4dev.booking.shared.data.bus.MessageBus;
-import com.azat4dev.booking.shared.data.bus.MessageSerializer;
-import com.azat4dev.booking.shared.data.serializers.Serializer;
+import com.azat4dev.booking.shared.infrastructure.bus.GetNumberOfConsumersForTopic;
+import com.azat4dev.booking.shared.infrastructure.bus.KafkaMessageBus;
+import com.azat4dev.booking.shared.infrastructure.bus.MessageBus;
+import com.azat4dev.booking.shared.infrastructure.bus.MessageSerializer;
+import com.azat4dev.booking.shared.infrastructure.serializers.Serializer;
 import com.azat4dev.booking.shared.utils.TimeProvider;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.context.annotation.Bean;

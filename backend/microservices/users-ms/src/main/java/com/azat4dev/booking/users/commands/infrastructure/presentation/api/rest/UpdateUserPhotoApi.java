@@ -1,7 +1,7 @@
 package com.azat4dev.booking.users.commands.infrastructure.presentation.api.rest;
 
 import com.azat4dev.booking.shared.application.ControllerException;
-import com.azat4dev.booking.shared.presentation.CurrentAuthenticatedUserIdProvider;
+import com.azat4dev.booking.shared.infrastructure.api.CurrentAuthenticatedUserIdProvider;
 import com.azat4dev.booking.users.commands.application.commands.photo.GenerateUserPhotoUploadUrl;
 import com.azat4dev.booking.users.commands.application.commands.photo.UpdateUserPhoto;
 import com.azat4dev.booking.users.commands.application.handlers.photo.GenerateUserPhotoUploadUrlHandler;

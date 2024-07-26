@@ -1,10 +1,10 @@
 package com.azat4dev.booking.shared.config.infrastracture.persistence.repositories.outbox;
 
 import com.azat4dev.booking.shared.config.infrastracture.bus.DefaultMapAnyDomainEventConfig;
-import com.azat4dev.booking.shared.data.repositories.outbox.OutboxEventSerializer;
-import com.azat4dev.booking.shared.data.repositories.outbox.OutboxEventSerializerJSON;
-import com.azat4dev.booking.shared.data.serializers.MapAnyDomainEvent;
-import com.azat4dev.booking.shared.data.serializers.MapDomainEvent;
+import com.azat4dev.booking.shared.infrastructure.persistence.repositories.outbox.OutboxEventSerializer;
+import com.azat4dev.booking.shared.infrastructure.persistence.repositories.outbox.OutboxEventSerializerJSON;
+import com.azat4dev.booking.shared.infrastructure.serializers.MapAnyDomainEvent;
+import com.azat4dev.booking.shared.infrastructure.serializers.MapDomainEvent;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.context.annotation.Bean;

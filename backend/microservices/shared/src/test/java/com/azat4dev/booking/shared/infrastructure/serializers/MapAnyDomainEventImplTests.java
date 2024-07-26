@@ -1,8 +1,5 @@
 package com.azat4dev.booking.shared.infrastructure.serializers;
 
-import com.azat4dev.booking.shared.data.serializers.MapAnyDomainEvent;
-import com.azat4dev.booking.shared.data.serializers.MapAnyDomainEventImpl;
-import com.azat4dev.booking.shared.data.serializers.MapDomainEvent;
 import com.azat4dev.booking.shared.domain.events.DomainEventPayload;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.databind.ObjectMapper;

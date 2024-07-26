@@ -10,7 +10,7 @@ import com.azat4dev.booking.listingsms.common.domain.values.PropertyType;
 import com.azat4dev.booking.listingsms.common.domain.values.RoomType;
 import com.azat4dev.booking.listingsms.common.domain.values.address.ListingAddress;
 import com.azat4dev.booking.listingsms.generated.events.dto.*;
-import com.azat4dev.booking.shared.data.serializers.Serializer;
+import com.azat4dev.booking.shared.infrastructure.serializers.Serializer;
 import lombok.AllArgsConstructor;
 import org.openapitools.jackson.nullable.JsonNullable;
 

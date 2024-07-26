@@ -1,6 +1,6 @@
 package com.azat4dev.booking.users.commands.infrastructure.persistence.repositories;
 
-import com.azat4dev.booking.shared.data.repositories.outbox.OutboxEventsRepository;
+import com.azat4dev.booking.shared.infrastructure.persistence.repositories.outbox.OutboxEventsRepository;
 import com.azat4dev.booking.users.commands.domain.interfaces.repositories.UnitOfWork;
 import com.azat4dev.booking.users.commands.domain.interfaces.repositories.UsersRepository;
 import io.micrometer.observation.annotation.Observed;

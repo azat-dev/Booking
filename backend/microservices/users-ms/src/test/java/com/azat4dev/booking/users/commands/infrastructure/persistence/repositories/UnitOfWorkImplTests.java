@@ -2,7 +2,7 @@ package com.azat4dev.booking.users.commands.infrastructure.persistence.repositor
 
 import com.azat4dev.booking.shared.config.infrastracture.bus.RandomEventIdGeneratorConfig;
 import com.azat4dev.booking.shared.config.infrastracture.persistence.repositories.outbox.OutboxEventsRepositoryConfig;
-import com.azat4dev.booking.shared.data.repositories.outbox.OutboxEventsRepository;
+import com.azat4dev.booking.shared.infrastructure.persistence.repositories.outbox.OutboxEventsRepository;
 import com.azat4dev.booking.users.commands.domain.UserHelpers;
 import com.azat4dev.booking.users.commands.domain.interfaces.repositories.UnitOfWork;
 import com.azat4dev.booking.users.commands.domain.interfaces.repositories.UsersRepository;

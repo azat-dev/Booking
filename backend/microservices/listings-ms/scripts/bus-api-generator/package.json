@@ -1,0 +1,17 @@
+{
+  "dependencies": {
+    "@asyncapi/generator": "^2.0.3",
+    "@asyncapi/generator-react-sdk": "^1.0.20",
+    "@asyncapi/modelina": "4.0.0-next.48",
+    "js-yaml": "^4.1.0",
+    "ts-node": "^10.3.0",
+    "yargs": "^17.7.2"
+  },
+  "scripts": {
+    "generate": "ts-node ./generate.ts"
+  },
+  "devDependencies": {
+    "@types/js-yaml": "^4.0.9",
+    "@types/node": "^20.14.12"
+  }
+}
