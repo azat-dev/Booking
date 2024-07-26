@@ -32,7 +32,6 @@ public class QueriesGetPublicListingDetailsByIdApi implements QueriesGetPublicLi
             UUID.randomUUID().toString(),
             "GetPublicListingDetailsByIdResponse",
             GetPublicListingDetailsByIdResponseDTO.builder()
-                .correlationId(request.id())
                 .params(request.message().getParams())
                 .data(
                     PublicListingDetailsDTO.builder()

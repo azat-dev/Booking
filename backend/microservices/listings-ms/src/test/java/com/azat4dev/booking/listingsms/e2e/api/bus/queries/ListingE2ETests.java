@@ -11,10 +11,13 @@ import com.azat4dev.booking.listingsms.generated.client.api.CommandsListingsPhot
 import com.azat4dev.booking.listingsms.generated.client.api.CommandsModificationsApi;
 import com.azat4dev.booking.listingsms.generated.client.api.QueriesPrivateApi;
 import com.azat4dev.booking.listingsms.generated.client.base.ApiClient;
+import com.azat4dev.booking.listingsms.generated.client.model.AddressDTO;
+import com.azat4dev.booking.listingsms.generated.client.model.GuestsCapacityDTO;
+import com.azat4dev.booking.listingsms.generated.client.model.ListingStatusDTO;
+import com.azat4dev.booking.listingsms.generated.client.model.PropertyTypeDTO;
+import com.azat4dev.booking.listingsms.generated.client.model.RoomTypeDTO;
 import com.azat4dev.booking.listingsms.generated.client.model.*;
-import com.azat4dev.booking.listingsms.generated.events.dto.GetPublicListingDetailsByIdDTO;
-import com.azat4dev.booking.listingsms.generated.events.dto.GetPublicListingDetailsByIdParamsDTO;
-import com.azat4dev.booking.listingsms.generated.events.dto.GetPublicListingDetailsByIdResponseDTO;
+import com.azat4dev.booking.listingsms.generated.events.dto.*;
 import com.azat4dev.booking.shared.config.infrastracture.bus.CustomizerForDtoClassesByMessageTypes;
 import com.azat4dev.booking.shared.domain.values.user.UserId;
 import com.azat4dev.booking.shared.infrastructure.bus.MessageBus;
@@ -39,7 +42,6 @@ import java.io.IOException;
 import java.time.Duration;
 import java.time.temporal.ChronoUnit;
 import java.util.Optional;
-import java.util.Set;
 import java.util.UUID;
 import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.function.Function;
@@ -308,6 +310,8 @@ class ListingE2ETests {
                     return;
                 }
 
+                assertThat(message.payload()).isInstanceOf(GetPublicListingDetailsByIdResponseDTO.class);
+//                assertThat(message.payload()).isEqualTo()
                 completed.set(true);
             }
         );
@@ -324,6 +328,66 @@ class ListingE2ETests {
                     GetPublicListingDetailsByIdParamsDTO.builder()
                         .listingId(listingId)
                         .build()
+                ).build()
+        );
+
+        // Then
+
+        Awaitility.await()
+            .atMost(Duration.of(10, ChronoUnit.SECONDS))
+            .untilTrue(completed);
+        listener.close();
+    }
+
+    @Test
+    void test_getPublicListingData_givenNotExistingListing_thenPublishError() throws IOException {
+
+        // Given
+        final var eventId = UUID.randomUUID().toString();
+        final var notExistingListingId = UUID.randomUUID();
+
+        final var completed = new AtomicBoolean(false);
+        final var params = GetPublicListingDetailsByIdParamsDTO.builder()
+            .listingId(notExistingListingId)
+            .build();
+
+        final var listener = messageBus.listen(
+            Channels.QUERIES_RESPONSES__GET_PUBLIC_LISTING_DETAILS_BY_ID.getValue(),
+            (message) -> {
+                if (message.correlationId().isEmpty()) {
+                    return;
+                }
+
+                final var receivedCorrelationId = message.correlationId().get();
+                if (!receivedCorrelationId.equals(eventId)) {
+                    return;
+                }
+
+                assertThat(message.payload()).isInstanceOf(FailedGetPublicListingDetailsByIdDTO.class);
+                final var expectedResponse = FailedGetPublicListingDetailsByIdDTO.builder()
+                    .error(
+                        com.azat4dev.booking.listingsms.generated.events.dto.ErrorDTO.builder()
+                            .code(ErrorCodeDTO.NOT_FOUND)
+                            .message("Listing not found")
+                            .build()
+                    )
+                    .params(params)
+                    .build();
+                assertThat(message.payload()).isEqualTo(expectedResponse);
+                completed.set(true);
+            }
+        );
+
+        // When
+        messageBus.publish(
+            Channels.QUERIES_REQUESTS__GET_PUBLIC_LISTING_DETAILS_BY_ID.getValue(),
+            Optional.empty(),
+            Optional.empty(),
+            eventId,
+            "GetPublicListingDetailsById",
+            GetPublicListingDetailsByIdDTO.builder()
+                .params(
+                    params
                 ).build()
         );
 
