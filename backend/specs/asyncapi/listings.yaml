@@ -62,46 +62,208 @@ components:
   messages:
     queries/requests/GetPublicListingDetailsById:
       name: GetPublicListingDetailsById
+      headers:
+        type: object
+        required:
+          - x-message-id
+          - x-message-type
+          - x-message-sent-at
+        properties:
+          x-message-id:
+            type: string
+          x-correlation-id:
+            type: string
+          x-message-type:
+            type: string
+            enum:
+              - GetPublicListingDetailsById
+          x-message-sent-at:
+            type: string
+            format: date-time
       payload:
         $ref: '#/components/schemas/queries/GetPublicListingDetailsById'
 
     queries/responses/GetPublicListingDetailsById:
       name: GetPublicListingDetailsById
+      headers:
+        type: object
+        required:
+          - x-message-id
+          - x-message-type
+          - x-message-sent-at
+        properties:
+          x-message-id:
+            type: string
+          x-correlation-id:
+            type: string
+          x-message-type:
+            type: string
+            enum:
+              - GetPublicListingDetailsById
+          x-message-sent-at:
+            type: string
+            format: date-time
       payload:
         $ref: '#/components/schemas/queries/GetPublicListingDetailsByIdResponse'
 
     events/NewListingAdded:
       name: NewListingAdded
+      headers:
+        type: object
+        required:
+          - x-message-id
+          - x-message-type
+          - x-message-sent-at
+        properties:
+          x-message-id:
+            type: string
+          x-correlation-id:
+            type: string
+          x-message-type:
+            type: string
+            enum:
+              - NewListingAdded
+          x-message-sent-at:
+            type: string
+            format: date-time
       payload:
         $ref: '#/components/schemas/payloads/NewListingAdded'
 
     events/FailedToAddNewListing:
       name: FailedToAddNewListing
+      headers:
+        type: object
+        required:
+          - x-message-id
+          - x-message-type
+          - x-message-sent-at
+        properties:
+          x-message-id:
+            type: string
+          x-correlation-id:
+            type: string
+          x-message-type:
+            type: string
+            enum:
+              - FailedToAddNewListing
+          x-message-sent-at:
+            type: string
+            format: date-time
       payload:
         $ref: '#/components/schemas/payloads/FailedToAddNewListing'
 
     events/ListingDetailsUpdated:
       name: ListingDetailsUpdated
+      headers:
+        type: object
+        required:
+          - x-message-id
+          - x-message-type
+          - x-message-sent-at
+        properties:
+          x-message-id:
+            type: string
+          x-correlation-id:
+            type: string
+          x-message-type:
+            type: string
+            enum:
+              - ListingDetailsUpdated
+          x-message-sent-at:
+            type: string
+            format: date-time
       payload:
         $ref: '#/components/schemas/payloads/ListingDetailsUpdated'
 
     events/ListingPublished:
       name: ListingPublished
+      headers:
+        type: object
+        required:
+          - x-message-id
+          - x-message-type
+          - x-message-sent-at
+        properties:
+          x-message-id:
+            type: string
+          x-correlation-id:
+            type: string
+          x-message-type:
+            type: string
+            enum:
+              - GeneratedUrlForUploadListingPhoto
+          x-message-sent-at:
+            type: string
+            format: date-time
       payload:
         $ref: '#/components/schemas/payloads/ListingPublished'
 
     events/GeneratedUrlForUploadListingPhoto:
       name: GeneratedUrlForUploadListingPhoto
+      headers:
+        type: object
+        required:
+          - x-message-id
+          - x-message-type
+          - x-message-sent-at
+        properties:
+          x-message-id:
+            type: string
+          x-correlation-id:
+            type: string
+          x-message-type:
+            type: string
+            enum:
+              - GeneratedUrlForUploadListingPhoto
+          x-message-sent-at:
+            type: string
+            format: date-time
       payload:
         $ref: '#/components/schemas/payloads/GeneratedUrlForUploadListingPhoto'
 
     events/FailedGenerateUrlForUploadListingPhoto:
       name: FailedGenerateUrlForUploadListingPhoto
+      headers:
+        type: object
+        required:
+          - x-message-id
+          - x-message-type
+          - x-message-sent-at
+        properties:
+          x-message-id:
+            type: string
+          x-correlation-id:
+            type: string
+          x-message-type:
+            type: string
+            enum:
+              - FailedGenerateUrlForUploadListingPhoto
+          x-message-sent-at:
+            type: string
+            format: date-time
       payload:
         $ref: '#/components/schemas/payloads/FailedGenerateUrlForUploadListingPhoto'
 
     events/AddedNewPhotoToListing:
       name: AddedNewPhotoToListing
+      headers:
+        type: object
+        required:
+          - x-message-id
+          - x-message-type
+          - x-message-sent-at
+        properties:
+          x-message-id:
+            type: string
+          x-correlation-id:
+            type: string
+          x-message-type:
+            type: string
+            enum:
+              - AddedNewPhotoToListing
+          x-message-sent-at:
+            type: string
+            format: date-time
       payload:
         $ref: '#/components/schemas/payloads/AddedNewPhotoToListing'
 
@@ -446,6 +608,22 @@ components:
             $ref: "./common/values.yaml#/components/schemas/ListingId"
 
       GetPublicListingDetailsByIdResponse:
+        title: GetPublicListingDetailsById
+        type: object
+        additionalProperties: false
+        required:
+          - correlationId
+          - params
+          - data
+        properties:
+          correlationId:
+            type: string
+          params:
+            $ref: "#/components/schemas/queries/GetPublicListingDetailsByIdParams"
+          data:
+            $ref: "#/components/schemas/values/PublicListingDetails"
+
+      FailedGetPublicListingDetailsById:
         title: GetPublicListingDetailsByIdResponse
         type: object
         additionalProperties: false

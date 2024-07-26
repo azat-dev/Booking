@@ -74,17 +74,19 @@ components:
       headers:
         type: object
         required:
-          - event_id
-          - event_type
-          - issued_at
+          - x-event-id
+          - x-event-type
+          - x-issued-at
         properties:
-          event_id:
+          x-message-id:
             type: string
-          event_type:
+          x-correlation-id:
+            type: string
+          x-message-type:
             type: string
             enum:
               - UserSignedUp
-          issued_at:
+          x-message-sent-at:
             type: string
             format: date-time
       payload:
@@ -95,17 +97,19 @@ components:
       headers:
         type: object
         required:
-          - event_id
-          - event_type
-          - issued_at
+          - x-message-id
+          - x-message-type
+          - x-message-sent-at
         properties:
-          event_id:
+          x-message-id:
             type: string
-          event_type:
+          x-correlation-id:
+            type: string
+          x-message-type:
             type: string
             enum:
               - UserVerifiedEmail
-          issued_at:
+          x-message-sent-at:
             type: string
             format: date-time
       payload:
@@ -116,17 +120,19 @@ components:
       headers:
         type: object
         required:
-          - event_id
-          - event_type
-          - issued_at
+          - x-message-id
+          - x-message-type
+          - x-message-sent-at
         properties:
-          event_id:
+          x-message-id:
             type: string
-          event_type:
+          x-correlation-id:
+            type: string
+          x-message-type:
             type: string
             enum:
               - VerificationEmailSent
-          issued_at:
+          x-message-sent-at:
             type: string
             format: date-time
       payload:
@@ -137,17 +143,19 @@ components:
       headers:
         type: object
         required:
-          - event_id
-          - event_type
-          - issued_at
+          - x-message-id
+          - x-message-type
+          - x-message-sent-at
         properties:
-          event_id:
+          x-message-id:
             type: string
-          event_type:
+          x-correlation-id:
+            type: string
+          x-message-type:
             type: string
             enum:
               - FailedToSendVerificationEmail
-          issued_at:
+          x-message-sent-at:
             type: string
             format: date-time
       payload:
@@ -158,17 +166,19 @@ components:
       headers:
         type: object
         required:
-          - event_id
-          - event_type
-          - issued_at
+          - x-message-id
+          - x-message-type
+          - x-message-sent-at
         properties:
-          event_id:
+          x-message-id:
             type: string
-          event_type:
+          x-correlation-id:
+            type: string
+          x-message-type:
             type: string
             enum:
               - CompleteEmailVerification
-          issued_at:
+          x-message-sent-at:
             type: string
             format: date-time
       payload:
@@ -179,17 +189,19 @@ components:
       headers:
         type: object
         required:
-          - event_id
-          - event_type
-          - issued_at
+          - x-message-id
+          - x-message-type
+          - x-message-sent-at
         properties:
-          event_id:
+          x-message-id:
             type: string
-          event_type:
+          x-correlation-id:
+            type: string
+          x-message-type:
             type: string
             enum:
               - SendVerificationEmail
-          issued_at:
+          x-message-sent-at:
             type: string
             format: date-time
       payload:
@@ -200,17 +212,19 @@ components:
       headers:
         type: object
         required:
-          - event_id
-          - event_type
-          - issued_at
+          - x-message-id
+          - x-message-type
+          - x-message-sent-at
         properties:
-          event_id:
+          x-message-id:
             type: string
-          event_type:
+          x-correlation-id:
+            type: string
+          x-message-type:
             type: string
             enum:
               - SentEmailForPasswordReset
-          issued_at:
+          x-message-sent-at:
             type: string
             format: date-time
       payload:
@@ -221,17 +235,19 @@ components:
       headers:
         type: object
         required:
-          - event_id
-          - event_type
-          - issued_at
+          - x-message-id
+          - x-message-type
+          - x-message-sent-at
         properties:
-          event_id:
+          x-message-id:
             type: string
-          event_type:
+          x-correlation-id:
+            type: string
+          x-message-type:
             type: string
             enum:
               - CompletePasswordReset
-          issued_at:
+          x-message-sent-at:
             type: string
             format: date-time
       payload:
@@ -242,17 +258,19 @@ components:
       headers:
         type: object
         required:
-          - event_id
-          - event_type
-          - issued_at
+          - x-message-id
+          - x-message-type
+          - x-message-sent-at
         properties:
-          event_id:
+          x-message-id:
             type: string
-          event_type:
+          x-correlation-id:
+            type: string
+          x-message-type:
             type: string
             enum:
               - UserDidResetPassword
-          issued_at:
+          x-message-sent-at:
             type: string
             format: date-time
       payload:
@@ -263,17 +281,19 @@ components:
       headers:
         type: object
         required:
-          - event_id
-          - event_type
-          - issued_at
+          - x-message-id
+          - x-message-type
+          - x-message-sent-at
         properties:
-          event_id:
+          x-message-id:
             type: string
-          event_type:
+          x-correlation-id:
+            type: string
+          x-message-type:
             type: string
             enum:
               - GeneratedUserPhotoUploadUrl
-          issued_at:
+          x-message-sent-at:
             type: string
             format: date-time
       payload:
@@ -284,17 +304,19 @@ components:
       headers:
         type: object
         required:
-          - event_id
-          - event_type
-          - issued_at
+          - x-message-id
+          - x-message-type
+          - x-message-sent-at
         properties:
-          event_id:
+          x-message-id:
             type: string
-          event_type:
+          x-correlation-id:
+            type: string
+          x-message-type:
             type: string
             enum:
               - UpdatedUserPhoto
-          issued_at:
+          x-message-sent-at:
             type: string
             format: date-time
       payload:
@@ -305,17 +327,19 @@ components:
       headers:
         type: object
         required:
-          - event_id
-          - event_type
-          - issued_at
+          - x-message-id
+          - x-message-type
+          - x-message-sent-at
         properties:
-          event_id:
+          x-message-id:
             type: string
-          event_type:
+          x-correlation-id:
+            type: string
+          x-message-type:
             type: string
             enum:
               - FailedUpdateUserPhoto
-          issued_at:
+          x-message-sent-at:
             type: string
             format: date-time
       payload:
@@ -326,17 +350,19 @@ components:
       headers:
         type: object
         required:
-          - event_id
-          - event_type
-          - issued_at
+          - x-message-id
+          - x-message-type
+          - x-message-sent-at
         properties:
-          event_id:
+          x-message-id:
             type: string
-          event_type:
+          x-correlation-id:
+            type: string
+          x-message-type:
             type: string
             enum:
               - FailedGenerateUserPhotoUploadUrl
-          issued_at:
+          x-message-sent-at:
             type: string
             format: date-time
       payload:
