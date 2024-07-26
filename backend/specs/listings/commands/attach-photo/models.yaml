@@ -60,6 +60,11 @@ components:
 
     GenerateUploadListingPhotoUrlRequestBody:
       type: "object"
+      required:
+        - operationId
+        - fileName
+        - fileExtension
+        - fileSize
       properties:
         operationId:
           $ref: "../../../common/models/OperationId.yaml"
