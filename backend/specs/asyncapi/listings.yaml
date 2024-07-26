@@ -29,7 +29,7 @@ channels:
         $ref: '#/components/messages/queries~1requests~1GetPublicListingDetailsById'
 
   queries/responses/GetPublicListingDetailsById:
-    address: 'com.azat4dev.booking.listings.1.0.queries.get_public_listing_details_by_id'
+    address: 'com.azat4dev.booking.listings.responses.get_public_listing_details_by_id'
     messages:
       GetPublicListingDetailsById:
         $ref: '#/components/messages/queries~1responses~1GetPublicListingDetailsById'
