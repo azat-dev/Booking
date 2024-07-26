@@ -1,5 +1,6 @@
 package com.azat4dev.booking.shared.infrastructure.bus;
 
+import com.azat4dev.booking.shared.config.infrastracture.bus.DtoClassesByEventTypes;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import lombok.AllArgsConstructor;
@@ -10,20 +11,20 @@ import lombok.extern.slf4j.Slf4j;
 public class MessageSerializerJSON implements MessageSerializer<String> {
 
     private final ObjectMapper objectMapper;
-    private final GetClassForMessageType getClassForMessageType;
+    private final DtoClassesByEventTypes dtoClassesByEventTypes;
 
     @Override
     public Object deserialize(String serializedMessage, String messageType) {
-        final var dtoClass = getClassForMessageType.run(messageType);
-        if (dtoClass == null) {
-            log.atError()
-                .addArgument(messageType)
-                .log("Can't find dto class for: messageType={}");
+        final var dtoClass = dtoClassesByEventTypes.get(messageType)
+            .orElseThrow(() -> {
+                log.atError()
+                    .addArgument(messageType)
+                    .log("Can't find dto class for: messageType={}");
 
-            throw new Exception.FailedDeserialize(
-                new RuntimeException("Can't find dto class for: messageType=" + messageType)
-            );
-        }
+                return new Exception.FailedDeserialize(
+                    new RuntimeException("Can't find dto class for: messageType=" + messageType)
+                );
+            });
 
         try {
             return objectMapper.readValue(serializedMessage, dtoClass);
@@ -39,10 +40,5 @@ public class MessageSerializerJSON implements MessageSerializer<String> {
         } catch (JsonProcessingException e) {
             throw new Exception.FailedSerialize(e);
         }
-    }
-
-    @FunctionalInterface
-    public interface GetClassForMessageType {
-        Class<?> run(String eventType);
     }
 }

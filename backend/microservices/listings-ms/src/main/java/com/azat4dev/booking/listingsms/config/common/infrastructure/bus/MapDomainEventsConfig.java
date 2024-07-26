@@ -1,9 +1,9 @@
 package com.azat4dev.booking.listingsms.config.common.infrastructure.bus;
 
 import com.azat4dev.booking.listingsms.commands.infrastructure.serializer.mappers.*;
+import com.azat4dev.booking.shared.domain.events.DomainEventPayload;
 import com.azat4dev.booking.shared.infrastructure.serializers.MapDomainEvent;
 import com.azat4dev.booking.shared.infrastructure.serializers.Serializer;
-import com.azat4dev.booking.shared.domain.events.DomainEventPayload;
 import lombok.AllArgsConstructor;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -20,7 +20,7 @@ public class MapDomainEventsConfig {
     private final Serializer<LocalDateTime, String> mapDateTime;
 
     @Bean
-    List<MapDomainEvent<?, ?>> domainEventsMappers() {
+    List<MapDomainEvent> domainEventsMappers() {
 
         final var mapGuestCapacity = new MapGuestsCapacity();
         final var mapAddress = new MapListingAddress();
@@ -42,7 +42,7 @@ public class MapDomainEventsConfig {
     }
 
     @Bean
-    Set<Class<? extends DomainEventPayload>> domainEventsClasses(List<MapDomainEvent<?, ?>> mappers) {
+    Set<Class<? extends DomainEventPayload>> mappedDomainEventsClasses(List<MapDomainEvent> mappers) {
         Set<Class<? extends DomainEventPayload>> result = new HashSet<>();
         for (MapDomainEvent<?, ?> mapper : mappers) {
             result.add(mapper.getOriginalClass());

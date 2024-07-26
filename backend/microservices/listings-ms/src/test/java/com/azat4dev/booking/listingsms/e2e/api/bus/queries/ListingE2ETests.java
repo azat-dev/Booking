@@ -14,6 +14,8 @@ import com.azat4dev.booking.listingsms.generated.client.base.ApiClient;
 import com.azat4dev.booking.listingsms.generated.client.model.*;
 import com.azat4dev.booking.listingsms.generated.events.dto.GetPublicListingDetailsByIdDTO;
 import com.azat4dev.booking.listingsms.generated.events.dto.GetPublicListingDetailsByIdParamsDTO;
+import com.azat4dev.booking.listingsms.generated.events.dto.GetPublicListingDetailsByIdResponseDTO;
+import com.azat4dev.booking.shared.config.infrastracture.bus.CustomizerForDtoClassesByMessageTypes;
 import com.azat4dev.booking.shared.domain.values.user.UserId;
 import com.azat4dev.booking.shared.infrastructure.bus.MessageBus;
 import net.datafaker.Faker;
@@ -21,8 +23,13 @@ import org.awaitility.Awaitility;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.boot.test.autoconfigure.actuate.observability.AutoConfigureObservability;
 import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.boot.test.context.TestConfiguration;
 import org.springframework.boot.test.web.server.LocalServerPort;
+import org.springframework.context.annotation.Bean;
+import org.springframework.context.annotation.Import;
+import org.springframework.context.annotation.Primary;
 import org.springframework.core.io.Resource;
 import org.springframework.http.HttpStatus;
 import org.springframework.test.context.jdbc.Sql;
@@ -43,7 +50,8 @@ import static com.azat4dev.booking.listingsms.e2e.helpers.UsersHelpers.USER2;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 
-@EnableTestcontainers(classes = {AccessTokenConfig.class})
+@AutoConfigureObservability
+@EnableTestcontainers
 @SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
 @Sql(value = {"/db/drop-schema.sql", "/db/schema.sql"})
 class ListingE2ETests {
@@ -286,6 +294,24 @@ class ListingE2ETests {
         final var listingId = givenExistingListing(USER1);
         givenExistingListing(USER2);
 
+        final var completed = new AtomicBoolean(false);
+
+        final var listener = messageBus.listen(
+            Channels.QUERIES_RESPONSES__GET_PUBLIC_LISTING_DETAILS_BY_ID.getValue(),
+            (message) -> {
+                if (message.correlationId().isEmpty()) {
+                    return;
+                }
+
+                final var receivedCorrelationId = message.correlationId().get();
+                if (!receivedCorrelationId.equals(eventId)) {
+                    return;
+                }
+
+                completed.set(true);
+            }
+        );
+
         // When
         messageBus.publish(
             Channels.QUERIES_REQUESTS__GET_PUBLIC_LISTING_DETAILS_BY_ID.getValue(),
@@ -302,27 +328,9 @@ class ListingE2ETests {
         );
 
         // Then
-        final var completed = new AtomicBoolean(false);
-
-        final var listener = messageBus.listen(
-            Channels.QUERIES_RESPONSES__GET_PUBLIC_LISTING_DETAILS_BY_ID.getValue(),
-            Set.of("GetPublicListingDetailsByIdResponse"),
-            (message) -> {
-                if (message.correlationId().isEmpty()) {
-                    return;
-                }
-
-                final var receivedCorrelationId = message.correlationId().get();
-                if (!receivedCorrelationId.equals(eventId)) {
-                    return;
-                }
-
-                completed.set(true);
-            }
-        );
 
         Awaitility.await()
-            .atLeast(Duration.of(5, ChronoUnit.SECONDS))
+            .atMost(Duration.of(10, ChronoUnit.SECONDS))
             .untilTrue(completed);
         listener.close();
     }
@@ -331,5 +339,18 @@ class ListingE2ETests {
 
         final var token = generateAccessToken.execute(userId);
         return ApiHelpers.apiClient(factory, token, port);
+    }
+
+    @Import(AccessTokenConfig.class)
+    @TestConfiguration
+    static class TestConfig {
+
+        @Primary
+        @Bean
+        public CustomizerForDtoClassesByMessageTypes customizerForDtoClassesByMessageTypesTest() {
+            return dtoClassesByMessageTypes -> {
+                dtoClassesByMessageTypes.put("GetPublicListingDetailsByIdResponse", GetPublicListingDetailsByIdResponseDTO.class);
+            };
+        }
     }
 }

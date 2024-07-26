@@ -130,7 +130,7 @@ public class KafkaMessageBus<PARTITION_KEY, SERIALIZED_MESSAGE> implements Messa
             final var headers = data.headers();
             final var messageType = fromBytes(headers.lastHeader(MESSAGE_TYPE_HEADER).value());
 
-            if (listeners.stream().noneMatch(l -> l.messageTypes.isPresent() && l.messageTypes.get().contains(messageType))) {
+            if (listeners.stream().noneMatch(l -> l.messageTypes.isEmpty() || l.messageTypes.get().contains(messageType))) {
                 if (acknowledgment != null) {
                     acknowledgment.acknowledge();
                 }
@@ -168,7 +168,8 @@ public class KafkaMessageBus<PARTITION_KEY, SERIALIZED_MESSAGE> implements Messa
                 .log("Received message: topic={} id={} type={} sentAt={} data={}");
 
             listeners.forEach(listener -> {
-                if (listener.messageTypes.isPresent() && !listener.messageTypes.get().contains(messageType)) {
+                final var isMessageTypeMatch = listener.messageTypes.isEmpty() || listener.messageTypes.get().contains(messageType);
+                if (!isMessageTypeMatch) {
                     return;
                 }
 
@@ -220,7 +221,13 @@ public class KafkaMessageBus<PARTITION_KEY, SERIALIZED_MESSAGE> implements Messa
             }
         }
 
-        return () -> removeListener(topic, listener);
+        return () -> {
+            log.atInfo()
+                .addArgument(topic)
+                .log("Close listener for topic: {}");
+
+            removeListener(topic, listener);
+        };
     }
 
     public interface LocalDateTimeSerializer {

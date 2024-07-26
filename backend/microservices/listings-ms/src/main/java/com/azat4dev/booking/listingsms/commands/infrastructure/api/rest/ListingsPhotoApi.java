@@ -38,8 +38,8 @@ public final class ListingsPhotoApi implements CommandsListingsPhotoApiDelegate 
                     requestBody.getOperationId().toString(),
                     userId.value().toString(),
                     listingId.toString(),
-                    requestBody.getFileExtension().orElse(null),
-                    requestBody.getFileSize().orElse(null)
+                    requestBody.getFileExtension(),
+                    requestBody.getFileSize()
                 )
             );
 

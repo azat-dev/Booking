@@ -29,9 +29,9 @@ public class RouteDomainEventsConfig {
     private final BusProperties busProperties;
 
     @Bean
-    GetInputTopicForEvent getInputTopicForEvent(Set<Class<? extends DomainEventPayload>> domainEvents) {
+    GetInputTopicForEvent getInputTopicForEvent(Set<Class<? extends DomainEventPayload>> mappedDomainEvents) {
 
-        final var inputTopicsForCommands = domainEvents.stream()
+        final var inputTopicsForCommands = mappedDomainEvents.stream()
             .filter(v -> Arrays.stream(v.getInterfaces()).anyMatch(i -> i.equals(Command.class)))
             .collect(Collectors.toMap(Function.identity(), v -> busProperties.getInternalCommandsTopicPrefix() + "." + v.getSimpleName()));
 

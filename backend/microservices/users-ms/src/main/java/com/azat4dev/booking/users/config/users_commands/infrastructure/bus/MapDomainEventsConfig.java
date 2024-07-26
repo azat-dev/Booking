@@ -20,7 +20,7 @@ public class MapDomainEventsConfig {
     private final Serializer<LocalDateTime, String> mapDateTime;
 
     @Bean
-    List<MapDomainEvent<?, ?>> domainEventsMappers() {
+    List<MapDomainEvent> domainEventsMappers() {
 
         final var mapFullName = new MapFullName();
 
@@ -40,7 +40,7 @@ public class MapDomainEventsConfig {
     }
 
     @Bean
-    Set<Class<? extends DomainEventPayload>> domainEventsClasses(List<MapDomainEvent<?, ?>> mappers) {
+    Set<Class<? extends DomainEventPayload>> mappedDomainEventsClasses(List<MapDomainEvent> mappers) {
         Set<Class<? extends DomainEventPayload>> result = new HashSet<>();
         for (MapDomainEvent<?, ?> mapper : mappers) {
             result.add(mapper.getOriginalClass());

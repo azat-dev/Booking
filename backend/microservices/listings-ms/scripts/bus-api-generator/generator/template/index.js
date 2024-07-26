@@ -19,30 +19,41 @@ const endpointFileContent = (
     interfaceName,
     inputChannelConstantName,
     replyChannelConstantName,
-    inputType,
+    inputMessageType,
+    inputMessageClass,
     returnTypes,
     dtoPackage
 ) => `
 package ${packageName};
 
 import com.azat4dev.booking.shared.infrastructure.api.bus.BusApiEndpoint;
-import com.azat4dev.booking.shared.infrastructure.api.bus.annotations.RepliesWith;
-
-${returnTypes.map(i => `import ${dtoPackage}.` + i + ';').join("\n")}
-
-import ${dtoPackage}.${inputType};
+import ${dtoPackage}.${inputMessageClass};
+${returnTypes.map(i => `import ${dtoPackage}.` + i.className + ';').join("\n")}
 
 import java.util.Optional;
 
-@RepliesWith(${returnTypes.map(i => i + ".class").join(", ")})
-public interface ${interfaceName} extends BusApiEndpoint<${inputType}> {
+public interface ${interfaceName} extends BusApiEndpoint<${inputMessageClass}> {
 
-    default String inputAddress() {
+    @Override
+    default String getInputAddress() {
         return Channels.${inputChannelConstantName}.getValue();
     }
     
-    default Optional<String> replyAddress() {
+    @Override
+    default Optional<String> getReplyAddress() {
         ${replyChannelConstantName ? `return Optional.of(Channels.${replyChannelConstantName}.getValue());` : 'return Optional.empty();'}
+    }
+    
+    @Override
+    default MessageInfo getInputMessageInfo() {
+        return new MessageInfo("${inputMessageType}", ${inputMessageClass}.class);
+    }
+    
+    @Override
+    default MessageInfo[] getResponseMessagesInfo() {
+        return new MessageInfo[] { 
+            ${returnTypes.map(i => `new MessageInfo("${i.type}", ${i.className}.class)`).join(", ")} 
+        };
     }
 }
 `.trim();
@@ -114,12 +125,15 @@ export default function (options) {
                     const inputChannelConstantName = convertChannelIdToConstantName(operation.channels()[0].id());
                     const replyChannelConstantName = convertChannelIdToConstantName(operation.reply().channel().id());
 
-                    const returnType = operation.reply().messages().collections.map(m => m.payload().title() + 'DTO');
+                    const returnType = operation.reply().messages().collections.map(m => ({
+                        type: m.payload().title(),
+                        className: m.payload().title() + 'DTO'
+                    }));
                     const inputType = operation.messages()[0].payload().title();
                     const inputTypeDto = inputType + "DTO";
                     return (
                         <File name={`${className}.java`}>
-                            {endpointFileContent(packageName, className, inputChannelConstantName, replyChannelConstantName, inputTypeDto, returnType, dtoPackage)}
+                            {endpointFileContent(packageName, className, inputChannelConstantName, replyChannelConstantName, inputType, inputTypeDto, returnType, dtoPackage)}
                         </File>
                     )
                 })

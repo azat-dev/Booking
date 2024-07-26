@@ -2,6 +2,7 @@ package com.azat4dev.booking.shared.infrastructure.bus;
 
 import com.azat4dev.booking.shared.domain.events.*;
 import com.azat4dev.booking.shared.domain.interfaces.bus.DomainEventsBus;
+import com.azat4dev.booking.shared.infrastructure.serializers.MapAnyDomainEvent;
 import io.micrometer.observation.annotation.Observed;
 import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -20,8 +21,8 @@ public class DefaultDomainEventsBus<PARTITION_KEY> implements DomainEventsBus {
     private final GetInputTopicForEvent getInputTopicForEvent;
     private final GetOutputTopicForEvent getOutputTopicForEvent;
     private final GetPartitionKeyForEvent<PARTITION_KEY> getPartitionKeyForEvent;
-    private final GetClassForEventType getClassForEventType;
     private final EventIdGenerator eventIdGenerator;
+    private final MapAnyDomainEvent mapEvent;
 
     @Override
     public void publish(DomainEventPayload event, EventId eventId) {
@@ -32,7 +33,7 @@ public class DefaultDomainEventsBus<PARTITION_KEY> implements DomainEventsBus {
             Optional.empty(),
             eventId.getValue(),
             event.getClass().getSimpleName(),
-            event
+            mapEvent.toDTO(event)
         );
     }
 
@@ -57,19 +58,13 @@ public class DefaultDomainEventsBus<PARTITION_KEY> implements DomainEventsBus {
             Set.of(eventType.getSimpleName()),
             message -> {
 
-                final var eventClass = getClassForEventType.execute(message.messageType());
-                if (eventClass == null) {
-                    log.atError()
-                        .addArgument(message.messageType())
-                        .log("Can't find class for event type: type={}");
-                    throw new RuntimeException("Can't find class for event type");
-                }
+                final var event = mapEvent.fromDTO(message.payload());
 
                 consumer.accept(
                     new DomainEvent<T>(
                         EventId.dangerouslyCreateFrom(message.messageId()),
                         message.messageSentAt(),
-                        (T) message.payload()
+                        (T) event
                     )
                 );
             }
