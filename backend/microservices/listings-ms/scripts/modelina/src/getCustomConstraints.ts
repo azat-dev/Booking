@@ -3,10 +3,11 @@ import capitalize from "./capitalize";
 
 const getCustomConstraints = (suffix: string): Partial<Constraints<JavaOptions>> => {
     return {
-        modelName: ({modelName}) => {
+        modelName: (params) => {
+            const {modelName} = params;
             return capitalize(modelName)
-                .replace("/", "")
-                .replace("\\", "") + suffix;
+                .replaceAll("/", "")
+                .replaceAll("\\", "") + suffix;
         }
     };
 }

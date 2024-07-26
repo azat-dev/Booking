@@ -1,7 +1,4 @@
 import {
-    ConstrainedObjectModel,
-    ConstrainedReferenceModel,
-    JAVA_JACKSON_PRESET,
     JavaFileGenerator
 } from '@asyncapi/modelina';
 import path from 'path';
