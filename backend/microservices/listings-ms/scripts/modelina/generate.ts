@@ -9,6 +9,12 @@ import yaml from 'js-yaml';
 import * as fs from "node:fs";
 import yargs from 'yargs';
 import {hideBin} from 'yargs/helpers';
+import getCustomConstraints from "./src/getCustomConstraints";
+import getCustomTypeMappings from "./src/getCustomTypeMappings";
+import getCustomJavaPreset from "./src/getCustomJavaPreset";
+import getCustomJacksonPreset from "./src/GetCustomJacksonPreset";
+
+const MODELS_SUFFIX = "DTO";
 
 const argv = yargs(hideBin(process.argv))
     .option('package', {
@@ -51,166 +57,11 @@ console.debug("Using output file:", OUTPUT_DIR);
 
 const generator = new JavaFileGenerator({
     presets: [
-        {
-            class: {
-                property(opt) {
-                    const {property, model} = opt;
-                    const isRequired = property.required;
-                    let wrapper = "";
-                    let propertyType = property.property.type;
-
-                    if (!isRequired) {
-                        wrapper = "JsonNullable";
-                        opt.renderer.dependencyManager.addDependency("import org.openapitools.jackson.nullable.JsonNullable;");
-                    }
-
-                    if (property.property.options.isNullable) {
-                        wrapper = "Optional";
-                        const foundTypeItem = property.property.originalInput.anyOf.find((item: any) => item.type !== 'null');
-                        opt.renderer.dependencyManager.addDependency("import java.util.Optional;");
-                        propertyType = foundTypeItem.title + "DTO";
-                    }
-
-                    if (model.options.isExtended) {
-                        return '';
-                    }
-
-                    if (property.property.options.const?.value) {
-                        if (wrapper) {
-                            return `private final ${wrapper}<${propertyType}> ${property.propertyName} = ${wrapper}.of(${property.property.options.const.value});`;
-                        }
-
-                        return `private final ${propertyType} ${property.propertyName} = ${property.property.options.const.value};`;
-                    }
-
-                    if (wrapper) {
-                        return `private ${wrapper}<${propertyType}> ${property.propertyName};`;
-                    }
-
-                    return `private ${propertyType} ${property.propertyName};`;
-                },
-                getter(opt) {
-                    return "";
-                },
-                setter(opt) {
-                    return "";
-                },
-                self(opt) {
-                    const {content} = opt;
-                    const CLASS_ANNOTATIONS = `@lombok.Builder(toBuilder = true)\n@lombok.AllArgsConstructor\n@lombok.NoArgsConstructor\n@lombok.Getter\n@lombok.Setter\n@lombok.EqualsAndHashCode`.trim();
-                    return `${CLASS_ANNOTATIONS}\n${content}`;
-                }
-            }
-        },
-        {
-            ...JAVA_JACKSON_PRESET,
-            union: {
-                additionalContent: ({renderer, model}) => {
-
-                    const JACKSON_ANNOTATION_DEPENDENCY =
-                        'import com.fasterxml.jackson.annotation.*;';
-
-                    renderer.dependencyManager.addDependency(JACKSON_ANNOTATION_DEPENDENCY);
-
-                    const blocks: string[] = [];
-
-                    if (model.options.discriminator) {
-                        const { discriminator } = model.options;
-                        blocks.push(
-                            renderer.renderAnnotation('JsonTypeInfo', {
-                                use: 'JsonTypeInfo.Id.NAME',
-                                include: 'JsonTypeInfo.As.EXISTING_PROPERTY',
-                                property: `"${discriminator.discriminator}"`,
-                                visible: 'true'
-                            })
-                        );
-
-                        const types = model.union
-                            .map((union) => {
-                                if (
-                                    union instanceof ConstrainedReferenceModel &&
-                                    union.ref instanceof ConstrainedObjectModel
-                                ) {
-                                    const discriminatorProp = Object.values(
-                                        union.ref.properties
-                                    ).find(
-                                        (model) =>
-                                            model.unconstrainedPropertyName ===
-                                            discriminator.discriminator
-                                    );
-
-                                    if (discriminatorProp?.property.options.const) {
-                                        return `  @JsonSubTypes.Type(value = ${union.name}.class, name = "${discriminatorProp.property.options.const.originalInput}")`;
-                                    }
-                                }
-
-                                return `  @JsonSubTypes.Type(value = ${union.name}.class, name = "${union.name}")`;
-                            })
-                            .join(',\n');
-
-                        blocks.push(
-                            renderer.renderAnnotation('JsonSubTypes', `{\n${types}\n}`)
-                        );
-                    } else {
-                        blocks.push(
-                            renderer.renderAnnotation('JsonTypeInfo', {
-                                use: 'JsonTypeInfo.Id.DEDUCTION'
-                            })
-                        );
-
-                        const types = model.union
-                            .map(
-                                (union) =>
-                                    `  @JsonSubTypes.Type(value = ${union.name}.class, name = "${union.name}")`
-                            )
-                            .join(',\n');
-
-                        blocks.push(
-                            renderer.renderAnnotation('JsonSubTypes', `{\n${types}\n}`)
-                        );
-                    }
-
-                    const content = "public static interface TypeInfo {}"
-                    return renderer.renderBlock([...blocks, content]);
-                }
-            }
-        },
+        getCustomJavaPreset(MODELS_SUFFIX),
+        getCustomJacksonPreset()
     ],
-    constraints: {
-        modelName: (options) => {
-            const capitalized = options.modelName.charAt(0).toUpperCase() + options.modelName.slice(1);
-            return capitalized
-                .replace("/", "")
-                .replace("\\", "") + "DTO";
-        }
-    },
-    typeMapping: {
-        String: context => {
-
-            const format = context?.constrainedModel?.options?.format;
-
-            if (format === 'uuid') {
-                context.dependencyManager.addDependency("import java.util.UUID;");
-                return 'UUID';
-            }
-
-            if (format === 'uri') {
-                context.dependencyManager.addDependency('import java.net.URI;');
-                return 'URI';
-            }
-
-            return "String";
-        },
-        Integer: context => {
-            const format = context?.constrainedModel?.options?.format;
-
-            if (format === 'int64') {
-                return 'Long';
-            }
-
-            return "Integer";
-        }
-    }
+    constraints: getCustomConstraints(MODELS_SUFFIX),
+    typeMapping: getCustomTypeMappings()
 });
 
 // Load the input from file, memory, or remotely.

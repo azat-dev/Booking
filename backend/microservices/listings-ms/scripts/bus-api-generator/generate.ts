@@ -1,5 +1,3 @@
-import fs from "node:fs";
-
 const path = require('path');
 const Generator = require("@asyncapi/generator");
 

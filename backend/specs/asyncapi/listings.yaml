@@ -51,7 +51,7 @@ operations:
       $ref: '#/channels/listingEventsStream'
     messages:
       - $ref: '#/channels/listingEventsStream/messages/NewListingAdded'
-      - $ref: '#/channels/listingEventsStream/messages/FailedToAddNewLitest: sting'
+      - $ref: '#/channels/listingEventsStream/messages/FailedToAddNewListing'
       - $ref: '#/channels/listingEventsStream/messages/ListingDetailsUpdated'
       - $ref: '#/channels/listingEventsStream/messages/ListingPublished'
       - $ref: '#/channels/listingEventsStream/messages/GeneratedUrlForUploadListingPhoto'
