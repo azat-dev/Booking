@@ -18,7 +18,8 @@ import com.azat4dev.booking.listingsms.generated.client.model.PropertyTypeDTO;
 import com.azat4dev.booking.listingsms.generated.client.model.RoomTypeDTO;
 import com.azat4dev.booking.listingsms.generated.client.model.*;
 import com.azat4dev.booking.listingsms.generated.events.dto.*;
-import com.azat4dev.booking.shared.config.infrastracture.bus.CustomizerForDtoClassesByMessageTypes;
+import com.azat4dev.booking.shared.config.infrastracture.bus.utils.ItemsToAddInOneToOneRelationsOfDtoClassesAndMessageTypes;
+import com.azat4dev.booking.shared.config.infrastracture.bus.utils.OneToOneRelationsOfDtoClassesAndMessageTypes;
 import com.azat4dev.booking.shared.domain.values.user.UserId;
 import com.azat4dev.booking.shared.infrastructure.bus.MessageBus;
 import net.datafaker.Faker;
@@ -32,7 +33,6 @@ import org.springframework.boot.test.context.TestConfiguration;
 import org.springframework.boot.test.web.server.LocalServerPort;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Import;
-import org.springframework.context.annotation.Primary;
 import org.springframework.core.io.Resource;
 import org.springframework.http.HttpStatus;
 import org.springframework.test.context.jdbc.Sql;
@@ -346,11 +346,25 @@ class ListingE2ETests {
         final var eventId = UUID.randomUUID().toString();
         final var notExistingListingId = UUID.randomUUID();
 
-        final var completed = new AtomicBoolean(false);
         final var params = GetPublicListingDetailsByIdParamsDTO.builder()
             .listingId(notExistingListingId)
             .build();
 
+        // When
+        messageBus.publish(
+            Channels.QUERIES_REQUESTS__GET_PUBLIC_LISTING_DETAILS_BY_ID.getValue(),
+            Optional.empty(),
+            Optional.empty(),
+            eventId,
+            "GetPublicListingDetailsById",
+            GetPublicListingDetailsByIdDTO.builder()
+                .params(
+                    params
+                ).build()
+        );
+
+        // Then
+        final var completed = new AtomicBoolean(false);
         final var listener = messageBus.listen(
             Channels.QUERIES_RESPONSES__GET_PUBLIC_LISTING_DETAILS_BY_ID.getValue(),
             (message) -> {
@@ -378,21 +392,6 @@ class ListingE2ETests {
             }
         );
 
-        // When
-        messageBus.publish(
-            Channels.QUERIES_REQUESTS__GET_PUBLIC_LISTING_DETAILS_BY_ID.getValue(),
-            Optional.empty(),
-            Optional.empty(),
-            eventId,
-            "GetPublicListingDetailsById",
-            GetPublicListingDetailsByIdDTO.builder()
-                .params(
-                    params
-                ).build()
-        );
-
-        // Then
-
         Awaitility.await()
             .atMost(Duration.of(10, ChronoUnit.SECONDS))
             .untilTrue(completed);
@@ -403,18 +402,5 @@ class ListingE2ETests {
 
         final var token = generateAccessToken.execute(userId);
         return ApiHelpers.apiClient(factory, token, port);
-    }
-
-    @Import(AccessTokenConfig.class)
-    @TestConfiguration
-    static class TestConfig {
-
-        @Primary
-        @Bean
-        public CustomizerForDtoClassesByMessageTypes customizerForDtoClassesByMessageTypesTest() {
-            return dtoClassesByMessageTypes -> {
-                dtoClassesByMessageTypes.put("GetPublicListingDetailsByIdResponse", GetPublicListingDetailsByIdResponseDTO.class);
-            };
-        }
     }
 }

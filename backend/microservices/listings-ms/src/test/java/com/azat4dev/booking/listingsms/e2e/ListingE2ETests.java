@@ -15,11 +15,13 @@ import net.datafaker.Faker;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.boot.test.autoconfigure.actuate.observability.AutoConfigureObservability;
 import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.boot.test.context.TestConfiguration;
 import org.springframework.boot.test.web.server.LocalServerPort;
+import org.springframework.context.annotation.Import;
 import org.springframework.core.io.Resource;
 import org.springframework.http.HttpStatus;
-import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.jdbc.Sql;
 import org.springframework.web.client.RestClientResponseException;
 
@@ -33,9 +35,10 @@ import static com.azat4dev.booking.listingsms.e2e.helpers.UsersHelpers.USER2;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 
-@EnableTestcontainers(classes = {AccessTokenConfig.class})
+@EnableTestcontainers
 @SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
 @Sql(value = {"/db/drop-schema.sql", "/db/schema.sql"})
+@AutoConfigureObservability /* The order matters for: ./mvnw test */
 class ListingE2ETests {
 
     @Autowired
@@ -266,5 +269,11 @@ class ListingE2ETests {
 
         final var token = generateAccessToken.execute(userId);
         return ApiHelpers.apiClient(factory, token, port);
+    }
+
+    @Import(AccessTokenConfig.class)
+    @TestConfiguration
+    static class TestConfig {
+
     }
 }

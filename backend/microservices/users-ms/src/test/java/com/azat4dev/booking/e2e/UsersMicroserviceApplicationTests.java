@@ -31,10 +31,11 @@ import java.util.UUID;
 import static com.azat4dev.booking.helpers.ApiHelpers.apiClient;
 import static org.assertj.core.api.Assertions.assertThat;
 
-@AutoConfigureObservability
+
 @EnableTestcontainers
 @SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
 @Sql(value = {"/db/drop-schema.sql", "/db/schema.sql"})
+@AutoConfigureObservability /* The order matters for: ./mvnw test */
 class UsersMicroserviceApplicationTests {
 
     public static final Faker faker = new Faker();

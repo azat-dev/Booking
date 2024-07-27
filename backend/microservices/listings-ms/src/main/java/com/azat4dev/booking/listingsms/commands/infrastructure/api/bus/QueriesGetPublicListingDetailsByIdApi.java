@@ -9,12 +9,9 @@ import com.azat4dev.booking.listingsms.queries.application.commands.GetPublicLis
 import com.azat4dev.booking.listingsms.queries.application.handlers.GetPublicListingDetailsHandler;
 import com.azat4dev.booking.shared.domain.events.EventIdGenerator;
 import com.azat4dev.booking.shared.infrastructure.api.bus.InputMessage;
-import com.azat4dev.booking.shared.infrastructure.bus.MessageBus;
 import io.micrometer.observation.annotation.Observed;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Component;
-
-import java.util.Optional;
 
 @Observed
 @Component
@@ -25,10 +22,7 @@ public class QueriesGetPublicListingDetailsByIdApi implements QueriesGetPublicLi
     private final EventIdGenerator eventIdGenerator;
 
     @Override
-    public void handle(
-        InputMessage<GetPublicListingDetailsByIdDTO> request,
-        MessageBus<String> messageBus
-    ) {
+    public void handle(InputMessage<GetPublicListingDetailsByIdDTO> request, Reply reply) {
 
         final var message = request.message();
 
@@ -39,12 +33,8 @@ public class QueriesGetPublicListingDetailsByIdApi implements QueriesGetPublicLi
                 )
             );
         } catch (GetPublicListingDetailsHandler.Exception.ListingNotFound e) {
-            messageBus.publish(
-                getReplyAddress().get(),
-                Optional.of(message.getParams().getListingId().toString()),
-                Optional.of(request.id()),
-                eventIdGenerator.generate().getValue(),
-                "FailedGetPublicListingDetailsById",
+
+            reply.publish(
                 FailedGetPublicListingDetailsByIdDTO.builder()
                     .params(message.getParams())
                     .error(
@@ -54,8 +44,14 @@ public class QueriesGetPublicListingDetailsByIdApi implements QueriesGetPublicLi
                             .build()
                     ).build()
             );
+
         } catch (GetPublicListingDetailsHandler.Exception e) {
             throw new RuntimeException(e);
         }
+    }
+
+    @Override
+    public void handleException(Throwable exception, Reply reply) {
+
     }
 }

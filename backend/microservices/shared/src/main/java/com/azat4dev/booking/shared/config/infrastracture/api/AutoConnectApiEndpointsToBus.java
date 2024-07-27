@@ -9,6 +9,6 @@ import java.lang.annotation.Target;
 
 @Target(ElementType.TYPE)
 @Retention(RetentionPolicy.RUNTIME)
-@Import({ConnectBusApiEndpointsConfig.class, BusApiDtoClassesForEndpointsConfig.class})
+@Import({BusApiEndpointsContainerConfig.class, BusApiEndpointsItemsToAddInOneToOneRelationsOfDtoClassesAndMessageTypesConfig.class})
 public @interface AutoConnectApiEndpointsToBus {
 }

@@ -17,7 +17,6 @@ import org.springframework.kafka.core.KafkaTemplate;
 import java.time.LocalDateTime;
 
 @Slf4j
-@Import(JsonMessageBusSerializerConfig.class)
 @Configuration
 public class KafkaMessageBusConfig {
 

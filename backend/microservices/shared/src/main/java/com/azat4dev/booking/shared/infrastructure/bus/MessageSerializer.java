@@ -1,28 +1,24 @@
 package com.azat4dev.booking.shared.infrastructure.bus;
 
 
-import com.azat4dev.booking.shared.infrastructure.serializers.TypedSerializer;
-
 public interface MessageSerializer<S> {
 
-    Object deserialize(S serializedMessage, String messageType) throws Exception;
+    Object deserialize(S serializedMessage, String messageType) throws Exception.FailedDeserialize;
 
-    <M> S serialize(M message) throws Exception;
-
-    // Exceptions
+    <M> S serialize(M message) throws Exception.FailedSerialize;
 
     abstract class Exception extends RuntimeException {
         protected Exception(Throwable cause) {
             super(cause);
         }
 
-        public static final class FailedSerialize extends TypedSerializer.Exception {
+        public static final class FailedSerialize extends Exception {
             public FailedSerialize(Throwable cause) {
                 super(cause);
             }
         }
 
-        public static final class FailedDeserialize extends TypedSerializer.Exception {
+        public static final class FailedDeserialize extends Exception {
             public FailedDeserialize(Throwable cause) {
                 super(cause);
             }
