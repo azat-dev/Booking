@@ -668,4 +668,15 @@ components:
           params:
             $ref: "#/components/schemas/queries/GetListingPublicDetailsByIdParams"
           error:
-            $ref: "./common/values.yaml#/components/schemas/Error"
+            title: FailedGetListingPublicDetailsByIdError
+            allOf:
+              - type: object
+                additionalProperties: false
+                required:
+                  - code
+                properties:
+                  code:
+                    title: FailedGetListingPublicDetailsByIdErrorCode
+                    allOf:
+                      - $ref: "./common/values.yaml#/components/schemas/ErrorCode"
+              - $ref: "./common/values.yaml#/components/schemas/Error"
