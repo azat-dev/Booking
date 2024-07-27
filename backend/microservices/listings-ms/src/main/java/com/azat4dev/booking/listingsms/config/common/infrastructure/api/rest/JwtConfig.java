@@ -1,7 +1,7 @@
-package com.azat4dev.booking.listingsms.config.common.infrastracture.api.rest;
+package com.azat4dev.booking.listingsms.config.common.infrastructure.api.rest;
 
 
-import com.azat4dev.booking.listingsms.config.common.infrastracture.api.rest.properties.JwtConfigProperties;
+import com.azat4dev.booking.listingsms.config.common.infrastructure.api.rest.properties.JwtConfigProperties;
 import lombok.AllArgsConstructor;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;

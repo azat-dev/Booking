@@ -86,7 +86,7 @@ public class BusApiEndpointsContainerImpl implements BusApiEndpointsContainer {
                     };
 
                     endpoint.handle(
-                        new InputMessage<>(
+                        new Request<>(
                             message.messageId(),
                             message.messageType(),
                             message.messageSentAt(),

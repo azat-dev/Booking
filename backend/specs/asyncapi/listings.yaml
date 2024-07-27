@@ -22,31 +22,31 @@ channels:
       AddedNewPhotoToListing:
         $ref: '#/components/messages/events~1AddedNewPhotoToListing'
 
-  queries/requests/GetPublicListingDetailsById:
+  queries/requests/GetListingPublicDetailsById:
     address: 'com.azat4dev.booking.listings.1.0.queries.get_public_listing_details_by_id'
     messages:
-      GetPublicListingDetailsById:
-        $ref: '#/components/messages/queries~1requests~1GetPublicListingDetailsById'
+      GetListingPublicDetailsById:
+        $ref: '#/components/messages/queries~1requests~1GetListingPublicDetailsById'
 
-  queries/responses/GetPublicListingDetailsById:
+  queries/responses/GetListingPublicDetailsById:
     address: 'com.azat4dev.booking.listings.responses.get_public_listing_details_by_id'
     messages:
-      GetPublicListingDetailsByIdResponse:
-        $ref: '#/components/messages/queries~1responses~1GetPublicListingDetailsByIdResponse'
-      FailedGetPublicListingDetailsById:
-        $ref: '#/components/messages/queries~1responses~1FailedGetPublicListingDetailsById'
+      GetListingPublicDetailsByIdResponse:
+        $ref: '#/components/messages/queries~1responses~1GetListingPublicDetailsByIdResponse'
+      FailedGetListingPublicDetailsById:
+        $ref: '#/components/messages/queries~1responses~1FailedGetListingPublicDetailsById'
 
 operations:
-  queriesGetPublicListingDetailsById:
+  queriesGetListingPublicDetailsById:
     action: receive
     channel:
-      $ref: '#/channels/queries~1requests~1GetPublicListingDetailsById'
+      $ref: '#/channels/queries~1requests~1GetListingPublicDetailsById'
     reply:
       channel:
-        $ref: '#/channels/queries~1responses~1GetPublicListingDetailsById'
+        $ref: '#/channels/queries~1responses~1GetListingPublicDetailsById'
       messages:
-        - $ref: '#/components/messages/queries~1responses~1GetPublicListingDetailsByIdResponse'
-        - $ref: '#/components/messages/queries~1responses~1FailedGetPublicListingDetailsById'
+        - $ref: '#/components/messages/queries~1responses~1GetListingPublicDetailsByIdResponse'
+        - $ref: '#/components/messages/queries~1responses~1FailedGetListingPublicDetailsById'
 
   sendListingEvents:
     action: send
@@ -63,8 +63,8 @@ operations:
 
 components:
   messages:
-    queries/requests/GetPublicListingDetailsById:
-      name: GetPublicListingDetailsById
+    queries/requests/GetListingPublicDetailsById:
+      name: GetListingPublicDetailsById
       headers:
         type: object
         required:
@@ -79,15 +79,15 @@ components:
           x-message-type:
             type: string
             enum:
-              - GetPublicListingDetailsById
+              - GetListingPublicDetailsById
           x-message-sent-at:
             type: string
             format: date-time
       payload:
-        $ref: '#/components/schemas/queries/GetPublicListingDetailsById'
+        $ref: '#/components/schemas/queries/GetListingPublicDetailsById'
 
-    queries/responses/GetPublicListingDetailsByIdResponse:
-      name: GetPublicListingDetailsByIdResponse
+    queries/responses/GetListingPublicDetailsByIdResponse:
+      name: GetListingPublicDetailsByIdResponse
       headers:
         type: object
         required:
@@ -102,15 +102,15 @@ components:
           x-message-type:
             type: string
             enum:
-              - GetPublicListingDetailsById
+              - GetListingPublicDetailsById
           x-message-sent-at:
             type: string
             format: date-time
       payload:
-        $ref: '#/components/schemas/queries/GetPublicListingDetailsByIdResponse'
+        $ref: '#/components/schemas/queries/GetListingPublicDetailsByIdResponse'
 
-    queries/responses/FailedGetPublicListingDetailsById:
-      name: FailedGetPublicListingDetailsById
+    queries/responses/FailedGetListingPublicDetailsById:
+      name: FailedGetListingPublicDetailsById
       headers:
         type: object
         required:
@@ -125,12 +125,12 @@ components:
           x-message-type:
             type: string
             enum:
-              - FailedGetPublicListingDetailsById
+              - FailedGetListingPublicDetailsById
           x-message-sent-at:
             type: string
             format: date-time
       payload:
-        $ref: '#/components/schemas/queries/FailedGetPublicListingDetailsById'
+        $ref: '#/components/schemas/queries/FailedGetListingPublicDetailsById'
 
     events/NewListingAdded:
       name: NewListingAdded
@@ -451,12 +451,15 @@ components:
           objectName:
             type: string
 
-      PublicListingDetails:
-        title: PublicListingDetails
+      ListingPublicDetails:
+        title: ListingPublicDetails
         type: object
         additionalProperties: false
         required:
-          - listingId
+          - id
+          - createdAt
+          - updatedAt
+          - hostId
           - title
           - description
           - address
@@ -466,8 +469,16 @@ components:
           - photos
           - status
         properties:
-          listingId:
+          id:
             $ref: "./common/values.yaml#/components/schemas/ListingId"
+          createdAt:
+            type: string
+            format: date-time
+          updatedAt:
+            type: string
+            format: date-time
+          hostId:
+            $ref: "./common/values.yaml#/components/schemas/HostId"
           title:
             type: string
           description:
@@ -610,8 +621,8 @@ components:
             $ref: "#/components/schemas/values/ListingDetailsFields"
 
     queries:
-      GetPublicListingDetailsById:
-        title: GetPublicListingDetailsById
+      GetListingPublicDetailsById:
+        title: GetListingPublicDetailsById
         type: object
         additionalProperties: false
         required:
@@ -621,10 +632,10 @@ components:
           correlationId:
             type: string
           params:
-            $ref: "#/components/schemas/queries/GetPublicListingDetailsByIdParams"
+            $ref: "#/components/schemas/queries/GetListingPublicDetailsByIdParams"
 
-      GetPublicListingDetailsByIdParams:
-        title: GetPublicListingDetailsByIdParams
+      GetListingPublicDetailsByIdParams:
+        title: GetListingPublicDetailsByIdParams
         type: object
         additionalProperties: false
         required:
@@ -633,8 +644,8 @@ components:
           listingId:
             $ref: "./common/values.yaml#/components/schemas/ListingId"
 
-      GetPublicListingDetailsByIdResponse:
-        title: GetPublicListingDetailsByIdResponse
+      GetListingPublicDetailsByIdResponse:
+        title: GetListingPublicDetailsByIdResponse
         type: object
         additionalProperties: false
         required:
@@ -642,12 +653,12 @@ components:
           - data
         properties:
           params:
-            $ref: "#/components/schemas/queries/GetPublicListingDetailsByIdParams"
+            $ref: "#/components/schemas/queries/GetListingPublicDetailsByIdParams"
           data:
-            $ref: "#/components/schemas/values/PublicListingDetails"
+            $ref: "#/components/schemas/values/ListingPublicDetails"
 
-      FailedGetPublicListingDetailsById:
-        title: FailedGetPublicListingDetailsById
+      FailedGetListingPublicDetailsById:
+        title: FailedGetListingPublicDetailsById
         type: object
         additionalProperties: false
         required:
@@ -655,6 +666,6 @@ components:
           - error
         properties:
           params:
-            $ref: "#/components/schemas/queries/GetPublicListingDetailsByIdParams"
+            $ref: "#/components/schemas/queries/GetListingPublicDetailsByIdParams"
           error:
             $ref: "./common/values.yaml#/components/schemas/Error"

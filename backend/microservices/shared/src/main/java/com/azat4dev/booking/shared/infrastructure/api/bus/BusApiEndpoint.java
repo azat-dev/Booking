@@ -1,20 +1,24 @@
 package com.azat4dev.booking.shared.infrastructure.api.bus;
 
 import lombok.Getter;
+import lombok.extern.slf4j.Slf4j;
 
 import java.util.Optional;
 
 public interface BusApiEndpoint<T> {
 
     void handle(
-        InputMessage<T> message,
+        Request<T> request,
         Reply reply
     );
 
-    void handleException(
+    default void handleException(
         Throwable exception,
+        Request<T> request,
         Reply reply
-    );
+    ) {
+
+    };
 
     String getInputAddress();
 

@@ -1,6 +1,6 @@
 package com.azat4dev.booking.listingsms.e2e.helpers;
 
-import com.azat4dev.booking.listingsms.config.common.infrastracture.api.rest.properties.JwtConfigProperties;
+import com.azat4dev.booking.listingsms.config.common.infrastructure.api.rest.properties.JwtConfigProperties;
 import com.azat4dev.booking.shared.domain.values.user.UserId;
 import com.nimbusds.jose.jwk.JWKSet;
 import com.nimbusds.jose.jwk.RSAKey;

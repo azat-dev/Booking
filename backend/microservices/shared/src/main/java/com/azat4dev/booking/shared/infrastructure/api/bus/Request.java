@@ -2,7 +2,7 @@ package com.azat4dev.booking.shared.infrastructure.api.bus;
 
 import java.time.LocalDateTime;
 
-public record InputMessage<T>(
+public record Request<T>(
     String id,
     String type,
     LocalDateTime timestamp,

@@ -8,7 +8,6 @@ import com.azat4dev.booking.listingsms.common.domain.values.address.ListingAddre
 
 import java.time.LocalDateTime;
 import java.util.List;
-import java.util.Optional;
 
 public record ListingPublicDetails(
     ListingId id,
@@ -17,11 +16,11 @@ public record ListingPublicDetails(
     HostId hostId,
     ListingTitle title,
     ListingStatus status,
-    Optional<ListingDescription> description,
+    ListingDescription description,
     GuestsCapacity guestsCapacity,
-    Optional<PropertyType> propertyType,
-    Optional<RoomType> roomType,
-    Optional<ListingAddress> address,
+    PropertyType propertyType,
+    RoomType roomType,
+    ListingAddress address,
     List<ListingPhoto> photos
 ) {
 }

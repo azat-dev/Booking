@@ -1,4 +1,4 @@
-package com.azat4dev.booking.listingsms.config.common.infrastracture.api.rest;
+package com.azat4dev.booking.listingsms.config.common.infrastructure.api.rest;
 
 import com.azat4dev.booking.shared.infrastructure.api.CurrentAuthenticatedUserIdProvider;
 import com.azat4dev.booking.shared.infrastructure.api.JwtCurrentAuthenticatedUserIdProvider;

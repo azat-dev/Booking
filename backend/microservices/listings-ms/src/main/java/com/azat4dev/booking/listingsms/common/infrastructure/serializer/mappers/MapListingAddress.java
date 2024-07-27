@@ -1,4 +1,4 @@
-package com.azat4dev.booking.listingsms.commands.infrastructure.serializer.mappers;
+package com.azat4dev.booking.listingsms.common.infrastructure.serializer.mappers;
 
 import com.azat4dev.booking.listingsms.common.domain.values.address.City;
 import com.azat4dev.booking.listingsms.common.domain.values.address.Country;

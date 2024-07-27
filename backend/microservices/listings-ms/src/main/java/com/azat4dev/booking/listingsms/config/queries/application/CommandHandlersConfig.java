@@ -19,7 +19,7 @@ public class CommandHandlersConfig {
     }
 
     @Bean
-    GetPublicListingDetailsHandler getPublicListingDetailsHandler() {
-        return new GetPublicListingDetailsHandlerImpl();
+    GetListingPublicDetailsHandler getListingPublicDetailsHandler() {
+        return new GetListingPublicDetailsHandlerImpl();
     }
 }

@@ -1,4 +1,4 @@
-package com.azat4dev.booking.listingsms.config.common.infrastracture.api.rest;
+package com.azat4dev.booking.listingsms.config.common.infrastructure.api.rest;
 
 import org.openapitools.jackson.nullable.JsonNullableModule;
 import org.springframework.context.annotation.Bean;

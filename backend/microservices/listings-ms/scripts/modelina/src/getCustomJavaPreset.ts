@@ -7,12 +7,12 @@ const OPTIONAL_IMPORT = 'import java.util.Optional;';
 
 const CLASS_ANNOTATIONS =
     `
- @lombok.Builder(toBuilder = true)
- @lombok.AllArgsConstructor
- @lombok.NoArgsConstructor
- @lombok.Getter
- @lombok.Setter
- @lombok.EqualsAndHashCode
+@lombok.Builder(toBuilder = true)
+@lombok.AllArgsConstructor
+@lombok.NoArgsConstructor
+@lombok.Getter
+@lombok.Setter
+@lombok.EqualsAndHashCode
  `.trim();
 
 const getCustomJavaPreset = (modelSuffix: string) : JavaPreset<JavaOptions> => ({

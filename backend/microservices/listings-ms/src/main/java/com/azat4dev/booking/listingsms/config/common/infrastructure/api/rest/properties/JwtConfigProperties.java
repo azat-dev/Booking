@@ -1,4 +1,4 @@
-package com.azat4dev.booking.listingsms.config.common.infrastracture.api.rest.properties;
+package com.azat4dev.booking.listingsms.config.common.infrastructure.api.rest.properties;
 
 import jakarta.annotation.Nonnull;
 import lombok.Data;

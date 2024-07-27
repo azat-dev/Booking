@@ -36,7 +36,7 @@ public class KafkaTopicsConfig {
 
         topics.add(
             new NewTopic(
-                Channels.QUERIES_RESPONSES__GET_PUBLIC_LISTING_DETAILS_BY_ID.getValue(),
+                Channels.QUERIES_RESPONSES__GET_LISTING_PUBLIC_DETAILS_BY_ID.getValue(),
                 Optional.of(1),
                 Optional.empty()
             )
