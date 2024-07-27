@@ -47,54 +47,52 @@ public class BusApiEndpointsContainerImpl implements BusApiEndpointsContainer {
             msg -> {
                 final var message = (MessageBus.ReceivedMessage) msg;
 
+                log.atDebug()
+                    .addArgument(() -> endpoint.getClass().getSimpleName())
+                    .addArgument(inputAddress)
+                    .addKeyValue("message.type", inputAddress)
+                    .addKeyValue("message.id", message::messageId)
+                    .addKeyValue("message.issuedAt", message::messageSentAt)
+                    .log("Pass event into bus api endpoint: endpoint={} inputAddress={}");
+
+                final var reply = new BusApiEndpoint.Reply() {
+                    @Override
+                    public void publish(Optional<String> partitionKey, Object response) {
+
+                        final var replyAddress = (Optional<String>) endpoint.getReplyAddress();
+                        if (replyAddress.isEmpty()) {
+                            log.atError()
+                                .addArgument(endpoint.getClass().getSimpleName())
+                                .log("There is no reply address for: endpoint={}");
+                            throw new Exception.EndpointDoesntHaveReplyAddress(endpoint.getClass());
+                        }
+
+                        messageBus.publish(
+                            replyAddress.get(),
+                            partitionKey,
+                            Optional.of(message.messageId()),
+                            generateMessageId.run(),
+                            getMessageTypeForDtoClass.run(response.getClass()),
+                            response
+                        );
+                    }
+
+                    @Override
+                    public void publish(Object response) {
+                        publish(Optional.empty(), response);
+                    }
+                };
+
+                final var request = new Request<>(
+                    message.messageId(),
+                    message.messageType(),
+                    message.messageSentAt(),
+                    message.payload()
+                );
+
                 try {
-                    log.atDebug()
-                        .addArgument(() -> endpoint.getClass().getSimpleName())
-                        .addArgument(inputAddress)
-                        .addKeyValue("message.type", inputAddress)
-                        .addKeyValue("message.id", message::messageId)
-                        .addKeyValue("message.issuedAt", message::messageSentAt)
-                        .log("Pass event into bus api endpoint: endpoint={} inputAddress={}");
 
-
-                    final var reply = new BusApiEndpoint.Reply() {
-                        @Override
-                        public void publish(Optional<String> partitionKey, Object response) {
-
-                            final var replyAddress = (Optional<String>) endpoint.getReplyAddress();
-                            if (replyAddress.isEmpty()) {
-                                log.atError()
-                                    .addArgument(endpoint.getClass().getSimpleName())
-                                    .log("There is no reply address for: endpoint={}");
-                                throw new Exception.EndpointDoesntHaveReplyAddress(endpoint.getClass());
-                            }
-
-                            messageBus.publish(
-                                replyAddress.get(),
-                                partitionKey,
-                                Optional.of(message.messageId()),
-                                generateMessageId.run(),
-                                getMessageTypeForDtoClass.run(response.getClass()),
-                                response
-                            );
-                        }
-
-                        @Override
-                        public void publish(Object response) {
-                            publish(Optional.empty(), response);
-                        }
-                    };
-
-                    endpoint.handle(
-                        new Request<>(
-                            message.messageId(),
-                            message.messageType(),
-                            message.messageSentAt(),
-                            message.payload()
-                        ),
-                        reply
-                    );
-
+                    endpoint.handle(request, reply);
 
                 } catch (Throwable e) {
                     log.atError()
@@ -104,6 +102,8 @@ public class BusApiEndpointsContainerImpl implements BusApiEndpointsContainer {
                         .addKeyValue("message.id", message::messageId)
                         .addKeyValue("message.issuedAt", message::messageSentAt)
                         .log("Exception during handling message by endpoint: {}");
+
+                    endpoint.handleException(e, request, reply);
                 }
             });
     }

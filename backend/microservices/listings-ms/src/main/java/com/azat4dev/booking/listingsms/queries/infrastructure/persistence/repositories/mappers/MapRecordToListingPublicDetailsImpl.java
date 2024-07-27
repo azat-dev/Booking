@@ -4,7 +4,7 @@ import com.azat4dev.booking.listingsms.commands.domain.values.*;
 import com.azat4dev.booking.listingsms.commands.infrastructure.persistence.dao.listings.ListingPhotoData;
 import com.azat4dev.booking.listingsms.common.domain.values.PropertyType;
 import com.azat4dev.booking.listingsms.common.domain.values.RoomType;
-import com.azat4dev.booking.listingsms.queries.domain.entities.ListingPrivateDetails;
+import com.azat4dev.booking.listingsms.queries.domain.entities.ListingPublicDetails;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import lombok.AllArgsConstructor;
@@ -13,11 +13,10 @@ import org.jooq.generated.tables.records.ListingsRecord;
 
 import java.util.Arrays;
 import java.util.List;
-import java.util.Optional;
 
 @Slf4j
 @AllArgsConstructor
-public class MapRecordToListingPrivateDetailsImpl implements MapRecordToListingPrivateDetails {
+public class MapRecordToListingPublicDetailsImpl implements MapRecordToListingPublicDetails {
 
     private final MapListingPhoto mapListingPhoto;
     private final MapAddress mapAddress;
@@ -44,22 +43,29 @@ public class MapRecordToListingPrivateDetailsImpl implements MapRecordToListingP
     }
 
     @Override
-    public ListingPrivateDetails map(ListingsRecord data) {
+    public ListingPublicDetails map(ListingsRecord data) {
 
-        return new ListingPrivateDetails(
-            ListingId.dangerouslyMakeFrom(data.getId().toString()),
+        final var id = ListingId.dangerouslyMakeFrom(data.getId().toString());
+        final var status = ListingStatus.valueOf(data.getStatus());
+
+        if (status != ListingStatus.PUBLISHED) {
+            throw new Exception.ListingNotPublished(id);
+        }
+
+        return new ListingPublicDetails(
+            id,
             data.getCreatedAt().withNano(data.getCreatedAtNano()),
             data.getUpdatedAt().withNano(data.getUpdatedAtNano()),
             HostId.dangerouslyMakeFrom(data.getHostId().toString()),
             ListingTitle.dangerouslyMakeFrom(data.getTitle()),
-            ListingStatus.valueOf(data.getStatus()),
+            status,
 
-            Optional.ofNullable(data.getDescription()).map(ListingDescription::dangerouslyMakeFrom),
+            ListingDescription.dangerouslyMakeFrom(data.getDescription()),
             mapGuestsCapacity.map(data),
-            Optional.ofNullable(data.getPropertyType()).map(PropertyType::valueOf),
-            Optional.ofNullable(data.getRoomType()).map(RoomType::valueOf),
+            PropertyType.valueOf(data.getPropertyType()),
+            RoomType.valueOf(data.getRoomType()),
 
-            mapAddress.map(data),
+            mapAddress.map(data).orElseThrow(() -> new RuntimeException("Address is required")),
             mapPhotos(data)
         );
     }

@@ -2,6 +2,7 @@ package com.azat4dev.booking.listingsms.config.queries.application;
 
 import com.azat4dev.booking.listingsms.queries.application.handlers.*;
 import com.azat4dev.booking.listingsms.queries.domain.entities.Hosts;
+import com.azat4dev.booking.listingsms.queries.domain.entities.PublicListings;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 
@@ -19,7 +20,7 @@ public class CommandHandlersConfig {
     }
 
     @Bean
-    GetListingPublicDetailsHandler getListingPublicDetailsHandler() {
-        return new GetListingPublicDetailsHandlerImpl();
+    GetListingPublicDetailsHandler getListingPublicDetailsHandler(PublicListings publicListings) {
+        return new GetListingPublicDetailsHandlerImpl(publicListings);
     }
 }

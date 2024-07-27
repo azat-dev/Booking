@@ -1,7 +1,6 @@
 package com.azat4dev.booking.shared.infrastructure.api.bus;
 
 import lombok.Getter;
-import lombok.extern.slf4j.Slf4j;
 
 import java.util.Optional;
 
@@ -10,7 +9,7 @@ public interface BusApiEndpoint<T> {
     void handle(
         Request<T> request,
         Reply reply
-    );
+    ) throws java.lang.Exception;
 
     default void handleException(
         Throwable exception,
@@ -18,7 +17,7 @@ public interface BusApiEndpoint<T> {
         Reply reply
     ) {
 
-    };
+    }
 
     String getInputAddress();
 

@@ -6,13 +6,15 @@ import com.azat4dev.booking.listingsms.queries.infrastructure.persistence.dao.Li
 import com.azat4dev.booking.listingsms.queries.infrastructure.persistence.repositories.mappers.MapRecordToListingPrivateDetails;
 import com.azat4dev.booking.listingsms.queries.domain.entities.ListingPrivateDetails;
 import com.azat4dev.booking.listingsms.queries.domain.interfaces.PrivateListingsReadRepository;
+import io.micrometer.observation.annotation.Observed;
 import lombok.AllArgsConstructor;
 
 import java.util.List;
 import java.util.Optional;
 
+@Observed
 @AllArgsConstructor
-public final class PrivateListingsReadRepositoryImpl implements PrivateListingsReadRepository {
+public class PrivateListingsReadRepositoryImpl implements PrivateListingsReadRepository {
 
     private final ListingsReadDao dao;
     private final MapRecordToListingPrivateDetails mapper;

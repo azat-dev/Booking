@@ -9,4 +9,9 @@ public record ValidationErrorDetailsDTO(
     public ValidationErrorDetailsDTO wrapInPath(String parentPath) {
         return new ValidationErrorDetailsDTO(code, parentPath + "." + path, error);
     }
+
+    @Override
+    public String toString() {
+        return String.format("%s: %s", path, error);
+    }
 }

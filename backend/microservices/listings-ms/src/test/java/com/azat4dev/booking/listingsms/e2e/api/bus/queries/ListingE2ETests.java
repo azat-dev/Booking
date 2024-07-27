@@ -18,8 +18,6 @@ import com.azat4dev.booking.listingsms.generated.client.model.PropertyTypeDTO;
 import com.azat4dev.booking.listingsms.generated.client.model.RoomTypeDTO;
 import com.azat4dev.booking.listingsms.generated.client.model.*;
 import com.azat4dev.booking.listingsms.generated.events.dto.*;
-import com.azat4dev.booking.shared.config.infrastracture.bus.utils.ItemsToAddInOneToOneRelationsOfDtoClassesAndMessageTypes;
-import com.azat4dev.booking.shared.config.infrastracture.bus.utils.OneToOneRelationsOfDtoClassesAndMessageTypes;
 import com.azat4dev.booking.shared.domain.values.user.UserId;
 import com.azat4dev.booking.shared.infrastructure.bus.MessageBus;
 import net.datafaker.Faker;
@@ -31,7 +29,6 @@ import org.springframework.boot.test.autoconfigure.actuate.observability.AutoCon
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.context.TestConfiguration;
 import org.springframework.boot.test.web.server.LocalServerPort;
-import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Import;
 import org.springframework.core.io.Resource;
 import org.springframework.http.HttpStatus;
@@ -52,10 +49,10 @@ import static com.azat4dev.booking.listingsms.e2e.helpers.UsersHelpers.USER2;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 
-@AutoConfigureObservability
 @EnableTestcontainers
 @SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
 @Sql(value = {"/db/drop-schema.sql", "/db/schema.sql"})
+@AutoConfigureObservability /* The order matters for: ./mvnw test */
 class ListingE2ETests {
 
     @Autowired
@@ -227,11 +224,8 @@ class ListingE2ETests {
         return listingId;
     }
 
-    @Test
-    void test_publishListing_givenListingReadyForPublishing_thenPublish() throws IOException {
-
+    private ListingPrivateDetailsDTO givenPublishedListing(UserId userId) throws IOException {
         // Given
-        final var userId = USER1;
         final var listingId = givenListingReadyForPublishing(userId);
 
         apiClient(CommandsModificationsApi::new, userId)
@@ -246,6 +240,7 @@ class ListingE2ETests {
         final var result = apiClient(CommandsModificationsApi::new, userId)
             .publishListingWithHttpInfo(listingId);
 
+
         // Then
         assertThat(result.getStatusCode())
             .isEqualTo(HttpStatus.NO_CONTENT);
@@ -255,6 +250,21 @@ class ListingE2ETests {
             .getListing();
 
         assertThat(listingDetails.getStatus()).isEqualTo(ListingStatusDTO.PUBLISHED);
+
+        return listingDetails;
+    }
+
+    @Test
+    void test_publishListing_givenListingReadyForPublishing_thenPublish() throws IOException {
+
+        // Given
+        final var userId = USER1;
+
+        // When
+        final var listing = givenPublishedListing(userId);
+
+        // Then
+        assertThat(listing.getStatus()).isEqualTo(ListingStatusDTO.PUBLISHED);
     }
 
     @Test
@@ -289,12 +299,62 @@ class ListingE2ETests {
     }
 
     @Test
-    void test_getPublicListingData_givenExistingListing_thenPublishResponse() throws IOException {
+    void test_getPublicListingData_givenExistingNotPublishedListing_thenPublishForbiddenError() throws IOException {
 
         // Given
         final var eventId = UUID.randomUUID().toString();
         final var listingId = givenExistingListing(USER1);
-        givenExistingListing(USER2);
+
+        final var completed = new AtomicBoolean(false);
+
+        final var listener = messageBus.listen(
+            Channels.QUERIES_RESPONSES__GET_LISTING_PUBLIC_DETAILS_BY_ID.getValue(),
+            (message) -> {
+                if (message.correlationId().isEmpty()) {
+                    return;
+                }
+
+                final var receivedCorrelationId = message.correlationId().get();
+                if (!receivedCorrelationId.equals(eventId)) {
+                    return;
+                }
+
+                final var payload = message.payload(FailedGetListingPublicDetailsByIdDTO.class);
+                assertThat(payload.getError().getCode())
+                    .isEqualTo(FailedGetListingPublicDetailsByIdErrorCodeDTO.FORBIDDEN);
+                completed.set(true);
+            }
+        );
+
+        // When
+        messageBus.publish(
+            Channels.QUERIES_REQUESTS__GET_LISTING_PUBLIC_DETAILS_BY_ID.getValue(),
+            Optional.empty(),
+            Optional.empty(),
+            eventId,
+            "GetListingPublicDetailsById",
+            GetListingPublicDetailsByIdDTO.builder()
+                .params(
+                    GetListingPublicDetailsByIdParamsDTO.builder()
+                        .listingId(listingId)
+                        .build()
+                ).build()
+        );
+
+        // Then
+        Awaitility.await()
+            .atMost(Duration.of(10, ChronoUnit.SECONDS))
+            .untilTrue(completed);
+        listener.close();
+    }
+
+    @Test
+    void test_getPublicListingData_givenExistingListing_thenPublishResponse() throws IOException {
+
+        // Given
+        final var eventId = UUID.randomUUID().toString();
+        final var listing = givenPublishedListing(USER1);
+        final var listingId = listing.getId();
 
         final var completed = new AtomicBoolean(false);
 
@@ -380,10 +440,10 @@ class ListingE2ETests {
                 assertThat(message.payload()).isInstanceOf(FailedGetListingPublicDetailsByIdDTO.class);
                 final var expectedResponse = FailedGetListingPublicDetailsByIdDTO.builder()
                     .error(
-                        com.azat4dev.booking.listingsms.generated.events.dto.ErrorDTO.builder()
-                            .code(ErrorCodeDTO.NOT_FOUND)
-                            .message("Listing not found")
-                            .build()
+                        new FailedGetListingPublicDetailsByIdErrorDTO(
+                            FailedGetListingPublicDetailsByIdErrorCodeDTO.NOT_FOUND,
+                            "Listing not found"
+                        )
                     )
                     .params(params)
                     .build();
@@ -402,5 +462,11 @@ class ListingE2ETests {
 
         final var token = generateAccessToken.execute(userId);
         return ApiHelpers.apiClient(factory, token, port);
+    }
+
+    @Import(AccessTokenConfig.class)
+    @TestConfiguration
+    static class TestConfig {
+
     }
 }

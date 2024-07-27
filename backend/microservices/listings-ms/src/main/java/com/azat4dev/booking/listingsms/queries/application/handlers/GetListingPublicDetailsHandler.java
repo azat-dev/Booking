@@ -3,11 +3,12 @@ package com.azat4dev.booking.listingsms.queries.application.handlers;
 import com.azat4dev.booking.listingsms.commands.domain.values.ListingId;
 import com.azat4dev.booking.listingsms.queries.application.commands.GetListingPublicDetails;
 import com.azat4dev.booking.listingsms.queries.domain.entities.ListingPublicDetails;
+import com.azat4dev.booking.shared.application.ValidationException;
 import com.azat4dev.booking.shared.domain.DomainException;
 
 public interface GetListingPublicDetailsHandler {
 
-    ListingPublicDetails handle(GetListingPublicDetails command) throws Exception;
+    ListingPublicDetails handle(GetListingPublicDetails command) throws Exception, ValidationException;
 
     // Exceptions
 
