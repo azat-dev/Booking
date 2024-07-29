@@ -1,5 +1,6 @@
 package com.azat4dev.booking.listingsms.config.commands.infrastructure.persistence.repositories;
 
+import com.azat4dev.booking.listingsms.commands.domain.entities.ListingFactory;
 import com.azat4dev.booking.listingsms.commands.domain.interfaces.repositories.ListingsRepository;
 import com.azat4dev.booking.listingsms.commands.infrastructure.persistence.dao.listings.ListingsDao;
 import com.azat4dev.booking.listingsms.commands.infrastructure.persistence.repositories.ListingsRepositoryImpl;
@@ -21,8 +22,8 @@ public class ListingsRepositoryConfig {
     }
 
     @Bean
-    MapRecordToListing mapDataToListing(ObjectMapper objectMapper) {
-        return new MapRecordToListingImpl(objectMapper);
+    MapRecordToListing mapDataToListing(ObjectMapper objectMapper, ListingFactory listingFactory) {
+        return new MapRecordToListingImpl(listingFactory, objectMapper);
     }
 
     @Bean

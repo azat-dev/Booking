@@ -2,7 +2,7 @@ package com.azat4dev.booking.listingsms.commands.domain.handers.modification;
 
 import com.azat4dev.booking.listingsms.commands.domain.commands.UpdateListingDetails;
 import com.azat4dev.booking.listingsms.commands.domain.entities.Hosts;
-import com.azat4dev.booking.listingsms.commands.domain.entities.ListingsCatalog;
+import com.azat4dev.booking.listingsms.commands.domain.entities.Listings;
 import com.azat4dev.booking.listingsms.commands.domain.values.HostId;
 import com.azat4dev.booking.listingsms.commands.domain.values.ListingDescription;
 import com.azat4dev.booking.listingsms.commands.domain.values.ListingId;
@@ -28,7 +28,7 @@ import java.util.Optional;
 public class UpdateListingDetailsHandlerImpl implements UpdateListingDetailsHandler {
 
     private final Hosts hosts;
-    private final ListingsCatalog listings;
+    private final Listings listings;
 
     @Override
     public void handle(UpdateListingDetails command) throws Exception.ListingNotFound, Exception.AccessForbidden, ValidationException {
@@ -68,7 +68,7 @@ public class UpdateListingDetailsHandlerImpl implements UpdateListingDetailsHand
 
             final var listing = host.getListings()
                 .findById(listingId)
-                .orElseThrow(ListingsCatalog.Exception.ListingNotFound::new);
+                .orElseThrow(Listings.Exception.ListingNotFound::new);
 
             newTitle.ifPresent(listing::setTitle);
             newDescription.ifPresent(listing::setDescription);
@@ -127,7 +127,7 @@ public class UpdateListingDetailsHandlerImpl implements UpdateListingDetailsHand
 
                 throw ValidationException.withPath("description", inst);
 
-            case ListingsCatalog.Exception.ListingNotFound inst:
+            case Listings.Exception.ListingNotFound inst:
 
                 log.atError()
                     .addKeyValue("errorMessage", inst.getMessage())

@@ -1,6 +1,6 @@
 package com.azat4dev.booking.listingsms.e2e;
 
-import com.azat4dev.booking.listingsms.commands.domain.entities.Listing;
+import com.azat4dev.booking.listingsms.commands.domain.entities.ListingImpl;
 import com.azat4dev.booking.listingsms.e2e.helpers.AccessTokenConfig;
 import com.azat4dev.booking.listingsms.e2e.helpers.ApiHelpers;
 import com.azat4dev.booking.listingsms.e2e.helpers.EnableTestcontainers;
@@ -29,7 +29,7 @@ import java.io.IOException;
 import java.util.UUID;
 import java.util.function.Function;
 
-import static com.azat4dev.booking.listingsms.e2e.helpers.PhotoHelpers.givenAllPhotosUploaded;
+import static com.azat4dev.booking.listingsms.e2e.helpers.DeprecatedPhotoHelpers.givenAllPhotosUploaded;
 import static com.azat4dev.booking.listingsms.e2e.helpers.UsersHelpers.USER1;
 import static com.azat4dev.booking.listingsms.e2e.helpers.UsersHelpers.USER2;
 import static org.assertj.core.api.Assertions.assertThat;
@@ -38,7 +38,7 @@ import static org.junit.jupiter.api.Assertions.assertThrows;
 @EnableTestcontainers
 @SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
 @Sql(value = {"/db/drop-schema.sql", "/db/schema.sql"})
-@AutoConfigureObservability /* The order matters for: ./mvnw test */
+//@AutoConfigureObservability /* The order matters for: ./mvnw test */
 class ListingE2ETests {
 
     @Autowired
@@ -199,7 +199,7 @@ class ListingE2ETests {
             .getListingPrivateDetails(listingId);
 
         assertThat(listingDetails.getListing().getPhotos().size())
-            .isEqualTo(Listing.MINIMUM_NUMBER_OF_PHOTOS);
+            .isEqualTo(ListingImpl.MINIMUM_NUMBER_OF_PHOTOS);
 
         return listingId;
     }

@@ -3,11 +3,11 @@ package com.azat4dev.booking.listingsms.unit.commands.handlers;
 import com.azat4dev.booking.listingsms.commands.application.commands.AddNewPhotoToListing;
 import com.azat4dev.booking.listingsms.commands.application.handlers.photo.AddNewPhotoToListingHandler;
 import com.azat4dev.booking.listingsms.commands.application.handlers.photo.AddNewPhotoToListingHandlerImpl;
-import com.azat4dev.booking.listingsms.commands.application.handlers.photo.MakeNewListingPhoto;
 import com.azat4dev.booking.listingsms.commands.domain.entities.*;
 import com.azat4dev.booking.listingsms.commands.domain.values.HostId;
 import com.azat4dev.booking.listingsms.commands.domain.values.ListingId;
 import com.azat4dev.booking.listingsms.commands.domain.values.ListingPhoto;
+import com.azat4dev.booking.listingsms.commands.domain.values.ListingPhotoId;
 import com.azat4dev.booking.shared.domain.values.files.BucketName;
 import com.azat4dev.booking.shared.domain.values.files.MediaObjectName;
 import org.junit.jupiter.api.Test;
@@ -23,17 +23,16 @@ import static org.mockito.BDDMockito.then;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.times;
 
-public class AddNewPhotoToListingHandlerImplTests {
+class AddNewPhotoToListingHandlerImplTests {
 
     private SUT createSUT() {
 
         var host = mock(Host.class);
         var hosts = mock(Hosts.class);
         var hostListings = mock(HostListings.class);
-        var listing = mock(Listing.class);
+        var listing = mock(ListingImpl.class);
 
-        var makeNewListingPhoto = mock(MakeNewListingPhoto.class);
-        var listingsCatalog = mock(ListingsCatalog.class);
+        var listingsCatalog = mock(Listings.class);
 
         given(hosts.getById(any())).willReturn(host);
         given(host.getListings()).willReturn(hostListings);
@@ -44,14 +43,12 @@ public class AddNewPhotoToListingHandlerImplTests {
         return new SUT(
             new AddNewPhotoToListingHandlerImpl(
                 hosts,
-                makeNewListingPhoto,
                 listingsCatalog
             ),
             hosts,
             host,
             hostListings,
             listing,
-            makeNewListingPhoto,
             listingsCatalog
         );
     }
@@ -92,7 +89,7 @@ public class AddNewPhotoToListingHandlerImplTests {
     }
 
     @Test
-    void test_handle_givenExistingListing_thenAdd() throws Listing.Exception.MaxPhotosReached, AddNewPhotoToListingHandler.Exception.AccessForbidden, AddNewPhotoToListingHandler.Exception.PhotoAlreadyExists, AddNewPhotoToListingHandler.Exception.MaxPhotosReached, AddNewPhotoToListingHandler.Exception.ListingNotFound, AddNewPhotoToListingHandler.Exception.PhotoNotFound, ListingsCatalog.Exception.ListingNotFound {
+    void test_handle_givenExistingListing_thenAdd() throws ListingImpl.Exception.MaxPhotosReached, AddNewPhotoToListingHandler.Exception.AccessForbidden, AddNewPhotoToListingHandler.Exception.PhotoAlreadyExists, AddNewPhotoToListingHandler.Exception.MaxPhotosReached, AddNewPhotoToListingHandler.Exception.ListingNotFound, AddNewPhotoToListingHandler.Exception.PhotoNotFound, Listings.Exception.ListingNotFound {
 
         // Given
         var sut = createSUT();
@@ -101,7 +98,7 @@ public class AddNewPhotoToListingHandlerImplTests {
         final var hostId = HostId.fromUserId(command.userId());
         final var listingId = ListingId.dangerouslyMakeFrom(command.listingId());
 
-        final var expectedPhotoId = "photoId";
+        final var expectedPhotoId = ListingPhotoId.generateNew();
 
         final var expectedListingPhoto = new ListingPhoto(
             expectedPhotoId,
@@ -109,8 +106,8 @@ public class AddNewPhotoToListingHandlerImplTests {
             MediaObjectName.dangerouslyMake(command.uploadedFileData().objectName())
         );
 
-        given(sut.makeNewListingPhoto.execute(any()))
-            .willReturn(expectedListingPhoto);
+        given(sut.listing.addNewPhoto(any(), any()))
+            .willReturn(expectedPhotoId);
 
         // When
         sut.handler.handle(command);
@@ -123,12 +120,9 @@ public class AddNewPhotoToListingHandlerImplTests {
             .findById(listingId);
 
         then(sut.listing).should(times(1))
-            .addPhoto(expectedListingPhoto);
+            .addNewPhoto(expectedListingPhoto.getBucketName(), expectedListingPhoto.getObjectName());
 
-        then(sut.listing).should(times(1))
-            .addPhoto(expectedListingPhoto);
-
-        then(sut.listingsCatalog).should(times(1))
+        then(sut.listings).should(times(1))
             .update(sut.listing);
     }
 
@@ -137,9 +131,8 @@ public class AddNewPhotoToListingHandlerImplTests {
         Hosts hosts,
         Host host,
         HostListings hostListings,
-        Listing listing,
-        MakeNewListingPhoto makeNewListingPhoto,
-        ListingsCatalog listingsCatalog
+        ListingImpl listing,
+        Listings listings
     ) {
     }
 }

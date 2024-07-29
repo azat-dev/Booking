@@ -1,7 +1,7 @@
 package com.azat4dev.booking.listingsms.commands.application.handlers;
 
 import com.azat4dev.booking.listingsms.commands.domain.commands.AddNewListing;
-import com.azat4dev.booking.listingsms.commands.domain.entities.ListingsCatalog;
+import com.azat4dev.booking.listingsms.commands.domain.entities.Listings;
 import com.azat4dev.booking.listingsms.commands.domain.values.HostId;
 import com.azat4dev.booking.listingsms.commands.domain.values.ListingId;
 import com.azat4dev.booking.listingsms.commands.domain.values.ListingTitle;
@@ -17,7 +17,7 @@ import lombok.extern.slf4j.Slf4j;
 public class AddNewListingHandlerImpl implements AddNewListingHandler {
 
     private final MakeNewListingId makeListingId;
-    private final ListingsCatalog listings;
+    private final Listings listings;
 
     public ListingId handle(AddNewListing command) throws ValidationException {
 
@@ -46,7 +46,7 @@ public class AddNewListingHandlerImpl implements AddNewListingHandler {
             log.atError()
                 .setCause(e)
                 .log("Failed to add new listing");
-            throw e;
+            throw new RuntimeException(e);
         }
 
         return listingId;

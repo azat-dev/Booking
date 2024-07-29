@@ -1,8 +1,9 @@
 package com.azat4dev.booking.listingsms.commands.infrastructure.persistence.repositories.mappers;
 
-import com.azat4dev.booking.listingsms.commands.infrastructure.persistence.dao.listings.ListingPhotoData;
 import com.azat4dev.booking.listingsms.commands.domain.entities.Listing;
+import com.azat4dev.booking.listingsms.commands.domain.entities.ListingFactory;
 import com.azat4dev.booking.listingsms.commands.domain.values.*;
+import com.azat4dev.booking.listingsms.commands.infrastructure.persistence.dao.listings.ListingPhotoData;
 import com.azat4dev.booking.listingsms.common.domain.values.GuestsCapacity;
 import com.azat4dev.booking.listingsms.common.domain.values.PropertyType;
 import com.azat4dev.booking.listingsms.common.domain.values.RoomType;
@@ -15,15 +16,18 @@ import com.azat4dev.booking.shared.domain.values.files.MediaObjectName;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import lombok.AllArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.jooq.generated.tables.records.ListingsRecord;
 
 import java.util.Arrays;
 import java.util.List;
 import java.util.Optional;
 
+@Slf4j
 @AllArgsConstructor
 public class MapRecordToListingImpl implements MapRecordToListing {
 
+    private final ListingFactory listingFactory;
     private final ObjectMapper objectMapper;
 
     private static Optional<ListingAddress> mapAddress(ListingsRecord data) {
@@ -58,13 +62,16 @@ public class MapRecordToListingImpl implements MapRecordToListing {
         try {
             final var photos = objectMapper.readValue(data.getPhotos().data(), ListingPhotoData[].class);
 
-            return Arrays.stream(photos).map(photo -> ListingPhoto.dangerouslyMakeFrom(
-                photo.id(),
+            return Arrays.stream(photos).map(photo -> ListingPhoto.makeWithoutChecks(
+                ListingPhotoId.makeWithoutChecks(photo.id()),
                 BucketName.makeWithoutChecks(photo.bucketName()),
                 MediaObjectName.dangerouslyMake(photo.objectName())
             )).toList();
 
         } catch (JsonProcessingException e) {
+            log.atError()
+                .addArgument(data.getId())
+                .log("Failed to deserialize photos for listing with id: {}");
             throw new RuntimeException(e);
         }
     }
@@ -72,7 +79,7 @@ public class MapRecordToListingImpl implements MapRecordToListing {
     @Override
     public Listing map(ListingsRecord data) {
 
-        return Listing.internalMake(
+        return listingFactory.internalMake(
             ListingId.dangerouslyMakeFrom(data.getId().toString()),
             ListingStatus.valueOf(data.getStatus()),
             data.getCreatedAt().withNano(data.getCreatedAtNano()),

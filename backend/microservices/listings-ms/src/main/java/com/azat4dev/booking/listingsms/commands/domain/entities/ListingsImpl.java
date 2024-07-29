@@ -18,27 +18,29 @@ import lombok.extern.slf4j.Slf4j;
 
 import java.util.LinkedList;
 import java.util.List;
+import java.util.Optional;
 import java.util.stream.Collectors;
 
 @Slf4j
 @Observed
 @AllArgsConstructor
-public class ListingsCatalogImpl implements ListingsCatalog {
+public class ListingsImpl implements Listings {
 
     private final UnitOfWorkFactory unitOfWorkFactory;
     private final MarkOutboxNeedsSynchronization markOutboxNeedsSynchronization;
     private final TimeProvider timeProvider;
     private final ExtractTraceContext extractTraceContext;
+    private final ListingFactory listingFactory;
 
     @Override
     public void addNew(
         ListingId listingId,
         HostId hostId,
         ListingTitle title
-    ) {
+    ) throws ListingsRepository.Exception.ListingAlreadyExists {
         final var now = timeProvider.currentTime();
 
-        final var newListing = Listing.makeNewDraft(
+        final var newListing = listingFactory.makeNewDraft(
             listingId,
             now,
             hostId,
@@ -67,6 +69,13 @@ public class ListingsCatalogImpl implements ListingsCatalog {
             log.atInfo()
                 .addKeyValue("listingId", listingId::getValue)
                 .log("New listing added");
+        } catch (ListingsRepository.Exception.ListingAlreadyExists e) {
+            unitOfWork.rollback();
+            log.atWarn()
+                .addKeyValue("listingId", listingId::getValue)
+                .log("Listing already exists");
+
+            throw new ListingsRepository.Exception.ListingAlreadyExists();
         } catch (Throwable e) {
             unitOfWork.rollback();
             log.atError()
@@ -75,6 +84,19 @@ public class ListingsCatalogImpl implements ListingsCatalog {
             throw e;
         } finally {
             markOutboxNeedsSynchronization.execute();
+        }
+    }
+
+    @Override
+    public Optional<Listing> getById(ListingId listingId) {
+
+        final var unit = unitOfWorkFactory.make();
+        try {
+            final var listingsRepository = unit.getListingsRepository();
+
+            return listingsRepository.findById(listingId);
+        } finally {
+            unit.save();
         }
     }
 

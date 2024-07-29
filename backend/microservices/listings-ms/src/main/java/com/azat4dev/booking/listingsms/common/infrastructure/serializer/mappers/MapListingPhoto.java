@@ -1,6 +1,7 @@
 package com.azat4dev.booking.listingsms.common.infrastructure.serializer.mappers;
 
 import com.azat4dev.booking.listingsms.commands.domain.values.ListingPhoto;
+import com.azat4dev.booking.listingsms.commands.domain.values.ListingPhotoId;
 import com.azat4dev.booking.listingsms.generated.events.dto.ListingPhotoDTO;
 import com.azat4dev.booking.shared.domain.DomainException;
 import com.azat4dev.booking.shared.domain.values.files.BucketName;
@@ -13,7 +14,7 @@ public final class MapListingPhoto implements Serializer<ListingPhoto, ListingPh
     @Override
     public ListingPhotoDTO serialize(ListingPhoto dm) {
         return ListingPhotoDTO.builder()
-            .id(dm.getId())
+            .id(dm.getId().toString())
             .bucketName(dm.getBucketName().getValue())
             .objectName(dm.getObjectName().getValue())
             .build();
@@ -23,7 +24,7 @@ public final class MapListingPhoto implements Serializer<ListingPhoto, ListingPh
     public ListingPhoto deserialize(ListingPhotoDTO dto) {
         try {
             return new ListingPhoto(
-                dto.getId(),
+                ListingPhotoId.checkAndMake(dto.getId()),
                 BucketName.checkAndMake(dto.getBucketName()),
                 MediaObjectName.checkAndMakeFrom(dto.getObjectName())
             );

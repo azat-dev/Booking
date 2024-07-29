@@ -2,14 +2,13 @@ package com.azat4dev.booking.listingsms.commands.application.handlers.photo;
 
 import com.azat4dev.booking.listingsms.commands.application.commands.AddNewPhotoToListing;
 import com.azat4dev.booking.listingsms.commands.domain.entities.Hosts;
-import com.azat4dev.booking.listingsms.commands.domain.entities.Listing;
-import com.azat4dev.booking.listingsms.commands.domain.entities.ListingsCatalog;
+import com.azat4dev.booking.listingsms.commands.domain.entities.ListingImpl;
+import com.azat4dev.booking.listingsms.commands.domain.entities.Listings;
 import com.azat4dev.booking.listingsms.commands.domain.values.HostId;
 import com.azat4dev.booking.listingsms.commands.domain.values.ListingId;
 import com.azat4dev.booking.shared.application.ValidationException;
 import com.azat4dev.booking.shared.domain.values.files.BucketName;
 import com.azat4dev.booking.shared.domain.values.files.MediaObjectName;
-import com.azat4dev.booking.shared.domain.values.files.UploadedFileData;
 import io.micrometer.observation.annotation.Observed;
 import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -20,8 +19,7 @@ import lombok.extern.slf4j.Slf4j;
 public class AddNewPhotoToListingHandlerImpl implements AddNewPhotoToListingHandler {
 
     private final Hosts hosts;
-    private final MakeNewListingPhoto makeNewListingPhoto;
-    private final ListingsCatalog listingsCatalog;
+    private final Listings listings;
 
     @Override
     public void handle(AddNewPhotoToListing command)
@@ -44,23 +42,20 @@ public class AddNewPhotoToListingHandlerImpl implements AddNewPhotoToListingHand
 
             final var uploadedFileData = command.uploadedFileData();
 
-            final var listingPhoto = makeNewListingPhoto.execute(
-                new UploadedFileData(
-                    BucketName.checkAndMake(uploadedFileData.bucketName()),
-                    MediaObjectName.checkAndMakeFrom(uploadedFileData.objectName())
-                )
-            );
-
             final var listing = currentHost.getListings()
                 .findById(listingId)
                 .orElseThrow(() -> new Exception.ListingNotFound(listingId.getValue().toString()));
 
-            listing.addPhoto(listingPhoto);
-            listingsCatalog.update(listing);
+            final var photoId = listing.addNewPhoto(
+                BucketName.checkAndMake(uploadedFileData.bucketName()),
+                MediaObjectName.checkAndMakeFrom(uploadedFileData.objectName())
+            );
+
+            listings.update(listing);
 
             log.atInfo()
                 .addKeyValue("listingId", listingId::getValue)
-                .addKeyValue("photoId", listingPhoto::getId)
+                .addKeyValue("photoId", photoId::getValue)
                 .log("Photo added to listing");
 
         } catch (ListingId.Exception.WrongFormat e) {
@@ -69,7 +64,7 @@ public class AddNewPhotoToListingHandlerImpl implements AddNewPhotoToListingHand
                 .addArgument(command::listingId)
                 .log("ListingId wrong format: {}");
             throw ValidationException.withPath("listingId", e);
-        } catch (Listing.Exception.MaxPhotosReached e) {
+        } catch (ListingImpl.Exception.MaxPhotosReached e) {
             log.atWarn()
                 .addKeyValue("errorMessage", e.getMessage())
                 .addKeyValue("listingId", command::listingId)
@@ -88,7 +83,7 @@ public class AddNewPhotoToListingHandlerImpl implements AddNewPhotoToListingHand
                 .addArgument(command.uploadedFileData()::bucketName)
                 .log("BucketName wrong format: {}");
             throw ValidationException.withPath("uploadedFileData.bucketName", e);
-        } catch (ListingsCatalog.Exception.ListingNotFound e) {
+        } catch (Listings.Exception.ListingNotFound e) {
             log.atError()
                 .addKeyValue("listingId", command::listingId)
                 .addKeyValue("userId", command::userId)

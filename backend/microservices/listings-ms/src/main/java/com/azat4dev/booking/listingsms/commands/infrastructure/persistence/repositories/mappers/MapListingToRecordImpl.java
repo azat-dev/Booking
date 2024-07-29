@@ -1,8 +1,8 @@
 package com.azat4dev.booking.listingsms.commands.infrastructure.persistence.repositories.mappers;
 
-import com.azat4dev.booking.listingsms.commands.infrastructure.persistence.dao.listings.ListingPhotoData;
 import com.azat4dev.booking.listingsms.commands.domain.entities.Listing;
 import com.azat4dev.booking.listingsms.commands.domain.values.ListingDescription;
+import com.azat4dev.booking.listingsms.commands.infrastructure.persistence.dao.listings.ListingPhotoData;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import lombok.AllArgsConstructor;

@@ -25,7 +25,7 @@ public interface GetListingPublicDetailsHandler {
 
         public static class ListingNotFound extends Exception {
             public ListingNotFound(ListingId id) {
-                super("Listing with id " + id.getValue() + " not found");
+                super("Listing not found: id=" + id.getValue());
             }
         }
     }

@@ -1,15 +1,15 @@
 package com.azat4dev.booking.listingsms.unit.commands.domain.entities;
 
-import com.azat4dev.booking.listingsms.commands.domain.entities.Listing;
-import com.azat4dev.booking.listingsms.commands.domain.entities.ListingsCatalog;
-import com.azat4dev.booking.listingsms.commands.domain.entities.ListingsCatalogImpl;
+import com.azat4dev.booking.listingsms.commands.domain.entities.ListingFactory;
+import com.azat4dev.booking.listingsms.commands.domain.entities.Listings;
+import com.azat4dev.booking.listingsms.commands.domain.entities.ListingsImpl;
 import com.azat4dev.booking.listingsms.commands.domain.events.NewListingAdded;
 import com.azat4dev.booking.listingsms.commands.domain.interfaces.repositories.ListingsRepository;
 import com.azat4dev.booking.listingsms.commands.domain.interfaces.repositories.UnitOfWork;
 import com.azat4dev.booking.listingsms.commands.domain.interfaces.repositories.UnitOfWorkFactory;
-import com.azat4dev.booking.shared.infrastructure.persistence.repositories.outbox.OutboxEventsRepository;
 import com.azat4dev.booking.shared.domain.interfaces.tracing.ExtractTraceContext;
 import com.azat4dev.booking.shared.domain.producers.OutboxEventsReader;
+import com.azat4dev.booking.shared.infrastructure.persistence.repositories.outbox.OutboxEventsRepository;
 import com.azat4dev.booking.shared.utils.TimeProvider;
 import org.junit.jupiter.api.Test;
 
@@ -23,7 +23,7 @@ import static org.mockito.BDDMockito.*;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.times;
 
-public class ListingCatalogTests {
+class ListingsTests {
 
     private SUT createSUT() {
 
@@ -47,13 +47,17 @@ public class ListingCatalogTests {
         final var extractTraceContext = mock(ExtractTraceContext.class);
         final var outboxEventsReader = mock(OutboxEventsReader.class);
 
+        final var factory = mock(ListingFactory.class);
+
         return new SUT(
-            new ListingsCatalogImpl(
+            new ListingsImpl(
                 unitOfWorkFactory,
                 outboxEventsReader::trigger,
                 timeProvider,
-                extractTraceContext
+                extractTraceContext,
+                factory
             ),
+            factory,
             unitOfWork,
             listingsRepository,
             outboxRepository,
@@ -63,7 +67,8 @@ public class ListingCatalogTests {
     }
 
     @Test
-    void test_addNew_givenValidData_thenPutNewListingInRepositoryAndPublishSuccessEvent() {
+    void test_addNew_givenValidData_thenPutNewListingInRepositoryAndPublishSuccessEvent()
+        throws ListingsRepository.Exception.ListingAlreadyExists {
 
         // Given
         var sut = createSUT();
@@ -81,14 +86,14 @@ public class ListingCatalogTests {
             .willReturn(tracingInfo);
 
         // When
-        sut.listingsCatalog.addNew(
+        sut.listings.addNew(
             listingId,
             hostId,
             title
         );
 
         // Then
-        final var expectedListing = Listing.makeNewDraft(
+        final var expectedListing = sut.listingFactory.makeNewDraft(
             listingId,
             now,
             hostId,
@@ -128,7 +133,7 @@ public class ListingCatalogTests {
         // When
 
         final var exception = assertThrows(RuntimeException.class, () -> {
-            sut.listingsCatalog.addNew(
+            sut.listings.addNew(
                 listingId,
                 hostId,
                 title
@@ -143,7 +148,8 @@ public class ListingCatalogTests {
     }
 
     private record SUT(
-        ListingsCatalog listingsCatalog,
+        Listings listings,
+        ListingFactory listingFactory,
         UnitOfWork unitOfWork,
         ListingsRepository listingsRepository,
         OutboxEventsRepository outboxRepository,

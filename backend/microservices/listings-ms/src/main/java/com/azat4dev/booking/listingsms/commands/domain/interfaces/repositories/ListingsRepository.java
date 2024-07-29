@@ -8,7 +8,7 @@ import java.util.Optional;
 
 public interface ListingsRepository {
 
-    void addNew(Listing listing);
+    void addNew(Listing listing) throws ListingsRepository.Exception.ListingAlreadyExists;
 
     Optional<Listing> findById(ListingId id);
 
@@ -21,9 +21,15 @@ public interface ListingsRepository {
             super(message);
         }
 
-        public static final class ListingNotFound extends Exception {
+        public static final class ListingNotFound extends ListingsRepository.Exception {
             public ListingNotFound() {
                 super("Listing not found");
+            }
+        }
+
+        public static final class ListingAlreadyExists extends ListingsRepository.Exception {
+            public ListingAlreadyExists() {
+                super("Listing already exists");
             }
         }
     }

@@ -12,7 +12,7 @@ public final class MapListingPhotoToDTOImpl implements MapListingPhotoToDTO {
     @Override
     public ListingPhotoPathDTO map(ListingPhoto listingPhoto) {
         return ListingPhotoPathDTO.builder()
-            .photoId(listingPhoto.getId())
+            .photoId(listingPhoto.getId().toString())
             .url(getListingPhotoUrl.execute(listingPhoto.getBucketName(), listingPhoto.getObjectName()))
             .build();
     }

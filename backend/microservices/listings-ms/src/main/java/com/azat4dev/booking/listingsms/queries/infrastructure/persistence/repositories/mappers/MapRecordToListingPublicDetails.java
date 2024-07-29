@@ -15,7 +15,7 @@ public interface MapRecordToListingPublicDetails {
 
         public static class ListingNotPublished extends Exception {
             public ListingNotPublished(ListingId id) {
-                super("Listing with id " + id + " is not published");
+                super("Listing not found: id=" + id.getValue());
             }
         }
     }

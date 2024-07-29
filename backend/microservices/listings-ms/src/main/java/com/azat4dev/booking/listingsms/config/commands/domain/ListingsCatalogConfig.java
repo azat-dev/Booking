@@ -1,10 +1,9 @@
 package com.azat4dev.booking.listingsms.config.commands.domain;
 
-import com.azat4dev.booking.listingsms.commands.domain.entities.ListingsCatalog;
-import com.azat4dev.booking.listingsms.commands.domain.entities.ListingsCatalogImpl;
+import com.azat4dev.booking.listingsms.commands.domain.entities.ListingFactory;
+import com.azat4dev.booking.listingsms.commands.domain.entities.Listings;
+import com.azat4dev.booking.listingsms.commands.domain.entities.ListingsImpl;
 import com.azat4dev.booking.listingsms.commands.domain.interfaces.repositories.UnitOfWorkFactory;
-import com.azat4dev.booking.listingsms.commands.domain.values.MakeNewListingId;
-import com.azat4dev.booking.listingsms.commands.domain.values.MakeNewListingIdImpl;
 import com.azat4dev.booking.shared.domain.interfaces.tracing.ExtractTraceContext;
 import com.azat4dev.booking.shared.domain.producers.OutboxEventsReader;
 import com.azat4dev.booking.shared.utils.TimeProvider;
@@ -22,17 +21,13 @@ public class ListingsCatalogConfig {
     private final OutboxEventsReader outboxEventsReader;
 
     @Bean
-    MakeNewListingId makeNewListingId() {
-        return new MakeNewListingIdImpl();
-    }
-
-    @Bean
-    ListingsCatalog listingsCatalog() {
-        return new ListingsCatalogImpl(
+    Listings listingsCatalog(ListingFactory listingFactory) {
+        return new ListingsImpl(
             unitOfWorkFactory,
             outboxEventsReader::trigger,
             timeProvider,
-            extractTraceContext
+            extractTraceContext,
+            listingFactory
         );
     }
 }

@@ -13,7 +13,7 @@ public interface GetListingPrivateDetailsHandler {
 
     class ListingNotFoundException extends DomainException {
         public ListingNotFoundException(ListingId id) {
-            super("Listing with id " + id.getValue() + " not found");
+            super("Listing not found: id=" + id.getValue());
         }
     }
 }

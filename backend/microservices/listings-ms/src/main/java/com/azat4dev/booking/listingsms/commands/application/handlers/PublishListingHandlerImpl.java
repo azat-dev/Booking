@@ -2,8 +2,8 @@ package com.azat4dev.booking.listingsms.commands.application.handlers;
 
 import com.azat4dev.booking.listingsms.commands.application.commands.PublishListing;
 import com.azat4dev.booking.listingsms.commands.domain.entities.Hosts;
-import com.azat4dev.booking.listingsms.commands.domain.entities.Listing;
-import com.azat4dev.booking.listingsms.commands.domain.entities.ListingsCatalog;
+import com.azat4dev.booking.listingsms.commands.domain.entities.ListingImpl;
+import com.azat4dev.booking.listingsms.commands.domain.entities.Listings;
 import com.azat4dev.booking.listingsms.commands.domain.values.HostId;
 import com.azat4dev.booking.listingsms.commands.domain.values.ListingId;
 import com.azat4dev.booking.shared.application.ValidationException;
@@ -17,7 +17,7 @@ import lombok.extern.slf4j.Slf4j;
 public class PublishListingHandlerImpl implements PublishListingHandler {
 
     private final Hosts hosts;
-    private final ListingsCatalog listingsCatalog;
+    private final Listings listings;
 
     @Override
     public void handle(PublishListing command) throws ValidationException, Exception.FailedToPublish, Exception.ListingNotFoundException {
@@ -32,14 +32,14 @@ public class PublishListingHandlerImpl implements PublishListingHandler {
                 .orElseThrow(() -> new Exception.ListingNotFoundException(command.listingId()));
 
             listing.publish();
-            listingsCatalog.update(listing);
+            listings.update(listing);
 
             log.atInfo()
                 .addKeyValue("userId", command::userId)
                 .addKeyValue("listingId", command::listingId)
                 .log("Listing published");
 
-        } catch (Listing.Exception.Publishing e) {
+        } catch (ListingImpl.Exception.Publishing e) {
 
             log.atError()
                 .addKeyValue("userId", command::userId)
@@ -56,7 +56,7 @@ public class PublishListingHandlerImpl implements PublishListingHandler {
                 .log("Wrong listing ID format");
 
             throw ValidationException.withPath("listingId", e);
-        } catch (ListingsCatalog.Exception.ListingNotFound e) {
+        } catch (Listings.Exception.ListingNotFound e) {
 
             log.atWarn()
                 .addKeyValue("listingId", command::listingId)

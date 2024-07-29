@@ -6,208 +6,73 @@ import com.azat4dev.booking.listingsms.common.domain.values.PropertyType;
 import com.azat4dev.booking.listingsms.common.domain.values.RoomType;
 import com.azat4dev.booking.listingsms.common.domain.values.address.ListingAddress;
 import com.azat4dev.booking.shared.domain.DomainException;
-import com.azat4dev.booking.shared.utils.Assert;
-import lombok.AccessLevel;
-import lombok.AllArgsConstructor;
-import lombok.EqualsAndHashCode;
-import lombok.Getter;
+import com.azat4dev.booking.shared.domain.values.files.BucketName;
+import com.azat4dev.booking.shared.domain.values.files.MediaObjectName;
 
 import java.time.LocalDateTime;
-import java.util.Collections;
-import java.util.LinkedList;
 import java.util.List;
 import java.util.Optional;
 
-@Getter
-@EqualsAndHashCode(of = "id")
-@AllArgsConstructor(access = AccessLevel.PRIVATE)
-public class Listing {
+public interface Listing {
 
-    public static final int MINIMUM_NUMBER_OF_PHOTOS = 5;
-    private static final int MAX_NUMBER_OF_PHOTOS = 20;
+    int MINIMUM_NUMBER_OF_PHOTOS = 5;
+    int MAX_NUMBER_OF_PHOTOS = 20;
 
-    private final ListingId id;
-    private final LocalDateTime createdAt;
-    private LocalDateTime updatedAt;
-    private final HostId hostId;
-    private ListingTitle title;
-    private ListingStatus status;
-    private Optional<ListingDescription> description;
-    private Optional<PropertyType> propertyType;
-    private Optional<RoomType> roomType;
-    private GuestsCapacity guestsCapacity;
-    private Optional<ListingAddress> address;
-    private List<ListingPhoto> photos;
+    ListingId getId();
 
-    public static Listing makeNewDraft(
-        ListingId id,
-        LocalDateTime createdAt,
-        HostId hostId,
-        ListingTitle title
-    ) {
+    HostId getHostId();
 
-        return new Listing(
-            id,
-            createdAt,
-            createdAt,
-            hostId,
-            title,
-            ListingStatus.DRAFT,
-            Optional.empty(),
-            Optional.empty(),
-            Optional.empty(),
-            GuestsCapacity.DEFAULT,
-            Optional.empty(),
-            List.of()
-        );
-    }
+    List<ListingPhoto> getPhotos();
 
-    public static Listing internalMake(
-        ListingId id,
-        ListingStatus status,
-        LocalDateTime createdAt,
-        LocalDateTime updatedAt,
-        HostId hostId,
-        ListingTitle title,
-        Optional<ListingDescription> description,
-        Optional<PropertyType> propertyType,
-        Optional<RoomType> roomType,
-        Optional<ListingAddress> address,
-        GuestsCapacity guestsCapacity,
-        List<ListingPhoto> photos
-    ) {
+    LocalDateTime getCreatedAt();
 
-        return new Listing(
-            id,
-            createdAt,
-            updatedAt,
-            hostId,
-            title,
-            status,
-            description,
-            propertyType,
-            roomType,
-            guestsCapacity,
-            address,
-            photos
-        );
-    }
+    LocalDateTime getUpdatedAt();
 
-    private void validateFieldsBeforePublishing() throws Exception.Publishing {
+    void publish() throws Listing.Exception.Publishing;
 
-        if (title == null) {
-            throw new Exception.Publishing.DescriptionIsRequired();
-        }
+    ListingStatus getStatus();
 
-        final var description = this.description.orElseThrow(Exception.Publishing.DescriptionIsRequired::new);
+    void setTitle(ListingTitle title) throws Listing.Exception.CantModifyPublishedListing;
 
-        Assert.string(description.getValue(), Exception.Publishing.DescriptionIsRequired::new).notBlank();
+    ListingTitle getTitle();
 
-        this.address.orElseThrow(Exception.Publishing.AddressIsRequired::new);
+    void setDescription(Optional<ListingDescription> description) throws Listing.Exception.CantModifyPublishedListing;
 
-        this.propertyType.orElseThrow(Exception.Publishing.PropertyTypeIsRequired::new);
+    Optional<ListingDescription> getDescription();
 
-        this.roomType.orElseThrow(Exception.Publishing.RooomTypeIsRequired::new);
+    void setPropertyType(Optional<PropertyType> propertyType) throws Listing.Exception.CantModifyPublishedListing;
 
-        if (this.photos.size() < MINIMUM_NUMBER_OF_PHOTOS) {
-            throw new Exception.Publishing.MinimumNumberOfPhotos();
-        }
-    }
+    Optional<PropertyType> getPropertyType();
 
-    public void publish() throws Exception.Publishing {
+    void setRoomType(Optional<RoomType> roomType) throws Listing.Exception.CantModifyPublishedListing;
 
-        validateFieldsBeforePublishing();
-        this.status = ListingStatus.PUBLISHED;
-    }
+    Optional<RoomType> getRoomType();
 
-    public void setTitle(ListingTitle title) throws Exception.CantModifyPublishedListing {
+    void setGuestsCapacity(GuestsCapacity guestsCapacity) throws Listing.Exception.CantModifyPublishedListing;
 
-        updateField(() -> this.title = title);
-    }
+    GuestsCapacity getGuestsCapacity();
 
-    public void setDescription(Optional<ListingDescription> description) throws Exception.CantModifyPublishedListing {
+    void setAddress(Optional<ListingAddress> address) throws Listing.Exception.CantModifyPublishedListing;
 
-        updateField(() -> this.description = description);
-    }
+    Optional<ListingAddress> getAddress();
 
-    public void setPropertyType(Optional<PropertyType> propertyType) throws Exception.CantModifyPublishedListing {
+    boolean isReadyForPublishing();
 
-        updateField(() -> this.propertyType = propertyType);
-    }
+    void internalSetUpdatedAt(LocalDateTime updatedAt);
 
-    public void setRoomType(Optional<RoomType> roomType) throws Exception.CantModifyPublishedListing {
-
-        updateField(() -> this.roomType = roomType);
-    }
-
-    public void setGuestsCapacity(GuestsCapacity guestsCapacity) throws Exception.CantModifyPublishedListing {
-
-        updateField(() -> this.guestsCapacity = guestsCapacity);
-    }
-
-    public void setAddress(Optional<ListingAddress> address) throws Exception.CantModifyPublishedListing {
-
-        updateField(() -> this.address = address);
-    }
-
-    private void updateField(Runnable action) throws Exception.CantModifyPublishedListing {
-        cantModifyPublishedListing();
-        action.run();
-        updateStatusIfNeed();
-    }
-
-    private void cantModifyPublishedListing() throws Exception.CantModifyPublishedListing {
-        if (this.status == ListingStatus.PUBLISHED) {
-            throw new Exception.CantModifyPublishedListing();
-        }
-    }
-
-    private void updateStatusIfNeed() {
-        if (this.status == ListingStatus.PUBLISHED) {
-            return;
-        }
-
-        if (!isReadyForPublishing()) {
-            this.status = ListingStatus.DRAFT;
-            return;
-        }
-
-        this.status = ListingStatus.READY_FOR_PUBLISHING;
-    }
-
-    private boolean isReadyForPublishing() {
-
-        try {
-            validateFieldsBeforePublishing();
-            return true;
-        } catch (Throwable e) {
-            return false;
-        }
-    }
-
-    public void internalSetUpdatedAt(LocalDateTime updatedAt) {
-        this.updatedAt = updatedAt;
-    }
-
-    public void addPhoto(ListingPhoto photo) throws Exception.MaxPhotosReached {
-        if (this.photos.size() >= MAX_NUMBER_OF_PHOTOS) {
-            throw new Exception.MaxPhotosReached();
-        }
-
-        final var newPhotos = new LinkedList<>(this.photos);
-        newPhotos.add(photo);
-
-        this.photos = Collections.unmodifiableList(newPhotos);
-    }
+    ListingPhotoId addNewPhoto(
+        BucketName bucketName,
+        MediaObjectName objectName
+    ) throws Listing.Exception.MaxPhotosReached;
 
     // Exceptions
 
-    public static class Exception extends DomainException {
+    class Exception extends DomainException {
         protected Exception(String message) {
             super(message);
         }
 
-        public static class CantModifyPublishedListing extends Exception {
+        public static class CantModifyPublishedListing extends Listing.Exception {
             public CantModifyPublishedListing() {
                 super("Can't modify published listing");
             }
@@ -219,11 +84,9 @@ public class Listing {
             }
         }
 
-        public static sealed abstract class Publishing extends Exception
-            permits Publishing.DescriptionIsRequired, Publishing.AddressIsRequired,
-            Publishing.MinimumNumberOfPhotos, Publishing.PropertyTypeIsRequired, Publishing.RooomTypeIsRequired {
+        public abstract static class Publishing extends Exception {
 
-            public Publishing(String message) {
+            protected Publishing(String message) {
                 super(message);
             }
 
@@ -245,8 +108,8 @@ public class Listing {
                 }
             }
 
-            public static final class RooomTypeIsRequired extends Publishing {
-                public RooomTypeIsRequired() {
+            public static final class RoomTypeIsRequired extends Publishing {
+                public RoomTypeIsRequired() {
                     super("Room type is required");
                 }
             }

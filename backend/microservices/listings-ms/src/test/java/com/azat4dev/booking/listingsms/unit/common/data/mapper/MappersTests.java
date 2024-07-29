@@ -102,7 +102,7 @@ class MappersTests {
             new AddedNewPhotoToListing(
                 anyListingId(),
                 new ListingPhoto(
-                    "photoId",
+                    ListingPhotoId.generateNew(),
                     BucketName.checkAndMake("bucket"),
                     MediaObjectName.checkAndMakeFrom("object")
                 )

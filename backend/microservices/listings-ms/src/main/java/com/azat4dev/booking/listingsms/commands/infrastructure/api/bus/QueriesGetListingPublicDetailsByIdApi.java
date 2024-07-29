@@ -49,6 +49,9 @@ public class QueriesGetListingPublicDetailsByIdApi implements QueriesGetListingP
         Reply reply
     ) {
 
+        log.atInfo()
+            .log("Handling exception: {}", exception.getMessage());
+
         final var message = request.message();
         var code = FailedGetListingPublicDetailsByIdErrorCodeDTO.INTERNAL_SERVER_ERROR;
         var messageText = exception.getMessage();
@@ -76,6 +79,7 @@ public class QueriesGetListingPublicDetailsByIdApi implements QueriesGetListingP
                 break;
         }
 
+        log.atInfo().log("Sent Error code: {}", code);
         reply.publish(
             new FailedGetListingPublicDetailsByIdDTO(
                 message.getParams(),

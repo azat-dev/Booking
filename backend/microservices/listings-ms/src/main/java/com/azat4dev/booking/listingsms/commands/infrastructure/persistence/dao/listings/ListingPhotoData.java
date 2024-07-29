@@ -10,7 +10,7 @@ public record ListingPhotoData(
 
     public static ListingPhotoData fromDomain(ListingPhoto dm) {
         return new ListingPhotoData(
-            dm.getId(),
+            dm.getId().toString(),
             dm.getBucketName().getValue(),
             dm.getObjectName().getValue()
         );

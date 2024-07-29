@@ -28,8 +28,8 @@ import java.io.IOException;
 import java.util.UUID;
 import java.util.function.Function;
 
-import static com.azat4dev.booking.listingsms.e2e.helpers.PhotoHelpers.givenAddedPhoto;
-import static com.azat4dev.booking.listingsms.e2e.helpers.PhotoHelpers.givenUploadedListingPhoto;
+import static com.azat4dev.booking.listingsms.e2e.helpers.DeprecatedPhotoHelpers.givenAddedPhoto;
+import static com.azat4dev.booking.listingsms.e2e.helpers.DeprecatedPhotoHelpers.givenUploadedListingPhoto;
 import static com.azat4dev.booking.listingsms.e2e.helpers.UsersHelpers.USER1;
 import static org.assertj.core.api.Assertions.assertThat;
 

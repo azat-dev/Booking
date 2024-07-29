@@ -17,18 +17,28 @@ public class GetListingPublicDetailsHandlerImpl implements GetListingPublicDetai
     private final PublicListings publicListings;
 
     @Override
-    public ListingPublicDetails handle(GetListingPublicDetails command) throws Exception {
+    public ListingPublicDetails handle(GetListingPublicDetails command)
+        throws GetListingPublicDetailsHandler.Exception {
 
         try {
             final var listingId = ListingId.checkAndMakeFrom(command.listingId());
 
             return publicListings.findById(listingId)
-                .orElseThrow(() -> new Exception.ListingNotFound(listingId));
+                .orElseThrow(() -> new GetListingPublicDetailsHandler.Exception.ListingNotFound(listingId));
 
         } catch (ListingId.Exception.WrongFormat e) {
+
+            log.atWarn()
+                .addArgument(command::listingId)
+                .log("Wrong listing ID format: listingId={}");
+
             throw ValidationException.withPath("listingId", e);
         } catch (PublicListings.Exception.ListingNotPublished e) {
-            throw new Exception.Forbidden();
+
+            log.atWarn()
+                .addArgument(command::listingId)
+                .log("Listing not published: listingId={}");
+            throw new GetListingPublicDetailsHandler.Exception.Forbidden();
         }
     }
 }

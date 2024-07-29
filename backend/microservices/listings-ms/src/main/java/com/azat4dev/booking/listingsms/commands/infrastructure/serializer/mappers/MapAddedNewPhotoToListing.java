@@ -4,6 +4,7 @@ package com.azat4dev.booking.listingsms.commands.infrastructure.serializer.mappe
 import com.azat4dev.booking.listingsms.commands.domain.events.AddedNewPhotoToListing;
 import com.azat4dev.booking.listingsms.commands.domain.values.ListingId;
 import com.azat4dev.booking.listingsms.commands.domain.values.ListingPhoto;
+import com.azat4dev.booking.listingsms.commands.domain.values.ListingPhotoId;
 import com.azat4dev.booking.listingsms.generated.events.dto.AddedNewPhotoToListingDTO;
 import com.azat4dev.booking.listingsms.generated.events.dto.ListingPhotoDTO;
 import com.azat4dev.booking.shared.infrastructure.serializers.MapDomainEvent;
@@ -19,7 +20,7 @@ public final class MapAddedNewPhotoToListing implements MapDomainEvent<AddedNewP
         return AddedNewPhotoToListingDTO.builder()
             .listingId(dm.listingId().getValue())
             .photo(ListingPhotoDTO.builder()
-                .id(dm.photo().getId())
+                .id(dm.photo().getId().toString())
                 .bucketName(dm.photo().getBucketName().getValue())
                 .objectName(dm.photo().getObjectName().getValue())
                 .build()
@@ -31,7 +32,7 @@ public final class MapAddedNewPhotoToListing implements MapDomainEvent<AddedNewP
         return new AddedNewPhotoToListing(
             ListingId.dangerouslyMakeFrom(dto.getListingId().toString()),
             new ListingPhoto(
-                dto.getPhoto().getId(),
+                ListingPhotoId.makeWithoutChecks(dto.getPhoto().getId()),
                 BucketName.makeWithoutChecks(dto.getPhoto().getBucketName()),
                 MediaObjectName.dangerouslyMake(dto.getPhoto().getObjectName())
             )

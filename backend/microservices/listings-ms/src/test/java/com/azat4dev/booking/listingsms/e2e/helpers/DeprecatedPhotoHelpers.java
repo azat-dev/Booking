@@ -1,11 +1,12 @@
 package com.azat4dev.booking.listingsms.e2e.helpers;
 
-import com.azat4dev.booking.listingsms.commands.domain.entities.Listing;
+import com.azat4dev.booking.listingsms.commands.domain.entities.ListingImpl;
 import com.azat4dev.booking.listingsms.generated.client.api.CommandsListingsPhotoApi;
 import com.azat4dev.booking.listingsms.generated.client.model.AddListingPhotoRequestBodyDTO;
 import com.azat4dev.booking.listingsms.generated.client.model.GenerateUploadListingPhotoUrlRequestBodyDTO;
 import com.azat4dev.booking.listingsms.generated.client.model.GenerateUploadListingPhotoUrlResponseBodyDTO;
 import com.azat4dev.booking.listingsms.generated.client.model.UploadedFileDataDTO;
+import lombok.AllArgsConstructor;
 import okhttp3.*;
 import org.springframework.core.io.Resource;
 
@@ -16,11 +17,11 @@ import java.util.UUID;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
-public class PhotoHelpers {
+@AllArgsConstructor
+public class DeprecatedPhotoHelpers {
 
     public static void uploadFile(
         String url,
-        String objectName,
         Map<String, String> formFields,
         File file,
         String contentType
@@ -48,7 +49,6 @@ public class PhotoHelpers {
         OkHttpClient httpClient = new OkHttpClient().newBuilder().build();
         Response response = httpClient.newCall(request).execute();
 
-        final var responseBody = response.body().string();
         assertThat(response.isSuccessful()).isTrue();
     }
 
@@ -75,7 +75,6 @@ public class PhotoHelpers {
         assertThat(result).isNotNull();
         uploadFile(
             result.getObjectPath().getUrl(),
-            result.getObjectPath().getObjectName(),
             result.getFormData(),
             file,
             "image/jpeg"
@@ -114,7 +113,7 @@ public class PhotoHelpers {
         Resource testImageFile
     ) throws IOException {
 
-        for (int i = 0; i < Listing.MINIMUM_NUMBER_OF_PHOTOS; i++) {
+        for (int i = 0; i < ListingImpl.MINIMUM_NUMBER_OF_PHOTOS; i++) {
             givenAddedPhoto(listingId, apiClient, testImageFile);
         }
     }

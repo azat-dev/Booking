@@ -5,7 +5,7 @@ import com.azat4dev.booking.listingsms.commands.application.handlers.AddNewListi
 import com.azat4dev.booking.listingsms.commands.application.handlers.PublishListingHandler;
 import com.azat4dev.booking.listingsms.commands.application.handlers.PublishListingHandlerImpl;
 import com.azat4dev.booking.listingsms.commands.domain.entities.Hosts;
-import com.azat4dev.booking.listingsms.commands.domain.entities.ListingsCatalog;
+import com.azat4dev.booking.listingsms.commands.domain.entities.Listings;
 import com.azat4dev.booking.listingsms.commands.domain.handers.modification.UpdateListingDetailsHandler;
 import com.azat4dev.booking.listingsms.commands.domain.handers.modification.UpdateListingDetailsHandlerImpl;
 import com.azat4dev.booking.listingsms.commands.domain.values.MakeNewListingId;
@@ -21,7 +21,7 @@ public class ListingsCommandHandlersConfig {
     @Bean
     AddNewListingHandler addNewListingHandler(
         MakeNewListingId makeListingId,
-        ListingsCatalog listings
+        Listings listings
     ) {
         return new AddNewListingHandlerImpl(
             makeListingId,
@@ -32,7 +32,7 @@ public class ListingsCommandHandlersConfig {
     @Bean
     UpdateListingDetailsHandler updateListingDetailsHandler(
         Hosts hosts,
-        ListingsCatalog listings
+        Listings listings
     ) {
         return new UpdateListingDetailsHandlerImpl(
             hosts,
@@ -43,7 +43,7 @@ public class ListingsCommandHandlersConfig {
     @Bean
     PublishListingHandler publishListingHandler(
         Hosts hosts,
-        ListingsCatalog listings) {
+        Listings listings) {
         return new PublishListingHandlerImpl(
             hosts,
             listings
