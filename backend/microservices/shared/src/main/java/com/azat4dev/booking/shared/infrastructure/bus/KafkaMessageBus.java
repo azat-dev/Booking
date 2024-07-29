@@ -105,7 +105,7 @@ public class KafkaMessageBus<PARTITION_KEY, SERIALIZED_MESSAGE> implements Messa
             }
 
             if (listeners == null || listeners.isEmpty()) {
-                final var container = containersForTopics.get(topic);
+                final var container = containersForTopics.remove(topic);
                 if (container == null) {
                     return;
                 }
@@ -124,6 +124,8 @@ public class KafkaMessageBus<PARTITION_KEY, SERIALIZED_MESSAGE> implements Messa
 
             final var listeners = getListenersForTopic(topic);
             if (listeners == null) {
+                log.atInfo()
+                    .log("No listeners for topic: {}", topic);
                 return;
             }
 
@@ -173,7 +175,18 @@ public class KafkaMessageBus<PARTITION_KEY, SERIALIZED_MESSAGE> implements Messa
                     return;
                 }
 
-                listener.consumer.accept(wrappedMessage);
+                try {
+                    listener.consumer.accept(wrappedMessage);
+                } catch (Exception e) {
+                    log.atError()
+                        .setCause(e)
+                        .addArgument(topic)
+                        .addArgument(messageId)
+                        .addArgument(messageType)
+                        .log("Error processing message: topic={} id={} type={}");
+
+                    throw e;
+                }
             });
 
             if (acknowledgment != null) {
@@ -205,6 +218,11 @@ public class KafkaMessageBus<PARTITION_KEY, SERIALIZED_MESSAGE> implements Messa
         Consumer<ReceivedMessage> consumer
     ) {
 
+        log.atDebug()
+            .addArgument(topic)
+            .addArgument(() -> messageTypes.orElse(null))
+            .log("Open listener: topic={}, messageTypes={}");
+
         final var listener = new ListenerData(consumer, messageTypes);
 
         synchronized (listenersForTopics) {
@@ -215,10 +233,12 @@ public class KafkaMessageBus<PARTITION_KEY, SERIALIZED_MESSAGE> implements Messa
                     topic,
                     new CopyOnWriteArrayList<>(List.of(listener))
                 );
-                addNewContainer(topic);
+
             } else {
                 listeners.add(listener);
             }
+
+            addNewContainer(topic);
         }
 
         return () -> {
