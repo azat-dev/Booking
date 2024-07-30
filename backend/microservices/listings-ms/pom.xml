@@ -274,7 +274,7 @@
                         <configuration>
                             <nodeVersion>v20.9.0</nodeVersion>
                             <workingDirectory>./scripts/modelina</workingDirectory>
-                            <installDirectory>java_runtime_node</installDirectory>
+                            <installDirectory>${project.build.directory}/java_runtime_node</installDirectory>
                         </configuration>
                     </execution>
                     <execution>
@@ -286,7 +286,7 @@
                         <configuration>
                             <nodeVersion>v20.9.0</nodeVersion>
                             <workingDirectory>./scripts/bus-api-generator</workingDirectory>
-                            <installDirectory>java_runtime_node</installDirectory>
+                            <installDirectory>${project.build.directory}/java_runtime_node</installDirectory>
                         </configuration>
                     </execution>
                     <execution>
@@ -298,22 +298,22 @@
                         <configuration>
                             <arguments>install</arguments>
                             <workingDirectory>./scripts/modelina</workingDirectory>
-                            <installDirectory>java_runtime_node</installDirectory>
+                            <installDirectory>${project.build.directory}/java_runtime_node</installDirectory>
                         </configuration>
                     </execution>
 
-<!--                    <execution>-->
-<!--                        <id>bus-api-generator-install-dependencies</id>-->
-<!--                        <phase>generate-sources</phase>-->
-<!--                        <goals>-->
-<!--                            <goal>npm</goal>-->
-<!--                        </goals>-->
-<!--                        <configuration>-->
-<!--                            <arguments>install</arguments>-->
-<!--                            <workingDirectory>./scripts/bus-api-generator</workingDirectory>-->
-<!--                            <installDirectory>java_runtime_node</installDirectory>-->
-<!--                        </configuration>-->
-<!--                    </execution>-->
+                    <execution>
+                        <id>bus-api-generator-install-dependencies</id>
+                        <phase>generate-sources</phase>
+                        <goals>
+                            <goal>npm</goal>
+                        </goals>
+                        <configuration>
+                            <arguments>install</arguments>
+                            <workingDirectory>./scripts/bus-api-generator</workingDirectory>
+                            <installDirectory>${project.build.directory}/java_runtime_node</installDirectory>
+                        </configuration>
+                    </execution>
 
                     <execution>
                         <id>modelina-generate-dtos</id>
@@ -323,8 +323,8 @@
                         </goals>
                         <configuration>
                             <workingDirectory>./scripts/modelina</workingDirectory>
-                            <arguments>run generate -- --package com.azat4dev.booking.listingsms.generated.events.dto --input ../../../../specs/asyncapi/listings.yaml --output ../../target/generated-sources/events</arguments>
-                            <installDirectory>java_runtime_node</installDirectory>
+                            <arguments>run generate -- --package com.azat4dev.booking.listingsms.generated.events.dto --input ../../../../specs/asyncapi/listings.yaml --output ${project.build.directory}/generated-sources/events</arguments>
+                            <installDirectory>${project.build.directory}/java_runtime_node</installDirectory>
                         </configuration>
                     </execution>
 
@@ -336,10 +336,10 @@
                         </goals>
                         <configuration>
                             <workingDirectory>./scripts/bus-api-generator</workingDirectory>
-                            <installDirectory>java_runtime_node</installDirectory>
-                            <arguments>run generate -- --package com.azat4dev.booking.listingsms.generated.api.bus --dto-package com.azat4dev.booking.listingsms.generated.events.dto --input ../../../../specs/asyncapi/listings.yaml --output ../../target/generated-sources/bus-api</arguments>
+                            <installDirectory>${project.build.directory}/java_runtime_node</installDirectory>
+                            <arguments>run generate -- --package com.azat4dev.booking.listingsms.generated.api.bus --dto-package com.azat4dev.booking.listingsms.generated.events.dto --input ../../../../specs/asyncapi/listings.yaml --output ${project.build.directory}/generated-sources/bus-api</arguments>
                             <environmentVariables>
-                                <NODE_PATH>${project.basedir}/java_runtime_node/node</NODE_PATH>
+                                <NODE_PATH>${project.build.directory}/java_runtime_node/node</NODE_PATH>
                             </environmentVariables>
                         </configuration>
                     </execution>
@@ -359,7 +359,7 @@
                         </goals>
                         <configuration>
                             <sources>
-                                <source>${project.basedir}/target/generated-sources/jooq</source>
+                                <source>${project.build.directory}/generated-sources/jooq</source>
                             </sources>
                         </configuration>
                     </execution>
@@ -372,7 +372,7 @@
                         </goals>
                         <configuration>
                             <sources>
-                                <source>${project.basedir}/target/generated-sources/events</source>
+                                <source>${project.build.directory}/generated-sources/events</source>
                             </sources>
                         </configuration>
                     </execution>
@@ -385,7 +385,7 @@
                         </goals>
                         <configuration>
                             <sources>
-                                <source>${project.basedir}/target/generated-sources/bus-api</source>
+                                <source>${project.build.directory}/generated-sources/bus-api</source>
                             </sources>
                         </configuration>
                     </execution>
@@ -453,7 +453,7 @@
                             <generatorName>spring</generatorName>
                             <library>spring-boot</library>
                             <inputSpec>${project.basedir}/../../specs/listings/openapi.yaml</inputSpec>
-                            <output>${project.basedir}/target/generated-sources/server-api</output>
+                            <output>${project.build.directory}/generated-sources/server-api</output>
                             <invokerPackage>${default.package}.generated.server.base</invokerPackage>
                             <apiPackage>${default.package}.generated.server.api</apiPackage>
                             <modelPackage>${default.package}.generated.server.model</modelPackage>
@@ -493,7 +493,7 @@
                             <generatorName>java</generatorName>
                             <library>restclient</library>
                             <inputSpec>${project.basedir}/../../specs/listings/openapi.yaml</inputSpec>
-                            <output>${project.basedir}/target/generated-sources/api-client</output>
+                            <output>${project.build.directory}/generated-sources/api-client</output>
                             <invokerPackage>com.azat4dev.booking.listingsms.generated.client.base</invokerPackage>
                             <apiPackage>com.azat4dev.booking.listingsms.generated.client.api</apiPackage>
                             <modelPackage>com.azat4dev.booking.listingsms.generated.client.model</modelPackage>
