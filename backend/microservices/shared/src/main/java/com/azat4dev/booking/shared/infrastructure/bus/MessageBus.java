@@ -11,7 +11,16 @@ public interface MessageBus<PARTITION_KEY> {
     <MESSAGE> void publish(
         String topic,
         Optional<PARTITION_KEY> partitionKey,
-        Optional<String> correlationId,
+        String messageId,
+        String messageType,
+        MESSAGE message,
+        Optional<String> replyTo,
+        Optional<String> correlationId
+    );
+
+    <MESSAGE> void publish(
+        String topic,
+        Optional<PARTITION_KEY> partitionKey,
         String messageId,
         String messageType,
         MESSAGE message
@@ -32,6 +41,7 @@ public interface MessageBus<PARTITION_KEY> {
         String messageId,
         String messageType,
         Optional<String> correlationId,
+        Optional<String> replyTo,
         LocalDateTime messageSentAt,
         Object payload
     ) {

@@ -31,9 +31,10 @@ public class KafkaMessageBus<PARTITION_KEY, SERIALIZED_MESSAGE> implements Messa
     private final LocalDateTimeSerializer dateTimeSerializer;
 
     public static final String MESSAGE_ID_HEADER = "x-message-id";
-    public static final String SENT_AT_HEADER = "x-message-sent-at";
+    public static final String MESSAGE_SENT_AT_HEADER = "x-message-sent-at";
     public static final String MESSAGE_TYPE_HEADER = "x-message-type";
     public static final String CORRELATION_ID_HEADER = "x-correlation-id";
+    public static final String REPLY_TO_HEADER = "x-reply-to-id";
 
     private static byte[] toBytes(String key) {
         return key.getBytes(StandardCharsets.UTF_8);
@@ -46,13 +47,15 @@ public class KafkaMessageBus<PARTITION_KEY, SERIALIZED_MESSAGE> implements Messa
     private final Map<String, ConcurrentMessageListenerContainer<PARTITION_KEY, SERIALIZED_MESSAGE>> containersForTopics = new HashMap<>();
     private final Map<String, CopyOnWriteArrayList<ListenerData>> listenersForTopics = new HashMap<>();
 
+    @Override
     public <MESSAGE> void publish(
         String topic,
         Optional<PARTITION_KEY> partitionKey,
-        Optional<String> correlationId,
         String messageId,
         String messageType,
-        MESSAGE message
+        MESSAGE message,
+        Optional<String> replyTo,
+        Optional<String> correlationId
     ) {
         final var serializedMessaged = messageSerializer.serialize(message);
 
@@ -64,18 +67,26 @@ public class KafkaMessageBus<PARTITION_KEY, SERIALIZED_MESSAGE> implements Messa
 
         final var time = timeProvider.currentTime();
         r.headers().add(MESSAGE_ID_HEADER, toBytes(messageId));
-        r.headers().add(SENT_AT_HEADER, toBytes(dateTimeSerializer.serialize(time)));
+        r.headers().add(MESSAGE_SENT_AT_HEADER, toBytes(dateTimeSerializer.serialize(time)));
         r.headers().add(MESSAGE_TYPE_HEADER, toBytes(messageType));
 
         correlationId.ifPresent(c -> r.headers().add(CORRELATION_ID_HEADER, toBytes(c)));
+        replyTo.ifPresent(c -> r.headers().add(REPLY_TO_HEADER, toBytes(c)));
 
         kafkaTemplate.send(r);
         log.atDebug()
             .addArgument(topic)
             .addArgument(messageId)
             .addArgument(messageType)
+            .addArgument(correlationId)
+            .addArgument(replyTo)
             .addArgument(serializedMessaged)
-            .log("Message sent: topic={} id={} type={} data={}");
+            .log("Message sent: topic={} id={} type={} correlationId={} replyTo={} data={}");
+    }
+
+    @Override
+    public <MESSAGE> void publish(String topic, Optional<PARTITION_KEY> partitionKey, String messageId, String messageType, MESSAGE message) {
+        publish(topic, partitionKey, messageId, messageType, message, Optional.empty(), Optional.empty());
     }
 
     @Override
@@ -147,8 +158,15 @@ public class KafkaMessageBus<PARTITION_KEY, SERIALIZED_MESSAGE> implements Messa
                 correlationId = Optional.of(fromBytes(correlationIdHeader.value()));
             }
 
+            final var replyToHeader = headers.lastHeader(REPLY_TO_HEADER);
+            Optional<String> replyTo = Optional.empty();
+
+            if (replyToHeader != null) {
+                replyTo = Optional.of(fromBytes(replyToHeader.value()));
+            }
+
             final var messageSentAt = dateTimeSerializer.deserialize(
-                fromBytes(headers.lastHeader(SENT_AT_HEADER).value())
+                fromBytes(headers.lastHeader(MESSAGE_SENT_AT_HEADER).value())
             );
 
             final var message = messageSerializer.deserialize(data.value(), messageType);
@@ -157,6 +175,7 @@ public class KafkaMessageBus<PARTITION_KEY, SERIALIZED_MESSAGE> implements Messa
                 messageId,
                 messageType,
                 correlationId,
+                replyTo,
                 messageSentAt,
                 message
             );
@@ -165,9 +184,11 @@ public class KafkaMessageBus<PARTITION_KEY, SERIALIZED_MESSAGE> implements Messa
                 .addArgument(topic)
                 .addArgument(messageId)
                 .addArgument(messageType)
+                .addArgument(correlationId)
+                .addArgument(replyTo)
                 .addArgument(messageSentAt)
                 .addArgument(message)
-                .log("Received message: topic={} id={} type={} sentAt={} data={}");
+                .log("Received message: topic={} id={} type={} correlationId={} replyTo={} sentAt={} data={}");
 
             listeners.forEach(listener -> {
                 final var isMessageTypeMatch = listener.messageTypes.isEmpty() || listener.messageTypes.get().contains(messageType);

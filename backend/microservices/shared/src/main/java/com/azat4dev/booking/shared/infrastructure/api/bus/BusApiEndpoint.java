@@ -21,7 +21,9 @@ public interface BusApiEndpoint<T> {
 
     String getInputAddress();
 
-    Optional<String> getReplyAddress();
+    boolean hasDynamicReplyAddress();
+
+    Optional<String> getStaticReplyAddress();
 
     MessageInfo getInputMessageInfo();
 

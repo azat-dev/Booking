@@ -1,7 +1,6 @@
 package com.azat4dev.booking.listingsms.config.common.infrastructure.bus;
 
 import com.azat4dev.booking.listingsms.config.common.properties.BusProperties;
-import com.azat4dev.booking.listingsms.generated.api.bus.Channels;
 import com.azat4dev.booking.shared.domain.events.Command;
 import com.azat4dev.booking.shared.domain.events.DomainEventPayload;
 import lombok.extern.slf4j.Slf4j;
@@ -31,14 +30,6 @@ public class KafkaTopicsConfig {
                 busProperties.getPrefixForEventsTopics() + "." + busProperties.getListingEventsTopicName(),
                 Optional.ofNullable(busProperties.getListingEventsTopicNumberOfPartitions()),
                 Optional.ofNullable(busProperties.getListingEventsTopicReplicationFactor())
-            )
-        );
-
-        topics.add(
-            new NewTopic(
-                Channels.QUERIES_RESPONSES__GET_LISTING_PUBLIC_DETAILS_BY_ID.getValue(),
-                Optional.of(1),
-                Optional.empty()
             )
         );
 

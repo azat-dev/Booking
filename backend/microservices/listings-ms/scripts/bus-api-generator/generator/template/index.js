@@ -22,7 +22,8 @@ const endpointFileContent = (
     inputMessageType,
     inputMessageClass,
     returnTypes,
-    dtoPackage
+    dtoPackage,
+    hasDynamicReplyAddress
 ) => `
 package ${packageName};
 
@@ -38,9 +39,14 @@ public interface ${interfaceName} extends BusApiEndpoint<${inputMessageClass}> {
     default String getInputAddress() {
         return Channels.${inputChannelConstantName}.getValue();
     }
+
+    @Override
+    default boolean hasDynamicReplyAddress() {
+        return ${hasDynamicReplyAddress ? 'true' : 'false'};
+    }
     
     @Override
-    default Optional<String> getReplyAddress() {
+    default Optional<String> getStaticReplyAddress() {
         ${replyChannelConstantName ? `return Optional.of(Channels.${replyChannelConstantName}.getValue());` : 'return Optional.empty();'}
     }
     
@@ -83,7 +89,7 @@ public enum Channels {
 const capitalize = (str) => str.charAt(0).toUpperCase() + str.slice(1);
 
 const convertChannelIdToConstantName = (id) => {
-    return camelCaseToScreamingSnakeCase(id.replaceAll('/', '_'));
+    return camelCaseToScreamingSnakeCase(id.replace(/\\/g, '_').replace(/\//g, '_'));
 }
 
 const getChannelConstantNames = (asyncapi) => {
@@ -121,9 +127,40 @@ export default function (options) {
             ...asyncapi.operations().filterByReceive()
                 .map(operation => {
 
-                    const className = capitalize(operation.id()) + "Endpoint";
-                    const inputChannelConstantName = convertChannelIdToConstantName(operation.channels()[0].id());
-                    const replyChannelConstantName = convertChannelIdToConstantName(operation.reply().channel().id());
+                    if (!operation.id || !operation.id()) {
+                        console.error("Operation doesn't have id", JSON.stringify(operation, null, 2));
+                        throw new Error("Operation doesn't have id");
+                    }
+
+                    const operationId = operation.id();
+
+                    const className = capitalize(operationId) + "Endpoint";
+                    const inputChannels = operation.channels?.();
+                    if (!inputChannels || inputChannels.length !== 1) {
+                        console.error("Operation doesn't have exactly one channel", JSON.stringify(operation, null, 2));
+                        throw new Error("Operation doesn't have exactly one channel");
+                    }
+
+                    const inputChannel = inputChannels[0];
+                    if (!inputChannel.id || !inputChannel.id()) {
+                        console.error("Channel doesn't have id", JSON.stringify(inputChannel, null, 2));
+                        throw new Error("Channel doesn't have id");
+                    }
+
+                    const inputChannelId = inputChannel.id();
+                    const inputChannelConstantName = convertChannelIdToConstantName(inputChannelId);
+
+                    if (!operation?.reply?.()) {
+                        console.error("Operation doesn't have reply", JSON.stringify(operation, null, 2));
+                        throw new Error("Operation doesn't have reply");
+                    }
+
+
+                    const replyChannelId = operation.reply().channel?.()?.id();
+
+                    const replyChannelConstantName = replyChannelId && convertChannelIdToConstantName(replyChannelId);
+                    const replyLocation = operation.reply?.()?.address?.()?.location?.();
+                    const hasDynamicReplyAddress = replyLocation === '$message.header#/x-reply-to';
 
                     const returnType = operation.reply().messages().collections.map(m => ({
                         type: m.payload().title(),
@@ -131,9 +168,20 @@ export default function (options) {
                     }));
                     const inputType = operation.messages()[0].payload().title();
                     const inputTypeDto = inputType + "DTO";
+
                     return (
                         <File name={`${className}.java`}>
-                            {endpointFileContent(packageName, className, inputChannelConstantName, replyChannelConstantName, inputType, inputTypeDto, returnType, dtoPackage)}
+                            {endpointFileContent(
+                                packageName,
+                                className,
+                                inputChannelConstantName,
+                                replyChannelConstantName,
+                                inputType,
+                                inputTypeDto,
+                                returnType,
+                                dtoPackage,
+                                hasDynamicReplyAddress
+                            )}
                         </File>
                     )
                 })

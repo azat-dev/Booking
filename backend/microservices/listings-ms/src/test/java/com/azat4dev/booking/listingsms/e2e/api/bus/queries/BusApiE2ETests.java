@@ -53,6 +53,7 @@ class BusApiE2ETests {
         // Given
         final var eventId = UUID.randomUUID().toString();
         final var existingListing = helpers.givenExistingListing(USER1);
+        final var replyChannel = UUID.randomUUID().toString();
 
         // When
         final var promise = publish(
@@ -65,12 +66,12 @@ class BusApiE2ETests {
                     GetListingPublicDetailsByIdParamsDTO.builder()
                         .listingId(existingListing.getId().getValue())
                         .build()
-                ).build()
+                ).build(),
+            Optional.of(replyChannel)
         );
 
 
         final var response = (FailedGetListingPublicDetailsByIdDTO) promise.waitFor(
-            Channels.QUERIES_RESPONSES__GET_LISTING_PUBLIC_DETAILS_BY_ID.getValue(),
             "FailedGetListingPublicDetailsById",
             10000
         );
@@ -88,6 +89,7 @@ class BusApiE2ETests {
         final var eventId = UUID.randomUUID().toString();
         final var existingListing = helpers.givenPublishedListing(USER1);
         final var listingId = existingListing.getId();
+        final var replyChannel = UUID.randomUUID().toString();
 
         // When
         final var promise = publish(
@@ -100,11 +102,11 @@ class BusApiE2ETests {
                     GetListingPublicDetailsByIdParamsDTO.builder()
                         .listingId(listingId.getValue())
                         .build()
-                ).build()
+                ).build(),
+            Optional.of(replyChannel)
         );
 
         final var response = (GetListingPublicDetailsByIdResponseDTO) promise.waitFor(
-            Channels.QUERIES_RESPONSES__GET_LISTING_PUBLIC_DETAILS_BY_ID.getValue(),
             "GetListingPublicDetailsByIdResponse",
             10000
         );
@@ -127,6 +129,8 @@ class BusApiE2ETests {
             .listingId(notExistingListingId)
             .build();
 
+        final var replyChannel = UUID.randomUUID().toString();
+
         // When
         final var promise = publish(
             Channels.QUERIES_REQUESTS__GET_LISTING_PUBLIC_DETAILS_BY_ID.getValue(),
@@ -136,11 +140,11 @@ class BusApiE2ETests {
             GetListingPublicDetailsByIdDTO.builder()
                 .params(
                     params
-                ).build()
+                ).build(),
+            Optional.of(replyChannel)
         );
 
         final var response = (FailedGetListingPublicDetailsByIdDTO) promise.waitFor(
-            Channels.QUERIES_RESPONSES__GET_LISTING_PUBLIC_DETAILS_BY_ID.getValue(),
             "FailedGetListingPublicDetailsById",
             10000
         );
@@ -155,7 +159,6 @@ class BusApiE2ETests {
     interface MessagePromise {
 
         Object waitFor(
-            String responseChannel,
             String responseMessageType,
             long waitMs
         );
@@ -166,25 +169,27 @@ class BusApiE2ETests {
         Optional<String> partitionKey,
         String messageId,
         String messageType,
-        Object messageData
+        Object messageData,
+        Optional<String> replyTo
     ) {
 
         messageBus.publish(
             channel,
             partitionKey,
-            Optional.of(messageId),
             messageId,
             messageType,
-            messageData
+            messageData,
+            replyTo,
+            Optional.of(messageId)
         );
 
-        return (responseChannel, responseMessageType, waitMs) -> {
+        return (responseMessageType, waitMs) -> {
 
             final var completed = new AtomicBoolean(false);
             AtomicReference<Object> result = new AtomicReference<>();
 
             final var listener = messageBus.listen(
-                responseChannel,
+                replyTo.get(),
                 (message) -> {
                     if (message.correlationId().isEmpty()) {
                         return;

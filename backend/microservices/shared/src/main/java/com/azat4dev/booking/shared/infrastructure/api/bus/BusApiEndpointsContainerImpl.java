@@ -55,11 +55,12 @@ public class BusApiEndpointsContainerImpl implements BusApiEndpointsContainer {
                     .addKeyValue("message.issuedAt", message::messageSentAt)
                     .log("Pass event into bus api endpoint: endpoint={} inputAddress={}");
 
+                final Optional<String> replyAddress = endpoint.hasDynamicReplyAddress() ? message.replyTo() : endpoint.getStaticReplyAddress();
+
                 final var reply = new BusApiEndpoint.Reply() {
                     @Override
                     public void publish(Optional<String> partitionKey, Object response) {
 
-                        final var replyAddress = (Optional<String>) endpoint.getReplyAddress();
                         if (replyAddress.isEmpty()) {
                             log.atError()
                                 .addArgument(endpoint.getClass().getSimpleName())
@@ -70,10 +71,11 @@ public class BusApiEndpointsContainerImpl implements BusApiEndpointsContainer {
                         messageBus.publish(
                             replyAddress.get(),
                             partitionKey,
-                            Optional.of(message.messageId()),
                             generateMessageId.run(),
                             getMessageTypeForDtoClass.run(response.getClass()),
-                            response
+                            response,
+                            Optional.empty(),
+                            Optional.of(message.messageId())
                         );
                     }
 
@@ -87,6 +89,7 @@ public class BusApiEndpointsContainerImpl implements BusApiEndpointsContainer {
                     message.messageId(),
                     message.messageType(),
                     message.messageSentAt(),
+                    replyAddress,
                     message.payload()
                 );
 

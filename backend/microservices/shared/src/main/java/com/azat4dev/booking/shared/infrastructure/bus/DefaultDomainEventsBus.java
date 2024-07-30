@@ -30,10 +30,11 @@ public class DefaultDomainEventsBus<PARTITION_KEY> implements DomainEventsBus {
         messageBus.publish(
             getOutputTopicForEvent.execute(event),
             getPartitionKeyForEvent.execute(event),
-            Optional.empty(),
             eventId.getValue(),
             event.getClass().getSimpleName(),
-            mapEvent.toDTO(event)
+            mapEvent.toDTO(event),
+            Optional.empty(),
+            Optional.empty()
         );
     }
 

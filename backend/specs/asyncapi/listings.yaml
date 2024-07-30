@@ -23,18 +23,10 @@ channels:
         $ref: '#/components/messages/events~1AddedNewPhotoToListing'
 
   queries/requests/GetListingPublicDetailsById:
-    address: 'com.azat4dev.booking.listings.1.0.queries.get_public_listing_details_by_id'
+    address: 'com.azat4dev.booking.listings.queries.get_public_listing_details_by_id'
     messages:
       GetListingPublicDetailsById:
         $ref: '#/components/messages/queries~1requests~1GetListingPublicDetailsById'
-
-  queries/responses/GetListingPublicDetailsById:
-    address: 'com.azat4dev.booking.listings.responses.get_public_listing_details_by_id'
-    messages:
-      GetListingPublicDetailsByIdResponse:
-        $ref: '#/components/messages/queries~1responses~1GetListingPublicDetailsByIdResponse'
-      FailedGetListingPublicDetailsById:
-        $ref: '#/components/messages/queries~1responses~1FailedGetListingPublicDetailsById'
 
 operations:
   queriesGetListingPublicDetailsById:
@@ -42,8 +34,8 @@ operations:
     channel:
       $ref: '#/channels/queries~1requests~1GetListingPublicDetailsById'
     reply:
-      channel:
-        $ref: '#/channels/queries~1responses~1GetListingPublicDetailsById'
+      address:
+        location: '$message.header#/x-reply-to'
       messages:
         - $ref: '#/components/messages/queries~1responses~1GetListingPublicDetailsByIdResponse'
         - $ref: '#/components/messages/queries~1responses~1FailedGetListingPublicDetailsById'
