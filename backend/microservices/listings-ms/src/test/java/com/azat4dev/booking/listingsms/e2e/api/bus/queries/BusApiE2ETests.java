@@ -81,73 +81,6 @@ class BusApiE2ETests {
             .isEqualTo(FailedGetListingPublicDetailsByIdErrorCodeDTO.FORBIDDEN);
     }
 
-    @FunctionalInterface
-    interface MessagePromise {
-
-        Object waitFor(
-            String responseChannel,
-            String responseMessageType,
-            long waitMs
-        );
-    }
-
-
-    private MessagePromise publish(
-        String channel,
-        Optional<String> partitionKey,
-        String messageId,
-        String messageType,
-        Object messageData
-    ) {
-
-        messageBus.publish(
-            channel,
-            partitionKey,
-            Optional.of(messageId),
-            messageId,
-            messageType,
-            messageData
-        );
-
-        return (responseChannel, responseMessageType, waitMs) -> {
-
-            final var completed = new AtomicBoolean(false);
-            AtomicReference<Object> result = new AtomicReference<>();
-
-            final var listener = messageBus.listen(
-                responseChannel,
-                (message) -> {
-                    if (message.correlationId().isEmpty()) {
-                        return;
-                    }
-
-                    final var receivedCorrelationId = message.correlationId().get();
-                    if (!receivedCorrelationId.equals(messageId)) {
-                        return;
-                    }
-
-                    if (!message.messageType().equals(responseMessageType)) {
-                        return;
-                    }
-
-                    result.set(message.payload());
-                    completed.set(true);
-                }
-            );
-
-            Awaitility.await()
-                .atMost(Duration.of(waitMs, ChronoUnit.MILLIS))
-                .untilTrue(completed);
-
-            try {
-                listener.close();
-            } catch (IOException e) {
-                throw new RuntimeException(e);
-            }
-            return result.get();
-        };
-    }
-
     @Test
     void test_getPublicListingData_givenExistingListing_thenPublishResponse() throws Exception {
 
@@ -216,5 +149,71 @@ class BusApiE2ETests {
         assertThat(response).isInstanceOf(FailedGetListingPublicDetailsByIdDTO.class);
         assertThat(response.getError().getCode())
             .isEqualTo(FailedGetListingPublicDetailsByIdErrorCodeDTO.NOT_FOUND);
+    }
+
+    @FunctionalInterface
+    interface MessagePromise {
+
+        Object waitFor(
+            String responseChannel,
+            String responseMessageType,
+            long waitMs
+        );
+    }
+
+    private MessagePromise publish(
+        String channel,
+        Optional<String> partitionKey,
+        String messageId,
+        String messageType,
+        Object messageData
+    ) {
+
+        messageBus.publish(
+            channel,
+            partitionKey,
+            Optional.of(messageId),
+            messageId,
+            messageType,
+            messageData
+        );
+
+        return (responseChannel, responseMessageType, waitMs) -> {
+
+            final var completed = new AtomicBoolean(false);
+            AtomicReference<Object> result = new AtomicReference<>();
+
+            final var listener = messageBus.listen(
+                responseChannel,
+                (message) -> {
+                    if (message.correlationId().isEmpty()) {
+                        return;
+                    }
+
+                    final var receivedCorrelationId = message.correlationId().get();
+                    if (!receivedCorrelationId.equals(messageId)) {
+                        return;
+                    }
+
+                    if (!message.messageType().equals(responseMessageType)) {
+                        return;
+                    }
+
+                    result.set(message.payload());
+                    completed.set(true);
+                }
+            );
+
+            Awaitility.await()
+                .atMost(Duration.of(waitMs, ChronoUnit.MILLIS))
+                .untilTrue(completed);
+
+            try {
+                listener.close();
+            } catch (IOException e) {
+                throw new RuntimeException(e);
+            }
+            return result.get();
+        };
     }
 }
