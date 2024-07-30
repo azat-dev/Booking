@@ -1,8 +1,6 @@
 package com.azat4dev.booking.listingsms.e2e;
 
 import com.azat4dev.booking.listingsms.e2e.helpers.*;
-import com.azat4dev.booking.listingsms.generated.client.api.CommandsListingsPhotoApi;
-import com.azat4dev.booking.listingsms.generated.client.api.CommandsModificationsApi;
 import com.azat4dev.booking.listingsms.generated.client.api.QueriesPrivateApi;
 import com.azat4dev.booking.listingsms.generated.client.base.ApiClient;
 import com.azat4dev.booking.listingsms.generated.client.model.AddListingRequestBodyDTO;
@@ -19,12 +17,9 @@ import org.springframework.context.annotation.Import;
 import org.springframework.core.io.Resource;
 import org.springframework.test.context.jdbc.Sql;
 
-import java.io.IOException;
 import java.util.UUID;
 import java.util.function.Function;
 
-import static com.azat4dev.booking.listingsms.e2e.helpers.DeprecatedPhotoHelpers.givenAddedPhoto;
-import static com.azat4dev.booking.listingsms.e2e.helpers.DeprecatedPhotoHelpers.givenUploadedListingPhoto;
 import static com.azat4dev.booking.listingsms.e2e.helpers.UsersHelpers.USER1;
 import static org.assertj.core.api.Assertions.assertThat;
 
@@ -39,6 +34,12 @@ class ListingPhotosE2ETests {
 
     @Autowired
     GenerateAccessToken generateAccessToken;
+
+    @Autowired
+    ListingHelpers listingHelpers;
+
+    @Autowired
+    PhotoHelpers photoHelpers;
 
     @LocalServerPort
     private int port;
@@ -59,16 +60,16 @@ class ListingPhotosE2ETests {
     }
 
     @Test
-    void test_addGenerateUploadUrl() throws IOException {
+    void test_addGenerateUploadUrl() throws Exception {
         // Given
         final var userId = USER1;
-        final var listingId = givenExistingListing(userId);
+        final var listingId = listingHelpers.givenExistingListing(userId)
+            .getId();
 
         // When
-        final var result = givenUploadedListingPhoto(
-            listingId,
-            apiClient(CommandsListingsPhotoApi::new, userId),
-            testImageFile
+        final var result = photoHelpers.givenUploadedListingPhoto(
+            userId,
+            listingId
         );
 
         // Then
@@ -76,50 +77,37 @@ class ListingPhotosE2ETests {
     }
 
     @Test
-    void test_addPhotoToListing() throws IOException {
+    void test_addPhotoToListing() throws Exception {
 
         // Given
         final var userId = USER1;
-        final var listingId = givenExistingListing(userId);
+        final var listingId = listingHelpers.givenExistingListing(userId)
+            .getId();
 
-        final var ignored = givenUploadedListingPhoto(
-            listingId,
-            apiClient(CommandsListingsPhotoApi::new, userId),
-            testImageFile
+        final var ignored = photoHelpers.givenUploadedListingPhoto(
+            userId,
+            listingId
         );
 
-        givenAddedPhoto(
-            listingId,
-            apiClient(CommandsListingsPhotoApi::new, userId),
-            testImageFile
+        photoHelpers.givenAddedPhoto(
+            userId,
+            listingId
         );
 
-        givenAddedPhoto(
-            listingId,
-            apiClient(CommandsListingsPhotoApi::new, userId),
-            testImageFile
+        photoHelpers.givenAddedPhoto(
+            userId,
+            listingId
         );
 
         // Then
         final var listingDetails = apiClient(QueriesPrivateApi::new, userId)
-            .getListingPrivateDetails(listingId)
+            .getListingPrivateDetails(listingId.getValue())
             .getListing();
 
         assertThat(listingDetails.getPhotos().size()).isEqualTo(2);
     }
 
     // Helpers
-
-    public UUID givenExistingListing(UserId userId) {
-        // Given
-        final var requestAddListing = anyRequestAddListing();
-
-        // When
-        final var response = apiClient(CommandsModificationsApi::new, userId)
-            .addListing(requestAddListing);
-
-        return response.getListingId();
-    }
 
     private <T> T apiClient(Function<ApiClient, T> factory, UserId userId) {
 
