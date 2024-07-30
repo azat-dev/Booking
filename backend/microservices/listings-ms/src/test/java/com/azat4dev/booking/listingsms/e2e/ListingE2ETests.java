@@ -1,11 +1,6 @@
 package com.azat4dev.booking.listingsms.e2e;
 
-import com.azat4dev.booking.listingsms.commands.domain.entities.ListingImpl;
-import com.azat4dev.booking.listingsms.e2e.helpers.AccessTokenConfig;
-import com.azat4dev.booking.listingsms.e2e.helpers.ApiHelpers;
-import com.azat4dev.booking.listingsms.e2e.helpers.EnableTestcontainers;
-import com.azat4dev.booking.listingsms.e2e.helpers.GenerateAccessToken;
-import com.azat4dev.booking.listingsms.generated.client.api.CommandsListingsPhotoApi;
+import com.azat4dev.booking.listingsms.e2e.helpers.*;
 import com.azat4dev.booking.listingsms.generated.client.api.CommandsModificationsApi;
 import com.azat4dev.booking.listingsms.generated.client.api.QueriesPrivateApi;
 import com.azat4dev.booking.listingsms.generated.client.base.ApiClient;
@@ -14,38 +9,34 @@ import com.azat4dev.booking.shared.domain.values.user.UserId;
 import net.datafaker.Faker;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.test.autoconfigure.actuate.observability.AutoConfigureObservability;
 import org.springframework.boot.test.context.SpringBootTest;
-import org.springframework.boot.test.context.TestConfiguration;
 import org.springframework.boot.test.web.server.LocalServerPort;
 import org.springframework.context.annotation.Import;
-import org.springframework.core.io.Resource;
 import org.springframework.http.HttpStatus;
 import org.springframework.test.context.jdbc.Sql;
 import org.springframework.web.client.RestClientResponseException;
 
-import java.io.IOException;
 import java.util.UUID;
 import java.util.function.Function;
 
-import static com.azat4dev.booking.listingsms.e2e.helpers.DeprecatedPhotoHelpers.givenAllPhotosUploaded;
 import static com.azat4dev.booking.listingsms.e2e.helpers.UsersHelpers.USER1;
 import static com.azat4dev.booking.listingsms.e2e.helpers.UsersHelpers.USER2;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 
+@Import({TestHelpersConfig.class})
 @EnableTestcontainers
 @SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
 @Sql(value = {"/db/drop-schema.sql", "/db/schema.sql"})
-//@AutoConfigureObservability /* The order matters for: ./mvnw test */
+@AutoConfigureObservability /* The order matters for: ./mvnw test */
 class ListingE2ETests {
 
     @Autowired
     GenerateAccessToken generateAccessToken;
 
-    @Value("classpath:test_image.jpg")
-    private Resource testImageFile;
+    @Autowired
+    ListingHelpers listingHelpers;
 
     @LocalServerPort
     private int port;
@@ -59,20 +50,24 @@ class ListingE2ETests {
     }
 
     @Test
-    void test_addListing_getListing() {
+    void test_addListing_and_getListing() {
         // Given
         final var userId = USER1;
+        final var requestAddListing = anyRequestAddListing();
 
         // When
-        final var listingId = givenExistingListing(userId);
+        final var addListingResponse = apiClient(CommandsModificationsApi::new, userId)
+            .addListing(requestAddListing);
+
+        final var listingId = addListingResponse.getListingId();
 
         // Then
         assertThat(listingId).isNotNull();
 
-        final var response = apiClient(QueriesPrivateApi::new, userId)
+        final var getListingResponse = apiClient(QueriesPrivateApi::new, userId)
             .getListingPrivateDetails(listingId);
 
-        assertThat(response.getListing().getId()).isEqualTo(listingId);
+        assertThat(getListingResponse.getListing().getId()).isEqualTo(listingId);
     }
 
     @Test
@@ -80,25 +75,16 @@ class ListingE2ETests {
     }
 
     @Test
-    void test_addListing() throws UserId.WrongFormatException {
-        // Given
-        final var userId = UserId.checkAndMakeFrom(UUID.randomUUID().toString());
-
-        // When
-        givenExistingListing(userId);
-    }
-
-    @Test
-    void test_getOnlyOwnListingDetails() throws UserId.WrongFormatException {
+    void test_getOnlyOwnListingDetails() throws Exception {
 
         // Given
-        final var currentUserListing = givenExistingListing(USER1);
-        final var anotherUserListing = givenExistingListing(USER2);
+        final var currentUserListing = listingHelpers.givenExistingListing(USER1);
+        final var anotherUserListing = listingHelpers.givenExistingListing(USER2);
 
         // When
         final var exception = assertThrows(RestClientResponseException.class, () -> {
             apiClient(QueriesPrivateApi::new, USER1)
-                .getListingPrivateDetails(anotherUserListing);
+                .getListingPrivateDetails(anotherUserListing.getId().getValue());
         });
 
         // Then
@@ -108,13 +94,13 @@ class ListingE2ETests {
     }
 
     @Test
-    void test_getOwnListings() {
+    void test_getOwnListings() throws Exception {
 
         // Given
-        final var currentUserListing1 = givenExistingListing(USER1);
-        final var currentUserListing2 = givenExistingListing(USER1);
+        final var currentUserListing1 = listingHelpers.givenExistingListing(USER1);
+        final var currentUserListing2 = listingHelpers.givenExistingListing(USER1);
 
-        final var anotherUserListing = givenExistingListing(USER2);
+        final var anotherUserListing = listingHelpers.givenExistingListing(USER2);
 
         // When
         final var ownListings = apiClient(QueriesPrivateApi::new, USER1)
@@ -123,18 +109,7 @@ class ListingE2ETests {
         // Then
         assertThat(ownListings).hasSize(2);
         assertThat(ownListings).extracting("id")
-            .contains(currentUserListing1, currentUserListing2);
-    }
-
-    public UUID givenExistingListing(UserId userId) {
-        // Given
-        final var requestAddListing = anyRequestAddListing();
-
-        // When
-        final var response = apiClient(CommandsModificationsApi::new, userId)
-            .addListing(requestAddListing);
-
-        return response.getListingId();
+            .contains(currentUserListing1.getId().getValue(), currentUserListing2.getId().getValue());
     }
 
     UpdateListingDetailsFieldsDTO anyFields() {
@@ -159,11 +134,12 @@ class ListingE2ETests {
     }
 
     @Test
-    void test_publishListing_givenDraftListing_thenRejectPublishing() {
+    void test_publishListing_givenDraftListing_thenRejectPublishing() throws Exception {
 
         // Given
         final var userId = USER1;
-        final var listingId = givenExistingListing(userId);
+        final var listingId = listingHelpers.givenExistingListing(userId)
+            .getId().getValue();
 
         // When
         final var exception = assertThrows(RestClientResponseException.class, () -> {
@@ -177,39 +153,14 @@ class ListingE2ETests {
             .isEqualTo(HttpStatus.CONFLICT);
     }
 
-    UUID givenListingReadyForPublishing(UserId userId) throws IOException {
-        // Given
-        final var listingId = givenExistingListing(userId);
-
-        apiClient(CommandsModificationsApi::new, userId)
-            .updateListingDetails(
-                listingId,
-                new UpdateListingDetailsRequestBodyDTO()
-                    .operationId(UUID.randomUUID())
-                    .fields(anyFields())
-            );
-
-        givenAllPhotosUploaded(
-            listingId,
-            apiClient(CommandsListingsPhotoApi::new, userId),
-            testImageFile
-        );
-
-        final var listingDetails = apiClient(QueriesPrivateApi::new, userId)
-            .getListingPrivateDetails(listingId);
-
-        assertThat(listingDetails.getListing().getPhotos().size())
-            .isEqualTo(ListingImpl.MINIMUM_NUMBER_OF_PHOTOS);
-
-        return listingId;
-    }
 
     @Test
-    void test_publishListing_givenListingReadyForPublishing_thenPublish() throws IOException {
+    void test_publishListing_givenListingReadyForPublishing_thenPublish() throws Exception {
 
         // Given
         final var userId = USER1;
-        final var listingId = givenListingReadyForPublishing(userId);
+        final var listing = listingHelpers.givenListingReadyForPublishing(userId);
+        final var listingId = listing.getId().getValue();
 
         apiClient(CommandsModificationsApi::new, userId)
             .updateListingDetails(
@@ -235,11 +186,12 @@ class ListingE2ETests {
     }
 
     @Test
-    void test_updateListingDetails_givenExistingListing_thenUpdate() throws IOException {
+    void test_updateListingDetails_givenExistingListing_thenUpdate() throws Exception {
 
         // Given
         final var userId = USER1;
-        final var listingId = givenExistingListing(userId);
+        final var listingId = listingHelpers.givenExistingListing(userId)
+            .getId().getValue();
 
         // When
         final var updateData = anyFields();
@@ -269,11 +221,5 @@ class ListingE2ETests {
 
         final var token = generateAccessToken.execute(userId);
         return ApiHelpers.apiClient(factory, token, port);
-    }
-
-    @Import(AccessTokenConfig.class)
-    @TestConfiguration
-    static class TestConfig {
-
     }
 }

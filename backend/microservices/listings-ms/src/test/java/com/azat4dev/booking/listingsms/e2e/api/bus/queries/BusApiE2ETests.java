@@ -4,23 +4,18 @@ import com.azat4dev.booking.listingsms.commands.domain.entities.Listings;
 import com.azat4dev.booking.listingsms.commands.domain.values.MakeNewListingId;
 import com.azat4dev.booking.listingsms.e2e.helpers.EnableTestcontainers;
 import com.azat4dev.booking.listingsms.e2e.helpers.ListingHelpers;
-import com.azat4dev.booking.listingsms.e2e.helpers.PhotoHelpers;
+import com.azat4dev.booking.listingsms.e2e.helpers.TestHelpersConfig;
 import com.azat4dev.booking.listingsms.generated.api.bus.Channels;
 import com.azat4dev.booking.listingsms.generated.events.dto.*;
 import com.azat4dev.booking.shared.infrastructure.bus.MessageBus;
 import org.awaitility.Awaitility;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.test.autoconfigure.actuate.observability.AutoConfigureObservability;
 import org.springframework.boot.test.context.SpringBootTest;
-import org.springframework.boot.test.context.TestConfiguration;
-import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Import;
-import org.springframework.core.io.Resource;
 import org.springframework.test.context.jdbc.Sql;
 
-import java.io.File;
 import java.io.IOException;
 import java.time.Duration;
 import java.time.temporal.ChronoUnit;
@@ -31,6 +26,7 @@ import java.util.concurrent.atomic.AtomicBoolean;
 import static com.azat4dev.booking.listingsms.e2e.helpers.UsersHelpers.USER1;
 import static org.assertj.core.api.Assertions.assertThat;
 
+@Import(TestHelpersConfig.class)
 @EnableTestcontainers
 @SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
 @Sql(value = {"/db/drop-schema.sql", "/db/schema.sql"})
@@ -208,17 +204,5 @@ class BusApiE2ETests {
             .atMost(Duration.of(100, ChronoUnit.SECONDS))
             .untilTrue(completed);
         listener.close();
-    }
-
-    @Import({PhotoHelpers.class, ListingHelpers.class})
-    @TestConfiguration
-    static class TestConfig {
-        @Value("classpath:/test_image.jpg")
-        private Resource testImageResource;
-
-        @Bean
-        File testImageFile() throws IOException {
-            return testImageResource.getFile();
-        }
     }
 }

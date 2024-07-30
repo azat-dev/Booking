@@ -1,9 +1,6 @@
 package com.azat4dev.booking.listingsms.e2e;
 
-import com.azat4dev.booking.listingsms.e2e.helpers.AccessTokenConfig;
-import com.azat4dev.booking.listingsms.e2e.helpers.ApiHelpers;
-import com.azat4dev.booking.listingsms.e2e.helpers.EnableTestcontainers;
-import com.azat4dev.booking.listingsms.e2e.helpers.GenerateAccessToken;
+import com.azat4dev.booking.listingsms.e2e.helpers.*;
 import com.azat4dev.booking.listingsms.generated.client.api.CommandsListingsPhotoApi;
 import com.azat4dev.booking.listingsms.generated.client.api.CommandsModificationsApi;
 import com.azat4dev.booking.listingsms.generated.client.api.QueriesPrivateApi;
@@ -16,14 +13,12 @@ import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.test.context.SpringBootTest;
-import org.springframework.boot.test.context.TestConfiguration;
 import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.boot.test.web.server.LocalServerPort;
-import org.springframework.context.annotation.Bean;
+import org.springframework.context.annotation.Import;
 import org.springframework.core.io.Resource;
 import org.springframework.test.context.jdbc.Sql;
 
-import java.io.File;
 import java.io.IOException;
 import java.util.UUID;
 import java.util.function.Function;
@@ -33,6 +28,7 @@ import static com.azat4dev.booking.listingsms.e2e.helpers.DeprecatedPhotoHelpers
 import static com.azat4dev.booking.listingsms.e2e.helpers.UsersHelpers.USER1;
 import static org.assertj.core.api.Assertions.assertThat;
 
+@Import(TestHelpersConfig.class)
 @EnableTestcontainers(classes = {AccessTokenConfig.class})
 @SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
 @Sql(value = {"/db/drop-schema.sql", "/db/schema.sql"})
@@ -129,14 +125,5 @@ class ListingPhotosE2ETests {
 
         final var token = generateAccessToken.execute(userId);
         return ApiHelpers.apiClient(factory, token, port);
-    }
-
-    @TestConfiguration
-    static class Config {
-
-        @Bean
-        File testImageFile() {
-            return new File("src/test/resources/test-image.png");
-        }
     }
 }
