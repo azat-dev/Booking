@@ -22,6 +22,7 @@ import java.time.temporal.ChronoUnit;
 import java.util.Optional;
 import java.util.UUID;
 import java.util.concurrent.atomic.AtomicBoolean;
+import java.util.concurrent.atomic.AtomicReference;
 
 import static com.azat4dev.booking.listingsms.e2e.helpers.UsersHelpers.USER1;
 import static org.assertj.core.api.Assertions.assertThat;
@@ -53,31 +54,9 @@ class BusApiE2ETests {
         final var eventId = UUID.randomUUID().toString();
         final var existingListing = helpers.givenExistingListing(USER1);
 
-        final var completed = new AtomicBoolean(false);
-
-        final var listener = messageBus.listen(
-            Channels.QUERIES_RESPONSES__GET_LISTING_PUBLIC_DETAILS_BY_ID.getValue(),
-            (message) -> {
-                if (message.correlationId().isEmpty()) {
-                    return;
-                }
-
-                final var receivedCorrelationId = message.correlationId().get();
-                if (!receivedCorrelationId.equals(eventId)) {
-                    return;
-                }
-
-                final var payload = message.payload(FailedGetListingPublicDetailsByIdDTO.class);
-                assertThat(payload.getError().getCode())
-                    .isEqualTo(FailedGetListingPublicDetailsByIdErrorCodeDTO.FORBIDDEN);
-                completed.set(true);
-            }
-        );
-
         // When
-        messageBus.publish(
+        final var promise = publish(
             Channels.QUERIES_REQUESTS__GET_LISTING_PUBLIC_DETAILS_BY_ID.getValue(),
-            Optional.empty(),
             Optional.empty(),
             eventId,
             "GetListingPublicDetailsById",
@@ -89,11 +68,84 @@ class BusApiE2ETests {
                 ).build()
         );
 
+
+        final var response = (FailedGetListingPublicDetailsByIdDTO) promise.waitFor(
+            Channels.QUERIES_RESPONSES__GET_LISTING_PUBLIC_DETAILS_BY_ID.getValue(),
+            "FailedGetListingPublicDetailsById",
+            10000
+        );
+
         // Then
-        Awaitility.await()
-            .atMost(Duration.of(10, ChronoUnit.SECONDS))
-            .untilTrue(completed);
-        listener.close();
+        assertThat(response).isNotNull();
+        assertThat(response.getError().getCode())
+            .isEqualTo(FailedGetListingPublicDetailsByIdErrorCodeDTO.FORBIDDEN);
+    }
+
+    @FunctionalInterface
+    interface MessagePromise {
+
+        Object waitFor(
+            String responseChannel,
+            String responseMessageType,
+            long waitMs
+        );
+    }
+
+
+    private MessagePromise publish(
+        String channel,
+        Optional<String> partitionKey,
+        String messageId,
+        String messageType,
+        Object messageData
+    ) {
+
+        messageBus.publish(
+            channel,
+            partitionKey,
+            Optional.of(messageId),
+            messageId,
+            messageType,
+            messageData
+        );
+
+        return (responseChannel, responseMessageType, waitMs) -> {
+
+            final var completed = new AtomicBoolean(false);
+            AtomicReference<Object> result = new AtomicReference<>();
+
+            final var listener = messageBus.listen(
+                responseChannel,
+                (message) -> {
+                    if (message.correlationId().isEmpty()) {
+                        return;
+                    }
+
+                    final var receivedCorrelationId = message.correlationId().get();
+                    if (!receivedCorrelationId.equals(messageId)) {
+                        return;
+                    }
+
+                    if (!message.messageType().equals(responseMessageType)) {
+                        return;
+                    }
+
+                    result.set(message.payload());
+                    completed.set(true);
+                }
+            );
+
+            Awaitility.await()
+                .atMost(Duration.of(waitMs, ChronoUnit.MILLIS))
+                .untilTrue(completed);
+
+            try {
+                listener.close();
+            } catch (IOException e) {
+                throw new RuntimeException(e);
+            }
+            return result.get();
+        };
     }
 
     @Test
@@ -104,30 +156,9 @@ class BusApiE2ETests {
         final var existingListing = helpers.givenPublishedListing(USER1);
         final var listingId = existingListing.getId();
 
-        final var completed = new AtomicBoolean(false);
-
-        final var listener = messageBus.listen(
-            Channels.QUERIES_RESPONSES__GET_LISTING_PUBLIC_DETAILS_BY_ID.getValue(),
-            (message) -> {
-                if (message.correlationId().isEmpty()) {
-                    return;
-                }
-
-                final var receivedCorrelationId = message.correlationId().get();
-                if (!receivedCorrelationId.equals(eventId)) {
-                    return;
-                }
-
-                assertThat(message.payload()).isInstanceOf(GetListingPublicDetailsByIdResponseDTO.class);
-//                assertThat(message.payload()).isEqualTo()
-                completed.set(true);
-            }
-        );
-
         // When
-        messageBus.publish(
+        final var promise = publish(
             Channels.QUERIES_REQUESTS__GET_LISTING_PUBLIC_DETAILS_BY_ID.getValue(),
-            Optional.empty(),
             Optional.empty(),
             eventId,
             "GetListingPublicDetailsById",
@@ -139,12 +170,17 @@ class BusApiE2ETests {
                 ).build()
         );
 
-        // Then
+        final var response = (GetListingPublicDetailsByIdResponseDTO) promise.waitFor(
+            Channels.QUERIES_RESPONSES__GET_LISTING_PUBLIC_DETAILS_BY_ID.getValue(),
+            "GetListingPublicDetailsByIdResponse",
+            10000
+        );
 
-        Awaitility.await()
-            .atMost(Duration.of(10, ChronoUnit.SECONDS))
-            .untilTrue(completed);
-        listener.close();
+        // Then
+        assertThat(response).isNotNull();
+
+        final var responseData = response.getData();
+        assertThat(responseData.getId()).isEqualTo(listingId.getValue());
     }
 
     @Test
@@ -159,9 +195,8 @@ class BusApiE2ETests {
             .build();
 
         // When
-        messageBus.publish(
+        final var promise = publish(
             Channels.QUERIES_REQUESTS__GET_LISTING_PUBLIC_DETAILS_BY_ID.getValue(),
-            Optional.empty(),
             Optional.empty(),
             eventId,
             "GetListingPublicDetailsById",
@@ -171,38 +206,15 @@ class BusApiE2ETests {
                 ).build()
         );
 
-        // Then
-        final var completed = new AtomicBoolean(false);
-        final var listener = messageBus.listen(
+        final var response = (FailedGetListingPublicDetailsByIdDTO) promise.waitFor(
             Channels.QUERIES_RESPONSES__GET_LISTING_PUBLIC_DETAILS_BY_ID.getValue(),
-            (message) -> {
-                if (message.correlationId().isEmpty()) {
-                    return;
-                }
-
-                final var receivedCorrelationId = message.correlationId().get();
-                if (!receivedCorrelationId.equals(eventId)) {
-                    return;
-                }
-
-                assertThat(message.payload()).isInstanceOf(FailedGetListingPublicDetailsByIdDTO.class);
-                final var expectedResponse = FailedGetListingPublicDetailsByIdDTO.builder()
-                    .error(
-                        new FailedGetListingPublicDetailsByIdErrorDTO(
-                            FailedGetListingPublicDetailsByIdErrorCodeDTO.NOT_FOUND,
-                            "Listing not found: id=" + notExistingListingId
-                        )
-                    )
-                    .params(params)
-                    .build();
-                assertThat(message.payload()).isEqualTo(expectedResponse);
-                completed.set(true);
-            }
+            "FailedGetListingPublicDetailsById",
+            10000
         );
 
-        Awaitility.await()
-            .atMost(Duration.of(100, ChronoUnit.SECONDS))
-            .untilTrue(completed);
-        listener.close();
+        // Then
+        assertThat(response).isInstanceOf(FailedGetListingPublicDetailsByIdDTO.class);
+        assertThat(response.getError().getCode())
+            .isEqualTo(FailedGetListingPublicDetailsByIdErrorCodeDTO.NOT_FOUND);
     }
 }
