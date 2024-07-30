@@ -36,13 +36,13 @@
         <modelina.output-directory>${project.build.directory}/generated-sources/events</modelina.output-directory>
 
         <rest-api.server.spec>${project.basedir}/../../specs/listings/openapi.yaml</rest-api.server.spec>
-        <rest-api.output-directory>${project.build.directory}/generated-sources/server-api</rest-api.output-directory>
+        <rest-api.output-directory>${project.build.directory}/generated-sources/rest-api-server</rest-api.output-directory>
 
         <rest-api.client.spec>${project.basedir}/../../specs/listings/openapi.yaml</rest-api.client.spec>
-        <rest-api.client.output-directory>{project.build.directory}/generated-sources/api-client</rest-api.client.output-directory>
+        <rest-api.client.output-directory>${project.build.directory}/generated-sources/rest-api-client</rest-api.client.output-directory>
 
         <bus-api.server.input-file>../../../../specs/asyncapi/listings.yaml</bus-api.server.input-file>
-        <bus-api.server.output-directory>${project.build.directory}/generated-sources/bus-api</bus-api.server.output-directory>
+        <bus-api.server.output-directory>${project.build.directory}/generated-sources/bus-api-server</bus-api.server.output-directory>
         <bus-api.server.package>${default.package}.generated.api.bus</bus-api.server.package>
         <bus-api.server.dto-package>${default.package}.generated.events.dto</bus-api.server.dto-package>
     </properties>
