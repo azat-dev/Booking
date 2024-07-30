@@ -6,8 +6,8 @@ const getCustomConstraints = (suffix: string): Partial<Constraints<JavaOptions>>
         modelName: (params) => {
             const {modelName} = params;
             return capitalize(modelName)
-                .replaceAll("/", "")
-                .replaceAll("\\", "") + suffix;
+                .replace(/\//g, "")
+                .replace(/\\/g, "") + suffix;
         }
     };
 }

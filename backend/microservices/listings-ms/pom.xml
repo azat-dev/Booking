@@ -22,10 +22,29 @@
         <mainClass>com.azat4dev.booking.ListingsMicroserviceApplication</mainClass>
         <default.package>com.azat4dev.booking.listingsms</default.package>
 
+        <docker.image.name>booking-demo/listings-ms:${project.version}</docker.image.name>
+
         <!-- JOOQ properties -->
-        <db.url>jdbc:tc:postgresql:16:///listingsdb?TC_TMPFS=/testtmpfs:rw&amp;TC_INITSCRIPT=file:${basedir}/src/main/resources/db/schema.sql</db.url>
-        <db.username>postgres</db.username>
-        <db.password>postgres</db.password>
+        <jooq.db.url>jdbc:tc:postgresql:16:///listingsdb?TC_TMPFS=/testtmpfs:rw&amp;TC_INITSCRIPT=file:${basedir}/src/main/resources/db/schema.sql</jooq.db.url>
+        <jooq.db.username>postgres</jooq.db.username>
+        <jooq.db.password>postgres</jooq.db.password>
+        <jooq.output-directory>${project.build.directory}/generated-sources/jooq</jooq.output-directory>
+
+
+        <modelina.package>${default.package}.generated.events.dto</modelina.package>
+        <modelina.input-file>../../../../specs/asyncapi/listings.yaml</modelina.input-file>
+        <modelina.output-directory>${project.build.directory}/generated-sources/events</modelina.output-directory>
+
+        <rest-api.server.spec>${project.basedir}/../../specs/listings/openapi.yaml</rest-api.server.spec>
+        <rest-api.output-directory>${project.build.directory}/generated-sources/server-api</rest-api.output-directory>
+
+        <rest-api.client.spec>${project.basedir}/../../specs/listings/openapi.yaml</rest-api.client.spec>
+        <rest-api.client.output-directory>{project.build.directory}/generated-sources/api-client</rest-api.client.output-directory>
+
+        <bus-api.server.input-file>../../../../specs/asyncapi/listings.yaml</bus-api.server.input-file>
+        <bus-api.server.output-directory>${project.build.directory}/generated-sources/bus-api</bus-api.server.output-directory>
+        <bus-api.server.package>${default.package}.generated.api.bus</bus-api.server.package>
+        <bus-api.server.dto-package>${default.package}.generated.events.dto</bus-api.server.dto-package>
     </properties>
 
     <dependencies>
@@ -254,7 +273,7 @@
                 <artifactId>spring-boot-maven-plugin</artifactId>
                 <configuration>
                     <image>
-                        <name>booking-demo/listings-ms:${project.version}</name>
+                        <name>${docker.image.name}</name>
                     </image>
                 </configuration>
             </plugin>
@@ -301,9 +320,8 @@
                             <installDirectory>${project.build.directory}/java_runtime_node</installDirectory>
                         </configuration>
                     </execution>
-
                     <execution>
-                        <id>bus-api-generator-install-dependencies</id>
+                        <id>bus-api-install-dependencies</id>
                         <phase>generate-sources</phase>
                         <goals>
                             <goal>npm</goal>
@@ -314,7 +332,6 @@
                             <installDirectory>${project.build.directory}/java_runtime_node</installDirectory>
                         </configuration>
                     </execution>
-
                     <execution>
                         <id>modelina-generate-dtos</id>
                         <phase>generate-sources</phase>
@@ -323,13 +340,13 @@
                         </goals>
                         <configuration>
                             <workingDirectory>./scripts/modelina</workingDirectory>
-                            <arguments>run generate -- --package com.azat4dev.booking.listingsms.generated.events.dto --input ../../../../specs/asyncapi/listings.yaml --output ${project.build.directory}/generated-sources/events</arguments>
+                            <arguments>run generate -- --package ${modelina.package} --input ${modelina.input-file} --output ${modelina.output-directory}</arguments>
                             <installDirectory>${project.build.directory}/java_runtime_node</installDirectory>
                         </configuration>
                     </execution>
 
                     <execution>
-                        <id>Generate bus-api</id>
+                        <id>generate-bus-api</id>
                         <phase>generate-sources</phase>
                         <goals>
                             <goal>npm</goal>
@@ -337,7 +354,7 @@
                         <configuration>
                             <workingDirectory>./scripts/bus-api-generator</workingDirectory>
                             <installDirectory>${project.build.directory}/java_runtime_node</installDirectory>
-                            <arguments>run generate -- --package com.azat4dev.booking.listingsms.generated.api.bus --dto-package com.azat4dev.booking.listingsms.generated.events.dto --input ../../../../specs/asyncapi/listings.yaml --output ${project.build.directory}/generated-sources/bus-api</arguments>
+                            <arguments>run generate -- --package ${bus-api.server.package} --dto-package ${bus-api.server.dto-package} --input ${bus-api.server.input-file} --output ${bus-api.server.output-directory}</arguments>
                             <environmentVariables>
                                 <NODE_PATH>${project.build.directory}/java_runtime_node/node</NODE_PATH>
                             </environmentVariables>
@@ -359,7 +376,7 @@
                         </goals>
                         <configuration>
                             <sources>
-                                <source>${project.build.directory}/generated-sources/jooq</source>
+                                <source>${jooq.output-directory}</source>
                             </sources>
                         </configuration>
                     </execution>
@@ -372,7 +389,7 @@
                         </goals>
                         <configuration>
                             <sources>
-                                <source>${project.build.directory}/generated-sources/events</source>
+                                <source>${modelina.output-directory}</source>
                             </sources>
                         </configuration>
                     </execution>
@@ -385,7 +402,7 @@
                         </goals>
                         <configuration>
                             <sources>
-                                <source>${project.build.directory}/generated-sources/bus-api</source>
+                                <source>${bus-api.server.output-directory}</source>
                             </sources>
                         </configuration>
                     </execution>
@@ -406,9 +423,9 @@
                         <configuration>
                             <jdbc>
                                 <driver>org.testcontainers.jdbc.ContainerDatabaseDriver</driver>
-                                <url>${db.url}</url>
-                                <user>${db.username}</user>
-                                <password>${db.password}</password>
+                                <url>${jooq.db.url}</url>
+                                <user>${jooq.db.username}</user>
+                                <password>${jooq.db.password}</password>
                             </jdbc>
                             <generator>
                                 <database>
@@ -421,7 +438,7 @@
                                 </generate>
                                 <target>
                                     <packageName>org.jooq.generated</packageName>
-                                    <directory>target/generated-sources/jooq</directory>
+                                    <directory>${jooq.output-directory}</directory>
                                 </target>
                             </generator>
                         </configuration>
@@ -445,15 +462,15 @@
                 <version>7.6.0</version>
                 <executions>
                     <execution>
-                        <id>generateServerApi</id>
+                        <id>generate-rest-api-server</id>
                         <goals>
                             <goal>generate</goal>
                         </goals>
                         <configuration>
                             <generatorName>spring</generatorName>
                             <library>spring-boot</library>
-                            <inputSpec>${project.basedir}/../../specs/listings/openapi.yaml</inputSpec>
-                            <output>${project.build.directory}/generated-sources/server-api</output>
+                            <inputSpec>${rest-api.server.spec}</inputSpec>
+                            <output>${rest-api.server.output-directory}</output>
                             <invokerPackage>${default.package}.generated.server.base</invokerPackage>
                             <apiPackage>${default.package}.generated.server.api</apiPackage>
                             <modelPackage>${default.package}.generated.server.model</modelPackage>
@@ -465,7 +482,8 @@
                                 <useOptional>true</useOptional>
                                 <openApiNullable>true</openApiNullable>
                                 <unhandledException>true</unhandledException>
-                                <additionalModelTypeAnnotations>@lombok.Builder(toBuilder = true)
+                                <additionalModelTypeAnnotations>
+                                    @lombok.Builder(toBuilder = true)
                                     @lombok.AllArgsConstructor
                                     @lombok.NoArgsConstructor
                                     @com.fasterxml.jackson.annotation.JsonIgnoreProperties(ignoreUnknown=true)
@@ -485,19 +503,19 @@
                     </execution>
 
                     <execution>
-                        <id>generateApiClient</id>
+                        <id>generate-rest-api-client</id>
                         <goals>
                             <goal>generate</goal>
                         </goals>
                         <configuration>
                             <generatorName>java</generatorName>
                             <library>restclient</library>
-                            <inputSpec>${project.basedir}/../../specs/listings/openapi.yaml</inputSpec>
-                            <output>${project.build.directory}/generated-sources/api-client</output>
-                            <invokerPackage>com.azat4dev.booking.listingsms.generated.client.base</invokerPackage>
-                            <apiPackage>com.azat4dev.booking.listingsms.generated.client.api</apiPackage>
-                            <modelPackage>com.azat4dev.booking.listingsms.generated.client.model</modelPackage>
-                            <packageName>com.azat4dev.booking.listingsms.generated.client</packageName>
+                            <inputSpec>${rest-api.client.spec}</inputSpec>
+                            <output>${rest-api.client.output-directory}</output>
+                            <invokerPackage>${default.package}.generated.client.base</invokerPackage>
+                            <apiPackage>${default.package}.generated.client.api</apiPackage>
+                            <modelPackage>${default.package}.generated.client.model</modelPackage>
+                            <packageName>${default.package}.generated.client</packageName>
                             <ignoreFileOverride>.openapi-generator-ignore</ignoreFileOverride>
                             <modelNameSuffix>DTO</modelNameSuffix>
                             <configOptions>

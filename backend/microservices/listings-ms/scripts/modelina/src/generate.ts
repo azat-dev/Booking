@@ -6,10 +6,10 @@ import yaml from 'js-yaml';
 import * as fs from "node:fs";
 import yargs from 'yargs';
 import {hideBin} from 'yargs/helpers';
-import getCustomConstraints from "./src/getCustomConstraints";
-import getCustomTypeMappings from "./src/getCustomTypeMappings";
-import getCustomJavaPreset from "./src/getCustomJavaPreset";
-import getCustomJacksonPreset from "./src/GetCustomJacksonPreset";
+import getCustomConstraints from "./getCustomConstraints";
+import getCustomTypeMappings from "./getCustomTypeMappings";
+import getCustomJavaPreset from "./getCustomJavaPreset";
+import getCustomJacksonPreset from "./getCustomJacksonPreset";
 
 const MODELS_SUFFIX = "DTO";
 
