@@ -3,8 +3,8 @@ package com.azat4dev.booking.listingsms.commands.infrastructure.serializer.mappe
 
 import com.azat4dev.booking.listingsms.commands.domain.events.GeneratedUrlForUploadListingPhoto;
 import com.azat4dev.booking.listingsms.commands.domain.values.ListingId;
-import com.azat4dev.booking.listingsms.generated.events.dto.GeneratedUrlForUploadListingPhotoDTO;
-import com.azat4dev.booking.listingsms.generated.events.dto.UploadFileFormDataDTO;
+import com.azat4dev.booking.listingsms.generated.api.bus.dto.listingsms.GeneratedUrlForUploadListingPhotoDTO;
+import com.azat4dev.booking.listingsms.generated.api.bus.dto.listingsms.UploadFileFormDataDTO;
 import com.azat4dev.booking.shared.infrastructure.serializers.MapDomainEvent;
 import com.azat4dev.booking.shared.domain.values.files.BucketName;
 import com.azat4dev.booking.shared.domain.values.files.MediaObjectName;

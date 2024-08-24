@@ -9,7 +9,6 @@ import com.azat4dev.booking.shared.infrastructure.bus.GetPartitionKeyForEvent;
 import com.azat4dev.booking.shared.domain.events.Command;
 import com.azat4dev.booking.shared.domain.events.DomainEventPayload;
 import lombok.AllArgsConstructor;
-import org.springframework.boot.context.properties.EnableConfigurationProperties;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.Import;
@@ -22,7 +21,6 @@ import java.util.stream.Collectors;
 
 @Configuration
 @Import(DefaultDomainEventsBusConfig.class)
-@EnableConfigurationProperties(BusProperties.class)
 @AllArgsConstructor
 public class RouteDomainEventsConfig {
 
@@ -32,8 +30,8 @@ public class RouteDomainEventsConfig {
     GetInputTopicForEvent getInputTopicForEvent(Set<Class<? extends DomainEventPayload>> mappedDomainEvents) {
 
         final var inputTopicsForCommands = mappedDomainEvents.stream()
-            .filter(v -> Arrays.stream(v.getInterfaces()).anyMatch(i -> i.equals(Command.class)))
-            .collect(Collectors.toMap(Function.identity(), v -> busProperties.getInternalCommandsTopicPrefix() + "." + v.getSimpleName()));
+                .filter(v -> Arrays.stream(v.getInterfaces()).anyMatch(i -> i.equals(Command.class)))
+                .collect(Collectors.toMap(Function.identity(), v -> busProperties.getInternalCommandsTopicPrefix() + "." + v.getSimpleName()));
 
         final var listingEventsTopic = busProperties.getPrefixForEventsTopics() + "." + busProperties.getListingEventsTopicName();
 

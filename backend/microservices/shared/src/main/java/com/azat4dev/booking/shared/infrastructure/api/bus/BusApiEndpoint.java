@@ -25,7 +25,7 @@ public interface BusApiEndpoint<T> {
 
     Optional<String> getStaticReplyAddress();
 
-    MessageInfo getInputMessageInfo();
+    MessageInfo[] getInputMessageInfo();
 
     MessageInfo[] getResponseMessagesInfo();
 

@@ -6,7 +6,7 @@ import com.azat4dev.booking.listingsms.e2e.helpers.EnableTestcontainers;
 import com.azat4dev.booking.listingsms.e2e.helpers.ListingHelpers;
 import com.azat4dev.booking.listingsms.e2e.helpers.TestHelpersConfig;
 import com.azat4dev.booking.listingsms.generated.api.bus.Channels;
-import com.azat4dev.booking.listingsms.generated.events.dto.*;
+import com.azat4dev.booking.listingsms.generated.api.bus.dto.listingsms.*;
 import com.azat4dev.booking.shared.infrastructure.bus.MessageBus;
 import org.awaitility.Awaitility;
 import org.junit.jupiter.api.Test;

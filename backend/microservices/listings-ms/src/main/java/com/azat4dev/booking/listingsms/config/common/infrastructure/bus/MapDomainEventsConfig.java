@@ -3,8 +3,8 @@ package com.azat4dev.booking.listingsms.config.common.infrastructure.bus;
 import com.azat4dev.booking.listingsms.commands.infrastructure.serializer.mappers.*;
 import com.azat4dev.booking.listingsms.common.domain.values.GuestsCapacity;
 import com.azat4dev.booking.listingsms.common.domain.values.address.ListingAddress;
-import com.azat4dev.booking.listingsms.generated.events.dto.AddressDTO;
-import com.azat4dev.booking.listingsms.generated.events.dto.GuestsCapacityDTO;
+import com.azat4dev.booking.listingsms.generated.api.bus.dto.listingsms.AddressDTO;
+import com.azat4dev.booking.listingsms.generated.api.bus.dto.listingsms.GuestsCapacityDTO;
 import com.azat4dev.booking.shared.domain.events.DomainEventPayload;
 import com.azat4dev.booking.shared.infrastructure.serializers.MapDomainEvent;
 import com.azat4dev.booking.shared.infrastructure.serializers.Serializer;
@@ -25,23 +25,23 @@ public class MapDomainEventsConfig {
 
     @Bean
     List<MapDomainEvent> domainEventsMappers(
-        Serializer<GuestsCapacity, GuestsCapacityDTO> mapGuestCapacity,
-        Serializer<ListingAddress, AddressDTO> mapAddress
+            Serializer<GuestsCapacity, GuestsCapacityDTO> mapGuestCapacity,
+            Serializer<ListingAddress, AddressDTO> mapAddress
     ) {
 
         final var mapListingChange = new MapListingDetailsUpdatedChange(
-            mapGuestCapacity,
-            mapAddress
+                mapGuestCapacity,
+                mapAddress
         );
 
         return List.of(
-            new MapNewListingAdded(),
-            new MapFailedToAddNewListing(),
-            new MapListingDetailsUpdated(mapListingChange, mapDateTime),
-            new MapListingPublished(mapDateTime),
-            new MapGeneratedUrlForUploadListingPhoto(),
-            new MapFailedGenerateUrlForUploadListingPhoto(),
-            new MapAddedNewPhotoToListing()
+                new MapNewListingAdded(),
+                new MapFailedToAddNewListing(),
+                new MapListingDetailsUpdated(mapListingChange, mapDateTime),
+                new MapListingPublished(mapDateTime),
+                new MapGeneratedUrlForUploadListingPhoto(),
+                new MapFailedGenerateUrlForUploadListingPhoto(),
+                new MapAddedNewPhotoToListing()
         );
     }
 

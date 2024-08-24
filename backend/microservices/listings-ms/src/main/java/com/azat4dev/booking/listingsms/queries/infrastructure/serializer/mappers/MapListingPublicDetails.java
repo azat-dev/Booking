@@ -5,7 +5,7 @@ import com.azat4dev.booking.listingsms.common.domain.values.GuestsCapacity;
 import com.azat4dev.booking.listingsms.common.domain.values.PropertyType;
 import com.azat4dev.booking.listingsms.common.domain.values.RoomType;
 import com.azat4dev.booking.listingsms.common.domain.values.address.ListingAddress;
-import com.azat4dev.booking.listingsms.generated.events.dto.*;
+import com.azat4dev.booking.listingsms.generated.api.bus.dto.listingsms.*;
 import com.azat4dev.booking.listingsms.queries.domain.entities.ListingPublicDetails;
 import com.azat4dev.booking.shared.domain.DomainException;
 import com.azat4dev.booking.shared.infrastructure.serializers.Serializer;

@@ -4,6 +4,8 @@ const Generator = require("@asyncapi/generator");
 import yargs from 'yargs';
 import {hideBin} from 'yargs/helpers';
 
+console.log("ARGS", hideBin(process.argv));
+
 const argv = yargs(hideBin(process.argv))
     .option('package', {
         alias: 'p',
@@ -29,9 +31,17 @@ const argv = yargs(hideBin(process.argv))
         type: 'string',
         demandOption: true, // Makes this argument required
     })
+    .option("service-package", {
+        alias: 'sp',
+        description: 'The path to yaml file for package names for services',
+        type: 'string',
+        demandOption: true, // Makes this argument required
+    })
     .help()
     .alias('help', 'h')
     .argv;
+
+console.log("ARGV", argv);
 
 const replaceSeparator = (filepath: string) => {
     return filepath.replace("/", path.sep).replace("\\", path.sep);
@@ -40,6 +50,7 @@ const replaceSeparator = (filepath: string) => {
 const INPUT_FILE = path.resolve(replaceSeparator((argv as any).input));
 const OUTPUT_DIR = path.resolve(replaceSeparator((argv as any).output));
 const PACKAGE_NAME = (argv as any).package;
+const PACKAGE_NAMES_BY_SERVICES = (argv as any).servicePackage;
 const MODEL_DIR = replaceSeparator(`${PACKAGE_NAME.split(".").join("/")}`);
 const FINAL_OUTPUT_PATH = path.resolve(OUTPUT_DIR, MODEL_DIR);
 
@@ -55,7 +66,9 @@ const generator = new Generator(
         forceWrite: true,
         templateParams: {
             package: (argv as any).package,
-            dtoPackage: (argv as any).dto
+            dtoPackage: (argv as any).dto,
+            outputDir: OUTPUT_DIR,
+            packageNamesByServices: PACKAGE_NAMES_BY_SERVICES
         }
     });
 

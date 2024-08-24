@@ -1,7 +1,7 @@
 package com.azat4dev.booking.listingsms.commands.infrastructure.api.bus;
 
-import com.azat4dev.booking.listingsms.generated.api.bus.QueriesGetListingPublicDetailsByIdEndpoint;
-import com.azat4dev.booking.listingsms.generated.events.dto.*;
+import com.azat4dev.booking.listingsms.generated.api.bus.dto.listingsms.*;
+import com.azat4dev.booking.listingsms.generated.api.bus.endpoints.QueriesGetListingPublicDetailsByIdEndpoint;
 import com.azat4dev.booking.listingsms.queries.application.commands.GetListingPublicDetails;
 import com.azat4dev.booking.listingsms.queries.application.handlers.GetListingPublicDetailsHandler;
 import com.azat4dev.booking.listingsms.queries.domain.entities.ListingPublicDetails;
@@ -29,28 +29,28 @@ public class QueriesGetListingPublicDetailsByIdApi implements QueriesGetListingP
         final var message = request.message();
 
         final var result = getListingPublicDetailsHandler.handle(
-            new GetListingPublicDetails(
-                request.message().getParams().getListingId().toString()
-            )
+                new GetListingPublicDetails(
+                        request.message().getParams().getListingId().toString()
+                )
         );
 
         reply.publish(
-            new GetListingPublicDetailsByIdResponseDTO(
-                message.getParams(),
-                mapListingPublicDetails.serialize(result)
-            )
+                GetListingPublicDetailsByIdResponseDTO.builder()
+                        .params(message.getParams())
+                        .data(mapListingPublicDetails.serialize(result)).
+                        build()
         );
     }
 
     @Override
     public void handleException(
-        Throwable exception,
-        Request<GetListingPublicDetailsByIdDTO> request,
-        Reply reply
+            Throwable exception,
+            Request<GetListingPublicDetailsByIdDTO> request,
+            Reply reply
     ) {
 
         log.atInfo()
-            .log("Handling exception: {}", exception.getMessage());
+                .log("Handling exception: {}", exception.getMessage());
 
         final var message = request.message();
         var code = FailedGetListingPublicDetailsByIdErrorCodeDTO.INTERNAL_SERVER_ERROR;
@@ -74,20 +74,21 @@ public class QueriesGetListingPublicDetailsByIdApi implements QueriesGetListingP
                 break;
             default:
                 log.atError()
-                    .setCause(exception)
-                    .log("Error handling request: {}", exception.getMessage());
+                        .setCause(exception)
+                        .log("Error handling request: {}", exception.getMessage());
                 break;
         }
 
         log.atInfo().log("Sent Error code: {}", code);
         reply.publish(
-            new FailedGetListingPublicDetailsByIdDTO(
-                message.getParams(),
-                new FailedGetListingPublicDetailsByIdErrorDTO(
-                    code,
-                    messageText
-                )
-            )
+            FailedGetListingPublicDetailsByIdDTO.builder()
+                .params(message.getParams())
+                .error(
+                    FailedGetListingPublicDetailsByIdErrorDTO.builder()
+                            .code(code)
+                            .message(messageText)
+                            .build()
+                ).build()
         );
     }
 }

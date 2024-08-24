@@ -6,7 +6,6 @@
     "renderer": "react",
     "apiVersion": "v3",
     "generator": ">=1.10.0 <=3.0.0",
-    "supportedProtocols": ["mqtt"],
     "parameters": {
       "package": {
         "description": "The name of the package.",
@@ -14,6 +13,14 @@
       },
       "dtoPackage": {
         "description": "The name of the DTO package.",
+        "required": true
+      },
+      "outputDir": {
+        "description": "The name of the DTO package.",
+        "required": true
+      },
+      "packageNamesByServices": {
+        "description": "Package names by services",
         "required": true
       }
     }

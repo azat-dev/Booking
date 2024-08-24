@@ -71,300 +71,209 @@ components:
   messages:
     UserSignedUp:
       name: UserSignedUp
+      traits:
+        - $ref: '#/components/messageTraits/commonHeaders'
       headers:
         type: object
         required:
-          - x-event-id
-          - x-event-type
-          - x-issued-at
+          - x-message-type
         properties:
-          x-message-id:
-            type: string
-          x-correlation-id:
-            type: string
           x-message-type:
             type: string
             enum:
               - UserSignedUp
-          x-message-sent-at:
-            type: string
-            format: date-time
       payload:
         $ref: '#/components/schemas/payloads/UserSignedUp'
 
     UserVerifiedEmail:
       name: UserVerifiedEmail
+      traits:
+        - $ref: '#/components/messageTraits/commonHeaders'
       headers:
         type: object
         required:
-          - x-message-id
           - x-message-type
-          - x-message-sent-at
         properties:
-          x-message-id:
-            type: string
-          x-correlation-id:
-            type: string
           x-message-type:
             type: string
             enum:
               - UserVerifiedEmail
-          x-message-sent-at:
-            type: string
-            format: date-time
       payload:
         $ref: '#/components/schemas/payloads/UserVerifiedEmail'
 
     VerificationEmailSent:
       name: VerificationEmailSent
+      traits:
+        - $ref: '#/components/messageTraits/commonHeaders'
       headers:
         type: object
         required:
-          - x-message-id
           - x-message-type
-          - x-message-sent-at
         properties:
-          x-message-id:
-            type: string
-          x-correlation-id:
-            type: string
           x-message-type:
             type: string
             enum:
               - VerificationEmailSent
-          x-message-sent-at:
-            type: string
-            format: date-time
       payload:
         $ref: '#/components/schemas/payloads/VerificationEmailSent'
 
     FailedToSendVerificationEmail:
       name: FailedToSendVerificationEmail
+      traits:
+        - $ref: '#/components/messageTraits/commonHeaders'
       headers:
         type: object
         required:
-          - x-message-id
           - x-message-type
-          - x-message-sent-at
         properties:
-          x-message-id:
-            type: string
-          x-correlation-id:
-            type: string
           x-message-type:
             type: string
             enum:
               - FailedToSendVerificationEmail
-          x-message-sent-at:
-            type: string
-            format: date-time
       payload:
         $ref: '#/components/schemas/payloads/FailedToSendVerificationEmail'
 
     CompleteEmailVerification:
       name: CompleteEmailVerification
+      traits:
+        - $ref: '#/components/messageTraits/commonHeaders'
       headers:
         type: object
         required:
-          - x-message-id
           - x-message-type
-          - x-message-sent-at
         properties:
-          x-message-id:
-            type: string
-          x-correlation-id:
-            type: string
           x-message-type:
             type: string
             enum:
               - CompleteEmailVerification
-          x-message-sent-at:
-            type: string
-            format: date-time
       payload:
         $ref: '#/components/schemas/payloads/CompleteEmailVerification'
 
     SendVerificationEmail:
       name: SendVerificationEmail
+      traits:
+        - $ref: '#/components/messageTraits/commonHeaders'
       headers:
         type: object
         required:
-          - x-message-id
           - x-message-type
-          - x-message-sent-at
         properties:
-          x-message-id:
-            type: string
-          x-correlation-id:
-            type: string
           x-message-type:
             type: string
             enum:
               - SendVerificationEmail
-          x-message-sent-at:
-            type: string
-            format: date-time
       payload:
         $ref: '#/components/schemas/payloads/SendVerificationEmail'
 
     SentEmailForPasswordReset:
       name: SentEmailForPasswordReset
+      traits:
+        - $ref: '#/components/messageTraits/commonHeaders'
       headers:
         type: object
         required:
-          - x-message-id
           - x-message-type
-          - x-message-sent-at
         properties:
-          x-message-id:
-            type: string
-          x-correlation-id:
-            type: string
           x-message-type:
             type: string
             enum:
               - SentEmailForPasswordReset
-          x-message-sent-at:
-            type: string
-            format: date-time
       payload:
         $ref: '#/components/schemas/payloads/SentEmailForPasswordReset'
 
     CompletePasswordReset:
       name: CompletePasswordReset
+      traits:
+        - $ref: '#/components/messageTraits/commonHeaders'
       headers:
         type: object
         required:
-          - x-message-id
           - x-message-type
-          - x-message-sent-at
         properties:
-          x-message-id:
-            type: string
-          x-correlation-id:
-            type: string
           x-message-type:
             type: string
             enum:
               - CompletePasswordReset
-          x-message-sent-at:
-            type: string
-            format: date-time
       payload:
         $ref: '#/components/schemas/payloads/CompletePasswordReset'
 
     UserDidResetPassword:
       name: UserDidResetPassword
+      traits:
+        - $ref: '#/components/messageTraits/commonHeaders'
       headers:
         type: object
         required:
-          - x-message-id
           - x-message-type
-          - x-message-sent-at
         properties:
-          x-message-id:
-            type: string
-          x-correlation-id:
-            type: string
           x-message-type:
             type: string
             enum:
               - UserDidResetPassword
-          x-message-sent-at:
-            type: string
-            format: date-time
       payload:
         $ref: '#/components/schemas/payloads/UserDidResetPassword'
 
     GeneratedUserPhotoUploadUrl:
       name: GeneratedUserPhotoUploadUrl
+      traits:
+        - $ref: '#/components/messageTraits/commonHeaders'
       headers:
         type: object
         required:
-          - x-message-id
           - x-message-type
-          - x-message-sent-at
         properties:
-          x-message-id:
-            type: string
-          x-correlation-id:
-            type: string
           x-message-type:
             type: string
             enum:
               - GeneratedUserPhotoUploadUrl
-          x-message-sent-at:
-            type: string
-            format: date-time
       payload:
         $ref: '#/components/schemas/payloads/GeneratedUserPhotoUploadUrl'
 
     UpdatedUserPhoto:
       name: UpdatedUserPhoto
+      traits:
+        - $ref: '#/components/messageTraits/commonHeaders'
       headers:
         type: object
         required:
-          - x-message-id
           - x-message-type
-          - x-message-sent-at
         properties:
-          x-message-id:
-            type: string
-          x-correlation-id:
-            type: string
           x-message-type:
             type: string
             enum:
               - UpdatedUserPhoto
-          x-message-sent-at:
-            type: string
-            format: date-time
       payload:
         $ref: '#/components/schemas/payloads/UpdatedUserPhoto'
 
     FailedUpdateUserPhoto:
       name: FailedUpdateUserPhoto
+      traits:
+        - $ref: '#/components/messageTraits/commonHeaders'
       headers:
         type: object
         required:
-          - x-message-id
           - x-message-type
-          - x-message-sent-at
         properties:
-          x-message-id:
-            type: string
-          x-correlation-id:
-            type: string
           x-message-type:
             type: string
             enum:
               - FailedUpdateUserPhoto
-          x-message-sent-at:
-            type: string
-            format: date-time
       payload:
         $ref: '#/components/schemas/payloads/FailedUpdateUserPhoto'
 
     FailedGenerateUserPhotoUploadUrl:
       name: FailedGenerateUserPhotoUploadUrl
+      traits:
+        - $ref: '#/components/messageTraits/commonHeaders'
       headers:
         type: object
         required:
-          - x-message-id
           - x-message-type
-          - x-message-sent-at
         properties:
-          x-message-id:
-            type: string
-          x-correlation-id:
-            type: string
           x-message-type:
             type: string
             enum:
               - FailedGenerateUserPhotoUploadUrl
-          x-message-sent-at:
-            type: string
-            format: date-time
       payload:
         $ref: '#/components/schemas/payloads/FailedGenerateUserPhotoUploadUrl'
 
@@ -653,4 +562,21 @@ components:
           newPassword:
             type: string
           passwordResetToken:
+            type: string
+  messageTraits:
+    commonHeaders:
+      headers:
+        type: object
+        required:
+          - x-message-id
+          - x-message-sent-at
+        properties:
+          x-message-id:
+            type: string
+          x-correlation-id:
+            type: string
+          x-message-sent-at:
+            type: string
+            format: date-time
+          x-reply-to:
             type: string

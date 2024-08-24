@@ -1,0 +1,174 @@
+asyncapi: 3.0.0
+info:
+  title: Search Listings Microservice Kafka API
+  version: 1.0.0
+  x-microservice: search-listings
+defaultContentType: application/json
+channels:
+  externalListingEventsStream:
+    $ref: './listings.yaml#/channels/listingEventsStream'
+
+  listingsQueries/requests/GetListingPublicDetailsById:
+    $ref: './listings.yaml#/channels/queries~1requests~1GetListingPublicDetailsById'
+
+  listingsQueries/responses/GetListingPublicDetailsById:
+    $ref: './listings.yaml#/channels/queriesResponsesGetListingPublicDetailsById'
+
+  receiveGetPublicListingPublicDetailsByIdForPublishedListing:
+    x-service: search-listings
+    address: 'com.azat4dev.search-listings.receive.get-public-listing-public-details-by-id-for-published-listing'
+    messages:
+      GetListingPublicDetailsByIdResponse:
+        $ref: './listings.yaml#/channels/queriesResponsesGetListingPublicDetailsById/messages/GetListingPublicDetailsByIdResponse'
+      FailedGetListingPublicDetailsById:
+        $ref: './listings.yaml#/channels/queriesResponsesGetListingPublicDetailsById/messages/FailedGetListingPublicDetailsById'
+
+  internalListingEventsStream:
+    x-service: search-listings
+    address: 'com.azat4dev.search-listings.events.internal.listing-events-stream'
+    messages:
+      ListingPublished:
+        $ref: '#/components/messages/ListingPublished'
+      ListingUpdated:
+        $ref: '#/components/messages/ListingUpdated'
+      ListingDeleted:
+        $ref: '#/components/messages/ListingDeleted'
+
+operations:
+  processExternalListingEvents:
+    action: receive
+    channel:
+      $ref: '#/channels/externalListingEventsStream'
+    messages:
+      - $ref: '#/channels/externalListingEventsStream/messages/ListingPublished'
+
+  processGetListingPublicDetailsByIdForPublishedListing:
+    action: receive
+    channel:
+      $ref: '#/channels/receiveGetPublicListingPublicDetailsByIdForPublishedListing'
+    messages:
+      - $ref: '#/channels/receiveGetPublicListingPublicDetailsByIdForPublishedListing/messages/GetListingPublicDetailsByIdResponse'
+      - $ref: '#/channels/receiveGetPublicListingPublicDetailsByIdForPublishedListing/messages/FailedGetListingPublicDetailsById'
+
+  sendInternalListingEvents:
+    action: send
+    channel:
+      $ref: '#/channels/internalListingEventsStream'
+    messages:
+      - $ref: '#/channels/internalListingEventsStream/messages/ListingPublished'
+      - $ref: '#/channels/internalListingEventsStream/messages/ListingUpdated'
+      - $ref: '#/channels/internalListingEventsStream/messages/ListingDeleted'
+
+components:
+  messages:
+    ListingPublished:
+      name: ListingPublishedInternal
+      traits:
+        - $ref: '#/components/messageTraits/commonHeaders'
+      headers:
+        type: object
+        required:
+          - x-message-type
+        properties:
+          x-message-type:
+            type: string
+            enum:
+              - ListingPublished
+      payload:
+        $ref: '#/components/schemas/payloads/ListingPublished'
+
+    ListingDeleted:
+      name: ListingDeleted
+      traits:
+        - $ref: '#/components/messageTraits/commonHeaders'
+      headers:
+        type: object
+        required:
+          - x-message-type
+        properties:
+          x-message-type:
+            type: string
+            enum:
+              - ListingDeleted
+      payload:
+        $ref: '#/components/schemas/payloads/ListingDeleted'
+
+    ListingUpdated:
+      name: ListingUpdated
+      traits:
+        - $ref: '#/components/messageTraits/commonHeaders'
+      headers:
+        type: object
+        required:
+          - x-message-type
+        properties:
+          x-message-type:
+            type: string
+            enum:
+              - ListingUpdated
+      payload:
+        $ref: '#/components/schemas/payloads/ListingUpdated'
+
+  schemas:
+    payloads:
+      ListingPublished:
+        title: ListingPublished
+        type: object
+        additionalProperties: false
+        required:
+          - listingId
+          - publishedAt
+          - data
+        properties:
+          listingId:
+            $ref: "./common/values.yaml#/components/schemas/ListingId"
+          publishedAt:
+            type: string
+            format: date-time
+          data:
+            $ref: "./listings.yaml#/components/schemas/values/ListingPublicDetails"
+
+      ListingUpdated:
+        x-title: ListingUpdated
+        type: object
+        additionalProperties: false
+        required:
+          - listingId
+          - updatedAt
+          - data
+        properties:
+          listingId:
+            $ref: "./common/values.yaml#/components/schemas/ListingId"
+          updatedAt:
+            type: string
+            format: date-time
+          data:
+            $ref: "./listings.yaml#/components/schemas/values/ListingPublicDetails"
+
+      ListingDeleted:
+        x-title: ListingDeleted
+        type: object
+        additionalProperties: false
+        required:
+          - listingId
+        properties:
+          listingId:
+            $ref: "./common/values.yaml#/components/schemas/ListingId"
+
+  messageTraits:
+    commonHeaders:
+      headers:
+        type: object
+        required:
+          - x-message-id
+          - x-message-sent-at
+        properties:
+          x-message-id:
+            type: string
+          x-correlation-id:
+            type: string
+          x-message-sent-at:
+            type: string
+            format: date-time
+          x-reply-to:
+            type: string

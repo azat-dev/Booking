@@ -4,7 +4,7 @@ import com.azat4dev.booking.listingsms.common.domain.values.address.City;
 import com.azat4dev.booking.listingsms.common.domain.values.address.Country;
 import com.azat4dev.booking.listingsms.common.domain.values.address.ListingAddress;
 import com.azat4dev.booking.listingsms.common.domain.values.address.Street;
-import com.azat4dev.booking.listingsms.generated.events.dto.AddressDTO;
+import com.azat4dev.booking.listingsms.generated.api.bus.dto.listingsms.AddressDTO;
 import com.azat4dev.booking.shared.infrastructure.serializers.Serializer;
 import lombok.AllArgsConstructor;
 

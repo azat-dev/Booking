@@ -30,11 +30,6 @@
         <jooq.db.password>postgres</jooq.db.password>
         <jooq.output-directory>${project.build.directory}/generated-sources/jooq</jooq.output-directory>
 
-
-        <modelina.package>${default.package}.generated.events.dto</modelina.package>
-        <modelina.input-file>../../../../specs/asyncapi/listings.yaml</modelina.input-file>
-        <modelina.output-directory>${project.build.directory}/generated-sources/events</modelina.output-directory>
-
         <rest-api.server.spec>${project.basedir}/../../specs/listings/openapi.yaml</rest-api.server.spec>
         <rest-api.output-directory>${project.build.directory}/generated-sources/rest-api-server</rest-api.output-directory>
 
@@ -285,18 +280,6 @@
                 <executions>
                     <!-- It will install nodejs and npm -->
                     <execution>
-                        <id>modelina install node and npm</id>
-                        <phase>generate-sources</phase>
-                        <goals>
-                            <goal>install-node-and-npm</goal>
-                        </goals>
-                        <configuration>
-                            <nodeVersion>v20.9.0</nodeVersion>
-                            <workingDirectory>./scripts/modelina</workingDirectory>
-                            <installDirectory>${project.build.directory}/java_runtime_node</installDirectory>
-                        </configuration>
-                    </execution>
-                    <execution>
                         <id>bus-api install node and npm</id>
                         <phase>generate-sources</phase>
                         <goals>
@@ -305,18 +288,6 @@
                         <configuration>
                             <nodeVersion>v20.9.0</nodeVersion>
                             <workingDirectory>./scripts/bus-api-generator</workingDirectory>
-                            <installDirectory>${project.build.directory}/java_runtime_node</installDirectory>
-                        </configuration>
-                    </execution>
-                    <execution>
-                        <id>modelina-install-dependencies</id>
-                        <phase>generate-sources</phase>
-                        <goals>
-                            <goal>npm</goal>
-                        </goals>
-                        <configuration>
-                            <arguments>install</arguments>
-                            <workingDirectory>./scripts/modelina</workingDirectory>
                             <installDirectory>${project.build.directory}/java_runtime_node</installDirectory>
                         </configuration>
                     </execution>
@@ -332,18 +303,6 @@
                             <installDirectory>${project.build.directory}/java_runtime_node</installDirectory>
                         </configuration>
                     </execution>
-                    <execution>
-                        <id>modelina-generate-dtos</id>
-                        <phase>generate-sources</phase>
-                        <goals>
-                            <goal>npm</goal>
-                        </goals>
-                        <configuration>
-                            <workingDirectory>./scripts/modelina</workingDirectory>
-                            <arguments>run generate -- --package ${modelina.package} --input ${modelina.input-file} --output ${modelina.output-directory}</arguments>
-                            <installDirectory>${project.build.directory}/java_runtime_node</installDirectory>
-                        </configuration>
-                    </execution>
 
                     <execution>
                         <id>generate-bus-api</id>
@@ -354,7 +313,7 @@
                         <configuration>
                             <workingDirectory>./scripts/bus-api-generator</workingDirectory>
                             <installDirectory>${project.build.directory}/java_runtime_node</installDirectory>
-                            <arguments>run generate -- --package ${bus-api.server.package} --dto-package ${bus-api.server.dto-package} --input ${bus-api.server.input-file} --output ${bus-api.server.output-directory}</arguments>
+                            <arguments>run generate -- --package ${bus-api.server.package} --dto-package ${bus-api.server.dto-package} --input ${bus-api.server.input-file} --output ${bus-api.server.output-directory} --service-package."search-listings"=searchlistingsms --service-package.listings=listingsms</arguments>
                             <environmentVariables>
                                 <NODE_PATH>${project.build.directory}/java_runtime_node/node</NODE_PATH>
                             </environmentVariables>
@@ -377,19 +336,6 @@
                         <configuration>
                             <sources>
                                 <source>${jooq.output-directory}</source>
-                            </sources>
-                        </configuration>
-                    </execution>
-
-                    <execution>
-                        <id>generated-events-models-add-source</id>
-                        <phase>generate-sources</phase>
-                        <goals>
-                            <goal>add-source</goal>
-                        </goals>
-                        <configuration>
-                            <sources>
-                                <source>${modelina.output-directory}</source>
                             </sources>
                         </configuration>
                     </execution>

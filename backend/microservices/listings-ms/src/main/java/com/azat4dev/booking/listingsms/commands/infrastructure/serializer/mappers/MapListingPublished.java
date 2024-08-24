@@ -2,7 +2,7 @@ package com.azat4dev.booking.listingsms.commands.infrastructure.serializer.mappe
 
 import com.azat4dev.booking.listingsms.commands.domain.events.ListingPublished;
 import com.azat4dev.booking.listingsms.commands.domain.values.ListingId;
-import com.azat4dev.booking.listingsms.generated.events.dto.ListingPublishedDTO;
+import com.azat4dev.booking.listingsms.generated.api.bus.dto.listingsms.ListingPublishedDTO;
 import com.azat4dev.booking.shared.infrastructure.serializers.MapDomainEvent;
 import com.azat4dev.booking.shared.infrastructure.serializers.Serializer;
 import lombok.AllArgsConstructor;

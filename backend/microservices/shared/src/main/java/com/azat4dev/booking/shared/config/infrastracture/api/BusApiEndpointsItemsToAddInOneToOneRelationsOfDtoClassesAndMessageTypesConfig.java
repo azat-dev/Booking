@@ -7,6 +7,7 @@ import com.azat4dev.booking.shared.infrastructure.api.bus.BusApiEndpoint;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 
+import java.util.Arrays;
 import java.util.List;
 
 @Configuration
@@ -20,12 +21,13 @@ public class BusApiEndpointsItemsToAddInOneToOneRelationsOfDtoClassesAndMessageT
 
             final var inputMessageInfo = endpoint.getInputMessageInfo();
 
-            items.add(
-                new OneToOneRelationsOfDtoClassesAndMessageTypes.Item(
-                    inputMessageInfo.messageType(),
-                    inputMessageInfo.messageClass()
-                )
-            );
+            Arrays.stream(inputMessageInfo)
+                .forEach(messageInfo -> items.add(
+                    new OneToOneRelationsOfDtoClassesAndMessageTypes.Item(
+                        messageInfo.messageType(),
+                        messageInfo.messageClass()
+                    )
+                ));
 
             for (var responseMessageInfo : endpoint.getResponseMessagesInfo()) {
 

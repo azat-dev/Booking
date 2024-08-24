@@ -1,7 +1,7 @@
 package com.azat4dev.booking.listingsms.common.infrastructure.serializer.mappers;
 
 import com.azat4dev.booking.listingsms.common.domain.values.GuestsCapacity;
-import com.azat4dev.booking.listingsms.generated.events.dto.GuestsCapacityDTO;
+import com.azat4dev.booking.listingsms.generated.api.bus.dto.listingsms.GuestsCapacityDTO;
 import com.azat4dev.booking.shared.infrastructure.serializers.Serializer;
 import lombok.AllArgsConstructor;
 

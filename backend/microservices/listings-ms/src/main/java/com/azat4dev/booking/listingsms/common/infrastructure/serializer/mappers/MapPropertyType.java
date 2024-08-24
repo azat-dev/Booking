@@ -1,7 +1,7 @@
 package com.azat4dev.booking.listingsms.common.infrastructure.serializer.mappers;
 
 import com.azat4dev.booking.listingsms.common.domain.values.PropertyType;
-import com.azat4dev.booking.listingsms.generated.events.dto.PropertyTypeDTO;
+import com.azat4dev.booking.listingsms.generated.api.bus.dto.listingsms.PropertyTypeDTO;
 import com.azat4dev.booking.shared.infrastructure.serializers.Serializer;
 import lombok.AllArgsConstructor;
 

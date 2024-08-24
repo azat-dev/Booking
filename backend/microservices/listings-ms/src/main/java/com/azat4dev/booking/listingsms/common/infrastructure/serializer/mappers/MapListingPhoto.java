@@ -2,7 +2,7 @@ package com.azat4dev.booking.listingsms.common.infrastructure.serializer.mappers
 
 import com.azat4dev.booking.listingsms.commands.domain.values.ListingPhoto;
 import com.azat4dev.booking.listingsms.commands.domain.values.ListingPhotoId;
-import com.azat4dev.booking.listingsms.generated.events.dto.ListingPhotoDTO;
+import com.azat4dev.booking.listingsms.generated.api.bus.dto.listingsms.ListingPhotoDTO;
 import com.azat4dev.booking.shared.domain.DomainException;
 import com.azat4dev.booking.shared.domain.values.files.BucketName;
 import com.azat4dev.booking.shared.domain.values.files.MediaObjectName;
