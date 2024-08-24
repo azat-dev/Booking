@@ -4,7 +4,7 @@ import com.azat4dev.booking.shared.domain.values.user.UserId;
 import com.azat4dev.booking.users.commands.domain.core.events.VerificationEmailSent;
 import com.azat4dev.booking.users.commands.domain.core.values.email.EmailAddress;
 import com.azat4dev.booking.shared.infrastructure.serializers.MapDomainEvent;
-import com.azat4dev.booking.usersms.generated.events.dto.VerificationEmailSentDTO;
+import com.azat4dev.booking.usersms.generated.api.bus.dto.usersms.VerificationEmailSentDTO;
 import lombok.AllArgsConstructor;
 
 @AllArgsConstructor

@@ -7,8 +7,8 @@ import com.azat4dev.booking.users.commands.domain.core.values.user.EmailVerifica
 import com.azat4dev.booking.users.commands.domain.core.values.user.FullName;
 import com.azat4dev.booking.shared.infrastructure.serializers.MapDomainEvent;
 import com.azat4dev.booking.shared.infrastructure.serializers.Serializer;
-import com.azat4dev.booking.usersms.generated.events.dto.FullNameDTO;
-import com.azat4dev.booking.usersms.generated.events.dto.UserSignedUpDTO;
+import com.azat4dev.booking.usersms.generated.api.bus.dto.usersms.FullNameDTO;
+import com.azat4dev.booking.usersms.generated.api.bus.dto.usersms.UserSignedUpDTO;
 import lombok.AllArgsConstructor;
 
 import java.time.LocalDateTime;

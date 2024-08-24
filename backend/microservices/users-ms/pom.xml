@@ -21,6 +21,11 @@
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
         <mainClass>com.azat4dev.booking.UsersMicroserviceApplication</mainClass>
         <default.package>com.azat4dev.booking.usersms</default.package>
+
+        <bus-api.server.input-file>../../../../specs/asyncapi/users.yaml</bus-api.server.input-file>
+        <bus-api.server.output-directory>${project.build.directory}/generated-sources/bus-api-server</bus-api.server.output-directory>
+        <bus-api.server.package>${default.package}.generated.api.bus</bus-api.server.package>
+        <bus-api.server.dto-package>${default.package}.generated.events.dto</bus-api.server.dto-package>
     </properties>
 
     <dependencies>
@@ -239,40 +244,46 @@
                 <groupId>com.github.eirslett</groupId>
                 <artifactId>frontend-maven-plugin</artifactId>
                 <version>1.12.1</version>
-                <configuration>
-                    <workingDirectory>./scripts/modelina</workingDirectory>
-                    <installDirectory>java_runtime_node</installDirectory>
-                </configuration>
                 <executions>
                     <!-- It will install nodejs and npm -->
                     <execution>
-                        <id>install node and npm</id>
+                        <id>bus-api install node and npm</id>
                         <phase>generate-sources</phase>
                         <goals>
                             <goal>install-node-and-npm</goal>
                         </goals>
                         <configuration>
-                            <nodeVersion>v18.15.0</nodeVersion>
+                            <nodeVersion>v20.9.0</nodeVersion>
+                            <workingDirectory>./scripts/bus-api-generator</workingDirectory>
+                            <installDirectory>${project.build.directory}/java_runtime_node</installDirectory>
                         </configuration>
                     </execution>
                     <execution>
-                        <id>Dependencies</id>
+                        <id>bus-api-install-dependencies</id>
                         <phase>generate-sources</phase>
                         <goals>
                             <goal>npm</goal>
                         </goals>
                         <configuration>
                             <arguments>install</arguments>
+                            <workingDirectory>./scripts/bus-api-generator</workingDirectory>
+                            <installDirectory>${project.build.directory}/java_runtime_node</installDirectory>
                         </configuration>
                     </execution>
+
                     <execution>
-                        <id>Generate sources</id>
+                        <id>generate-bus-api</id>
                         <phase>generate-sources</phase>
                         <goals>
                             <goal>npm</goal>
                         </goals>
                         <configuration>
-                            <arguments>run generate -- --package com.azat4dev.booking.usersms.generated.events.dto --input ../../../../specs/asyncapi/users.yaml --output ../../target/generated-sources/events</arguments>
+                            <workingDirectory>./scripts/bus-api-generator</workingDirectory>
+                            <installDirectory>${project.build.directory}/java_runtime_node</installDirectory>
+                            <arguments>run generate -- --package ${bus-api.server.package} --dto-package ${bus-api.server.dto-package} --input ${bus-api.server.input-file} --output ${bus-api.server.output-directory} --service-package.users=usersms</arguments>
+                            <environmentVariables>
+                                <NODE_PATH>${project.build.directory}/java_runtime_node/node</NODE_PATH>
+                            </environmentVariables>
                         </configuration>
                     </execution>
                 </executions>
@@ -292,6 +303,19 @@
                         <configuration>
                             <sources>
                                 <source>${project.basedir}/target/generated-sources/events</source>
+                            </sources>
+                        </configuration>
+                    </execution>
+
+                    <execution>
+                        <id>generated-bus-api-add-source</id>
+                        <phase>generate-sources</phase>
+                        <goals>
+                            <goal>add-source</goal>
+                        </goals>
+                        <configuration>
+                            <sources>
+                                <source>${bus-api.server.output-directory}</source>
                             </sources>
                         </configuration>
                     </execution>

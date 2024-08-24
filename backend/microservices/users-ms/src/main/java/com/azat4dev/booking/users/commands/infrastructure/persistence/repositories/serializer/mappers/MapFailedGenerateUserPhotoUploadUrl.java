@@ -5,7 +5,7 @@ import com.azat4dev.booking.shared.domain.values.IdempotentOperationId;
 import com.azat4dev.booking.shared.domain.values.files.PhotoFileExtension;
 import com.azat4dev.booking.shared.domain.values.user.UserId;
 import com.azat4dev.booking.users.commands.domain.core.events.FailedGenerateUserPhotoUploadUrl;
-import com.azat4dev.booking.usersms.generated.events.dto.FailedGenerateUserPhotoUploadUrlDTO;
+import com.azat4dev.booking.usersms.generated.api.bus.dto.usersms.FailedGenerateUserPhotoUploadUrlDTO;
 import lombok.AllArgsConstructor;
 
 @AllArgsConstructor

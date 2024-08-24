@@ -7,8 +7,8 @@ import com.azat4dev.booking.shared.domain.values.files.MediaObjectName;
 import com.azat4dev.booking.shared.domain.values.files.UploadedFileData;
 import com.azat4dev.booking.shared.domain.values.user.UserId;
 import com.azat4dev.booking.users.commands.domain.core.events.FailedUpdateUserPhoto;
-import com.azat4dev.booking.usersms.generated.events.dto.FailedUpdateUserPhotoDTO;
-import com.azat4dev.booking.usersms.generated.events.dto.UploadedFileDataDTO;
+import com.azat4dev.booking.usersms.generated.api.bus.dto.usersms.FailedUpdateUserPhotoDTO;
+import com.azat4dev.booking.usersms.generated.api.bus.dto.usersms.UploadedFileDataDTO;
 import lombok.AllArgsConstructor;
 
 @AllArgsConstructor
@@ -53,6 +53,6 @@ public final class MapFailedUpdateUserPhoto implements MapDomainEvent<FailedUpda
 
     @Override
     public Class<FailedUpdateUserPhotoDTO> getSerializedClass() {
-        return com.azat4dev.booking.usersms.generated.events.dto.FailedUpdateUserPhotoDTO.class;
+        return FailedUpdateUserPhotoDTO.class;
     }
 }

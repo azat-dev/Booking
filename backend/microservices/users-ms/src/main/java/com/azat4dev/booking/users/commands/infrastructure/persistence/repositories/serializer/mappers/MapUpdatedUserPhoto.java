@@ -6,8 +6,8 @@ import com.azat4dev.booking.shared.domain.values.user.UserId;
 import com.azat4dev.booking.users.commands.domain.core.entities.UserPhotoPath;
 import com.azat4dev.booking.users.commands.domain.core.events.UpdatedUserPhoto;
 import com.azat4dev.booking.shared.infrastructure.serializers.MapDomainEvent;
-import com.azat4dev.booking.usersms.generated.events.dto.UpdatedUserPhotoDTO;
-import com.azat4dev.booking.usersms.generated.events.dto.UserPhotoPathDTO;
+import com.azat4dev.booking.usersms.generated.api.bus.dto.usersms.UpdatedUserPhotoDTO;
+import com.azat4dev.booking.usersms.generated.api.bus.dto.usersms.UserPhotoPathDTO;
 import lombok.AllArgsConstructor;
 
 @AllArgsConstructor

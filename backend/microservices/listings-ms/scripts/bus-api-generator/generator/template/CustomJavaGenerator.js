@@ -181,7 +181,7 @@ export class CustomJavaGenerator {
                         opt.renderer.dependencyManager.addDependency(JSON_NULLABLE_IMPORT);
                     }
 
-                    if (property.property.options.isNullable) {
+                    if (property.property.options.isNullable || property.property.originalInput.union?.find((item) => item.type === 'null')) {
                         wrapper = "Optional";
                         if (initializer) {
                             initializer = ` = Optional.ofNullable(${initializer})`;
@@ -189,9 +189,10 @@ export class CustomJavaGenerator {
                             initializer = ` = Optional.empty()`;
                         }
 
-                        const foundTypeItem = property.property.originalInput.anyOf.find((item) => item.type !== 'null');
+                        const foundTypeItem = property.property.originalInput.union.find((item) => item.type !== 'null');
                         opt.renderer.dependencyManager.addDependency(OPTIONAL_IMPORT);
-                        propertyType = foundTypeItem.title + modelSuffix;
+
+                        propertyType = foundTypeItem['$id'] + modelSuffix;
                     }
 
                     if (model.options.isExtended) {

@@ -9,7 +9,6 @@
   },
   "scripts": {
     "generate": "ts-node ./generate.ts",
-    "generate-debug": "ts-node ./generate.ts --package com.azat4dev.booking.listingsms.generated.api.bus --dto-package com.azat4dev.booking.listingsms.generated.events.dto --input ../../../../specs/asyncapi/listings.yaml --output /Users/azat/dev/my/projects/demo-booking/backend/microservices/listings-ms/target/generated-sources/bus-api-server --service-package.\"search-listings\"=searchlistingsms --service-package.listings=listingsms",
     "build": "tsc ./generate.ts"
   },
   "devDependencies": {

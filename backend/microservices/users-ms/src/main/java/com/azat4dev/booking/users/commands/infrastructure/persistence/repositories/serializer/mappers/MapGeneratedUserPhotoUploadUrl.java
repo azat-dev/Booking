@@ -6,8 +6,8 @@ import com.azat4dev.booking.shared.domain.values.files.UploadFileFormData;
 import com.azat4dev.booking.shared.domain.values.user.UserId;
 import com.azat4dev.booking.users.commands.domain.core.events.GeneratedUserPhotoUploadUrl;
 import com.azat4dev.booking.shared.infrastructure.serializers.MapDomainEvent;
-import com.azat4dev.booking.usersms.generated.events.dto.GeneratedUserPhotoUploadUrlDTO;
-import com.azat4dev.booking.usersms.generated.events.dto.UploadedFileFormDataDTO;
+import com.azat4dev.booking.usersms.generated.api.bus.dto.usersms.GeneratedUserPhotoUploadUrlDTO;
+import com.azat4dev.booking.usersms.generated.api.bus.dto.usersms.UploadedFileFormDataDTO;
 import lombok.AllArgsConstructor;
 
 import java.net.MalformedURLException;
@@ -63,6 +63,6 @@ public final class MapGeneratedUserPhotoUploadUrl implements MapDomainEvent<Gene
 
     @Override
     public Class<GeneratedUserPhotoUploadUrlDTO> getSerializedClass() {
-        return com.azat4dev.booking.usersms.generated.events.dto.GeneratedUserPhotoUploadUrlDTO.class;
+        return GeneratedUserPhotoUploadUrlDTO.class;
     }
 }

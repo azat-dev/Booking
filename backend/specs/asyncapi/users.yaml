@@ -6,6 +6,7 @@ defaultContentType: application/json
 channels:
   events/userEventsStream:
     title: UserEvent
+    x-service: users
     address: 'com.azat4dev.booking.users.events.user_events_stream'
     messages:
       UserSignedUp:
@@ -30,9 +31,10 @@ channels:
         $ref: '#/components/messages/FailedGenerateUserPhotoUploadUrl'
 
   commands/SendVerificationEmail:
+    x-service: users
+    x-private: true
     title: SendVerificationEmail
     address: 'com.azat4dev.booking.users.commands.internal.SendVerificationEmail'
-    x-private: true
     messages:
       SendVerificationEmail:
         $ref: '#/components/messages/SendVerificationEmail'
