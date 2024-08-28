@@ -1,7 +1,6 @@
-package com.azat4dev.booking.listingsms.config.common.infrastructure.bus;
+package com.azat4dev.booking.searchlistingsms.config.common.infrastructure.bus;
 
-import com.azat4dev.booking.listingsms.commands.domain.events.FailedToAddNewListing;
-import com.azat4dev.booking.listingsms.commands.domain.events.NewListingAdded;
+import com.azat4dev.booking.searchlistingsms.common.domain.events.incoming.NewListingPublished;
 import lombok.RequiredArgsConstructor;
 import org.apache.kafka.clients.admin.NewTopic;
 import org.apache.kafka.clients.producer.ProducerConfig;
@@ -41,7 +40,7 @@ public class KafkaConfig {
 
     @Bean
     public ProducerFactory<String, String> producerFactory() {
-        return new DefaultKafkaProducerFactory<String, String>(producerConfigs());
+        return new DefaultKafkaProducerFactory<>(producerConfigs());
     }
 
     @Bean
@@ -53,8 +52,7 @@ public class KafkaConfig {
     KafkaAdmin.NewTopics newTopicList() {
 
         final List<Class<?>> events = List.of(
-            NewListingAdded.class,
-            FailedToAddNewListing.class
+            NewListingPublished.class
         );
 
         final var topics = events.stream().map(

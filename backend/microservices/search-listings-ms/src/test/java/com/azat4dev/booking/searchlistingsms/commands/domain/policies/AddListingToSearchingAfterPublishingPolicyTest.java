@@ -8,6 +8,9 @@ import com.azat4dev.booking.searchlistingsms.commands.domain.interfaces.Listings
 import com.azat4dev.booking.searchlistingsms.commands.domain.interfaces.ListingsSearchRepository;
 import com.azat4dev.booking.searchlistingsms.commands.domain.values.ListingId;
 import com.azat4dev.booking.searchlistingsms.commands.domain.values.ListingPhoto;
+import com.azat4dev.booking.searchlistingsms.common.acl.domain.values.ListingInfo;
+import com.azat4dev.booking.searchlistingsms.common.domain.values.GuestsCapacity;
+import com.azat4dev.booking.searchlistingsms.common.domain.values.PropertyType;
 import com.azat4dev.booking.shared.domain.events.DomainEvent;
 import com.azat4dev.booking.shared.domain.events.RandomEventIdGenerator;
 import com.azat4dev.booking.shared.domain.interfaces.bus.DomainEventsBus;
@@ -40,21 +43,27 @@ class AddListingToSearchingAfterPublishingPolicyTest {
         );
     }
 
-    private DomainEvent<ListingPublished> anyEvent() {
+    private DomainEvent<ListingPublished> anyEvent() throws GuestsCapacity.Exception.CapacityMustBePositive {
         final var g = new RandomEventIdGenerator();
         return new DomainEvent<>(
             g.generate(),
             LocalDateTime.now(),
             new ListingPublished(
                 ListingId.dangerouslyMakeFrom(UUID.randomUUID().toString()),
-                LocalDateTime.now()
+                LocalDateTime.now(),
+                new ListingInfo(
+                    "Title",
+                    "Description",
+                    GuestsCapacity.checkAndMake(1, 2, 3),
+                    PropertyType.APARTMENT
+                )
             )
         );
     }
 
 
     @Test
-    void test_execute_givenExistingDetails_thenAddListingToSearch() {
+    void test_execute_givenExistingDetails_thenAddListingToSearch() throws GuestsCapacity.Exception.CapacityMustBePositive {
         // Given
         final var sut = createSUT();
         final var event = anyEvent();

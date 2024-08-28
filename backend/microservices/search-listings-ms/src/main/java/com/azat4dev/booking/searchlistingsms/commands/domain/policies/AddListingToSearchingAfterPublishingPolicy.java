@@ -39,4 +39,9 @@ public class AddListingToSearchingAfterPublishingPolicy implements Policy<Listin
             ));
         }
     }
+
+    @Override
+    public Class<ListingPublished> getEventClass() {
+        return ListingPublished.class;
+    }
 }
