@@ -31,3 +31,15 @@ export const getInputTypeNameForEndpoint = (operationId, inputTypes, modelsSuffi
 
     return `${capitalize(removeSlashes(operationId))}Input${modelsSuffix}`;
 }
+
+export const getInputChannel = (operation) => {
+
+    const inputChannels = operation.channels?.();
+
+    if (inputChannels.length !== 1) {
+        console.error("Operation doesn't have exactly one channel", JSON.stringify(operation, null, 2));
+        throw new Error("Operation doesn't have exactly one channel");
+    }
+
+    return inputChannels[0];
+}

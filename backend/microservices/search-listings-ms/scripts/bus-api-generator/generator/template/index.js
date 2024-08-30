@@ -29,13 +29,21 @@ export default async function (options) {
         return result;
     }
 
-    const javaGenerator = new CustomJavaGenerator(options.id, options.modelsSuffix);
+    const modelsSuffix  = SUFFIX;
+
+    const javaGenerator = new CustomJavaGenerator(options.id, modelsSuffix);
     const modelFilesGenerator = new ModelFilesGenerator(getPackageForService);
 
     const channelsFileGenerator = new ChannelsFileGenerator();
-    const endpointInputInterfaceGenerator = new EndpointInputInterfaceGenerator(options.modelsSuffix);
+
+    const endpointInputInterfaceGenerator = new EndpointInputInterfaceGenerator(modelsSuffix, getPackageForService);
     const endpointFileGenerator = new EndpointFileGenerator(getPackageForService);
-    const endpointFilesGenerator = new EndpointFilesGenerator(endpointFileGenerator, endpointInputInterfaceGenerator);
+    const endpointFilesGenerator = new EndpointFilesGenerator(
+        endpointFileGenerator,
+        endpointInputInterfaceGenerator,
+        packageName,
+        getPackageForService
+    );
 
     const modelsGenerator = new ModelsGenerator(javaGenerator);
     const dtoGenerator = new DtoGenerator(modelFilesGenerator, getPackageForService);

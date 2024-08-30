@@ -1,9 +1,7 @@
 import {capitalize, convertChannelIdToConstantName, getChannelServiceId, removeSlashes} from "../utils";
 import {getInputTypeNameForEndpoint, getInputTypes} from "./utils";
 
-
-
-export  class EndpointFileGenerator {
+export class EndpointFileGenerator {
 
     constructor(getPackageForService) {
         this._getPackageForService = getPackageForService;
@@ -28,6 +26,8 @@ export  class EndpointFileGenerator {
         const inputChannel = inputChannels[0];
         const packageName = options.packageName + '.endpoints';
 
+        const inputServiceId  = getChannelServiceId(inputChannel);
+
         const inputChannelId = inputChannel?.id?.();
         const inputChannelConstantName = inputChannelId && convertChannelIdToConstantName(inputChannelId);
 
@@ -49,6 +49,7 @@ export  class EndpointFileGenerator {
 
         const inputTypes = getInputTypes(operation, options.modelsSuffix, this._getPackageForService);
         const inputTypeDto = getInputTypeNameForEndpoint(operationId, inputTypes, options.modelsSuffix);
+        const inputTypeDtoImport = `${options.packageName}.dto.${this._getPackageForService(inputServiceId)}.${inputTypeDto}`
 
         return (
             {
@@ -59,6 +60,7 @@ export  class EndpointFileGenerator {
                     [
                         'java.util.Optional',
                         'com.azat4dev.booking.shared.infrastructure.api.bus.BusApiEndpoint',
+                        inputTypeDtoImport,
                         `${options.packageName}.Channels`,
                         ...(inputTypes.map(i => `${options.packageName}.dto.${i.packageName}.${i.className}`)),
                         ...(returnType.map(i => `${options.packageName}.dto.${i.packageName}.${i.className}`))
