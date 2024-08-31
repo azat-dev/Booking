@@ -1,4 +1,5 @@
-import {getInputTypeNameForEndpoint, getInputTypes} from "./utils";
+import {getInputChannelForOperation, getInputTypeNameForEndpoint, getInputTypes} from "./utils";
+import {getChannelServiceId} from "../utils";
 
 export class EndpointInputInterfaceGenerator {
 
@@ -25,7 +26,9 @@ export class EndpointInputInterfaceGenerator {
             return null;
         }
 
-        const pckg = `${this._basePackageName}.dto.${this._getPackageForService()}`
+        const inputChannel =  getInputChannelForOperation(operation);
+        const serviceId  = getChannelServiceId(inputChannel);
+        const pckg = `${this._basePackageName}.dto.${this._getPackageForService(serviceId)}`
 
         const interfaceName = getInputTypeNameForEndpoint(operationId, inputTypes, this._modelsSuffix)
 

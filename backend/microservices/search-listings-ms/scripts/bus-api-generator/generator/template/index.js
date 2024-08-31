@@ -36,7 +36,8 @@ export default async function (options) {
 
     const channelsFileGenerator = new ChannelsFileGenerator();
 
-    const endpointInputInterfaceGenerator = new EndpointInputInterfaceGenerator(modelsSuffix, getPackageForService);
+    const basePackageName = options.packageName;
+    const endpointInputInterfaceGenerator = new EndpointInputInterfaceGenerator(basePackageName, modelsSuffix, getPackageForService);
     const endpointFileGenerator = new EndpointFileGenerator(getPackageForService);
     const endpointFilesGenerator = new EndpointFilesGenerator(
         endpointFileGenerator,
