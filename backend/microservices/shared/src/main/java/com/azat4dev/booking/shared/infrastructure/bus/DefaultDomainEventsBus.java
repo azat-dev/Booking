@@ -12,6 +12,13 @@ import java.util.Optional;
 import java.util.Set;
 import java.util.function.Consumer;
 
+/**
+ * Maps domain events to DTOs and vice versa.
+ * Routes  domain events to the correct topic.
+ * Publishes domain events to the message bus.
+ * Listens to domain events from the message bus.
+ * @param <PARTITION_KEY>
+ */
 @Slf4j
 @Observed
 @AllArgsConstructor

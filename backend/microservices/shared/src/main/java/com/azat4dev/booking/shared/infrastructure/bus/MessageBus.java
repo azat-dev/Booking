@@ -37,7 +37,7 @@ public interface MessageBus<PARTITION_KEY> {
         Consumer<ReceivedMessage> consumer
     );
 
-    record ReceivedMessage(
+    public static record ReceivedMessage(
         String messageId,
         String messageType,
         Optional<String> correlationId,

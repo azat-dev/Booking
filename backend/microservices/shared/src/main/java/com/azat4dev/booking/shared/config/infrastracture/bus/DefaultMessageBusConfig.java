@@ -1,5 +1,9 @@
 package com.azat4dev.booking.shared.config.infrastracture.bus;
 
+import com.azat4dev.booking.shared.infrastructure.bus.DefaultMakeTopologyForTopic;
+import com.azat4dev.booking.shared.infrastructure.bus.MessageBus;
+import org.apache.kafka.common.serialization.Serde;
+import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.Import;
 
@@ -12,4 +16,9 @@ import org.springframework.context.annotation.Import;
 })
 @Configuration
 public class DefaultMessageBusConfig {
+
+    @Bean
+    DefaultMakeTopologyForTopic defaultMakeTopologyForTopic(Serde<MessageBus.ReceivedMessage> serde) {
+        return new DefaultMakeTopologyForTopic(serde);
+    }
 }
