@@ -5,6 +5,6 @@ import com.azat4dev.booking.shared.domain.events.DomainEventPayload;
 import java.util.Optional;
 
 @FunctionalInterface
-public interface GetPartitionKeyForEvent<K> {
-    <T extends DomainEventPayload> Optional<K> execute(T event);
+public interface GetPartitionKeyForEvent {
+    <T extends DomainEventPayload> Optional<String> execute(T event);
 }

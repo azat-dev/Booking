@@ -44,15 +44,14 @@ public class BusApiEndpointsContainerImpl implements BusApiEndpointsContainer {
 
         return messageBus.listen(
             inputAddress,
-            msg -> {
-                final var message = (MessageBus.ReceivedMessage) msg;
+            message -> {
 
                 log.atDebug()
                     .addArgument(() -> endpoint.getClass().getSimpleName())
                     .addArgument(inputAddress)
                     .addKeyValue("message.type", inputAddress)
-                    .addKeyValue("message.id", message::messageId)
-                    .addKeyValue("message.issuedAt", message::messageSentAt)
+                    .addKeyValue("message.id", message::id)
+                    .addKeyValue("message.issuedAt", message::sentAt)
                     .log("Pass event into bus api endpoint: endpoint={} inputAddress={}");
 
                 final Optional<String> replyAddress = endpoint.hasDynamicReplyAddress() ? message.replyTo() : endpoint.getStaticReplyAddress();
@@ -71,11 +70,13 @@ public class BusApiEndpointsContainerImpl implements BusApiEndpointsContainer {
                         messageBus.publish(
                             replyAddress.get(),
                             partitionKey,
-                            generateMessageId.run(),
-                            getMessageTypeForDtoClass.run(response.getClass()),
-                            response,
-                            Optional.empty(),
-                            Optional.of(message.messageId())
+                            MessageBus.Data.with(
+                                generateMessageId.run(),
+                                getMessageTypeForDtoClass.run(response.getClass()),
+                                Optional.of(message.id()),
+                                Optional.empty(),
+                                response
+                            )
                         );
                     }
 
@@ -86,9 +87,9 @@ public class BusApiEndpointsContainerImpl implements BusApiEndpointsContainer {
                 };
 
                 final var request = new Request<>(
-                    message.messageId(),
-                    message.messageType(),
-                    message.messageSentAt(),
+                    message.id(),
+                    message.type(),
+                    message.sentAt(),
                     replyAddress,
                     message.payload()
                 );
@@ -102,8 +103,8 @@ public class BusApiEndpointsContainerImpl implements BusApiEndpointsContainer {
                         .setCause(e)
                         .addArgument(inputAddress)
                         .addKeyValue("message.type", inputAddress)
-                        .addKeyValue("message.id", message::messageId)
-                        .addKeyValue("message.issuedAt", message::messageSentAt)
+                        .addKeyValue("message.id", message::id)
+                        .addKeyValue("message.issuedAt", message::sentAt)
                         .log("Exception during handling message by endpoint: {}");
 
                     endpoint.handleException(e, request, reply);

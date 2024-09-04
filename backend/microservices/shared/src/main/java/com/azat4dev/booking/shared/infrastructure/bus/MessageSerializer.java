@@ -1,11 +1,11 @@
 package com.azat4dev.booking.shared.infrastructure.bus;
 
 
-public interface MessageSerializer<S> {
+public interface MessageSerializer {
 
-    Object deserialize(S serializedMessage, String messageType) throws Exception.FailedDeserialize;
+    Message deserialize(byte[] serializedMessage) throws Exception.FailedDeserialize;
 
-    <M> S serialize(M message) throws Exception.FailedSerialize;
+    byte[] serialize(Message message) throws Exception.FailedSerialize;
 
     abstract class Exception extends RuntimeException {
         protected Exception(Throwable cause) {

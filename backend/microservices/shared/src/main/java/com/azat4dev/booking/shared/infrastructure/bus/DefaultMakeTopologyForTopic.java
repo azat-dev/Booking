@@ -16,10 +16,10 @@ import java.util.function.Consumer;
 @AllArgsConstructor
 public class DefaultMakeTopologyForTopic implements KafkaMessageBus.MakeTopologyForTopic {
 
-    private final Serde<MessageBus.ReceivedMessage> serde;
+    private final Serde<Message> serde;
 
     @Override
-    public Topology run(String topic, Optional<Set<String>> messageTypes, Consumer<MessageBus.ReceivedMessage> consumer) {
+    public Topology run(String topic, Optional<Set<String>> messageTypes, Consumer<Message> consumer) {
         final var sb = new StreamsBuilder();
 
         var stream = sb.stream(
@@ -27,13 +27,13 @@ public class DefaultMakeTopologyForTopic implements KafkaMessageBus.MakeTopology
             Consumed.with(Serdes.String(), serde)
         );
 
-        if (messageTypes.isPresent() && !messageTypes.get().isEmpty())  {
-            stream = stream.filter((key, message) ->  {
+        if (messageTypes.isPresent() && !messageTypes.get().isEmpty()) {
+            stream = stream.filter((key, message) -> {
                 if (messageTypes.isEmpty()) {
                     return false;
                 }
 
-                return messageTypes.get().contains(message.messageType());
+                return messageTypes.get().contains(message.type());
             });
         }
 
@@ -45,8 +45,8 @@ public class DefaultMakeTopologyForTopic implements KafkaMessageBus.MakeTopology
                 log.atError()
                     .setCause(e)
                     .addArgument(topic)
-                    .addArgument(message::messageId)
-                    .addArgument(message::messageType)
+                    .addArgument(message::id)
+                    .addArgument(message::type)
                     .log("Error processing message: topic={} id={} type={}");
 
                 throw e;

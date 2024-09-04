@@ -10,7 +10,6 @@ import org.apache.kafka.streams.Topology;
 import org.springframework.kafka.core.KafkaTemplate;
 
 import java.io.Closeable;
-import java.nio.charset.StandardCharsets;
 import java.time.LocalDateTime;
 import java.util.Optional;
 import java.util.Properties;
@@ -20,22 +19,12 @@ import java.util.function.Consumer;
 @Slf4j
 @Observed
 @RequiredArgsConstructor
-public class KafkaMessageBus<PARTITION_KEY, SERIALIZED_MESSAGE> implements MessageBus<PARTITION_KEY> {
+public class KafkaMessageBus implements MessageBus {
 
-    private final MessageSerializer<SERIALIZED_MESSAGE> messageSerializer;
-    private final KafkaTemplate<PARTITION_KEY, SERIALIZED_MESSAGE> kafkaTemplate;
+    private final MessageSerializer messageSerializer;
+    private final KafkaTemplate<String, byte[]> kafkaTemplate;
     private final TimeProvider timeProvider;
     private final LocalDateTimeSerializer dateTimeSerializer;
-
-    public static final String MESSAGE_ID_HEADER = "x-message-id";
-    public static final String MESSAGE_SENT_AT_HEADER = "x-message-sent-at";
-    public static final String MESSAGE_TYPE_HEADER = "x-message-type";
-    public static final String CORRELATION_ID_HEADER = "x-correlation-id";
-    public static final String REPLY_TO_HEADER = "x-reply-to-id";
-
-    private static byte[] toBytes(String key) {
-        return key.getBytes(StandardCharsets.UTF_8);
-    }
 
     private final CustomTopologyFactoriesForTopics topologiesForTopics;
     private final MakeTopologyForTopic getDefaultTopologyForTopic;
@@ -43,16 +32,23 @@ public class KafkaMessageBus<PARTITION_KEY, SERIALIZED_MESSAGE> implements Messa
     private final Properties streamsConfig;
 
     @Override
-    public <MESSAGE> void publish(
+    public <P> void publish(
         String topic,
-        Optional<PARTITION_KEY> partitionKey,
-        String messageId,
-        String messageType,
-        MESSAGE message,
-        Optional<String> replyTo,
-        Optional<String> correlationId
+        Optional<String> partitionKey,
+        Data<P> data
     ) {
-        final var serializedMessaged = messageSerializer.serialize(message);
+        final var time = timeProvider.currentTime();
+
+        final var serializedMessaged = messageSerializer.serialize(
+            new Message(
+                data.id(),
+                data.type(),
+                time,
+                data.correlationId(),
+                data.replyTo(),
+                data.payload()
+            )
+        );
 
         final var r = new ProducerRecord<>(
             topic,
@@ -60,44 +56,31 @@ public class KafkaMessageBus<PARTITION_KEY, SERIALIZED_MESSAGE> implements Messa
             serializedMessaged
         );
 
-        final var time = timeProvider.currentTime();
-        r.headers().add(MESSAGE_ID_HEADER, toBytes(messageId));
-        r.headers().add(MESSAGE_SENT_AT_HEADER, toBytes(dateTimeSerializer.serialize(time)));
-        r.headers().add(MESSAGE_TYPE_HEADER, toBytes(messageType));
-
-        correlationId.ifPresent(c -> r.headers().add(CORRELATION_ID_HEADER, toBytes(c)));
-        replyTo.ifPresent(c -> r.headers().add(REPLY_TO_HEADER, toBytes(c)));
-
         kafkaTemplate.send(r);
         log.atDebug()
             .addArgument(topic)
-            .addArgument(messageId)
-            .addArgument(messageType)
-            .addArgument(correlationId)
-            .addArgument(replyTo)
+            .addArgument(data::id)
+            .addArgument(data::type)
+            .addArgument(data::correlationId)
+            .addArgument(data::replyTo)
             .addArgument(serializedMessaged)
             .log("Message sent: topic={} id={} type={} correlationId={} replyTo={} data={}");
     }
 
     @Override
-    public <MESSAGE> void publish(String topic, Optional<PARTITION_KEY> partitionKey, String messageId, String messageType, MESSAGE message) {
-        publish(topic, partitionKey, messageId, messageType, message, Optional.empty(), Optional.empty());
-    }
-
-    @Override
-    public Closeable listen(String topic, Consumer<ReceivedMessage> consumer) {
+    public Closeable listen(String topic, Consumer<Message> consumer) {
         return listen(topic, Optional.empty(), consumer);
     }
 
     @Override
-    public Closeable listen(String topic, Set<String> messageTypes, Consumer<ReceivedMessage> consumer) {
+    public Closeable listen(String topic, Set<String> messageTypes, Consumer<Message> consumer) {
         return listen(topic, Optional.of(messageTypes), consumer);
     }
 
     public Closeable listen(
         String topic,
         Optional<Set<String>> messageTypes,
-        Consumer<ReceivedMessage> consumer
+        Consumer<Message> consumer
     ) {
 
         log.atDebug()
@@ -122,6 +105,6 @@ public class KafkaMessageBus<PARTITION_KEY, SERIALIZED_MESSAGE> implements Messa
 
     @FunctionalInterface
     public interface MakeTopologyForTopic {
-        Topology run(String topic, Optional<Set<String>> messageTypes, Consumer<ReceivedMessage> consumer);
+        Topology run(String topic, Optional<Set<String>> messageTypes, Consumer<Message> consumer);
     }
 }

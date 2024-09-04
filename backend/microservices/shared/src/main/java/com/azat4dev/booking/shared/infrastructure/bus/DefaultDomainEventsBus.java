@@ -17,17 +17,18 @@ import java.util.function.Consumer;
  * Routes  domain events to the correct topic.
  * Publishes domain events to the message bus.
  * Listens to domain events from the message bus.
+ *
  * @param <PARTITION_KEY>
  */
 @Slf4j
 @Observed
 @AllArgsConstructor
-public class DefaultDomainEventsBus<PARTITION_KEY> implements DomainEventsBus {
+public class DefaultDomainEventsBus implements DomainEventsBus {
 
-    private final MessageBus<PARTITION_KEY> messageBus;
+    private final MessageBus messageBus;
     private final GetInputTopicForEvent getInputTopicForEvent;
     private final GetOutputTopicForEvent getOutputTopicForEvent;
-    private final GetPartitionKeyForEvent<PARTITION_KEY> getPartitionKeyForEvent;
+    private final GetPartitionKeyForEvent getPartitionKeyForEvent;
     private final EventIdGenerator eventIdGenerator;
     private final MapAnyDomainEvent mapEvent;
 
@@ -37,11 +38,11 @@ public class DefaultDomainEventsBus<PARTITION_KEY> implements DomainEventsBus {
         messageBus.publish(
             getOutputTopicForEvent.execute(event),
             getPartitionKeyForEvent.execute(event),
-            eventId.getValue(),
-            event.getClass().getSimpleName(),
-            mapEvent.toDTO(event),
-            Optional.empty(),
-            Optional.empty()
+            MessageBus.Data.with(
+                eventId.getValue(),
+                event.getClass().getSimpleName(),
+                mapEvent.toDTO(event)
+            )
         );
     }
 
@@ -70,8 +71,8 @@ public class DefaultDomainEventsBus<PARTITION_KEY> implements DomainEventsBus {
 
                 consumer.accept(
                     new DomainEvent<T>(
-                        EventId.dangerouslyCreateFrom(message.messageId()),
-                        message.messageSentAt(),
+                        EventId.dangerouslyCreateFrom(message.id()),
+                        message.sentAt(),
                         (T) event
                     )
                 );

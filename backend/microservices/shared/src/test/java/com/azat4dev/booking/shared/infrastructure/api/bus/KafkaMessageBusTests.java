@@ -6,15 +6,24 @@ import com.azat4dev.booking.shared.config.infrastracture.bus.utils.ItemsToAddInO
 import com.azat4dev.booking.shared.config.infrastracture.bus.utils.OneToOneRelationsOfDtoClassesAndMessageTypes;
 import com.azat4dev.booking.shared.config.infrastracture.serializers.DefaultTimeSerializerConfig;
 import com.azat4dev.booking.shared.config.infrastracture.services.DefaultTimeProviderConfig;
+import com.azat4dev.booking.shared.generated.dto.JoinedMessage;
+import com.azat4dev.booking.shared.generated.dto.JoinedMessageDTO;
+import com.azat4dev.booking.shared.generated.dto.MessageDTO;
+import com.azat4dev.booking.shared.generated.dto.TestMessageDTO;
 import com.azat4dev.booking.shared.helpers.EnableTestcontainers;
-import com.azat4dev.booking.shared.infrastructure.bus.CustomTopologyFactoriesForTopics;
 import com.azat4dev.booking.shared.infrastructure.bus.CustomTopologyForTopic;
+import com.azat4dev.booking.shared.infrastructure.bus.Message;
 import com.azat4dev.booking.shared.infrastructure.bus.MessageBus;
+import com.azat4dev.booking.shared.infrastructure.bus.MessageSerializer;
+import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import org.apache.kafka.clients.admin.NewTopic;
+import org.apache.kafka.common.serialization.Deserializer;
 import org.apache.kafka.common.serialization.Serde;
 import org.apache.kafka.common.serialization.Serdes;
+import org.apache.kafka.common.serialization.Serializer;
 import org.apache.kafka.streams.StreamsBuilder;
-import org.apache.kafka.streams.kstream.Consumed;
+import org.apache.kafka.streams.kstream.*;
 import org.awaitility.Awaitility;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -27,7 +36,9 @@ import org.springframework.context.annotation.Import;
 import org.springframework.kafka.annotation.EnableKafka;
 import org.springframework.kafka.core.KafkaAdmin;
 
+import java.io.IOException;
 import java.time.Duration;
+import java.time.LocalDateTime;
 import java.util.Optional;
 import java.util.Set;
 import java.util.UUID;
@@ -53,7 +64,7 @@ public class KafkaMessageBusTests {
     private static final String INPUT_TOPIC2 = "input2";
 
     @Autowired
-    MessageBus<String> messageBus;
+    MessageBus messageBus;
 
     @Test
     void test_publish_givenValidMessage_thenReceive() {
@@ -62,19 +73,21 @@ public class KafkaMessageBusTests {
         final var topic = SIMPLE_TOPIC;
         final var messageId = UUID.randomUUID().toString();
         final var messageType = "TestMessage";
-        final var message = new TestMessage("id", "type", "payload");
+        final var message = new TestMessageDTO("id", "payload");
 
         // When
         messageBus.publish(
             topic,
             Optional.empty(),
-            messageId,
-            messageType,
-            message
+            MessageBus.Data.with(
+                messageId,
+                messageType,
+                message
+            )
         );
 
         // Then
-        final var receivedMessage = waitForResult((Consumer<MessageBus.ReceivedMessage> completed) -> {
+        final var receivedMessage = waitForResult((Consumer<Message> completed) -> {
             messageBus.listen(topic, msg -> {
                 completed.accept(msg);
             });
@@ -87,32 +100,35 @@ public class KafkaMessageBusTests {
     void test_publish_givenTwoInputTopics_thenJoin() {
 
         // Given
-        final var topic = "test";
         final var messageId1 = UUID.randomUUID().toString();
         final var messageId2 = UUID.randomUUID().toString();
         final var messageType = "TestMessage";
 
         // When
         messageBus.publish(
-            topic,
+            INPUT_TOPIC1,
             Optional.empty(),
-            messageId1,
-            messageType,
-            new TestMessage(messageId1, "type", "payload")
+            MessageBus.Data.with(
+                messageId1,
+                messageType,
+                new TestMessageDTO(messageId1, "payload")
+            )
         );
 
         messageBus.publish(
-            topic,
+            INPUT_TOPIC2,
             Optional.empty(),
-            messageId2,
-            messageType,
-            new TestMessage(messageId2, "type", "payload")
+            MessageBus.Data.with(
+                messageId2,
+                messageType,
+                new TestMessageDTO(messageId2, "payload")
+            )
         );
 
         // Then
         final var expected = new JoinedMessage(messageId1, messageId2);
 
-        final var receivedMessage = waitForResult((Consumer<MessageBus.ReceivedMessage> completed) -> {
+        final var receivedMessage = waitForResult((Consumer<Message> completed) -> {
             messageBus.listen(TOPIC_WITH_JOIN, msg -> {
                 completed.accept(msg);
             });
@@ -154,36 +170,129 @@ public class KafkaMessageBusTests {
         @Bean
         ItemsToAddInOneToOneRelationsOfDtoClassesAndMessageTypes getDtoClassForMessageType() {
             return new ItemsToAddInOneToOneRelationsOfDtoClassesAndMessageTypes(
-                new OneToOneRelationsOfDtoClassesAndMessageTypes.Item("TestMessage", TestMessage.class)
+                new OneToOneRelationsOfDtoClassesAndMessageTypes.Item("TestMessage", TestMessageDTO.class),
+                new OneToOneRelationsOfDtoClassesAndMessageTypes.Item("JoinedMessage", JoinedMessageDTO.class)
             );
         }
 
         @Bean
-        CustomTopologyForTopic customTopologyForTopic(Serde<MessageBus.ReceivedMessage> valueSerde) {
+        Serde<JoinedMessage> joinedMessageSerde(ObjectMapper objectMapper) {
+            return new Serde<JoinedMessage>() {
+                @Override
+                public Serializer<JoinedMessage> serializer() {
+                    return new Serializer<JoinedMessage>() {
+                        @Override
+                        public byte[] serialize(String s, JoinedMessage joinedMessage) {
+                            try {
+                                return objectMapper.writeValueAsBytes(joinedMessage);
+                            } catch (JsonProcessingException e) {
+                                throw new RuntimeException(e);
+                            }
+                        }
+                    };
+                }
+
+                @Override
+                public Deserializer<JoinedMessage> deserializer() {
+                    return new Deserializer<JoinedMessage>() {
+                        @Override
+                        public JoinedMessage deserialize(String s, byte[] bytes) {
+                            try {
+                                return objectMapper.readValue(bytes, JoinedMessage.class);
+                            } catch (JsonProcessingException e) {
+                                throw new RuntimeException(e);
+                            } catch (IOException e) {
+                                throw new RuntimeException(e);
+                            }
+                        }
+                    };
+                }
+            };
+        }
+
+        @Bean
+        MessageSerializer messageSerializer(ObjectMapper objectMapper) {
+            return new MessageSerializer() {
+
+                @Override
+                public Message deserialize(byte[] serializedMessage) throws Exception.FailedDeserialize {
+                    try {
+                        final var dto = MessageDTO.getDecoder().decode(serializedMessage);
+
+                        return new Message(
+                            dto.getId().toString(),
+                            dto.getType().toString(),
+                            LocalDateTime.now(),
+                            Optional.ofNullable(dto.getCorrelationId()).map(CharSequence::toString),
+                            Optional.ofNullable(dto.getReplyToId()).map(CharSequence::toString),
+                            dto.getPayload()
+                        );
+                    } catch (IOException e) {
+                        throw new Exception.FailedDeserialize(e);
+                    }
+                }
+
+                @Override
+                public byte[] serialize(Message message) throws Exception.FailedSerialize {
+                    try {
+                        return MessageDTO.getEncoder().encode(
+                            new MessageDTO(
+                                message.id(),
+                                message.type(),
+                                message.correlationId().orElse(null),
+                                message.replyTo().orElse(null),
+                                message.payload()
+                            )
+                        ).array();
+                    } catch (IOException e) {
+                        throw new Exception.FailedSerialize(e);
+                    }
+                }
+            };
+        }
+
+        @Bean
+        CustomTopologyForTopic customTopologyForTopic(Serde<Message> valueSerde, Serde<JoinedMessage> joinedMessageSerde) {
             return new CustomTopologyForTopic(
                 TOPIC_WITH_JOIN,
-                (String topic, Optional<Set<String>> messageTypes, Consumer<MessageBus.ReceivedMessage> consumer) -> {
+                (String topic, Optional<Set<String>> messageTypes, Consumer<Message> consumer) -> {
 
                     StreamsBuilder builder = new StreamsBuilder();
 
-                    final var s = builder.stream(INPUT_TOPIC1, Consumed.with(Serdes.String(), valueSerde))
-                        .selectKey((k, v) -> v.payload());
+                    final KStream<String, Message> s = builder.stream(INPUT_TOPIC1, Consumed.with(Serdes.String(), valueSerde))
+                        .selectKey((k, v) -> {
+                            return v.payloadAs(TestMessageDTO.class).getPayload().toString();
+                        });
 
                     final var t = builder.stream(INPUT_TOPIC2, Consumed.with(Serdes.String(), valueSerde))
-                        .selectKey((k, v) -> v.payload())
-                        .toTable();
+                        .selectKey((k, v) -> v.payloadAs(TestMessageDTO.class).getPayload().toString())
+                        .toTable(Materialized.with(Serdes.String(), valueSerde));
 
-                    s.join(t, (left, right) -> new JoinedMessage(left.messageId(), right.messageId()))
-                        .to(TOPIC_WITH_JOIN);
+                    s.join(
+                            t,
+                            (v1, v2) -> new Message(
+                                v1.id(),
+                                v1.type(),
+                                v1.sentAt(),
+                                Optional.empty(),
+                                Optional.empty(),
+                                new JoinedMessage(v1.id(), v2.id())
+                            ),
+                            Joined.with(Serdes.String(), valueSerde, valueSerde)
+                        )
+                        .foreach((k, message) -> {
+
+                            try {
+                                consumer.accept(message);
+                            } catch (Exception e) {
+
+                                throw e;
+                            }
+                        });
+
 
                     return builder.build();
                 });
         }
-    }
-
-    public static record TestMessage(String id, String type, String payload) {
-    }
-
-    public static record JoinedMessage(String messageId1, String messageId2) {
     }
 }

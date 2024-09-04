@@ -14,7 +14,7 @@ import org.springframework.context.annotation.Import;
 @Configuration
 public class DefaultDomainEventsBusConfig {
 
-    private final MessageBus<String> messageBus;
+    private final MessageBus messageBus;
     private final MapAnyDomainEvent mapAnyDomainEvent;
 
     @Bean
@@ -22,10 +22,10 @@ public class DefaultDomainEventsBusConfig {
         EventIdGenerator eventIdGenerator,
         GetInputTopicForEvent getInputTopicForEvent,
         GetOutputTopicForEvent getOutputTopicForEvent,
-        GetPartitionKeyForEvent<String> getPartitionKeyForEvent
+        GetPartitionKeyForEvent getPartitionKeyForEvent
     ) {
 
-        return new DefaultDomainEventsBus<String>(
+        return new DefaultDomainEventsBus(
             messageBus,
             getInputTopicForEvent,
             getOutputTopicForEvent,

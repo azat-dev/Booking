@@ -1,0 +1,62 @@
+{
+  "namespace": "com.azat4dev.booking.shared.generated.dto",
+  "name": "MessageDTO",
+  "type": "record",
+  "fields": [
+    {
+      "name": "id",
+      "type": "string"
+    },
+    {
+      "name": "type",
+      "type": "string"
+    },
+    {
+      "name": "correlationId",
+      "type": [
+        "string",
+        "null"
+      ]
+    },
+    {
+      "name": "replyToId",
+      "type": [
+        "string",
+        "null"
+      ]
+    },
+    {
+      "name": "payload",
+      "type": [
+        {
+          "type": "record",
+          "name": "JoinedMessageDTO",
+          "fields": [
+            {
+              "name": "messageId1",
+              "type": "string"
+            },
+            {
+              "name": "messageId2",
+              "type": "string"
+            }
+          ]
+        },
+        {
+          "type": "record",
+          "name": "TestMessageDTO",
+          "fields": [
+            {
+              "name": "id",
+              "type": "string"
+            },
+            {
+              "name": "payload",
+              "type": "string"
+            }
+          ]
+        }
+      ]
+    }
+  ]
+}

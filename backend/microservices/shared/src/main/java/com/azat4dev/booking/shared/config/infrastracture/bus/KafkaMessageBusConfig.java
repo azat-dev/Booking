@@ -5,17 +5,28 @@ import com.azat4dev.booking.shared.infrastructure.serializers.Serializer;
 import com.azat4dev.booking.shared.utils.TimeProvider;
 import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.apache.kafka.clients.CommonClientConfigs;
+import org.apache.kafka.clients.producer.ProducerConfig;
+import org.apache.kafka.common.serialization.ByteArraySerializer;
 import org.apache.kafka.common.serialization.Serde;
+import org.springframework.beans.factory.ObjectProvider;
+import org.springframework.boot.autoconfigure.kafka.DefaultKafkaProducerFactoryCustomizer;
+import org.springframework.boot.autoconfigure.kafka.KafkaProperties;
+import org.springframework.boot.ssl.SslBundles;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.kafka.annotation.EnableKafka;
 import org.springframework.kafka.annotation.EnableKafkaStreams;
 import org.springframework.kafka.config.KafkaStreamsConfiguration;
+import org.springframework.kafka.core.DefaultKafkaProducerFactory;
 import org.springframework.kafka.core.KafkaAdmin;
 import org.springframework.kafka.core.KafkaTemplate;
+import org.springframework.kafka.core.ProducerFactory;
 
 import java.time.LocalDateTime;
 import java.util.List;
+import java.util.Map;
+import java.util.Optional;
 
 @Slf4j
 @EnableKafka
@@ -25,8 +36,36 @@ import java.util.List;
 public class KafkaMessageBusConfig {
 
     private final TimeProvider timeProvider;
-    private final KafkaTemplate<String, String> kafkaTemplate;
     private final Serializer<LocalDateTime, String> mapLocalDateTime;
+
+    @Bean
+    public ProducerFactory<?, ?> kafkaProducerFactory(
+        KafkaProperties kafkaProperties,
+        ObjectProvider<DefaultKafkaProducerFactoryCustomizer> customizers,
+        ObjectProvider<SslBundles> sslBundles
+    ) {
+        Map<String, Object> properties = kafkaProperties.buildProducerProperties(sslBundles.getIfAvailable());
+
+        properties.put(
+            CommonClientConfigs.SECURITY_PROTOCOL_CONFIG,
+            Optional.ofNullable(kafkaProperties.getProducer().getSecurity().getProtocol())
+                .orElse("PLAINTEXT")
+        );
+
+        properties.put(
+            ProducerConfig.VALUE_SERIALIZER_CLASS_CONFIG,
+            ByteArraySerializer.class
+        );
+
+        DefaultKafkaProducerFactory<?, ?> factory = new DefaultKafkaProducerFactory<>(properties);
+        String transactionIdPrefix = kafkaProperties.getProducer().getTransactionIdPrefix();
+        if (transactionIdPrefix != null) {
+            factory.setTransactionIdPrefix(transactionIdPrefix);
+        }
+        customizers.orderedStream().forEach((customizer) -> customizer.customize(factory));
+        return factory;
+    }
+
 
     @Bean
     KafkaMessageBus.LocalDateTimeSerializer localDateTimeSerializer() {
@@ -56,19 +95,20 @@ public class KafkaMessageBusConfig {
     }
 
     @Bean
-    MessageBus<String> messageBus(
-        MessageSerializer<String> messageSerializer,
+    MessageBus messageBus(
+        MessageSerializer messageSerializer,
         KafkaMessageBus.LocalDateTimeSerializer localDateTimeSerializer,
         KafkaAdmin kafkaAdmin,
         DefaultMakeTopologyForTopic makeTopologyForTopic,
         CustomTopologyFactoriesForTopics customTopologyFactoriesForTopics,
-        KafkaStreamsConfiguration kafkaStreamsConfiguration
+        KafkaStreamsConfiguration kafkaStreamsConfiguration,
+        KafkaTemplate<String, byte[]> kafkaTemplate
     ) {
 
         kafkaAdmin.setAutoCreate(false);
         kafkaAdmin.initialize();
 
-        return new KafkaMessageBus<>(
+        return new KafkaMessageBus(
             messageSerializer,
             kafkaTemplate,
             timeProvider,
@@ -80,10 +120,11 @@ public class KafkaMessageBusConfig {
     }
 
     @Bean
-    Serde<MessageBus.ReceivedMessage> serde(
-        MessageSerializer<String> messageSerializer,
-        KafkaMessageBus.LocalDateTimeSerializer localDateTimeSerializer
+    Serde<Message> serde(
+        MessageSerializer messageSerializer
     ) {
-        return new BusMessageSerde(messageSerializer, localDateTimeSerializer);
+        return new BusMessageSerde(
+            messageSerializer
+        );
     }
 }
