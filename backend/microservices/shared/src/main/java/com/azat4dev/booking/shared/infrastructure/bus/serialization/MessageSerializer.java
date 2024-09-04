@@ -1,9 +1,9 @@
-package com.azat4dev.booking.shared.infrastructure.bus;
+package com.azat4dev.booking.shared.infrastructure.bus.serialization;
 
+
+import com.azat4dev.booking.shared.infrastructure.bus.Message;
 
 public interface MessageSerializer {
-
-    Message deserialize(byte[] serializedMessage) throws Exception.FailedDeserialize;
 
     byte[] serialize(Message message) throws Exception.FailedSerialize;
 
@@ -14,12 +14,6 @@ public interface MessageSerializer {
 
         public static final class FailedSerialize extends Exception {
             public FailedSerialize(Throwable cause) {
-                super(cause);
-            }
-        }
-
-        public static final class FailedDeserialize extends Exception {
-            public FailedDeserialize(Throwable cause) {
                 super(cause);
             }
         }

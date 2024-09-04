@@ -1,8 +1,8 @@
-package com.azat4dev.booking.shared.infrastructure.bus;
+package com.azat4dev.booking.shared.infrastructure.bus.kafka;
 
+import com.azat4dev.booking.shared.infrastructure.bus.Message;
 import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.apache.kafka.common.serialization.Serde;
 import org.apache.kafka.common.serialization.Serdes;
 import org.apache.kafka.streams.StreamsBuilder;
 import org.apache.kafka.streams.Topology;
@@ -16,7 +16,7 @@ import java.util.function.Consumer;
 @AllArgsConstructor
 public class DefaultMakeTopologyForTopic implements KafkaMessageBus.MakeTopologyForTopic {
 
-    private final Serde<Message> serde;
+    private final GetSerdeForTopic getSerdeForTopic;
 
     @Override
     public Topology run(String topic, Optional<Set<String>> messageTypes, Consumer<Message> consumer) {
@@ -24,7 +24,7 @@ public class DefaultMakeTopologyForTopic implements KafkaMessageBus.MakeTopology
 
         var stream = sb.stream(
             topic,
-            Consumed.with(Serdes.String(), serde)
+            Consumed.with(Serdes.String(), getSerdeForTopic.run(topic))
         );
 
         if (messageTypes.isPresent() && !messageTypes.get().isEmpty()) {

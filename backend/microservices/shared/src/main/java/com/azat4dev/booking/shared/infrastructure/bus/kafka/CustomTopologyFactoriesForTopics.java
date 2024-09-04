@@ -1,4 +1,6 @@
-package com.azat4dev.booking.shared.infrastructure.bus;
+package com.azat4dev.booking.shared.infrastructure.bus.kafka;
+
+import com.azat4dev.booking.shared.infrastructure.bus.kafka.KafkaMessageBus;
 
 import java.util.HashMap;
 import java.util.List;

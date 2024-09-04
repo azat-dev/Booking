@@ -1,6 +1,8 @@
 package com.azat4dev.booking.shared.config.infrastracture.bus;
 
 import com.azat4dev.booking.shared.infrastructure.bus.*;
+import com.azat4dev.booking.shared.infrastructure.bus.kafka.*;
+import com.azat4dev.booking.shared.infrastructure.bus.serialization.*;
 import com.azat4dev.booking.shared.infrastructure.serializers.Serializer;
 import com.azat4dev.booking.shared.utils.TimeProvider;
 import lombok.AllArgsConstructor;
@@ -96,8 +98,7 @@ public class KafkaMessageBusConfig {
 
     @Bean
     MessageBus messageBus(
-        MessageSerializer messageSerializer,
-        KafkaMessageBus.LocalDateTimeSerializer localDateTimeSerializer,
+        MessageSerializersForTopics messageSerializers,
         KafkaAdmin kafkaAdmin,
         DefaultMakeTopologyForTopic makeTopologyForTopic,
         CustomTopologyFactoriesForTopics customTopologyFactoriesForTopics,
@@ -109,10 +110,9 @@ public class KafkaMessageBusConfig {
         kafkaAdmin.initialize();
 
         return new KafkaMessageBus(
-            messageSerializer,
+            messageSerializers,
             kafkaTemplate,
             timeProvider,
-            localDateTimeSerializer,
             customTopologyFactoriesForTopics,
             makeTopologyForTopic,
             kafkaStreamsConfiguration.asProperties()
@@ -121,10 +121,22 @@ public class KafkaMessageBusConfig {
 
     @Bean
     Serde<Message> serde(
-        MessageSerializer messageSerializer
+        MessageSerializer messageSerializer,
+        MessageDeserializer messageDeserializer
     ) {
         return new BusMessageSerde(
-            messageSerializer
+            messageSerializer,
+            messageDeserializer
         );
+    }
+
+    @Bean
+    MessageDeserializersForTopics messageDeserializersForTopics(List<CustomMessageDeserializerForTopics> items) {
+        return new MessageDeserializersForTopics(items);
+    }
+
+    @Bean
+    MessageSerializersForTopics messageSerializersForTopics(List<CustomMessageSerializerForTopics> items) {
+        return new MessageSerializersForTopics(items);
     }
 }

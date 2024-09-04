@@ -1,5 +1,9 @@
-package com.azat4dev.booking.shared.infrastructure.bus;
+package com.azat4dev.booking.shared.infrastructure.bus.kafka;
 
+import com.azat4dev.booking.shared.infrastructure.bus.Message;
+import com.azat4dev.booking.shared.infrastructure.bus.MessageBus;
+import com.azat4dev.booking.shared.infrastructure.bus.serialization.MessageSerializer;
+import com.azat4dev.booking.shared.infrastructure.bus.serialization.MessageSerializersForTopics;
 import com.azat4dev.booking.shared.utils.TimeProvider;
 import io.micrometer.observation.annotation.Observed;
 import lombok.RequiredArgsConstructor;
@@ -21,10 +25,9 @@ import java.util.function.Consumer;
 @RequiredArgsConstructor
 public class KafkaMessageBus implements MessageBus {
 
-    private final MessageSerializer messageSerializer;
+    private final MessageSerializersForTopics messageSerializers;
     private final KafkaTemplate<String, byte[]> kafkaTemplate;
     private final TimeProvider timeProvider;
-    private final LocalDateTimeSerializer dateTimeSerializer;
 
     private final CustomTopologyFactoriesForTopics topologiesForTopics;
     private final MakeTopologyForTopic getDefaultTopologyForTopic;
@@ -38,8 +41,10 @@ public class KafkaMessageBus implements MessageBus {
         Data<P> data
     ) {
         final var time = timeProvider.currentTime();
+        final var serializer = messageSerializers.getForTopic(topic)
+            .orElseThrow(() -> new Exception.NoSerializerForTopic(topic));
 
-        final var serializedMessaged = messageSerializer.serialize(
+        final var serializedMessaged = serializer.serialize(
             new Message(
                 data.id(),
                 data.type(),
@@ -106,5 +111,21 @@ public class KafkaMessageBus implements MessageBus {
     @FunctionalInterface
     public interface MakeTopologyForTopic {
         Topology run(String topic, Optional<Set<String>> messageTypes, Consumer<Message> consumer);
+    }
+
+    // Exceptions
+
+    public static abstract class Exception extends RuntimeException {
+
+        private Exception(String message) {
+            super(message);
+        }
+
+        public static final class NoSerializerForTopic extends Exception {
+
+            public NoSerializerForTopic(String topic) {
+                super("There is no serializer for topic: " + topic);
+            }
+        }
     }
 }

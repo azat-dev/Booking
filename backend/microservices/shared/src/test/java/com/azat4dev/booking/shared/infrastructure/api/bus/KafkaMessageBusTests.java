@@ -11,10 +11,13 @@ import com.azat4dev.booking.shared.generated.dto.JoinedMessageDTO;
 import com.azat4dev.booking.shared.generated.dto.MessageDTO;
 import com.azat4dev.booking.shared.generated.dto.TestMessageDTO;
 import com.azat4dev.booking.shared.helpers.EnableTestcontainers;
-import com.azat4dev.booking.shared.infrastructure.bus.CustomTopologyForTopic;
 import com.azat4dev.booking.shared.infrastructure.bus.Message;
 import com.azat4dev.booking.shared.infrastructure.bus.MessageBus;
-import com.azat4dev.booking.shared.infrastructure.bus.MessageSerializer;
+import com.azat4dev.booking.shared.infrastructure.bus.kafka.CustomTopologyForTopic;
+import com.azat4dev.booking.shared.infrastructure.bus.serialization.CustomMessageDeserializerForTopics;
+import com.azat4dev.booking.shared.infrastructure.bus.serialization.CustomMessageSerializerForTopics;
+import com.azat4dev.booking.shared.infrastructure.bus.serialization.MessageDeserializer;
+import com.azat4dev.booking.shared.infrastructure.bus.serialization.MessageSerializer;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.apache.kafka.clients.admin.NewTopic;
@@ -23,7 +26,10 @@ import org.apache.kafka.common.serialization.Serde;
 import org.apache.kafka.common.serialization.Serdes;
 import org.apache.kafka.common.serialization.Serializer;
 import org.apache.kafka.streams.StreamsBuilder;
-import org.apache.kafka.streams.kstream.*;
+import org.apache.kafka.streams.kstream.Consumed;
+import org.apache.kafka.streams.kstream.Joined;
+import org.apache.kafka.streams.kstream.KStream;
+import org.apache.kafka.streams.kstream.Materialized;
 import org.awaitility.Awaitility;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -35,10 +41,12 @@ import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Import;
 import org.springframework.kafka.annotation.EnableKafka;
 import org.springframework.kafka.core.KafkaAdmin;
+import org.springframework.test.annotation.DirtiesContext;
 
 import java.io.IOException;
 import java.time.Duration;
 import java.time.LocalDateTime;
+import java.util.List;
 import java.util.Optional;
 import java.util.Set;
 import java.util.UUID;
@@ -58,10 +66,10 @@ import static org.assertj.core.api.Assertions.assertThat;
 @SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.NONE)
 public class KafkaMessageBusTests {
 
-    private static final String SIMPLE_TOPIC = "test";
-    private static final String TOPIC_WITH_JOIN = "test_join";
-    private static final String INPUT_TOPIC1 = "input1";
-    private static final String INPUT_TOPIC2 = "input2";
+    private static final String SIMPLE_TOPIC = "test_" + UUID.randomUUID().toString();
+    private static final String TOPIC_WITH_JOIN = "test_join_" + UUID.randomUUID().toString();
+    private static final String INPUT_TOPIC1 = "input1_" + UUID.randomUUID().toString();
+    private static final String INPUT_TOPIC2 = "input2_" + UUID.randomUUID().toString();
 
     @Autowired
     MessageBus messageBus;
@@ -211,26 +219,24 @@ public class KafkaMessageBusTests {
         }
 
         @Bean
-        MessageSerializer messageSerializer(ObjectMapper objectMapper) {
+        CustomMessageSerializerForTopics messageSerializerForInputTopic1(MessageSerializer serializer) {
+            return new CustomMessageSerializerForTopics(
+                List.of(SIMPLE_TOPIC, INPUT_TOPIC1, INPUT_TOPIC2),
+                serializer
+            );
+        }
+
+        @Bean
+        CustomMessageDeserializerForTopics messageDeserializerForTopics(MessageDeserializer deserializer) {
+            return new CustomMessageDeserializerForTopics(
+                List.of(SIMPLE_TOPIC, INPUT_TOPIC1, INPUT_TOPIC2),
+                deserializer
+            );
+        }
+
+        @Bean
+        MessageSerializer messageSerializer() {
             return new MessageSerializer() {
-
-                @Override
-                public Message deserialize(byte[] serializedMessage) throws Exception.FailedDeserialize {
-                    try {
-                        final var dto = MessageDTO.getDecoder().decode(serializedMessage);
-
-                        return new Message(
-                            dto.getId().toString(),
-                            dto.getType().toString(),
-                            LocalDateTime.now(),
-                            Optional.ofNullable(dto.getCorrelationId()).map(CharSequence::toString),
-                            Optional.ofNullable(dto.getReplyToId()).map(CharSequence::toString),
-                            dto.getPayload()
-                        );
-                    } catch (IOException e) {
-                        throw new Exception.FailedDeserialize(e);
-                    }
-                }
 
                 @Override
                 public byte[] serialize(Message message) throws Exception.FailedSerialize {
@@ -252,7 +258,31 @@ public class KafkaMessageBusTests {
         }
 
         @Bean
-        CustomTopologyForTopic customTopologyForTopic(Serde<Message> valueSerde, Serde<JoinedMessage> joinedMessageSerde) {
+        MessageDeserializer messageDeserializer() {
+            return new MessageDeserializer() {
+
+                @Override
+                public Message deserialize(byte[] serializedMessage) throws MessageSerializer.Exception {
+                    try {
+                        final var dto = MessageDTO.getDecoder().decode(serializedMessage);
+
+                        return new Message(
+                            dto.getId().toString(),
+                            dto.getType().toString(),
+                            LocalDateTime.now(),
+                            Optional.ofNullable(dto.getCorrelationId()).map(CharSequence::toString),
+                            Optional.ofNullable(dto.getReplyToId()).map(CharSequence::toString),
+                            dto.getPayload()
+                        );
+                    } catch (IOException e) {
+                        throw new Exception.FailedDeserialize(e);
+                    }
+                }
+            };
+        }
+
+        @Bean
+        CustomTopologyForTopic customTopologyForTopic(Serde<Message> valueSerde) {
             return new CustomTopologyForTopic(
                 TOPIC_WITH_JOIN,
                 (String topic, Optional<Set<String>> messageTypes, Consumer<Message> consumer) -> {

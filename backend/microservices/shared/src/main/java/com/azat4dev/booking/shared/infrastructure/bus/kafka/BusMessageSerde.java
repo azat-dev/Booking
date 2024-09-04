@@ -1,5 +1,8 @@
-package com.azat4dev.booking.shared.infrastructure.bus;
+package com.azat4dev.booking.shared.infrastructure.bus.kafka;
 
+import com.azat4dev.booking.shared.infrastructure.bus.Message;
+import com.azat4dev.booking.shared.infrastructure.bus.serialization.MessageDeserializer;
+import com.azat4dev.booking.shared.infrastructure.bus.serialization.MessageSerializer;
 import lombok.AllArgsConstructor;
 import org.apache.kafka.common.serialization.Deserializer;
 import org.apache.kafka.common.serialization.Serde;
@@ -9,6 +12,7 @@ import org.apache.kafka.common.serialization.Serializer;
 public class BusMessageSerde implements Serde<Message> {
 
     private final MessageSerializer messageSerializer;
+    private final MessageDeserializer messageDeserializer;
 
     @Override
     public Serializer<Message> serializer() {
@@ -26,7 +30,7 @@ public class BusMessageSerde implements Serde<Message> {
         return new Deserializer<Message>() {
             @Override
             public Message deserialize(String topic, byte[] data) {
-                return messageSerializer.deserialize(data);
+                return messageDeserializer.deserialize(data);
             }
         };
     }

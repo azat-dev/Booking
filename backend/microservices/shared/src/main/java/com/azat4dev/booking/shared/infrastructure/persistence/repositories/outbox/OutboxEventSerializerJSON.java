@@ -1,8 +1,9 @@
 package com.azat4dev.booking.shared.infrastructure.persistence.repositories.outbox;
 
-import com.azat4dev.booking.shared.infrastructure.bus.MessageSerializer;
-import com.azat4dev.booking.shared.infrastructure.serializers.MapAnyDomainEvent;
 import com.azat4dev.booking.shared.domain.events.DomainEventPayload;
+import com.azat4dev.booking.shared.infrastructure.bus.serialization.MessageDeserializer;
+import com.azat4dev.booking.shared.infrastructure.bus.serialization.MessageSerializer;
+import com.azat4dev.booking.shared.infrastructure.serializers.MapAnyDomainEvent;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import lombok.AllArgsConstructor;
@@ -23,7 +24,7 @@ public final class OutboxEventSerializerJSON implements OutboxEventSerializer {
             log.atError()
                 .addArgument(eventType)
                 .log("Can't find dto class for: eventType={}");
-            throw new MessageSerializer.Exception.FailedDeserialize(
+            throw new MessageDeserializer.Exception.FailedDeserialize(
                 new RuntimeException("Can't find dto class for: eventType=" + eventType)
             );
         }
@@ -32,7 +33,7 @@ public final class OutboxEventSerializerJSON implements OutboxEventSerializer {
             final var dto = objectMapper.readValue(serializedEvent, dtoClass);
             return mapEvent.fromDTO(dto);
         } catch (JsonProcessingException e) {
-            throw new MessageSerializer.Exception.FailedDeserialize(e);
+            throw new MessageDeserializer.Exception.FailedDeserialize(e);
         }
     }
 
