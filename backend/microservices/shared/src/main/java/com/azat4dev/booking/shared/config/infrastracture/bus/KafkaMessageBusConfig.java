@@ -102,8 +102,6 @@ public class KafkaMessageBusConfig {
             kafkaStreamsConfiguration.asProperties()
         );
 
-        streams.start();
-
         return streams;
     }
 

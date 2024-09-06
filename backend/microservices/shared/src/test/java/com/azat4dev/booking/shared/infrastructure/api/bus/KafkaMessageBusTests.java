@@ -28,8 +28,6 @@ import org.apache.kafka.streams.kstream.Consumed;
 import org.apache.kafka.streams.kstream.Joined;
 import org.apache.kafka.streams.kstream.KStream;
 import org.apache.kafka.streams.kstream.Materialized;
-import org.awaitility.Awaitility;
-import org.hamcrest.Matchers;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -52,6 +50,7 @@ import java.util.UUID;
 import java.util.concurrent.atomic.AtomicReference;
 import java.util.function.Consumer;
 
+import static com.azat4dev.booking.shared.helpers.Helpers.waitForValue;
 import static org.assertj.core.api.Assertions.assertThat;
 
 @EnableKafka
@@ -123,10 +122,7 @@ public class KafkaMessageBusTests {
         );
 
         // Then
-        Awaitility.await()
-            .pollInterval(Duration.ofMillis(1))
-            .atMost(Duration.ofSeconds(1000))
-            .untilAtomic(receivedMessageStore, Matchers.notNullValue());
+        waitForValue(receivedMessageStore, Duration.ofSeconds(1));
 
         final var receivedMessage = receivedMessageStore.get();
         assertThat(receivedMessage.payload()).isEqualTo(message.payload());
@@ -164,10 +160,7 @@ public class KafkaMessageBusTests {
         );
 
         // Then
-        Awaitility.await()
-            .pollInterval(Duration.ofMillis(1))
-            .atMost(Duration.ofSeconds(1000))
-            .untilAtomic(receivedMessageStore, Matchers.notNullValue());
+        waitForValue(receivedMessageStore, Duration.ofSeconds(1));
 
         final var expected = new JoinedMessageDTO(message1.id(), message2.id());
 
@@ -236,33 +229,27 @@ public class KafkaMessageBusTests {
 
         @Bean
         Serde<JoinedMessageDTO> joinedMessageSerde(ObjectMapper objectMapper) {
-            return new Serde<JoinedMessageDTO>() {
+            return new Serde<>() {
                 @Override
                 public Serializer<JoinedMessageDTO> serializer() {
-                    return new Serializer<JoinedMessageDTO>() {
-                        @Override
-                        public byte[] serialize(String s, JoinedMessageDTO joinedMessage) {
-                            try {
-                                return objectMapper.writeValueAsBytes(joinedMessage);
-                            } catch (JsonProcessingException e) {
-                                throw new RuntimeException(e);
-                            }
+                    return (s, joinedMessage) -> {
+                        try {
+                            return objectMapper.writeValueAsBytes(joinedMessage);
+                        } catch (JsonProcessingException e) {
+                            throw new RuntimeException(e);
                         }
                     };
                 }
 
                 @Override
                 public Deserializer<JoinedMessageDTO> deserializer() {
-                    return new Deserializer<JoinedMessageDTO>() {
-                        @Override
-                        public JoinedMessageDTO deserialize(String s, byte[] bytes) {
-                            try {
-                                return objectMapper.readValue(bytes, JoinedMessageDTO.class);
-                            } catch (JsonProcessingException e) {
-                                throw new RuntimeException(e);
-                            } catch (IOException e) {
-                                throw new RuntimeException(e);
-                            }
+                    return (s, bytes) -> {
+                        try {
+                            return objectMapper.readValue(bytes, JoinedMessageDTO.class);
+                        } catch (JsonProcessingException e) {
+                            throw new RuntimeException(e);
+                        } catch (IOException e) {
+                            throw new RuntimeException(e);
                         }
                     };
                 }
@@ -310,24 +297,20 @@ public class KafkaMessageBusTests {
 
         @Bean
         MessageDeserializer messageDeserializer() {
-            return new MessageDeserializer() {
+            return serializedMessage -> {
+                try {
+                    final var dto = MessageDTO.getDecoder().decode(serializedMessage);
 
-                @Override
-                public Message deserialize(byte[] serializedMessage) throws MessageSerializer.Exception {
-                    try {
-                        final var dto = MessageDTO.getDecoder().decode(serializedMessage);
-
-                        return new Message(
-                            dto.getId().toString(),
-                            dto.getType().toString(),
-                            LocalDateTime.now(),
-                            Optional.ofNullable(dto.getCorrelationId()).map(CharSequence::toString),
-                            Optional.ofNullable(dto.getReplyToId()).map(CharSequence::toString),
-                            dto.getPayload()
-                        );
-                    } catch (IOException e) {
-                        throw new Exception.FailedDeserialize(e);
-                    }
+                    return new Message(
+                        dto.getId().toString(),
+                        dto.getType().toString(),
+                        LocalDateTime.now(),
+                        Optional.ofNullable(dto.getCorrelationId()).map(CharSequence::toString),
+                        Optional.ofNullable(dto.getReplyToId()).map(CharSequence::toString),
+                        dto.getPayload()
+                    );
+                } catch (IOException e) {
+                    throw new MessageDeserializer.Exception.FailedDeserialize(e);
                 }
             };
         }

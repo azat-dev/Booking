@@ -21,8 +21,6 @@ import com.azat4dev.booking.shared.infrastructure.bus.serialization.MessageDeser
 import com.azat4dev.booking.shared.infrastructure.bus.serialization.MessageSerializer;
 import com.azat4dev.booking.shared.infrastructure.serializers.MapDomainEvent;
 import org.apache.kafka.clients.admin.NewTopic;
-import org.awaitility.Awaitility;
-import org.hamcrest.Matchers;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -45,6 +43,7 @@ import java.util.UUID;
 import java.util.concurrent.atomic.AtomicReference;
 import java.util.function.Consumer;
 
+import static com.azat4dev.booking.shared.helpers.Helpers.waitForValue;
 import static org.assertj.core.api.Assertions.assertThat;
 
 @EnableKafka
@@ -97,10 +96,7 @@ public class ConnectPoliciesTests {
         bus.publish(event);
 
         // Then
-        Awaitility.await()
-            .pollInterval(Duration.ofMillis(1))
-            .atMost(Duration.ofSeconds(1000))
-            .untilAtomic(receivedEventStore, Matchers.notNullValue());
+        waitForValue(receivedEventStore, Duration.ofSeconds(1));
 
         final var receivedEvent = receivedEventStore.get();
         assertThat(receivedEvent).isEqualTo(event);
@@ -121,8 +117,6 @@ public class ConnectPoliciesTests {
     @TestConfiguration
     public static class TestConfig {
 
-        @Autowired
-        KafkaAdmin admin;
 
         @Bean("policyCallback")
         AtomicReference<Consumer<TestDomainEvent>> policyCallback() {
