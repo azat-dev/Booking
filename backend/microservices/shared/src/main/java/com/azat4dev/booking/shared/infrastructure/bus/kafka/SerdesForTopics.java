@@ -13,11 +13,13 @@ public class SerdesForTopics {
     private final MessageDeserializersForTopics deserializers;
 
     public Serde<Message> getForTopic(String topic) {
-        return new BusMessageSerde(
+        return new MessageSerde(
             serializers.getForTopic(topic)
-                .orElseThrow(() -> new RuntimeException("There is no serializer for topic: " + topic)),
+                .orElseThrow(() -> new RuntimeException("There is no serializer for topic: " + topic
+                    + ". Provide it by using CustomMessageSerializerForTopics bean")),
             deserializers.getForTopic(topic)
-                .orElseThrow(() -> new RuntimeException("There is no serializer for topic: " + topic))
+                .orElseThrow(() -> new RuntimeException("There is no serializer for topic: " + topic +
+                    ". Provide it by using CustomMessageDeserializerForTopics bean"))
         );
     }
 }

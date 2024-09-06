@@ -3,10 +3,7 @@ package com.azat4dev.booking.shared.infrastructure.bus;
 import lombok.AccessLevel;
 import lombok.AllArgsConstructor;
 
-import java.io.Closeable;
 import java.util.Optional;
-import java.util.Set;
-import java.util.function.Consumer;
 
 public interface MessageBus {
 
@@ -16,16 +13,6 @@ public interface MessageBus {
         Data<P> message
     );
 
-    Closeable listen(
-        String topic,
-        Consumer<Message> consumer
-    );
-
-    Closeable listen(
-        String topic,
-        Set<String> messageTypes,
-        Consumer<Message> consumer
-    );
 
     @AllArgsConstructor(access = AccessLevel.PRIVATE)
     class Data<P> {
@@ -40,7 +27,7 @@ public interface MessageBus {
         }
 
         public static <P> Data<P> with(String messageId, String messageType,
-           Optional<String> correlationId, Optional<String> replyTo, P payload) {
+                                       Optional<String> correlationId, Optional<String> replyTo, P payload) {
             return new Data<>(messageId, messageType, correlationId, replyTo, payload);
         }
 

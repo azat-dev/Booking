@@ -1,22 +1,26 @@
 package com.azat4dev.booking.shared.config.infrastracture.bus;
 
-import com.azat4dev.booking.shared.infrastructure.bus.*;
-import com.azat4dev.booking.shared.infrastructure.bus.kafka.*;
-import com.azat4dev.booking.shared.infrastructure.bus.serialization.*;
-import com.azat4dev.booking.shared.infrastructure.serializers.Serializer;
+import com.azat4dev.booking.shared.infrastructure.bus.MessageBus;
+import com.azat4dev.booking.shared.infrastructure.bus.kafka.KafkaMessageBus;
+import com.azat4dev.booking.shared.infrastructure.bus.serialization.CustomMessageDeserializerForTopics;
+import com.azat4dev.booking.shared.infrastructure.bus.serialization.CustomMessageSerializerForTopics;
+import com.azat4dev.booking.shared.infrastructure.bus.serialization.MessageDeserializersForTopics;
+import com.azat4dev.booking.shared.infrastructure.bus.serialization.MessageSerializersForTopics;
 import com.azat4dev.booking.shared.utils.TimeProvider;
 import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.kafka.clients.CommonClientConfigs;
 import org.apache.kafka.clients.producer.ProducerConfig;
 import org.apache.kafka.common.serialization.ByteArraySerializer;
-import org.apache.kafka.common.serialization.Serde;
+import org.apache.kafka.streams.KafkaStreams;
+import org.apache.kafka.streams.Topology;
 import org.springframework.beans.factory.ObjectProvider;
 import org.springframework.boot.autoconfigure.kafka.DefaultKafkaProducerFactoryCustomizer;
 import org.springframework.boot.autoconfigure.kafka.KafkaProperties;
 import org.springframework.boot.ssl.SslBundles;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.context.annotation.Import;
 import org.springframework.kafka.annotation.EnableKafka;
 import org.springframework.kafka.annotation.EnableKafkaStreams;
 import org.springframework.kafka.config.KafkaStreamsConfiguration;
@@ -25,12 +29,14 @@ import org.springframework.kafka.core.KafkaAdmin;
 import org.springframework.kafka.core.KafkaTemplate;
 import org.springframework.kafka.core.ProducerFactory;
 
-import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 
 @Slf4j
+@Import({
+    KafkaTopologyConfig.class
+})
 @EnableKafka
 @EnableKafkaStreams
 @Configuration
@@ -38,7 +44,6 @@ import java.util.Optional;
 public class KafkaMessageBusConfig {
 
     private final TimeProvider timeProvider;
-    private final Serializer<LocalDateTime, String> mapLocalDateTime;
 
     @Bean
     public ProducerFactory<?, ?> kafkaProducerFactory(
@@ -68,41 +73,10 @@ public class KafkaMessageBusConfig {
         return factory;
     }
 
-
-    @Bean
-    KafkaMessageBus.LocalDateTimeSerializer localDateTimeSerializer() {
-        return new KafkaMessageBus.LocalDateTimeSerializer() {
-            @Override
-            public String serialize(LocalDateTime time) {
-                return mapLocalDateTime.serialize(time);
-            }
-
-            @Override
-            public LocalDateTime deserialize(String time) {
-                return mapLocalDateTime.deserialize(time);
-            }
-        };
-    }
-
-    @Bean
-    GetNumberOfConsumersForTopic getNumberOfConsumersForTopic() {
-        return topic -> 3;
-    }
-
-    @Bean
-    CustomTopologyFactoriesForTopics customTopologyFactoriesForTopics(
-        List<CustomTopologyForTopic> customTopologyForTopics
-    ) {
-        return new CustomTopologyFactoriesForTopics(customTopologyForTopics);
-    }
-
     @Bean
     MessageBus messageBus(
         MessageSerializersForTopics messageSerializers,
         KafkaAdmin kafkaAdmin,
-        DefaultMakeTopologyForTopic makeTopologyForTopic,
-        CustomTopologyFactoriesForTopics customTopologyFactoriesForTopics,
-        KafkaStreamsConfiguration kafkaStreamsConfiguration,
         KafkaTemplate<String, byte[]> kafkaTemplate
     ) {
 
@@ -112,22 +86,25 @@ public class KafkaMessageBusConfig {
         return new KafkaMessageBus(
             messageSerializers,
             kafkaTemplate,
-            timeProvider,
-            customTopologyFactoriesForTopics,
-            makeTopologyForTopic,
-            kafkaStreamsConfiguration.asProperties()
+            timeProvider
         );
     }
 
     @Bean
-    Serde<Message> serde(
-        MessageSerializer messageSerializer,
-        MessageDeserializer messageDeserializer
+    KafkaStreams kafkaStreams(
+        KafkaStreamsConfiguration kafkaStreamsConfiguration,
+        Topology topology,
+        MessageBus messageBus // execute only after messageBus bean is created
     ) {
-        return new BusMessageSerde(
-            messageSerializer,
-            messageDeserializer
+
+        final var streams = new KafkaStreams(
+            topology,
+            kafkaStreamsConfiguration.asProperties()
         );
+
+        streams.start();
+
+        return streams;
     }
 
     @Bean

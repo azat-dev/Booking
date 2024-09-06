@@ -1,6 +1,5 @@
 package com.azat4dev.booking.shared.config.infrastracture.bus;
 
-import com.azat4dev.booking.shared.infrastructure.bus.kafka.DefaultMakeTopologyForTopic;
 import com.azat4dev.booking.shared.infrastructure.bus.kafka.GetSerdeForTopic;
 import com.azat4dev.booking.shared.infrastructure.bus.kafka.SerdesForTopics;
 import com.azat4dev.booking.shared.infrastructure.bus.serialization.MessageDeserializersForTopics;
@@ -26,10 +25,5 @@ public class DefaultMessageBusConfig {
         final var serdes = new SerdesForTopics(serializers, deserializers);
 
         return serdes::getForTopic;
-    }
-
-    @Bean
-    DefaultMakeTopologyForTopic defaultMakeTopologyForTopic(GetSerdeForTopic getSerdeForTopic) {
-        return new DefaultMakeTopologyForTopic(getSerdeForTopic);
     }
 }

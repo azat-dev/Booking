@@ -9,7 +9,7 @@ import org.apache.kafka.common.serialization.Serde;
 import org.apache.kafka.common.serialization.Serializer;
 
 @AllArgsConstructor
-public class BusMessageSerde implements Serde<Message> {
+public class MessageSerde implements Serde<Message> {
 
     private final MessageSerializer messageSerializer;
     private final MessageDeserializer messageDeserializer;

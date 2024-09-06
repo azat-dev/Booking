@@ -1,25 +1,15 @@
 package com.azat4dev.booking.shared.infrastructure.bus;
 
-import com.azat4dev.booking.shared.domain.events.*;
+import com.azat4dev.booking.shared.domain.events.Command;
+import com.azat4dev.booking.shared.domain.events.DomainEventPayload;
+import com.azat4dev.booking.shared.domain.events.EventId;
+import com.azat4dev.booking.shared.domain.events.EventIdGenerator;
 import com.azat4dev.booking.shared.domain.interfaces.bus.DomainEventsBus;
 import com.azat4dev.booking.shared.infrastructure.serializers.MapAnyDomainEvent;
 import io.micrometer.observation.annotation.Observed;
 import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 
-import java.io.Closeable;
-import java.util.Optional;
-import java.util.Set;
-import java.util.function.Consumer;
-
-/**
- * Maps domain events to DTOs and vice versa.
- * Routes  domain events to the correct topic.
- * Publishes domain events to the message bus.
- * Listens to domain events from the message bus.
- *
- * @param <PARTITION_KEY>
- */
 @Slf4j
 @Observed
 @AllArgsConstructor
@@ -56,27 +46,6 @@ public class DefaultDomainEventsBus implements DomainEventsBus {
         this.publish(
             event,
             eventIdGenerator.generate()
-        );
-    }
-
-    @Override
-    public <T extends DomainEventPayload> Closeable listen(Class<T> eventType, Consumer<DomainEvent<T>> consumer) {
-
-        return messageBus.listen(
-            getInputTopicForEvent.execute(eventType),
-            Set.of(eventType.getSimpleName()),
-            message -> {
-
-                final var event = mapEvent.fromDTO(message.payload());
-
-                consumer.accept(
-                    new DomainEvent<T>(
-                        EventId.dangerouslyCreateFrom(message.id()),
-                        message.sentAt(),
-                        (T) event
-                    )
-                );
-            }
         );
     }
 }
