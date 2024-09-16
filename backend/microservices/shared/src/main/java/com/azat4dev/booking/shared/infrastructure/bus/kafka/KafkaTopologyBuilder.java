@@ -12,7 +12,7 @@ import java.util.stream.Collectors;
 public class KafkaTopologyBuilder {
 
     private final StreamsBuilder streamsBuilder;
-    private final GetDefaultStreamFactory getDefaultStreamFactory;
+    private final GetDefaultStreamFactoryForTopic getDefaultStreamFactory;
 
     public void build(
         List<StreamFactoryForTopic> factories,

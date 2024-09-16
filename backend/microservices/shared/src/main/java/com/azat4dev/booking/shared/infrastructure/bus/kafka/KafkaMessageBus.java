@@ -6,7 +6,6 @@ import com.azat4dev.booking.shared.infrastructure.bus.serialization.MessageSeria
 import com.azat4dev.booking.shared.utils.TimeProvider;
 import io.micrometer.observation.annotation.Observed;
 import lombok.AllArgsConstructor;
-import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.kafka.clients.producer.ProducerRecord;
 import org.springframework.kafka.core.KafkaTemplate;

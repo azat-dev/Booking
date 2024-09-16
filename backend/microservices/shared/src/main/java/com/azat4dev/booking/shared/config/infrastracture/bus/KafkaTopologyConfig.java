@@ -1,6 +1,6 @@
 package com.azat4dev.booking.shared.config.infrastracture.bus;
 
-import com.azat4dev.booking.shared.infrastructure.bus.NewTopicListener;
+import com.azat4dev.booking.shared.infrastructure.bus.NewTopicMessageListener;
 import com.azat4dev.booking.shared.infrastructure.bus.NewTopicListeners;
 import com.azat4dev.booking.shared.infrastructure.bus.kafka.*;
 import lombok.AllArgsConstructor;
@@ -17,14 +17,14 @@ import java.util.stream.Stream;
 public class KafkaTopologyConfig {
 
     @Bean
-    GetDefaultStreamFactory getDefaultStreamFactory(GetSerdeForTopic getSerdeForTopic) {
-        return new GetDefaultStreamFactory(getSerdeForTopic);
+    GetDefaultStreamFactoryForTopic getDefaultStreamFactory(GetSerdeForTopic getSerdeForTopic) {
+        return new GetDefaultStreamFactoryForTopic(getSerdeForTopic);
     }
 
     @Bean
     KafkaTopologyBuilder topologyBuilder(
         StreamsBuilder streamsBuilder,
-        GetDefaultStreamFactory getDefaultStreamFactory
+        GetDefaultStreamFactoryForTopic getDefaultStreamFactory
     ) {
         return new KafkaTopologyBuilder(
             streamsBuilder,
@@ -36,7 +36,7 @@ public class KafkaTopologyConfig {
     BeanFactoryPostProcessor topology(
         List<StreamFactoryForTopic> factories,
         KafkaTopologyBuilder topologyBuilder,
-        List<NewTopicListener> topicListeners,
+        List<NewTopicMessageListener> topicListeners,
         List<NewTopicListeners> topicListenersList,
         List<TopicStreamConfigurator> customStreamConfigurators
     ) {

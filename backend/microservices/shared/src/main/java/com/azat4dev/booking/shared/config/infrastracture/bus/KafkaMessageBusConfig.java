@@ -13,17 +13,11 @@ import org.apache.kafka.clients.CommonClientConfigs;
 import org.apache.kafka.clients.producer.ProducerConfig;
 import org.apache.kafka.common.serialization.ByteArraySerializer;
 import org.apache.kafka.common.serialization.Serdes;
-import org.apache.kafka.streams.KeyValue;
-import org.apache.kafka.streams.StreamsBuilder;
 import org.apache.kafka.streams.StreamsConfig;
-import org.apache.kafka.streams.kstream.*;
 import org.apache.kafka.streams.processor.WallclockTimestampExtractor;
-import org.springframework.beans.factory.FactoryBean;
 import org.springframework.beans.factory.ObjectProvider;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.autoconfigure.kafka.DefaultKafkaProducerFactoryCustomizer;
-import org.springframework.boot.autoconfigure.kafka.KafkaConnectionDetails;
 import org.springframework.boot.autoconfigure.kafka.KafkaProperties;
 import org.springframework.boot.ssl.SslBundles;
 import org.springframework.context.annotation.Bean;
@@ -33,14 +27,12 @@ import org.springframework.kafka.annotation.EnableKafka;
 import org.springframework.kafka.annotation.EnableKafkaStreams;
 import org.springframework.kafka.annotation.KafkaStreamsDefaultConfiguration;
 import org.springframework.kafka.config.KafkaStreamsConfiguration;
-import org.springframework.kafka.config.StreamsBuilderFactoryBean;
 import org.springframework.kafka.config.StreamsBuilderFactoryBeanConfigurer;
 import org.springframework.kafka.core.DefaultKafkaProducerFactory;
 import org.springframework.kafka.core.KafkaAdmin;
 import org.springframework.kafka.core.KafkaTemplate;
 import org.springframework.kafka.core.ProducerFactory;
 
-import java.time.Duration;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -85,16 +77,22 @@ public class KafkaMessageBusConfig {
     }
 
     @Bean
-    MessageBus messageBus(
-        MessageSerializersForTopics messageSerializers,
-        KafkaAdmin kafkaAdmin,
-        KafkaTemplate<String, byte[]> kafkaTemplate,
-        TimeProvider timeProvider
+    InitializedTopics initializedTopics(
+        KafkaAdmin kafkaAdmin
     ) {
-
         kafkaAdmin.setAutoCreate(false);
         kafkaAdmin.initialize();
 
+        return new InitializedTopics();
+    }
+
+    @Bean
+    MessageBus messageBus(
+        InitializedTopics initializedTopics,
+        MessageSerializersForTopics messageSerializers,
+        KafkaTemplate<String, byte[]> kafkaTemplate,
+        TimeProvider timeProvider
+    ) {
         return new KafkaMessageBus(
             messageSerializers,
             kafkaTemplate,
@@ -133,4 +131,6 @@ public class KafkaMessageBusConfig {
             System.out.println("State transition from " + oldState + " to " + newState);
         });
     }
+
+    public static class InitializedTopics {}
 }

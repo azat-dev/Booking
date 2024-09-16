@@ -3,7 +3,7 @@ package com.azat4dev.booking.shared.config.domain;
 import com.azat4dev.booking.shared.domain.CommandHandler;
 import com.azat4dev.booking.shared.infrastructure.bus.GetInputTopicForEvent;
 import com.azat4dev.booking.shared.infrastructure.bus.MessageListenerForCommandHandler;
-import com.azat4dev.booking.shared.infrastructure.bus.NewTopicListener;
+import com.azat4dev.booking.shared.infrastructure.bus.NewTopicMessageListener;
 import com.azat4dev.booking.shared.infrastructure.bus.NewTopicListeners;
 import com.azat4dev.booking.shared.infrastructure.serializers.MapAnyDomainEvent;
 import org.springframework.context.annotation.Bean;
@@ -17,19 +17,19 @@ import java.util.Set;
 @Configuration
 public class ConnectCommandHandlersConfig {
 
-    private List<NewTopicListener> getCommandListeners(
+    private List<NewTopicMessageListener> getCommandListeners(
         List<CommandHandler> commandHandlers,
         GetInputTopicForEvent getInputTopicForEvent,
         MapAnyDomainEvent mapEvent
     ) {
 
-        final var result = new LinkedList<NewTopicListener>();
+        final var result = new LinkedList<NewTopicMessageListener>();
 
         for (final var commandHandler : commandHandlers) {
 
             final var commandType = commandHandler.getCommandClass();
 
-            final var listener = new NewTopicListener(
+            final var listener = new NewTopicMessageListener(
                 getInputTopicForEvent.execute(commandType),
                 Optional.of(Set.of(commandType.getSimpleName())),
                 new MessageListenerForCommandHandler(

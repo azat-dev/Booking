@@ -10,8 +10,8 @@ import org.springframework.context.annotation.Import;
 
 @Import({
     KafkaMessageBusConfig.class,
-    CombineOneToOneRelationsOfDtoClassesAndMessageTypesConfig.class,
-    CollectOneToOneRelationsOfDtoClassesAndMessageTypesForDomainEventsConfig.class,
+    CombineRelationsOfDtoClassesAndMessageTypesConfig.class,
+    CollectRelationsOfDtoClassesAndMessageTypesForDomainEventsConfig.class,
     DefaultMapAnyDomainEventConfig.class
 })
 @Configuration

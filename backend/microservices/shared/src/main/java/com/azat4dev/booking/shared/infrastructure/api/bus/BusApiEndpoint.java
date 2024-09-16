@@ -29,6 +29,8 @@ public interface BusApiEndpoint<T> {
 
     MessageInfo[] getResponseMessagesInfo();
 
+    boolean isMessageTypeAllowed(String messageType);
+
     record MessageInfo(
         String messageType,
         Class<?> messageClass

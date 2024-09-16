@@ -4,7 +4,7 @@ import lombok.AllArgsConstructor;
 import org.apache.kafka.common.serialization.Serdes;
 
 @AllArgsConstructor
-public class GetDefaultStreamFactory {
+public class GetDefaultStreamFactoryForTopic {
 
     private final GetSerdeForTopic getSerdeForTopic;
 

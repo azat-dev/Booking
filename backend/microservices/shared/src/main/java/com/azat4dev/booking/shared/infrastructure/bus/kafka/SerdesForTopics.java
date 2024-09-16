@@ -7,7 +7,7 @@ import lombok.AllArgsConstructor;
 import org.apache.kafka.common.serialization.Serde;
 
 @AllArgsConstructor
-public class SerdesForTopics {
+public final class SerdesForTopics {
 
     private final MessageSerializersForTopics serializers;
     private final MessageDeserializersForTopics deserializers;

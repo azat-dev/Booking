@@ -10,7 +10,7 @@ import com.azat4dev.booking.shared.generated.dto.TestMessageDTO;
 import com.azat4dev.booking.shared.helpers.EnableTestcontainers;
 import com.azat4dev.booking.shared.infrastructure.bus.Message;
 import com.azat4dev.booking.shared.infrastructure.bus.MessageBus;
-import com.azat4dev.booking.shared.infrastructure.bus.NewTopicListener;
+import com.azat4dev.booking.shared.infrastructure.bus.NewTopicMessageListener;
 import com.azat4dev.booking.shared.infrastructure.bus.kafka.GetSerdeForTopic;
 import com.azat4dev.booking.shared.infrastructure.bus.kafka.StreamFactoryForTopic;
 import com.azat4dev.booking.shared.infrastructure.bus.serialization.CustomMessageDeserializerForTopics;
@@ -40,6 +40,7 @@ import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Import;
 import org.springframework.kafka.annotation.EnableKafka;
 import org.springframework.kafka.core.KafkaAdmin;
+import org.springframework.test.annotation.DirtiesContext;
 
 import java.io.IOException;
 import java.time.Duration;
@@ -53,6 +54,7 @@ import java.util.function.Consumer;
 import static com.azat4dev.booking.shared.helpers.Helpers.waitForValue;
 import static org.assertj.core.api.Assertions.assertThat;
 
+@DirtiesContext
 @EnableKafka
 @Import({
     DefaultMessageBusConfig.class,
@@ -202,11 +204,11 @@ public class KafkaMessageBusTests {
         }
 
         @Bean
-        NewTopicListener simpleTopicListener(
+        NewTopicMessageListener simpleTopicListener(
             @Qualifier("simpleTopicListenerCallback")
             AtomicReference<Consumer<Message>> simpleTopicListenerCallback
         ) {
-            return new NewTopicListener(
+            return new NewTopicMessageListener(
                 SIMPLE_TOPIC,
                 message -> {
                     simpleTopicListenerCallback.get().accept(message);
@@ -215,11 +217,11 @@ public class KafkaMessageBusTests {
         }
 
         @Bean
-        NewTopicListener topicWithJoinListener(
+        NewTopicMessageListener topicWithJoinListener(
             @Qualifier("topicWithJoinListenerCallback")
             AtomicReference<Consumer<Message>> topicWithJoinListenerCallback
         ) {
-            return new NewTopicListener(
+            return new NewTopicMessageListener(
                 TOPIC_WITH_JOIN,
                 message -> {
                     topicWithJoinListenerCallback.get().accept(message);

@@ -1,10 +1,11 @@
 package com.azat4dev.booking.shared.infrastructure.api.bus;
 
 
+import com.azat4dev.booking.shared.config.domain.AutoConnectPoliciesToBus;
 import com.azat4dev.booking.shared.config.domain.ConnectPoliciesConfig;
 import com.azat4dev.booking.shared.config.infrastracture.bus.DefaultDomainEventsBusConfig;
 import com.azat4dev.booking.shared.config.infrastracture.bus.DefaultMessageBusConfig;
-import com.azat4dev.booking.shared.config.infrastracture.bus.utils.OneToOneRelationsOfDtoClassesAndMessageTypes;
+import com.azat4dev.booking.shared.config.infrastracture.bus.utils.RelationsOfDtoClassesAndMessageTypes;
 import com.azat4dev.booking.shared.config.infrastracture.serializers.DefaultTimeSerializerConfig;
 import com.azat4dev.booking.shared.config.infrastracture.services.DefaultTimeProviderConfig;
 import com.azat4dev.booking.shared.domain.Policy;
@@ -34,6 +35,7 @@ import org.springframework.context.annotation.Import;
 import org.springframework.kafka.annotation.EnableKafka;
 import org.springframework.kafka.annotation.EnableKafkaStreams;
 import org.springframework.kafka.core.KafkaAdmin;
+import org.springframework.test.annotation.DirtiesContext;
 
 import java.io.IOException;
 import java.time.Duration;
@@ -47,14 +49,15 @@ import java.util.function.Consumer;
 import static com.azat4dev.booking.shared.helpers.Helpers.waitForValue;
 import static org.assertj.core.api.Assertions.assertThat;
 
+@DirtiesContext
+@AutoConnectPoliciesToBus
 @EnableKafka
 @EnableKafkaStreams
 @Import({
     DefaultDomainEventsBusConfig.class,
     DefaultMessageBusConfig.class,
     DefaultTimeProviderConfig.class,
-    DefaultTimeSerializerConfig.class,
-    ConnectPoliciesConfig.class
+    DefaultTimeSerializerConfig.class
 })
 @EnableTestcontainers
 @SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.NONE)
@@ -119,7 +122,6 @@ public class ConnectPoliciesTests {
     @TestConfiguration
     public static class TestConfig {
 
-
         @Bean("policyCallback")
         AtomicReference<Consumer<TestDomainEvent>> policyCallback() {
             return new AtomicReference<>();
@@ -151,9 +153,9 @@ public class ConnectPoliciesTests {
         }
 
         @Bean
-        OneToOneRelationsOfDtoClassesAndMessageTypes oneToOneRelationsOfDtoClassesAndMessageTypes() {
-            return new OneToOneRelationsOfDtoClassesAndMessageTypes(
-                new OneToOneRelationsOfDtoClassesAndMessageTypes.Item("TestDomainEvent", TestMessageDTO.class)
+        RelationsOfDtoClassesAndMessageTypes oneToOneRelationsOfDtoClassesAndMessageTypes() {
+            return new RelationsOfDtoClassesAndMessageTypes(
+                new RelationsOfDtoClassesAndMessageTypes.Item("TestDomainEvent", TestMessageDTO.class)
             );
         }
 

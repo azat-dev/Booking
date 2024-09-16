@@ -1,12 +1,15 @@
 package com.azat4dev.booking.shared.helpers;
 
+import org.junit.jupiter.api.AfterAll;
 import org.springframework.boot.test.util.TestPropertyValues;
 import org.springframework.context.ApplicationContextInitializer;
 import org.springframework.context.ConfigurableApplicationContext;
+import org.springframework.test.annotation.DirtiesContext;
 import org.testcontainers.containers.KafkaContainer;
 import org.testcontainers.lifecycle.Startables;
 import org.testcontainers.utility.DockerImageName;
 
+@DirtiesContext
 class KafkaTestContainerInitializer implements ApplicationContextInitializer<ConfigurableApplicationContext> {
 
     static KafkaContainer kafka = new KafkaContainer(DockerImageName.parse("confluentinc/cp-kafka:5.4.3"));
@@ -21,5 +24,10 @@ class KafkaTestContainerInitializer implements ApplicationContextInitializer<Con
         TestPropertyValues.of(
             "spring.kafka.bootstrap-servers=" + kafka.getBootstrapServers()
             ).applyTo(ctx.getEnvironment());
+    }
+
+    @AfterAll
+    public static void deinit() {
+        kafka.close();
     }
 }

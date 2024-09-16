@@ -1,8 +1,8 @@
 package com.azat4dev.booking.shared.config.infrastracture.api;
 
 
-import com.azat4dev.booking.shared.config.infrastracture.bus.utils.ItemsToAddInOneToOneRelationsOfDtoClassesAndMessageTypes;
-import com.azat4dev.booking.shared.config.infrastracture.bus.utils.OneToOneRelationsOfDtoClassesAndMessageTypes;
+import com.azat4dev.booking.shared.config.infrastracture.bus.utils.NewRelationsOfDtoClassesAndMessageTypes;
+import com.azat4dev.booking.shared.config.infrastracture.bus.utils.RelationsOfDtoClassesAndMessageTypes;
 import com.azat4dev.booking.shared.infrastructure.api.bus.BusApiEndpoint;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -13,9 +13,9 @@ import java.util.List;
 @Configuration
 public class BusApiEndpointsItemsToAddInOneToOneRelationsOfDtoClassesAndMessageTypesConfig {
     @Bean
-    public ItemsToAddInOneToOneRelationsOfDtoClassesAndMessageTypes addItems(List<BusApiEndpoint> endpoints) {
+    public NewRelationsOfDtoClassesAndMessageTypes addItems(List<BusApiEndpoint> endpoints) {
 
-        final var items = new ItemsToAddInOneToOneRelationsOfDtoClassesAndMessageTypes();
+        final var items = new NewRelationsOfDtoClassesAndMessageTypes();
 
         for (var endpoint : endpoints) {
 
@@ -23,7 +23,7 @@ public class BusApiEndpointsItemsToAddInOneToOneRelationsOfDtoClassesAndMessageT
 
             Arrays.stream(inputMessageInfo)
                 .forEach(messageInfo -> items.add(
-                    new OneToOneRelationsOfDtoClassesAndMessageTypes.Item(
+                    new RelationsOfDtoClassesAndMessageTypes.Item(
                         messageInfo.messageType(),
                         messageInfo.messageClass()
                     )
@@ -32,7 +32,7 @@ public class BusApiEndpointsItemsToAddInOneToOneRelationsOfDtoClassesAndMessageT
             for (var responseMessageInfo : endpoint.getResponseMessagesInfo()) {
 
                 items.add(
-                    new OneToOneRelationsOfDtoClassesAndMessageTypes.Item(
+                    new RelationsOfDtoClassesAndMessageTypes.Item(
                         responseMessageInfo.messageType(),
                         responseMessageInfo.messageClass()
                     )

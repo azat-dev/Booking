@@ -1,26 +1,22 @@
 package com.azat4dev.booking.shared.infrastructure.api.bus;
 
 
-import com.azat4dev.booking.shared.config.domain.AutoConnectCommandHandlersToBus;
-import com.azat4dev.booking.shared.config.infrastracture.bus.DefaultDomainEventsBusConfig;
+import com.azat4dev.booking.shared.config.infrastracture.api.AutoConnectApiEndpointsToBus;
 import com.azat4dev.booking.shared.config.infrastracture.bus.DefaultMessageBusConfig;
-import com.azat4dev.booking.shared.config.infrastracture.bus.utils.RelationsOfDtoClassesAndMessageTypes;
 import com.azat4dev.booking.shared.config.infrastracture.serializers.DefaultTimeSerializerConfig;
 import com.azat4dev.booking.shared.config.infrastracture.services.DefaultTimeProviderConfig;
-import com.azat4dev.booking.shared.domain.CommandHandler;
-import com.azat4dev.booking.shared.domain.events.Command;
-import com.azat4dev.booking.shared.domain.events.DomainEventPayload;
-import com.azat4dev.booking.shared.domain.events.EventId;
-import com.azat4dev.booking.shared.domain.interfaces.bus.DomainEventsBus;
+import com.azat4dev.booking.shared.domain.events.EventIdGenerator;
+import com.azat4dev.booking.shared.domain.events.RandomEventIdGenerator;
 import com.azat4dev.booking.shared.generated.dto.MessageDTO;
 import com.azat4dev.booking.shared.generated.dto.TestMessageDTO;
 import com.azat4dev.booking.shared.helpers.EnableTestcontainers;
-import com.azat4dev.booking.shared.infrastructure.bus.*;
+import com.azat4dev.booking.shared.infrastructure.bus.Message;
+import com.azat4dev.booking.shared.infrastructure.bus.MessageBus;
+import com.azat4dev.booking.shared.infrastructure.bus.NewTopicMessageListener;
 import com.azat4dev.booking.shared.infrastructure.bus.serialization.CustomMessageDeserializerForTopics;
 import com.azat4dev.booking.shared.infrastructure.bus.serialization.CustomMessageSerializerForTopics;
 import com.azat4dev.booking.shared.infrastructure.bus.serialization.MessageDeserializer;
 import com.azat4dev.booking.shared.infrastructure.bus.serialization.MessageSerializer;
-import com.azat4dev.booking.shared.infrastructure.serializers.MapDomainEvent;
 import org.apache.kafka.clients.admin.NewTopic;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -52,20 +48,18 @@ import static org.assertj.core.api.Assertions.assertThat;
 @EnableKafka
 @EnableTestcontainers
 @SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.NONE)
-public class ConnectCommandHandlersTests {
+public class ConnectBusApiEndpointsTests {
 
-    private static final String SIMPLE_TOPIC = "simple_topic";
+    private static final String INPUT_TOPIC = "input_topic";
+    private static final String REPLY_TOPIC = "reply_topic";
 
-    @Qualifier("commandHandlerCallback")
+    @Qualifier("endpointCallback")
     @Autowired
-    AtomicReference<Consumer<TestCommand>> commandHandlerCallback;
-
-    @Autowired
-    DomainEventsBus bus;
+    AtomicReference<Consumer<TestMessageDTO>> endpointCallback;
 
     @BeforeEach
     void setUp() {
-        commandHandlerCallback.set(null);
+        endpointCallback.set(null);
     }
 
     @Autowired
@@ -75,27 +69,35 @@ public class ConnectCommandHandlersTests {
         return UUID.randomUUID().toString();
     }
 
-    private TestCommand anyTestEvent() {
-        return new TestCommand(anyDomainEventId());
+    private TestMessageDTO anyTestInputMessage() {
+        return new TestMessageDTO(anyDomainEventId(), "payload");
     }
 
     @Test
-    void test_publish_givenCommandPublished_thenCommandHandlerMustBeTriggered() {
+    void test_publish_givenMessagePublished_thenEndpointMustBeTriggered() {
 
         // Given
-        final var event = anyTestEvent();
+        final var inputMessage = anyTestInputMessage();
 
-        final var receivedEventStore = new AtomicReference<TestCommand>();
-        commandHandlerCallback.set(receivedEventStore::set);
+        final var receivedReplyStore = new AtomicReference<TestMessageDTO>();
+        endpointCallback.set(receivedReplyStore::set);
 
         // When
-        bus.publish(event);
+        messageBus.publish(
+            INPUT_TOPIC,
+            Optional.<String>empty(),
+            MessageBus.Data.with(
+                "messageId",
+                "TestMessage",
+                inputMessage
+            )
+        );
 
         // Then
-        waitForValue(receivedEventStore, Duration.ofSeconds(1));
+        waitForValue(receivedReplyStore, Duration.ofSeconds(1));
 
-        final var receivedEvent = receivedEventStore.get();
-        assertThat(receivedEvent).isEqualTo(event);
+        final var receivedReply = receivedReplyStore.get();
+        assertThat(receivedReply).isEqualTo(inputMessage);
     }
 
     @SpringBootApplication
@@ -106,87 +108,76 @@ public class ConnectCommandHandlersTests {
         }
     }
 
-    public record TestCommand(String value) implements Command {
-    }
-
-    @AutoConnectCommandHandlersToBus
+    @AutoConnectApiEndpointsToBus
     @TestConfiguration
     @Import({
         DefaultMessageBusConfig.class,
         DefaultTimeProviderConfig.class,
-        DefaultDomainEventsBusConfig.class,
-        DefaultTimeSerializerConfig.class
+        DefaultTimeSerializerConfig.class,
     })
     public static class TestConfig {
 
-        @Bean("commandHandlerCallback")
-        AtomicReference<Consumer<TestCommand>> commandHandlerCallback() {
+        @Bean
+        EventIdGenerator eventIdGenerator() {
+            return new RandomEventIdGenerator();
+        }
+
+        @Bean("endpointCallback")
+        AtomicReference<Consumer<TestMessageDTO>> endpointCallback() {
             return new AtomicReference<>();
         }
 
         @Bean
-        MapDomainEvent<TestCommand, TestMessageDTO> mapDomainEvent() {
-            return new MapDomainEvent<TestCommand, TestMessageDTO>() {
-                @Override
-                public TestMessageDTO serialize(TestCommand domain) {
-                    return new TestMessageDTO(domain.value(), "payload");
+        NewTopicMessageListener replyTopicListener() {
+            return new NewTopicMessageListener(
+                REPLY_TOPIC,
+                message -> {
+                    endpointCallback().get().accept(message.payloadAs(TestMessageDTO.class));
                 }
-
-                @Override
-                public TestCommand deserialize(TestMessageDTO dto) {
-                    return new TestCommand(dto.getId().toString());
-                }
-
-                @Override
-                public Class<TestCommand> getOriginalClass() {
-                    return TestCommand.class;
-                }
-
-                @Override
-                public Class<TestMessageDTO> getSerializedClass() {
-                    return TestMessageDTO.class;
-                }
-            };
-        }
-
-        @Bean
-        RelationsOfDtoClassesAndMessageTypes oneToOneRelationsOfDtoClassesAndMessageTypes() {
-            return new RelationsOfDtoClassesAndMessageTypes(
-                new RelationsOfDtoClassesAndMessageTypes.Item("TestCommand", TestMessageDTO.class)
             );
         }
 
         @Bean
-        GetInputTopicForEvent getInputTopicForEvent() {
-            return eventType -> SIMPLE_TOPIC;
-        }
-
-        @Bean
-        GetOutputTopicForEvent getOutputTopicForEvent() {
-            return eventType -> SIMPLE_TOPIC;
-        }
-
-        @Bean
-        GetPartitionKeyForEvent getPartitionKeyForEvent() {
-            return new GetPartitionKeyForEvent() {
+        BusApiEndpoint<TestMessageDTO> testEndpoint() {
+            return new BusApiEndpoint<>() {
                 @Override
-                public <T extends DomainEventPayload> Optional<String> execute(T event) {
-                    return Optional.empty();
-                }
-            };
-        }
-
-        @Bean
-        CommandHandler<TestCommand> testCommandHandler() {
-            return new CommandHandler<>() {
-                @Override
-                public void handle(TestCommand command, EventId eventId, LocalDateTime issuedAt) {
-                    commandHandlerCallback().get().accept(command);
+                public void handle(Request<TestMessageDTO> request, Reply reply) throws Exception {
+                    reply.publish(request.message());
                 }
 
                 @Override
-                public Class<TestCommand> getCommandClass() {
-                    return TestCommand.class;
+                public String getInputAddress() {
+                    return INPUT_TOPIC;
+                }
+
+                @Override
+                public boolean hasDynamicReplyAddress() {
+                    return false;
+                }
+
+                @Override
+                public Optional<String> getStaticReplyAddress() {
+                    return Optional.of(REPLY_TOPIC);
+                }
+
+                @Override
+                public MessageInfo[] getInputMessageInfo() {
+                    return new MessageInfo[]{
+                        new MessageInfo(
+                            "TestMessage",
+                            TestMessageDTO.class
+                        )
+                    };
+                }
+
+                @Override
+                public MessageInfo[] getResponseMessagesInfo() {
+                    return new MessageInfo[0];
+                }
+
+                @Override
+                public boolean isMessageTypeAllowed(String messageType) {
+                    return messageType.equals("TestMessage");
                 }
             };
         }
@@ -194,14 +185,15 @@ public class ConnectCommandHandlersTests {
         @Bean
         KafkaAdmin.NewTopics newTopicList() {
             return new KafkaAdmin.NewTopics(
-                new NewTopic(SIMPLE_TOPIC, 1, (short) 1)
+                new NewTopic(INPUT_TOPIC, 1, (short) 1),
+                new NewTopic(REPLY_TOPIC, 1, (short) 1)
             );
         }
 
         @Bean
-        CustomMessageSerializerForTopics messageSerializerForInputTopic1(MessageSerializer serializer) {
+        CustomMessageSerializerForTopics messageSerializerForInputTopic(MessageSerializer serializer) {
             return new CustomMessageSerializerForTopics(
-                List.of(SIMPLE_TOPIC),
+                List.of(INPUT_TOPIC, REPLY_TOPIC),
                 serializer
             );
         }
@@ -209,7 +201,7 @@ public class ConnectCommandHandlersTests {
         @Bean
         CustomMessageDeserializerForTopics messageDeserializerForTopics(MessageDeserializer deserializer) {
             return new CustomMessageDeserializerForTopics(
-                List.of(SIMPLE_TOPIC),
+                List.of(INPUT_TOPIC, REPLY_TOPIC),
                 deserializer
             );
         }

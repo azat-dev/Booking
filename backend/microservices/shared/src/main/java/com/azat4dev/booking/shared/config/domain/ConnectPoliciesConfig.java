@@ -3,7 +3,7 @@ package com.azat4dev.booking.shared.config.domain;
 import com.azat4dev.booking.shared.domain.Policy;
 import com.azat4dev.booking.shared.infrastructure.bus.GetInputTopicForEvent;
 import com.azat4dev.booking.shared.infrastructure.bus.MessageListenerForPolicy;
-import com.azat4dev.booking.shared.infrastructure.bus.NewTopicListener;
+import com.azat4dev.booking.shared.infrastructure.bus.NewTopicMessageListener;
 import com.azat4dev.booking.shared.infrastructure.bus.NewTopicListeners;
 import com.azat4dev.booking.shared.infrastructure.serializers.MapAnyDomainEvent;
 import org.springframework.context.annotation.Bean;
@@ -17,19 +17,19 @@ import java.util.Set;
 @Configuration
 public class ConnectPoliciesConfig {
 
-    private List<NewTopicListener> getPolicyListeners(
+    private List<NewTopicMessageListener> getPolicyListeners(
         List<Policy<?>> policies,
         GetInputTopicForEvent getInputTopicForEvent,
         MapAnyDomainEvent mapEvent
     ) {
 
-        final var result = new LinkedList<NewTopicListener>();
+        final var result = new LinkedList<NewTopicMessageListener>();
 
         for (final var policy : policies) {
 
             final var eventType = policy.getEventClass();
 
-            final var listener = new NewTopicListener(
+            final var listener = new NewTopicMessageListener(
                 getInputTopicForEvent.execute(eventType),
                 Optional.of(Set.of(eventType.getSimpleName())),
                 new MessageListenerForPolicy(

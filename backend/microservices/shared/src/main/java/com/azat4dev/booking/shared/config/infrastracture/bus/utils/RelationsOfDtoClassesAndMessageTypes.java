@@ -10,12 +10,12 @@ import java.util.List;
 import java.util.Map;
 
 @AllArgsConstructor
-public class OneToOneRelationsOfDtoClassesAndMessageTypes {
+public class RelationsOfDtoClassesAndMessageTypes {
 
     private final Map<String, Class<?>> dtoClassesByMessageTypes;
     private final Map<Class<?>, String> messageTypesByDtoClasses;
 
-    public OneToOneRelationsOfDtoClassesAndMessageTypes(Item... items) {
+    public RelationsOfDtoClassesAndMessageTypes(Item... items) {
 
         dtoClassesByMessageTypes = new HashMap<>();
         messageTypesByDtoClasses = new HashMap<>();
@@ -71,7 +71,7 @@ public class OneToOneRelationsOfDtoClassesAndMessageTypes {
     }
 
     /**
-     * Exceptions for {@link OneToOneRelationsOfDtoClassesAndMessageTypes}
+     * Exceptions for {@link RelationsOfDtoClassesAndMessageTypes}
      */
     public abstract static class Exception extends RuntimeException {
         protected Exception(String message) {
