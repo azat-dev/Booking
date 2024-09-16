@@ -10,7 +10,7 @@ import com.azat4dev.booking.shared.generated.dto.TestMessageDTO;
 import com.azat4dev.booking.shared.helpers.EnableTestcontainers;
 import com.azat4dev.booking.shared.infrastructure.bus.Message;
 import com.azat4dev.booking.shared.infrastructure.bus.MessageBus;
-import com.azat4dev.booking.shared.infrastructure.bus.TopicListener;
+import com.azat4dev.booking.shared.infrastructure.bus.NewTopicListener;
 import com.azat4dev.booking.shared.infrastructure.bus.kafka.GetSerdeForTopic;
 import com.azat4dev.booking.shared.infrastructure.bus.kafka.StreamFactoryForTopic;
 import com.azat4dev.booking.shared.infrastructure.bus.serialization.CustomMessageDeserializerForTopics;
@@ -202,11 +202,11 @@ public class KafkaMessageBusTests {
         }
 
         @Bean
-        TopicListener simpleTopicListener(
+        NewTopicListener simpleTopicListener(
             @Qualifier("simpleTopicListenerCallback")
             AtomicReference<Consumer<Message>> simpleTopicListenerCallback
         ) {
-            return new TopicListener(
+            return new NewTopicListener(
                 SIMPLE_TOPIC,
                 message -> {
                     simpleTopicListenerCallback.get().accept(message);
@@ -215,11 +215,11 @@ public class KafkaMessageBusTests {
         }
 
         @Bean
-        TopicListener topicWithJoinListener(
+        NewTopicListener topicWithJoinListener(
             @Qualifier("topicWithJoinListenerCallback")
             AtomicReference<Consumer<Message>> topicWithJoinListenerCallback
         ) {
-            return new TopicListener(
+            return new NewTopicListener(
                 TOPIC_WITH_JOIN,
                 message -> {
                     topicWithJoinListenerCallback.get().accept(message);

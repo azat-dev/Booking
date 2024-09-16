@@ -2,12 +2,12 @@ package com.azat4dev.booking.shared.domain.producers;
 
 import com.azat4dev.booking.shared.infrastructure.persistence.repositories.outbox.OutboxEventsRepository;
 import io.micrometer.observation.annotation.Observed;
-import lombok.RequiredArgsConstructor;
+import lombok.AllArgsConstructor;
 
 import java.util.List;
 
 @Observed
-@RequiredArgsConstructor
+@AllArgsConstructor
 public class OutboxEventsReaderImpl implements OutboxEventsReader {
 
     private final OutboxEventsRepository outboxEventsRepository;

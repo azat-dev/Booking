@@ -8,7 +8,7 @@ import com.azat4dev.booking.shared.domain.values.files.MediaObjectName;
 import com.azat4dev.booking.shared.domain.values.files.UploadFileFormData;
 import io.minio.*;
 import io.minio.http.Method;
-import lombok.RequiredArgsConstructor;
+import lombok.AllArgsConstructor;
 
 import java.net.MalformedURLException;
 import java.net.URI;
@@ -16,7 +16,7 @@ import java.net.URL;
 import java.time.Duration;
 import java.time.ZonedDateTime;
 
-@RequiredArgsConstructor
+@AllArgsConstructor
 public class MinioMediaObjectsBucket implements MediaObjectsBucket {
 
     private final BaseUrl baseUrl;

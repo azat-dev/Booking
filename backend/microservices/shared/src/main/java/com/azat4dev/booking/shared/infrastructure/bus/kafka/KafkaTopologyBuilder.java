@@ -3,7 +3,6 @@ package com.azat4dev.booking.shared.infrastructure.bus.kafka;
 import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.kafka.streams.StreamsBuilder;
-import org.apache.kafka.streams.Topology;
 
 import java.util.List;
 import java.util.stream.Collectors;
@@ -12,9 +11,10 @@ import java.util.stream.Collectors;
 @AllArgsConstructor
 public class KafkaTopologyBuilder {
 
+    private final StreamsBuilder streamsBuilder;
     private final GetDefaultStreamFactory getDefaultStreamFactory;
 
-    public Topology build(
+    public void build(
         List<StreamFactoryForTopic> factories,
         List<TopicStreamConfigurator> listeners
     ) {
@@ -52,8 +52,6 @@ public class KafkaTopologyBuilder {
                 )
             );
 
-        final var sb = new StreamsBuilder();
-
         for (final var listenerItem : listenersByTopics.entrySet()) {
 
             final var topic = listenerItem.getKey();
@@ -62,7 +60,7 @@ public class KafkaTopologyBuilder {
             final var customFactory = factoriesByTopics.get(topic);
 
             var factory = customFactory != null ? customFactory.factory() : getDefaultStreamFactory.run(topic);
-            final var stream = factory.make(sb);
+            final var stream = factory.make(streamsBuilder);
 
             if (listenersForTopic == null || listenersForTopic.isEmpty()) {
                 continue;
@@ -72,9 +70,5 @@ public class KafkaTopologyBuilder {
                 listener.configurator().configure(stream);
             }
         }
-
-        return sb.build();
     }
-
-
 }

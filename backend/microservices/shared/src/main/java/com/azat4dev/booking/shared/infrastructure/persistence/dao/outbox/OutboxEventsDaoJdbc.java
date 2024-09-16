@@ -1,6 +1,6 @@
 package com.azat4dev.booking.shared.infrastructure.persistence.dao.outbox;
 
-import lombok.RequiredArgsConstructor;
+import lombok.AllArgsConstructor;
 import org.springframework.jdbc.core.RowMapper;
 import org.springframework.jdbc.core.namedparam.NamedParameterJdbcTemplate;
 
@@ -8,7 +8,7 @@ import java.sql.Timestamp;
 import java.util.List;
 import java.util.Map;
 
-@RequiredArgsConstructor
+@AllArgsConstructor
 public final class OutboxEventsDaoJdbc implements OutboxEventsDao {
 
     private final NamedParameterJdbcTemplate jdbcTemplate;
@@ -56,8 +56,8 @@ public final class OutboxEventsDaoJdbc implements OutboxEventsDao {
     public void markAsPublished(List<String> eventIds) {
 
         final var sql = """
-           UPDATE outbox_events SET is_published = TRUE WHERE event_id IN (:event_ids)
-            """;
+            UPDATE outbox_events SET is_published = TRUE WHERE event_id IN (:event_ids)
+             """;
 
         jdbcTemplate.update(
             sql,

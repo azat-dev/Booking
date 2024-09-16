@@ -1,13 +1,14 @@
 package com.azat4dev.booking.shared.infrastructure.api.bus;
 
 
-import com.azat4dev.booking.shared.config.domain.ConnectPoliciesConfig;
+import com.azat4dev.booking.shared.config.domain.ConnectCommandHandlersConfig;
 import com.azat4dev.booking.shared.config.infrastracture.bus.DefaultDomainEventsBusConfig;
 import com.azat4dev.booking.shared.config.infrastracture.bus.DefaultMessageBusConfig;
 import com.azat4dev.booking.shared.config.infrastracture.bus.utils.OneToOneRelationsOfDtoClassesAndMessageTypes;
 import com.azat4dev.booking.shared.config.infrastracture.serializers.DefaultTimeSerializerConfig;
 import com.azat4dev.booking.shared.config.infrastracture.services.DefaultTimeProviderConfig;
-import com.azat4dev.booking.shared.domain.Policy;
+import com.azat4dev.booking.shared.domain.CommandHandler;
+import com.azat4dev.booking.shared.domain.events.Command;
 import com.azat4dev.booking.shared.domain.events.DomainEventPayload;
 import com.azat4dev.booking.shared.domain.events.EventId;
 import com.azat4dev.booking.shared.domain.interfaces.bus.DomainEventsBus;
@@ -27,12 +28,12 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
+import org.springframework.boot.autoconfigure.kafka.KafkaProperties;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.context.TestConfiguration;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Import;
 import org.springframework.kafka.annotation.EnableKafka;
-import org.springframework.kafka.annotation.EnableKafkaStreams;
 import org.springframework.kafka.core.KafkaAdmin;
 
 import java.io.IOException;
@@ -48,30 +49,31 @@ import static com.azat4dev.booking.shared.helpers.Helpers.waitForValue;
 import static org.assertj.core.api.Assertions.assertThat;
 
 @EnableKafka
-@EnableKafkaStreams
-@Import({
-    DefaultDomainEventsBusConfig.class,
-    DefaultMessageBusConfig.class,
-    DefaultTimeProviderConfig.class,
-    DefaultTimeSerializerConfig.class,
-    ConnectPoliciesConfig.class
-})
 @EnableTestcontainers
 @SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.NONE)
-public class ConnectPoliciesTests {
+public class ConnectCommandHandlersTests {
+
+    @Autowired
+    KafkaProperties kafkaProperties;
+
+    @Test
+    public void test_kafka() {
+
+        System.out.println(kafkaProperties);
+    }
 
     private static final String SIMPLE_TOPIC = "simple_topic";
 
-    @Qualifier("policyCallback")
+    @Qualifier("commandHandlerCallback")
     @Autowired
-    AtomicReference<Consumer<TestDomainEvent>> policyCallback;
+    AtomicReference<Consumer<TestCommand>> commandHandlerCallback;
 
     @Autowired
     DomainEventsBus bus;
 
     @BeforeEach
     void setUp() {
-        policyCallback.set(null);
+        commandHandlerCallback.set(null);
     }
 
     @Autowired
@@ -81,18 +83,18 @@ public class ConnectPoliciesTests {
         return UUID.randomUUID().toString();
     }
 
-    private TestDomainEvent anyTestEvent() {
-        return new TestDomainEvent(anyDomainEventId());
+    private TestCommand anyTestEvent() {
+        return new TestCommand(anyDomainEventId());
     }
 
     @Test
-    void test_publish_givenDomainEventPublished_thenPolicyMustReceiveEvent() {
+    void test_publish_givenCommandPublished_thenCommandHandlerMustBeTriggered() {
 
         // Given
         final var event = anyTestEvent();
 
-        final var receivedEventStore = new AtomicReference<TestDomainEvent>();
-        policyCallback.set(receivedEventStore::set);
+        final var receivedEventStore = new AtomicReference<TestCommand>();
+        commandHandlerCallback.set(receivedEventStore::set);
 
         // When
         bus.publish(event);
@@ -112,35 +114,40 @@ public class ConnectPoliciesTests {
         }
     }
 
-    public record TestDomainEvent(String value) implements DomainEventPayload {
-
+    public record TestCommand(String value) implements Command {
     }
 
     @TestConfiguration
+    @Import({
+        DefaultMessageBusConfig.class,
+        DefaultTimeProviderConfig.class,
+        DefaultDomainEventsBusConfig.class,
+        DefaultTimeSerializerConfig.class,
+        ConnectCommandHandlersConfig.class
+    })
     public static class TestConfig {
 
-
-        @Bean("policyCallback")
-        AtomicReference<Consumer<TestDomainEvent>> policyCallback() {
+        @Bean("commandHandlerCallback")
+        AtomicReference<Consumer<TestCommand>> commandHandlerCallback() {
             return new AtomicReference<>();
         }
 
         @Bean
-        MapDomainEvent<TestDomainEvent, TestMessageDTO> mapDomainEvent() {
-            return new MapDomainEvent<TestDomainEvent, TestMessageDTO>() {
+        MapDomainEvent<TestCommand, TestMessageDTO> mapDomainEvent() {
+            return new MapDomainEvent<TestCommand, TestMessageDTO>() {
                 @Override
-                public TestMessageDTO serialize(TestDomainEvent domain) {
+                public TestMessageDTO serialize(TestCommand domain) {
                     return new TestMessageDTO(domain.value(), "payload");
                 }
 
                 @Override
-                public TestDomainEvent deserialize(TestMessageDTO dto) {
-                    return new TestDomainEvent(dto.getId().toString());
+                public TestCommand deserialize(TestMessageDTO dto) {
+                    return new TestCommand(dto.getId().toString());
                 }
 
                 @Override
-                public Class<TestDomainEvent> getOriginalClass() {
-                    return TestDomainEvent.class;
+                public Class<TestCommand> getOriginalClass() {
+                    return TestCommand.class;
                 }
 
                 @Override
@@ -153,7 +160,7 @@ public class ConnectPoliciesTests {
         @Bean
         OneToOneRelationsOfDtoClassesAndMessageTypes oneToOneRelationsOfDtoClassesAndMessageTypes() {
             return new OneToOneRelationsOfDtoClassesAndMessageTypes(
-                new OneToOneRelationsOfDtoClassesAndMessageTypes.Item("TestDomainEvent", TestMessageDTO.class)
+                new OneToOneRelationsOfDtoClassesAndMessageTypes.Item("TestCommand", TestMessageDTO.class)
             );
         }
 
@@ -178,16 +185,16 @@ public class ConnectPoliciesTests {
         }
 
         @Bean
-        Policy<TestDomainEvent> testPolicy() {
-            return new Policy<>() {
+        CommandHandler<TestCommand> testCommandHandler() {
+            return new CommandHandler<>() {
                 @Override
-                public void execute(TestDomainEvent event, EventId eventId, LocalDateTime issuedAt) {
-                    policyCallback().get().accept(event);
+                public void handle(TestCommand command, EventId eventId, LocalDateTime issuedAt) {
+                    commandHandlerCallback().get().accept(command);
                 }
 
                 @Override
-                public Class<TestDomainEvent> getEventClass() {
-                    return TestDomainEvent.class;
+                public Class<TestCommand> getCommandClass() {
+                    return TestCommand.class;
                 }
             };
         }
@@ -217,47 +224,39 @@ public class ConnectPoliciesTests {
 
         @Bean
         MessageSerializer messageSerializer() {
-            return new MessageSerializer() {
+            return message -> {
+                try {
 
-                @Override
-                public byte[] serialize(Message message) throws Exception.FailedSerialize {
-                    try {
-
-                        final var dto = new MessageDTO(
-                            message.id(),
-                            message.type(),
-                            message.correlationId().orElse(null),
-                            message.replyTo().orElse(null),
-                            message.payload()
-                        );
-                        return MessageDTO.getEncoder().encode(dto).array();
-                    } catch (IOException e) {
-                        throw new Exception.FailedSerialize(e);
-                    }
+                    final var dto = new MessageDTO(
+                        message.id(),
+                        message.type(),
+                        message.correlationId().orElse(null),
+                        message.replyTo().orElse(null),
+                        message.payload()
+                    );
+                    return MessageDTO.getEncoder().encode(dto).array();
+                } catch (IOException e) {
+                    throw new MessageSerializer.Exception.FailedSerialize(e);
                 }
             };
         }
 
         @Bean
         MessageDeserializer messageDeserializer() {
-            return new MessageDeserializer() {
+            return serializedMessage -> {
+                try {
+                    final var dto = MessageDTO.getDecoder().decode(serializedMessage);
 
-                @Override
-                public Message deserialize(byte[] serializedMessage) throws MessageSerializer.Exception {
-                    try {
-                        final var dto = MessageDTO.getDecoder().decode(serializedMessage);
-
-                        return new Message(
-                            dto.getId().toString(),
-                            dto.getType().toString(),
-                            LocalDateTime.now(),
-                            Optional.ofNullable(dto.getCorrelationId()).map(CharSequence::toString),
-                            Optional.ofNullable(dto.getReplyToId()).map(CharSequence::toString),
-                            dto.getPayload()
-                        );
-                    } catch (IOException e) {
-                        throw new Exception.FailedDeserialize(e);
-                    }
+                    return new Message(
+                        dto.getId().toString(),
+                        dto.getType().toString(),
+                        LocalDateTime.now(),
+                        Optional.ofNullable(dto.getCorrelationId()).map(CharSequence::toString),
+                        Optional.ofNullable(dto.getReplyToId()).map(CharSequence::toString),
+                        dto.getPayload()
+                    );
+                } catch (IOException e) {
+                    throw new MessageDeserializer.Exception.FailedDeserialize(e);
                 }
             };
         }
