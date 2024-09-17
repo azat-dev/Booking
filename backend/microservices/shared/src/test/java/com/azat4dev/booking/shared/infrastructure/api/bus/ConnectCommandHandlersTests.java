@@ -14,7 +14,7 @@ import com.azat4dev.booking.shared.domain.events.EventId;
 import com.azat4dev.booking.shared.domain.interfaces.bus.DomainEventsBus;
 import com.azat4dev.booking.shared.generated.dto.MessageDTO;
 import com.azat4dev.booking.shared.generated.dto.TestMessageDTO;
-import com.azat4dev.booking.shared.helpers.EnableTestcontainers;
+import com.azat4dev.booking.shared.helpers.KafkaTestContainerInitializer;
 import com.azat4dev.booking.shared.infrastructure.bus.*;
 import com.azat4dev.booking.shared.infrastructure.bus.serialization.CustomMessageDeserializerForTopics;
 import com.azat4dev.booking.shared.infrastructure.bus.serialization.CustomMessageSerializerForTopics;
@@ -34,7 +34,7 @@ import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Import;
 import org.springframework.kafka.annotation.EnableKafka;
 import org.springframework.kafka.core.KafkaAdmin;
-import org.springframework.test.annotation.DirtiesContext;
+import org.springframework.test.context.ContextConfiguration;
 
 import java.io.IOException;
 import java.time.Duration;
@@ -48,9 +48,15 @@ import java.util.function.Consumer;
 import static com.azat4dev.booking.shared.helpers.Helpers.waitForValue;
 import static org.assertj.core.api.Assertions.assertThat;
 
-@DirtiesContext
 @EnableKafka
-@EnableTestcontainers
+@ContextConfiguration(initializers = KafkaTestContainerInitializer.class)
+@AutoConnectCommandHandlersToBus
+@Import({
+    DefaultMessageBusConfig.class,
+    DefaultTimeProviderConfig.class,
+    DefaultDomainEventsBusConfig.class,
+    DefaultTimeSerializerConfig.class
+})
 @SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.NONE)
 public class ConnectCommandHandlersTests {
 
@@ -109,14 +115,7 @@ public class ConnectCommandHandlersTests {
     public record TestCommand(String value) implements Command {
     }
 
-    @AutoConnectCommandHandlersToBus
     @TestConfiguration
-    @Import({
-        DefaultMessageBusConfig.class,
-        DefaultTimeProviderConfig.class,
-        DefaultDomainEventsBusConfig.class,
-        DefaultTimeSerializerConfig.class
-    })
     public static class TestConfig {
 
         @Bean("commandHandlerCallback")

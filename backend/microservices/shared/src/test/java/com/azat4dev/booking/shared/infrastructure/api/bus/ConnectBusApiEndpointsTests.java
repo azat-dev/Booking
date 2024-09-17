@@ -9,7 +9,7 @@ import com.azat4dev.booking.shared.domain.events.EventIdGenerator;
 import com.azat4dev.booking.shared.domain.events.RandomEventIdGenerator;
 import com.azat4dev.booking.shared.generated.dto.MessageDTO;
 import com.azat4dev.booking.shared.generated.dto.TestMessageDTO;
-import com.azat4dev.booking.shared.helpers.EnableTestcontainers;
+import com.azat4dev.booking.shared.helpers.KafkaTestContainerInitializer;
 import com.azat4dev.booking.shared.infrastructure.bus.Message;
 import com.azat4dev.booking.shared.infrastructure.bus.MessageBus;
 import com.azat4dev.booking.shared.infrastructure.bus.NewTopicMessageListener;
@@ -18,6 +18,7 @@ import com.azat4dev.booking.shared.infrastructure.bus.serialization.CustomMessag
 import com.azat4dev.booking.shared.infrastructure.bus.serialization.MessageDeserializer;
 import com.azat4dev.booking.shared.infrastructure.bus.serialization.MessageSerializer;
 import org.apache.kafka.clients.admin.NewTopic;
+import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -31,6 +32,7 @@ import org.springframework.context.annotation.Import;
 import org.springframework.kafka.annotation.EnableKafka;
 import org.springframework.kafka.core.KafkaAdmin;
 import org.springframework.test.annotation.DirtiesContext;
+import org.springframework.test.context.ContextConfiguration;
 
 import java.io.IOException;
 import java.time.Duration;
@@ -46,7 +48,13 @@ import static org.assertj.core.api.Assertions.assertThat;
 
 @DirtiesContext
 @EnableKafka
-@EnableTestcontainers
+@AutoConnectApiEndpointsToBus
+@ContextConfiguration(initializers = {KafkaTestContainerInitializer.class})
+@Import({
+    DefaultMessageBusConfig.class,
+    DefaultTimeProviderConfig.class,
+    DefaultTimeSerializerConfig.class,
+})
 @SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.NONE)
 public class ConnectBusApiEndpointsTests {
 
@@ -108,13 +116,7 @@ public class ConnectBusApiEndpointsTests {
         }
     }
 
-    @AutoConnectApiEndpointsToBus
     @TestConfiguration
-    @Import({
-        DefaultMessageBusConfig.class,
-        DefaultTimeProviderConfig.class,
-        DefaultTimeSerializerConfig.class,
-    })
     public static class TestConfig {
 
         @Bean

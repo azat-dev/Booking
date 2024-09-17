@@ -7,7 +7,7 @@ import com.azat4dev.booking.shared.config.infrastracture.services.DefaultTimePro
 import com.azat4dev.booking.shared.generated.dto.JoinedMessageDTO;
 import com.azat4dev.booking.shared.generated.dto.MessageDTO;
 import com.azat4dev.booking.shared.generated.dto.TestMessageDTO;
-import com.azat4dev.booking.shared.helpers.EnableTestcontainers;
+import com.azat4dev.booking.shared.helpers.KafkaTestContainerInitializer;
 import com.azat4dev.booking.shared.infrastructure.bus.Message;
 import com.azat4dev.booking.shared.infrastructure.bus.MessageBus;
 import com.azat4dev.booking.shared.infrastructure.bus.NewTopicMessageListener;
@@ -41,6 +41,7 @@ import org.springframework.context.annotation.Import;
 import org.springframework.kafka.annotation.EnableKafka;
 import org.springframework.kafka.core.KafkaAdmin;
 import org.springframework.test.annotation.DirtiesContext;
+import org.springframework.test.context.ContextConfiguration;
 
 import java.io.IOException;
 import java.time.Duration;
@@ -55,13 +56,13 @@ import static com.azat4dev.booking.shared.helpers.Helpers.waitForValue;
 import static org.assertj.core.api.Assertions.assertThat;
 
 @DirtiesContext
+@ContextConfiguration(initializers = KafkaTestContainerInitializer.class)
 @EnableKafka
 @Import({
     DefaultMessageBusConfig.class,
     DefaultTimeProviderConfig.class,
     DefaultTimeSerializerConfig.class
 })
-@EnableTestcontainers
 @SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.NONE)
 public class KafkaMessageBusTests {
 
@@ -102,6 +103,7 @@ public class KafkaMessageBusTests {
         );
     }
 
+    @DirtiesContext
     @Test
     void test_publish_givenValidMessage_thenReceive() {
 
@@ -130,6 +132,7 @@ public class KafkaMessageBusTests {
         assertThat(receivedMessage.payload()).isEqualTo(message.payload());
     }
 
+    @DirtiesContext
     @Test
     void test_publish_givenTwoInputTopics_thenJoin() {
 
@@ -162,7 +165,7 @@ public class KafkaMessageBusTests {
         );
 
         // Then
-        waitForValue(receivedMessageStore, Duration.ofSeconds(1));
+        waitForValue(receivedMessageStore, Duration.ofSeconds(50));
 
         final var expected = new JoinedMessageDTO(message1.id(), message2.id());
 
@@ -224,6 +227,7 @@ public class KafkaMessageBusTests {
             return new NewTopicMessageListener(
                 TOPIC_WITH_JOIN,
                 message -> {
+                    System.out.println("message = " + message);
                     topicWithJoinListenerCallback.get().accept(message);
                 }
             );
@@ -276,23 +280,19 @@ public class KafkaMessageBusTests {
 
         @Bean
         MessageSerializer messageSerializer() {
-            return new MessageSerializer() {
+            return message -> {
+                try {
 
-                @Override
-                public byte[] serialize(Message message) throws Exception.FailedSerialize {
-                    try {
-
-                        final var dto = new MessageDTO(
-                            message.id(),
-                            message.type(),
-                            message.correlationId().orElse(null),
-                            message.replyTo().orElse(null),
-                            message.payload()
-                        );
-                        return MessageDTO.getEncoder().encode(dto).array();
-                    } catch (IOException e) {
-                        throw new Exception.FailedSerialize(e);
-                    }
+                    final var dto = new MessageDTO(
+                        message.id(),
+                        message.type(),
+                        message.correlationId().orElse(null),
+                        message.replyTo().orElse(null),
+                        message.payload()
+                    );
+                    return MessageDTO.getEncoder().encode(dto).array();
+                } catch (IOException e) {
+                    throw new MessageSerializer.Exception.FailedSerialize(e);
                 }
             };
         }

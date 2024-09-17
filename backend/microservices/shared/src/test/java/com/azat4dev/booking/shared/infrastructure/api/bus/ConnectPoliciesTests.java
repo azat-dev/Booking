@@ -2,7 +2,6 @@ package com.azat4dev.booking.shared.infrastructure.api.bus;
 
 
 import com.azat4dev.booking.shared.config.domain.AutoConnectPoliciesToBus;
-import com.azat4dev.booking.shared.config.domain.ConnectPoliciesConfig;
 import com.azat4dev.booking.shared.config.infrastracture.bus.DefaultDomainEventsBusConfig;
 import com.azat4dev.booking.shared.config.infrastracture.bus.DefaultMessageBusConfig;
 import com.azat4dev.booking.shared.config.infrastracture.bus.utils.RelationsOfDtoClassesAndMessageTypes;
@@ -14,7 +13,7 @@ import com.azat4dev.booking.shared.domain.events.EventId;
 import com.azat4dev.booking.shared.domain.interfaces.bus.DomainEventsBus;
 import com.azat4dev.booking.shared.generated.dto.MessageDTO;
 import com.azat4dev.booking.shared.generated.dto.TestMessageDTO;
-import com.azat4dev.booking.shared.helpers.EnableTestcontainers;
+import com.azat4dev.booking.shared.helpers.KafkaTestContainerInitializer;
 import com.azat4dev.booking.shared.infrastructure.bus.*;
 import com.azat4dev.booking.shared.infrastructure.bus.serialization.CustomMessageDeserializerForTopics;
 import com.azat4dev.booking.shared.infrastructure.bus.serialization.CustomMessageSerializerForTopics;
@@ -35,7 +34,7 @@ import org.springframework.context.annotation.Import;
 import org.springframework.kafka.annotation.EnableKafka;
 import org.springframework.kafka.annotation.EnableKafkaStreams;
 import org.springframework.kafka.core.KafkaAdmin;
-import org.springframework.test.annotation.DirtiesContext;
+import org.springframework.test.context.ContextConfiguration;
 
 import java.io.IOException;
 import java.time.Duration;
@@ -49,7 +48,7 @@ import java.util.function.Consumer;
 import static com.azat4dev.booking.shared.helpers.Helpers.waitForValue;
 import static org.assertj.core.api.Assertions.assertThat;
 
-@DirtiesContext
+@ContextConfiguration(initializers = KafkaTestContainerInitializer.class)
 @AutoConnectPoliciesToBus
 @EnableKafka
 @EnableKafkaStreams
@@ -59,10 +58,10 @@ import static org.assertj.core.api.Assertions.assertThat;
     DefaultTimeProviderConfig.class,
     DefaultTimeSerializerConfig.class
 })
-@EnableTestcontainers
 @SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.NONE)
 public class ConnectPoliciesTests {
 
+    // Fields
     private static final String SIMPLE_TOPIC = "simple_topic";
 
     @Qualifier("policyCallback")
