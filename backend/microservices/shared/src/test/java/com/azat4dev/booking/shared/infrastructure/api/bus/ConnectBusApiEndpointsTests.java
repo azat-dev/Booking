@@ -12,13 +12,12 @@ import com.azat4dev.booking.shared.generated.dto.TestMessageDTO;
 import com.azat4dev.booking.shared.helpers.KafkaTestContainerInitializer;
 import com.azat4dev.booking.shared.infrastructure.bus.Message;
 import com.azat4dev.booking.shared.infrastructure.bus.MessageBus;
-import com.azat4dev.booking.shared.infrastructure.bus.NewTopicMessageListener;
-import com.azat4dev.booking.shared.infrastructure.bus.serialization.CustomMessageDeserializerForTopics;
-import com.azat4dev.booking.shared.infrastructure.bus.serialization.CustomMessageSerializerForTopics;
+import com.azat4dev.booking.shared.infrastructure.bus.NewMessageListenerForChannel;
+import com.azat4dev.booking.shared.infrastructure.bus.serialization.NewDeserializerForChannels;
+import com.azat4dev.booking.shared.infrastructure.bus.serialization.NewSerializerForChannels;
 import com.azat4dev.booking.shared.infrastructure.bus.serialization.MessageDeserializer;
 import com.azat4dev.booking.shared.infrastructure.bus.serialization.MessageSerializer;
 import org.apache.kafka.clients.admin.NewTopic;
-import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -130,8 +129,8 @@ public class ConnectBusApiEndpointsTests {
         }
 
         @Bean
-        NewTopicMessageListener replyTopicListener() {
-            return new NewTopicMessageListener(
+        NewMessageListenerForChannel replyTopicListener() {
+            return new NewMessageListenerForChannel(
                 REPLY_TOPIC,
                 message -> {
                     endpointCallback().get().accept(message.payloadAs(TestMessageDTO.class));
@@ -193,16 +192,16 @@ public class ConnectBusApiEndpointsTests {
         }
 
         @Bean
-        CustomMessageSerializerForTopics messageSerializerForInputTopic(MessageSerializer serializer) {
-            return new CustomMessageSerializerForTopics(
+        NewSerializerForChannels messageSerializerForInputTopic(MessageSerializer serializer) {
+            return new NewSerializerForChannels(
                 List.of(INPUT_TOPIC, REPLY_TOPIC),
                 serializer
             );
         }
 
         @Bean
-        CustomMessageDeserializerForTopics messageDeserializerForTopics(MessageDeserializer deserializer) {
-            return new CustomMessageDeserializerForTopics(
+        NewDeserializerForChannels messageDeserializerForTopics(MessageDeserializer deserializer) {
+            return new NewDeserializerForChannels(
                 List.of(INPUT_TOPIC, REPLY_TOPIC),
                 deserializer
             );

@@ -5,6 +5,7 @@ import {EndpointFilesGenerator} from "./endpoints/EndpointFilesGenerator";
 import {MessageFileGenerator} from "./MessageFileGenerator";
 import {EndpointInputInterfaceGenerator} from "./endpoints/EndpointInputInterfaceGenerator";
 import {AvroDtoGenerator} from "./AvroDtoGenerator";
+import {AvroChannelSerdeGenerator} from "./AvroChannelSerdeGenerator";
 
 const SUFFIX = "DTO";
 
@@ -32,7 +33,9 @@ export default async function (options) {
     const channelsFileGenerator = new ChannelsFileGenerator();
 
     const basePackageName = options.params.package;
-    debugger
+
+    const channelSerdeGenerator = new AvroChannelSerdeGenerator(getPackageForService);
+
     const endpointInputInterfaceGenerator = new EndpointInputInterfaceGenerator(basePackageName, modelsSuffix, getPackageForService);
     const endpointFileGenerator = new EndpointFileGenerator(getPackageForService);
     const endpointFilesGenerator = new EndpointFilesGenerator(
@@ -64,6 +67,12 @@ export default async function (options) {
     await writer.write(
         await dtoGenerator.generate(asyncapi, SUFFIX, packageName),
         outputAvroDir,
+        true
+    );
+
+    await writer.write(
+        await channelSerdeGenerator.generate(asyncapi, SUFFIX, packageName),
+        outputDir,
         true
     );
     return [];

@@ -2,10 +2,10 @@ package com.azat4dev.booking.shared.config.infrastracture.bus;
 
 import com.azat4dev.booking.shared.infrastructure.bus.MessageBus;
 import com.azat4dev.booking.shared.infrastructure.bus.kafka.KafkaMessageBus;
-import com.azat4dev.booking.shared.infrastructure.bus.serialization.CustomMessageDeserializerForTopics;
-import com.azat4dev.booking.shared.infrastructure.bus.serialization.CustomMessageSerializerForTopics;
-import com.azat4dev.booking.shared.infrastructure.bus.serialization.MessageDeserializersForTopics;
-import com.azat4dev.booking.shared.infrastructure.bus.serialization.MessageSerializersForTopics;
+import com.azat4dev.booking.shared.infrastructure.bus.serialization.NewDeserializerForChannels;
+import com.azat4dev.booking.shared.infrastructure.bus.serialization.NewSerializerForChannels;
+import com.azat4dev.booking.shared.infrastructure.bus.serialization.DeserializersForChannels;
+import com.azat4dev.booking.shared.infrastructure.bus.serialization.SerializersForChannels;
 import com.azat4dev.booking.shared.utils.TimeProvider;
 import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -81,7 +81,7 @@ public class KafkaMessageBusConfig {
     @Bean
     MessageBus messageBus(
         InitializedTopics initializedTopics,
-        MessageSerializersForTopics messageSerializers,
+        SerializersForChannels messageSerializers,
         KafkaTemplate<String, byte[]> kafkaTemplate,
         TimeProvider timeProvider
     ) {
@@ -93,13 +93,13 @@ public class KafkaMessageBusConfig {
     }
 
     @Bean
-    MessageDeserializersForTopics messageDeserializersForTopics(List<CustomMessageDeserializerForTopics> items) {
-        return new MessageDeserializersForTopics(items);
+    DeserializersForChannels messageDeserializersForTopics(List<NewDeserializerForChannels> items) {
+        return new DeserializersForChannels(items);
     }
 
     @Bean
-    MessageSerializersForTopics messageSerializersForTopics(List<CustomMessageSerializerForTopics> items) {
-        return new MessageSerializersForTopics(items);
+    SerializersForChannels messageSerializersForTopics(List<NewSerializerForChannels> items) {
+        return new SerializersForChannels(items);
     }
 
     public static class InitializedTopics {

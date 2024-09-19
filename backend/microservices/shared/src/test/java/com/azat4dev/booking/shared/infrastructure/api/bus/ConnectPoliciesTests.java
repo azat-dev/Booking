@@ -15,8 +15,8 @@ import com.azat4dev.booking.shared.generated.dto.MessageDTO;
 import com.azat4dev.booking.shared.generated.dto.TestMessageDTO;
 import com.azat4dev.booking.shared.helpers.KafkaTestContainerInitializer;
 import com.azat4dev.booking.shared.infrastructure.bus.*;
-import com.azat4dev.booking.shared.infrastructure.bus.serialization.CustomMessageDeserializerForTopics;
-import com.azat4dev.booking.shared.infrastructure.bus.serialization.CustomMessageSerializerForTopics;
+import com.azat4dev.booking.shared.infrastructure.bus.serialization.NewDeserializerForChannels;
+import com.azat4dev.booking.shared.infrastructure.bus.serialization.NewSerializerForChannels;
 import com.azat4dev.booking.shared.infrastructure.bus.serialization.MessageDeserializer;
 import com.azat4dev.booking.shared.infrastructure.bus.serialization.MessageSerializer;
 import com.azat4dev.booking.shared.infrastructure.serializers.MapDomainEvent;
@@ -159,12 +159,12 @@ public class ConnectPoliciesTests {
         }
 
         @Bean
-        GetInputTopicForEvent getInputTopicForEvent() {
+        GetInputChannelForEvent getInputTopicForEvent() {
             return eventType -> SIMPLE_TOPIC;
         }
 
         @Bean
-        GetOutputTopicForEvent getOutputTopicForEvent() {
+        GetOutputChannelForEvent getOutputTopicForEvent() {
             return eventType -> SIMPLE_TOPIC;
         }
 
@@ -201,16 +201,16 @@ public class ConnectPoliciesTests {
         }
 
         @Bean
-        CustomMessageSerializerForTopics messageSerializerForInputTopic1(MessageSerializer serializer) {
-            return new CustomMessageSerializerForTopics(
+        NewSerializerForChannels messageSerializerForInputTopic1(MessageSerializer serializer) {
+            return new NewSerializerForChannels(
                 List.of(SIMPLE_TOPIC),
                 serializer
             );
         }
 
         @Bean
-        CustomMessageDeserializerForTopics messageDeserializerForTopics(MessageDeserializer deserializer) {
-            return new CustomMessageDeserializerForTopics(
+        NewDeserializerForChannels messageDeserializerForTopics(MessageDeserializer deserializer) {
+            return new NewDeserializerForChannels(
                 List.of(SIMPLE_TOPIC),
                 deserializer
             );

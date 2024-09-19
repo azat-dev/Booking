@@ -16,8 +16,7 @@ import lombok.extern.slf4j.Slf4j;
 public class DefaultDomainEventsBus implements DomainEventsBus {
 
     private final MessageBus messageBus;
-    private final GetInputTopicForEvent getInputTopicForEvent;
-    private final GetOutputTopicForEvent getOutputTopicForEvent;
+    private final GetOutputChannelForEvent getOutputChannelForEvent;
     private final GetPartitionKeyForEvent getPartitionKeyForEvent;
     private final EventIdGenerator eventIdGenerator;
     private final MapAnyDomainEvent mapEvent;
@@ -26,7 +25,7 @@ public class DefaultDomainEventsBus implements DomainEventsBus {
     public void publish(DomainEventPayload event, EventId eventId) {
 
         messageBus.publish(
-            getOutputTopicForEvent.execute(event),
+            getOutputChannelForEvent.execute(event),
             getPartitionKeyForEvent.execute(event),
             MessageBus.Data.with(
                 eventId.getValue(),

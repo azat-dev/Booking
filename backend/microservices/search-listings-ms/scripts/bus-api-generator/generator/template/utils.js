@@ -11,3 +11,7 @@ export const convertChannelIdToConstantName = (id) => {
 }
 
 export const getChannelServiceId = (channel) => channel.extensions().all().find(i => i.id() === 'x-service')?.value();
+
+export const convertChannelIdToPackageName = (id) => {
+    return id.replace(/\\/g, '.').replace(/\//g, '.').toLowerCase();
+}

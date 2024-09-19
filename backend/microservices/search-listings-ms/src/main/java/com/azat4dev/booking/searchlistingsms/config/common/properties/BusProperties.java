@@ -14,39 +14,39 @@ public class BusProperties {
 
     @NotBlank
     @NotNull
-    private final String prefixForEventsTopics;
+    private final String prefixForEventsChannels;
 
     @NotBlank
     @NotNull
-    private final String listingEventsTopicName;
+    private final String listingEventsChannelName;
 
-    private final Short listingEventsTopicReplicationFactor;
-
-    @Min(1)
-    @NotNull
-    private final Integer listingEventsTopicNumberOfConsumers;
+    private final Short listingEventsChannelReplicationFactor;
 
     @Min(1)
     @NotNull
-    private final Integer listingEventsTopicNumberOfPartitions;
+    private final Integer listingEventsChannelNumberOfConsumers;
+
+    @Min(1)
+    @NotNull
+    private final Integer listingEventsChannelNumberOfPartitions;
 
     @NotBlank
     @NotNull
-    private final String internalCommandsTopicPrefix;
+    private final String internalCommandsChannelPrefix;
 
     @Min(1)
     @NotNull
-    private final Integer internalCommandsTopicNumberOfPartitions;
+    private final Integer internalCommandsChannelNumberOfPartitions;
 
-    private final Short internalCommandsTopicReplicationFactor;
+    private final Short internalCommandsChannelReplicationFactor;
 
     @Min(1)
     @NotNull
-    private final Integer internalCommandsTopicNumberOfConsumers;
+    private final Integer internalCommandsChannelNumberOfConsumers;
 
     @NotBlank
-    public final String publicCommandsTopicPrefix;
+    public final String publicCommandsChannelPrefix;
 
     @NotBlank
-    public final String publicCommandsGetListingPublicDetailsByIdTopicName;
+    public final String publicCommandsGetListingPublicDetailsByIdChannelName;
 }

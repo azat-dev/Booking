@@ -8,7 +8,7 @@ import java.util.Optional;
 public interface MessageBus {
 
     <P> void publish(
-        String topic,
+        String channel,
         Optional<String> partitionKey,
         Data<P> message
     );

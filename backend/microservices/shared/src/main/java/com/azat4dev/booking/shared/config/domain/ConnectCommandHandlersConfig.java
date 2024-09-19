@@ -1,10 +1,10 @@
 package com.azat4dev.booking.shared.config.domain;
 
 import com.azat4dev.booking.shared.domain.CommandHandler;
-import com.azat4dev.booking.shared.infrastructure.bus.GetInputTopicForEvent;
+import com.azat4dev.booking.shared.infrastructure.bus.GetInputChannelForEvent;
 import com.azat4dev.booking.shared.infrastructure.bus.MessageListenerForCommandHandler;
-import com.azat4dev.booking.shared.infrastructure.bus.NewTopicMessageListener;
-import com.azat4dev.booking.shared.infrastructure.bus.NewTopicListeners;
+import com.azat4dev.booking.shared.infrastructure.bus.NewMessageListenerForChannel;
+import com.azat4dev.booking.shared.infrastructure.bus.NewMessageListenersForChannel;
 import com.azat4dev.booking.shared.infrastructure.serializers.MapAnyDomainEvent;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -17,19 +17,19 @@ import java.util.Set;
 @Configuration
 public class ConnectCommandHandlersConfig {
 
-    private List<NewTopicMessageListener> getCommandListeners(
+    private List<NewMessageListenerForChannel> getCommandListeners(
         List<CommandHandler> commandHandlers,
-        GetInputTopicForEvent getInputTopicForEvent,
+        GetInputChannelForEvent getInputTopicForEvent,
         MapAnyDomainEvent mapEvent
     ) {
 
-        final var result = new LinkedList<NewTopicMessageListener>();
+        final var result = new LinkedList<NewMessageListenerForChannel>();
 
         for (final var commandHandler : commandHandlers) {
 
             final var commandType = commandHandler.getCommandClass();
 
-            final var listener = new NewTopicMessageListener(
+            final var listener = new NewMessageListenerForChannel(
                 getInputTopicForEvent.execute(commandType),
                 Optional.of(Set.of(commandType.getSimpleName())),
                 new MessageListenerForCommandHandler(
@@ -45,12 +45,12 @@ public class ConnectCommandHandlersConfig {
     }
 
     @Bean
-    NewTopicListeners connectCommandHandlersToBus(
+    NewMessageListenersForChannel connectCommandHandlersToBus(
         List<CommandHandler> commandHandlers,
-        GetInputTopicForEvent getInputTopicForEvent,
+        GetInputChannelForEvent getInputTopicForEvent,
         MapAnyDomainEvent mapEvent
     ) {
-        return new NewTopicListeners(
+        return new NewMessageListenersForChannel(
             getCommandListeners(
                 commandHandlers,
                 getInputTopicForEvent,

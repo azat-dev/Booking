@@ -4,8 +4,8 @@ import com.azat4dev.booking.searchlistingsms.config.common.properties.BusPropert
 import com.azat4dev.booking.shared.config.infrastracture.bus.DefaultDomainEventsBusConfig;
 import com.azat4dev.booking.shared.domain.events.Command;
 import com.azat4dev.booking.shared.domain.events.DomainEventPayload;
-import com.azat4dev.booking.shared.infrastructure.bus.GetInputTopicForEvent;
-import com.azat4dev.booking.shared.infrastructure.bus.GetOutputTopicForEvent;
+import com.azat4dev.booking.shared.infrastructure.bus.GetInputChannelForEvent;
+import com.azat4dev.booking.shared.infrastructure.bus.GetOutputChannelForEvent;
 import com.azat4dev.booking.shared.infrastructure.bus.GetPartitionKeyForEvent;
 import lombok.AllArgsConstructor;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
@@ -28,28 +28,28 @@ public class RouteDomainEventsConfig {
     private final BusProperties busProperties;
 
     @Bean
-    GetInputTopicForEvent getInputTopicForEvent(Set<Class<? extends DomainEventPayload>> mappedDomainEvents) {
+    GetInputChannelForEvent getInputChannelForEvent(Set<Class<? extends DomainEventPayload>> mappedDomainEvents) {
 
-        final var inputTopicsForCommands = mappedDomainEvents.stream()
+        final var inputChannelsForCommands = mappedDomainEvents.stream()
             .filter(v -> Arrays.stream(v.getInterfaces()).anyMatch(i -> i.equals(Command.class)))
-            .collect(Collectors.toMap(Function.identity(), v -> busProperties.getInternalCommandsTopicPrefix() + "." + v.getSimpleName()));
+            .collect(Collectors.toMap(Function.identity(), v -> busProperties.getInternalCommandsChannelPrefix() + "." + v.getSimpleName()));
 
-        final var listingEventsTopic = busProperties.getPrefixForEventsTopics() + "." + busProperties.getListingEventsTopicName();
+        final var listingEventsChannel = busProperties.getPrefixForEventsChannels() + "." + busProperties.getListingEventsChannelName();
 
         return (eventClass) -> {
 
-            final var commandTopic = inputTopicsForCommands.get(eventClass);
-            if (commandTopic != null) {
-                return commandTopic;
+            final var commandChannel = inputChannelsForCommands.get(eventClass);
+            if (commandChannel != null) {
+                return commandChannel;
             }
 
-            return listingEventsTopic;
+            return listingEventsChannel;
         };
     }
 
     @Bean
-    GetOutputTopicForEvent getOutputTopicForEvent(GetInputTopicForEvent getInputTopic) {
-        return (event) -> getInputTopic.execute(event.getClass());
+    GetOutputChannelForEvent getOutputChannelForEvent(GetInputChannelForEvent getInputChannel) {
+        return (event) -> getInputChannel.execute(event.getClass());
     }
 
     @Bean

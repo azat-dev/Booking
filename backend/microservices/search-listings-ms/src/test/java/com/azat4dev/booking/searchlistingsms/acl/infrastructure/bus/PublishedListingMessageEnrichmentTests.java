@@ -7,10 +7,7 @@ import com.azat4dev.booking.searchlistingsms.generated.api.bus.dto.listingsms.li
 import com.azat4dev.booking.searchlistingsms.generated.api.bus.dto.searchlistingsms.internallistingeventsstream.ListingPublishedDTO;
 import com.azat4dev.booking.searchlistingsms.generated.api.bus.dto.searchlistingsms.internallistingeventsstream.WaitingInfoForPublishedListingDTO;
 import com.azat4dev.booking.searchlistingsms.helpers.EnableTestcontainers;
-import com.azat4dev.booking.shared.infrastructure.bus.Message;
-import com.azat4dev.booking.shared.infrastructure.bus.MessageBus;
-import com.azat4dev.booking.shared.infrastructure.bus.MessageListener;
-import com.azat4dev.booking.shared.infrastructure.bus.NewTopicMessageListener;
+import com.azat4dev.booking.shared.infrastructure.bus.*;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.actuate.observability.AutoConfigureObservability;
@@ -32,7 +29,7 @@ import static com.azat4dev.booking.searchlistingsms.helpers.Helpers.waitForValue
 @SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
 @Sql(value = {"/db/drop-schema.sql", "/db/schema.sql"})
 @AutoConfigureObservability /* The order matters for: ./mvnw test */
-public class JoinMessagesTest {
+public class PublishedListingMessageEnrichmentTests {
 
     @Autowired
     AtomicReference<ListingPublishedDTO> receivedListingPublished;
@@ -108,8 +105,8 @@ public class JoinMessagesTest {
 
 
         @Bean
-        NewTopicMessageListener outputMessageListener(AtomicReference<ListingPublishedDTO> receivedListingPublished) {
-            return new NewTopicMessageListener(
+        NewMessageListenerForChannel outputMessageListener(AtomicReference<ListingPublishedDTO> receivedListingPublished) {
+            return new NewMessageListenerForChannel(
                 Channels.INTERNAL_LISTING_EVENTS_STREAM.getValue(),
                 new MessageListener() {
 

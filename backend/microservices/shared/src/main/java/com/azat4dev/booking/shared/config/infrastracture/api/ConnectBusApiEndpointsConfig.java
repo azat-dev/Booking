@@ -5,8 +5,8 @@ import com.azat4dev.booking.shared.domain.events.EventIdGenerator;
 import com.azat4dev.booking.shared.infrastructure.api.bus.BusApiEndpoint;
 import com.azat4dev.booking.shared.infrastructure.bus.MessageBus;
 import com.azat4dev.booking.shared.infrastructure.bus.MessageListenerForBusApiEndpoint;
-import com.azat4dev.booking.shared.infrastructure.bus.NewTopicMessageListener;
-import com.azat4dev.booking.shared.infrastructure.bus.NewTopicListeners;
+import com.azat4dev.booking.shared.infrastructure.bus.NewMessageListenerForChannel;
+import com.azat4dev.booking.shared.infrastructure.bus.NewMessageListenersForChannel;
 import org.springframework.beans.BeansException;
 import org.springframework.beans.factory.config.BeanPostProcessor;
 import org.springframework.context.annotation.Bean;
@@ -22,7 +22,7 @@ public class ConnectBusApiEndpointsConfig {
     volatile MessageBus messageBus;
 
     @Bean
-    public BeanPostProcessor postProcessor() {
+    public BeanPostProcessor saveMessageBusToRef() {
 
         final var ref = this;
 
@@ -39,15 +39,15 @@ public class ConnectBusApiEndpointsConfig {
     }
 
     @Bean
-    NewTopicListeners topicListenersForBusApiEndpoints(
+    NewMessageListenersForChannel topicListenersForBusApiEndpoints(
         List<BusApiEndpoint<?>> endpoints,
         RelationsOfDtoClassesAndMessageTypes oneToOneRelationsOfDtoClassesAndMessageTypes,
         EventIdGenerator eventIdGenerator
     ) {
 
-        return new NewTopicListeners(
+        return new NewMessageListenersForChannel(
             endpoints.stream()
-                .map(endpoint -> new NewTopicMessageListener(
+                .map(endpoint -> new NewMessageListenerForChannel(
                     endpoint.getInputAddress(),
                     new MessageListenerForBusApiEndpoint(
                         endpoint,

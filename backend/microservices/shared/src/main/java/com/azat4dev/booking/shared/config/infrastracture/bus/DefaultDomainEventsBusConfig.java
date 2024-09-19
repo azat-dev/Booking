@@ -20,15 +20,13 @@ public class DefaultDomainEventsBusConfig {
     @Bean
     public DomainEventsBus domainEventsBus(
         EventIdGenerator eventIdGenerator,
-        GetInputTopicForEvent getInputTopicForEvent,
-        GetOutputTopicForEvent getOutputTopicForEvent,
+        GetOutputChannelForEvent getOutputChannelForEvent,
         GetPartitionKeyForEvent getPartitionKeyForEvent
     ) {
 
         return new DefaultDomainEventsBus(
             messageBus,
-            getInputTopicForEvent,
-            getOutputTopicForEvent,
+            getOutputChannelForEvent,
             getPartitionKeyForEvent,
             eventIdGenerator,
             mapAnyDomainEvent

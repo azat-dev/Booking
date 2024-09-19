@@ -10,11 +10,11 @@ import com.azat4dev.booking.shared.generated.dto.TestMessageDTO;
 import com.azat4dev.booking.shared.helpers.KafkaTestContainerInitializer;
 import com.azat4dev.booking.shared.infrastructure.bus.Message;
 import com.azat4dev.booking.shared.infrastructure.bus.MessageBus;
-import com.azat4dev.booking.shared.infrastructure.bus.NewTopicMessageListener;
+import com.azat4dev.booking.shared.infrastructure.bus.NewMessageListenerForChannel;
 import com.azat4dev.booking.shared.infrastructure.bus.kafka.GetSerdeForTopic;
 import com.azat4dev.booking.shared.infrastructure.bus.kafka.StreamFactoryForTopic;
-import com.azat4dev.booking.shared.infrastructure.bus.serialization.CustomMessageDeserializerForTopics;
-import com.azat4dev.booking.shared.infrastructure.bus.serialization.CustomMessageSerializerForTopics;
+import com.azat4dev.booking.shared.infrastructure.bus.serialization.NewDeserializerForChannels;
+import com.azat4dev.booking.shared.infrastructure.bus.serialization.NewSerializerForChannels;
 import com.azat4dev.booking.shared.infrastructure.bus.serialization.MessageDeserializer;
 import com.azat4dev.booking.shared.infrastructure.bus.serialization.MessageSerializer;
 import com.fasterxml.jackson.core.JsonProcessingException;
@@ -207,11 +207,11 @@ public class KafkaMessageBusTests {
         }
 
         @Bean
-        NewTopicMessageListener simpleTopicListener(
+        NewMessageListenerForChannel simpleTopicListener(
             @Qualifier("simpleTopicListenerCallback")
             AtomicReference<Consumer<Message>> simpleTopicListenerCallback
         ) {
-            return new NewTopicMessageListener(
+            return new NewMessageListenerForChannel(
                 SIMPLE_TOPIC,
                 message -> {
                     simpleTopicListenerCallback.get().accept(message);
@@ -220,11 +220,11 @@ public class KafkaMessageBusTests {
         }
 
         @Bean
-        NewTopicMessageListener topicWithJoinListener(
+        NewMessageListenerForChannel topicWithJoinListener(
             @Qualifier("topicWithJoinListenerCallback")
             AtomicReference<Consumer<Message>> topicWithJoinListenerCallback
         ) {
-            return new NewTopicMessageListener(
+            return new NewMessageListenerForChannel(
                 TOPIC_WITH_JOIN,
                 message -> {
                     System.out.println("message = " + message);
@@ -263,16 +263,16 @@ public class KafkaMessageBusTests {
         }
 
         @Bean
-        CustomMessageSerializerForTopics messageSerializerForInputTopic1(MessageSerializer serializer) {
-            return new CustomMessageSerializerForTopics(
+        NewSerializerForChannels messageSerializerForInputTopic1(MessageSerializer serializer) {
+            return new NewSerializerForChannels(
                 List.of(SIMPLE_TOPIC, INPUT_TOPIC1, INPUT_TOPIC2),
                 serializer
             );
         }
 
         @Bean
-        CustomMessageDeserializerForTopics messageDeserializerForTopics(MessageDeserializer deserializer) {
-            return new CustomMessageDeserializerForTopics(
+        NewDeserializerForChannels messageDeserializerForTopics(MessageDeserializer deserializer) {
+            return new NewDeserializerForChannels(
                 List.of(SIMPLE_TOPIC, INPUT_TOPIC1, INPUT_TOPIC2),
                 deserializer
             );

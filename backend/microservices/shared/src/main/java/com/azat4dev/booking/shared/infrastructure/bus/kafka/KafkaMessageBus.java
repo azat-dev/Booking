@@ -2,7 +2,7 @@ package com.azat4dev.booking.shared.infrastructure.bus.kafka;
 
 import com.azat4dev.booking.shared.infrastructure.bus.Message;
 import com.azat4dev.booking.shared.infrastructure.bus.MessageBus;
-import com.azat4dev.booking.shared.infrastructure.bus.serialization.MessageSerializersForTopics;
+import com.azat4dev.booking.shared.infrastructure.bus.serialization.SerializersForChannels;
 import com.azat4dev.booking.shared.utils.TimeProvider;
 import io.micrometer.observation.annotation.Observed;
 import lombok.AllArgsConstructor;
@@ -17,19 +17,19 @@ import java.util.Optional;
 @AllArgsConstructor
 public class KafkaMessageBus implements MessageBus {
 
-    private final MessageSerializersForTopics messageSerializers;
+    private final SerializersForChannels messageSerializers;
     private final KafkaTemplate<String, byte[]> kafkaTemplate;
     private final TimeProvider timeProvider;
 
     @Override
     public <P> void publish(
-        String topic,
+        String channel,
         Optional<String> partitionKey,
         Data<P> data
     ) {
         final var time = timeProvider.currentTime();
-        final var serializer = messageSerializers.getForTopic(topic)
-            .orElseThrow(() -> new Exception.NoSerializerForTopic(topic));
+        final var serializer = messageSerializers.getForChannel(channel)
+            .orElseThrow(() -> new Exception.NoSerializerForChannel(channel));
 
         final var serializedMessaged = serializer.serialize(
             new Message(
@@ -43,20 +43,20 @@ public class KafkaMessageBus implements MessageBus {
         );
 
         final var r = new ProducerRecord<>(
-            topic,
+            channel,
             partitionKey.orElse(null),
             serializedMessaged
         );
 
         kafkaTemplate.send(r);
         log.atDebug()
-            .addArgument(topic)
+            .addArgument(channel)
             .addArgument(data::id)
             .addArgument(data::type)
             .addArgument(data::correlationId)
             .addArgument(data::replyTo)
             .addArgument(serializedMessaged)
-            .log("Message sent: topic={} id={} type={} correlationId={} replyTo={} data={}");
+            .log("Message sent: channel={} id={} type={} correlationId={} replyTo={} data={}");
     }
 
     // Exceptions
@@ -67,10 +67,10 @@ public class KafkaMessageBus implements MessageBus {
             super(message);
         }
 
-        public static final class NoSerializerForTopic extends Exception {
+        public static final class NoSerializerForChannel extends Exception {
 
-            public NoSerializerForTopic(String topic) {
-                super("There is no serializer for topic: " + topic);
+            public NoSerializerForChannel(String channel) {
+                super("There is no serializer for channel: " + channel);
             }
         }
     }

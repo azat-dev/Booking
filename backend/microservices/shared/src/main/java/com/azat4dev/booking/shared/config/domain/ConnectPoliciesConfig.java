@@ -1,10 +1,10 @@
 package com.azat4dev.booking.shared.config.domain;
 
 import com.azat4dev.booking.shared.domain.Policy;
-import com.azat4dev.booking.shared.infrastructure.bus.GetInputTopicForEvent;
+import com.azat4dev.booking.shared.infrastructure.bus.GetInputChannelForEvent;
 import com.azat4dev.booking.shared.infrastructure.bus.MessageListenerForPolicy;
-import com.azat4dev.booking.shared.infrastructure.bus.NewTopicMessageListener;
-import com.azat4dev.booking.shared.infrastructure.bus.NewTopicListeners;
+import com.azat4dev.booking.shared.infrastructure.bus.NewMessageListenerForChannel;
+import com.azat4dev.booking.shared.infrastructure.bus.NewMessageListenersForChannel;
 import com.azat4dev.booking.shared.infrastructure.serializers.MapAnyDomainEvent;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -17,19 +17,19 @@ import java.util.Set;
 @Configuration
 public class ConnectPoliciesConfig {
 
-    private List<NewTopicMessageListener> getPolicyListeners(
+    private List<NewMessageListenerForChannel> getPolicyListeners(
         List<Policy<?>> policies,
-        GetInputTopicForEvent getInputTopicForEvent,
+        GetInputChannelForEvent getInputTopicForEvent,
         MapAnyDomainEvent mapEvent
     ) {
 
-        final var result = new LinkedList<NewTopicMessageListener>();
+        final var result = new LinkedList<NewMessageListenerForChannel>();
 
         for (final var policy : policies) {
 
             final var eventType = policy.getEventClass();
 
-            final var listener = new NewTopicMessageListener(
+            final var listener = new NewMessageListenerForChannel(
                 getInputTopicForEvent.execute(eventType),
                 Optional.of(Set.of(eventType.getSimpleName())),
                 new MessageListenerForPolicy(
@@ -45,13 +45,13 @@ public class ConnectPoliciesConfig {
     }
 
     @Bean
-    NewTopicListeners connectPoliciesToBus(
+    NewMessageListenersForChannel connectPoliciesToBus(
         List<Policy<?>> policies,
-        GetInputTopicForEvent getInputTopicForEvent,
+        GetInputChannelForEvent getInputTopicForEvent,
         MapAnyDomainEvent mapEvent
     ) {
 
-        return new NewTopicListeners(
+        return new NewMessageListenersForChannel(
             getPolicyListeners(
                 policies,
                 getInputTopicForEvent,
