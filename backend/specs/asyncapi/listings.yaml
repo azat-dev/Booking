@@ -120,9 +120,11 @@ components:
   schemas:
     values:
       UserId:
+        x-service: listings
         type: string
         format: uuid
       FullName:
+        x-service: listings
         title: FullName
         type: object
         required:
@@ -135,6 +137,7 @@ components:
             type: string
 
       ListingStatus:
+        x-service: listings
         title: ListingStatus
         type: string
         enum:
@@ -143,6 +146,7 @@ components:
           - READY_FOR_PUBLISHING
 
       RoomType:
+        x-service: listings
         title: RoomType
         type: string
         enum:
@@ -151,6 +155,7 @@ components:
           - SHARED_ROOM
 
       PropertyType:
+        x-service: listings
         title: PropertyType
         type: string
         additionalProperties: false
@@ -171,6 +176,7 @@ components:
           - OTHER
 
       UploadFileFormData:
+        x-service: listings
         title: UploadFileFormData
         type: object
         additionalProperties: false
@@ -192,6 +198,7 @@ components:
             additionalProperties:
               type: string
       Address:
+        x-service: listings
         title: Address
         type: object
         additionalProperties: false
@@ -210,6 +217,7 @@ components:
             type: string
 
       GuestsCapacity:
+        x-service: listings
         title: GuestsCapacity
         type: object
         additionalProperties: false
@@ -226,6 +234,7 @@ components:
             type: integer
 
       ListingDetailsFields:
+        x-service: listings
         title: ListingDetailsFields
         type: object
         additionalProperties: false
@@ -246,6 +255,7 @@ components:
             $ref: "#/components/schemas/values/Address"
 
       UploadedFileData:
+        x-service: listings
         title: UploadedFileData
         type: object
         additionalProperties: false
@@ -259,6 +269,7 @@ components:
             type: string
 
       ListingPhoto:
+        x-service: listings
         title: ListingPhoto
         type: object
         additionalProperties: false
@@ -275,6 +286,7 @@ components:
             type: string
 
       ListingPublicDetails:
+        x-service: listings
         title: ListingPublicDetails
         type: object
         additionalProperties: false
@@ -323,6 +335,7 @@ components:
 
     payloads:
       NewListingAdded:
+        x-service: listings
         title: NewListingAdded
         type: object
         additionalProperties: false
@@ -341,6 +354,7 @@ components:
             type: string
 
       FailedToAddNewListing:
+        x-service: listings
         title: FailedToAddNewListing
         type: object
         additionalProperties: false
@@ -357,6 +371,7 @@ components:
             type: string
 
       GeneratedUrlForUploadListingPhoto:
+        x-service: listings
         title: GeneratedUrlForUploadListingPhoto
         type: object
         additionalProperties: false
@@ -375,6 +390,7 @@ components:
             $ref: "#/components/schemas/values/UploadFileFormData"
 
       FailedGenerateUrlForUploadListingPhoto:
+        x-service: listings
         title: FailedGenerateUrlForUploadListingPhoto
         type: object
         additionalProperties: false
@@ -397,6 +413,7 @@ components:
             type: integer
 
       AddedNewPhotoToListing:
+        x-service: listings
         title: AddedNewPhotoToListing
         type: object
         additionalProperties: false
@@ -410,6 +427,7 @@ components:
             $ref: "#/components/schemas/values/ListingPhoto"
 
       ListingPublished:
+        x-service: listings
         title: ListingPublished
         type: object
         additionalProperties: false
@@ -424,6 +442,7 @@ components:
             format: date-time
 
       ListingDetailsUpdated:
+        x-service: listings
         title: ListingDetailsUpdated
         type: object
         additionalProperties: false
@@ -445,6 +464,7 @@ components:
 
     queries:
       GetListingPublicDetailsById:
+        x-service: listings
         title: GetListingPublicDetailsById
         type: object
         additionalProperties: false
@@ -458,6 +478,7 @@ components:
             $ref: "#/components/schemas/queries/GetListingPublicDetailsByIdParams"
 
       GetListingPublicDetailsByIdParams:
+        x-service: listings
         title: GetListingPublicDetailsByIdParams
         type: object
         additionalProperties: false
@@ -468,6 +489,7 @@ components:
             $ref: "./common/values.yaml#/components/schemas/ListingId"
 
       GetListingPublicDetailsByIdResponse:
+        x-service: listings
         title: GetListingPublicDetailsByIdResponse
         type: object
         additionalProperties: false
@@ -481,6 +503,7 @@ components:
             $ref: "#/components/schemas/values/ListingPublicDetails"
 
       FailedGetListingPublicDetailsById:
+        x-service: listings
         title: FailedGetListingPublicDetailsById
         type: object
         additionalProperties: false
@@ -502,4 +525,5 @@ components:
                     title: FailedGetListingPublicDetailsByIdErrorCode
                     allOf:
                       - $ref: "./common/values.yaml#/components/schemas/ErrorCode"
+                      - x-service: listings
               - $ref: "./common/values.yaml#/components/schemas/Error"

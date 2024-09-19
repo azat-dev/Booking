@@ -29,15 +29,14 @@ export class EndpointInputInterfaceGenerator {
         const inputChannel =  getInputChannelForOperation(operation);
         const serviceId  = getChannelServiceId(inputChannel);
 
-        debugger
         const pckg = `${this._basePackageName}.dto.${this._getPackageForService(serviceId)}.${channelIdToPackageName(inputChannel.id())}`
 
-        const interfaceName = getInputTypeNameForEndpoint(operationId, inputTypes, this._modelsSuffix)
+        const interfaceData = getInputTypeNameForEndpoint(operationId, inputTypes, this._modelsSuffix, inputChannel, this._getPackageForService);
 
         return {
-            fileName: `${interfaceName}.java`,
+            fileName: `${interfaceData.className}.java`,
             packageName: `${this._basePackageName}.dto.${this._getPackageForService(serviceId)}.${channelIdToPackageName(inputChannel.id())}`,
-            content: this._renderContent(pckg, interfaceName)
+            content: this._renderContent(pckg, interfaceData.className)
         }
     }
 }

@@ -1,31 +1,43 @@
 export class ConverterJsonSchemaToAvro {
 
-    constructor(modelsSuffix, namespace, undefinedType) {
+    constructor(modelsSuffix, namespace, undefinedType, baseNameSpace, getServicePackage) {
         this._modelsSuffix = modelsSuffix;
         this._namespace = namespace;
         this._undefinedType = undefinedType;
+        this._getServicePackage = getServicePackage;
+        this._baseNameSpace = baseNameSpace;
     }
 
-    convert = (schema, interfaces) => {
+    _getNamespace = (schema) => {
+        let namespace = this._namespace;
+        if (schema["x-service"]) {
+            namespace = this._baseNameSpace + '.' + this._getServicePackage(schema["x-service"]);
+        }
+        return namespace;
+    }
+
+    convert = (schema) => {
+
+        const namespace = this._getNamespace(schema);
+
         if (!schema.title) {
             console.log('Schema without title', schema);
         }
 
         const avroSchema = {
             type: 'record',
-            namespace: this._namespace,
+            namespace,
             name: schema.title + this._modelsSuffix,
-            "_interfaces": interfaces,
             fields: []
         };
 
         const {fields, internalTypes} = this._convertPropertiesToFields(schema)
         avroSchema.fields = fields;
 
-        return [
-            avroSchema,
-            ...internalTypes
-        ];
+        return {
+            schema: avroSchema,
+            otherTypes: internalTypes
+        };
     }
 
     _convertPropertiesToFields = (schema) => {
@@ -74,8 +86,14 @@ export class ConverterJsonSchemaToAvro {
         }
 
         if (property.type === 'string' && property.enum) {
+
+            if (property.title === 'FailedGetListingPublicDetailsByIdErrorCode') {
+                debugger;
+            }
             const typeName = property.title + this._modelsSuffix;
-            const fullType = this._namespace + '.' + typeName;
+            const fullType = this._getNamespace(property) + '.' + typeName;
+            let namespace = this._getNamespace(property);
+
             return {
                 field: {
                     name: key,
@@ -84,7 +102,7 @@ export class ConverterJsonSchemaToAvro {
                 internalTypes: [
                     {
                         name: typeName,
-                        namespace: this._namespace,
+                        namespace,
                         type: 'enum',
                         symbols: property.enum
                     }
@@ -140,7 +158,7 @@ export class ConverterJsonSchemaToAvro {
             return {
                 field: {
                     name: key,
-                    type: this._namespace + '.' + property.title + this._modelsSuffix
+                    type: this._getNamespace(property)  + '.' + property.title + this._modelsSuffix
                 },
                 internalTypes: result.internalTypes
             }
@@ -161,11 +179,12 @@ export class ConverterJsonSchemaToAvro {
         }, []);
 
         const typeName = property.title + this._modelsSuffix;
-        const fullTypeName = this._namespace + '.' + typeName;
+        const namespace = this._getNamespace(property);
+        const fullTypeName = namespace + '.' + typeName;
 
         internalTypes.push({
             name: typeName,
-            namespace: this._namespace,
+            namespace,
             type: 'record',
             fields
         });
@@ -206,12 +225,16 @@ export class ConverterJsonSchemaToAvro {
             };
         }
 
+        const namespace = this._getNamespace(property);
+
+        const result = this.convert(property);
+
         return {
             field: {
                 name: key,
-                type: this._namespace + '.' + property.title + this._modelsSuffix
+                type: `${namespace}.${property.title}${this._modelsSuffix}`
             },
-            internalTypes: this.convert(property)
+            internalTypes: [result.schema, ...result.otherTypes]
         }
     }
 

@@ -26,6 +26,13 @@ import org.apache.avro.message.BinaryMessageEncoder;
 import org.apache.avro.message.BinaryMessageDecoder;
 import org.apache.avro.message.SchemaStore;
 #end
+
+#if ($schema.getObjectProps())
+    #foreach ($interfaceImport in $schema.getObjectProps().get("_interfacesImports"))
+        ${interfaceImport}
+    #end
+#end
+
 #if (${this.gettersReturnOptional} || ${this.createOptionalGetters})import java.util.Optional;#end
 
 #if ($schema.getDoc())
@@ -37,7 +44,6 @@ import org.apache.avro.message.SchemaStore;
 @org.apache.avro.specific.AvroGenerated
 public class ${this.mangleTypeIdentifier($schema.getName())} extends ${this.getSchemaParentClass($schema.isError())} implements org.apache.avro.specific.SpecificRecord
 
-// VALUES
 #if ($schema.getObjectProps()) #foreach ($interface in $schema.getObjectProps().get("_interfaces")), ${interface} #end #end
 
 {

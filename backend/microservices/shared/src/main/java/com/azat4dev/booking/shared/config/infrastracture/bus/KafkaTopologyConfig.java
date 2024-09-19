@@ -1,7 +1,7 @@
 package com.azat4dev.booking.shared.config.infrastracture.bus;
 
-import com.azat4dev.booking.shared.infrastructure.bus.NewMessageListenersForChannel;
 import com.azat4dev.booking.shared.infrastructure.bus.NewMessageListenerForChannel;
+import com.azat4dev.booking.shared.infrastructure.bus.NewMessageListenersForChannel;
 import com.azat4dev.booking.shared.infrastructure.bus.kafka.*;
 import lombok.AllArgsConstructor;
 import org.apache.kafka.streams.StreamsBuilder;
@@ -33,19 +33,19 @@ public class KafkaTopologyConfig {
 
     @Bean
     TopologyConfigured topology(
-        List<StreamFactoryForTopic> factories,
+        List<NewKafkaStreamForTopic> newKafkaStreamForTopics,
         KafkaTopologyBuilder topologyBuilder,
         List<NewMessageListenerForChannel> channelListeners,
         List<NewMessageListenersForChannel> channelListenersList,
-        List<StreamConfiguratorForTopic> customStreamConfigurators
+        List<StreamConnectorForTopic> customStreamConfigurators
     ) {
 
         final var defaultTopicConfigurators = Stream.concat(
             channelListeners.stream(),
             channelListenersList.stream().flatMap(i -> i.items().stream())
-        ).map(i -> new StreamConfiguratorForTopic(
+        ).map(i -> new StreamConnectorForTopic(
             i.channel(),
-            new KafkaStreamConfiguratorForMessageListener(i.messageListener())
+            new KafkaStreamConnectToMessageListener(i.messageListener())
         ));
 
         final var allTopicStreamConfigurators = Stream.concat(
@@ -54,7 +54,7 @@ public class KafkaTopologyConfig {
         ).toList();
 
         topologyBuilder.build(
-            factories,
+            newKafkaStreamForTopics,
             allTopicStreamConfigurators
         );
 

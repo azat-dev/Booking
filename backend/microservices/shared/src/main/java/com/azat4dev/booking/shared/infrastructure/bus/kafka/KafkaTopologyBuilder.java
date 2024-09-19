@@ -15,14 +15,14 @@ public class KafkaTopologyBuilder {
     private final GetDefaultStreamFactoryForTopic getDefaultStreamFactory;
 
     public void build(
-        List<StreamFactoryForTopic> streamFactories,
-        List<StreamConfiguratorForTopic> streamConfigurators
+        List<NewKafkaStreamForTopic> streamsForTopics,
+        List<StreamConnectorForTopic> streamConfigurators
     ) {
 
-        final var duplicatedTopic = streamFactories.stream()
+        final var duplicatedTopic = streamsForTopics.stream()
             .collect(
                 Collectors.groupingBy(
-                    StreamFactoryForTopic::topic,
+                    NewKafkaStreamForTopic::topic,
                     Collectors.counting()
                 )
             )
@@ -36,18 +36,18 @@ public class KafkaTopologyBuilder {
             throw new RuntimeException("Duplicated stream factory for topic: " + duplicatedTopic.get().getKey());
         }
 
-        final var factoriesByTopics = streamFactories.stream()
+        final var streamsByTopics = streamsForTopics.stream()
             .collect(
                 Collectors.toMap(
-                    StreamFactoryForTopic::topic,
-                    i -> i
+                    NewKafkaStreamForTopic::topic,
+                    i -> i.factory().make(streamsBuilder)
                 )
             );
 
         final var streamConfiguratorsByTopics = streamConfigurators.stream()
             .collect(
                 Collectors.groupingBy(
-                    StreamConfiguratorForTopic::channel,
+                    StreamConnectorForTopic::topic,
                     Collectors.toList()
                 )
             );
@@ -57,17 +57,15 @@ public class KafkaTopologyBuilder {
             final var topic = streamConfiguratorsForTopic.getKey();
             final var configurators = streamConfiguratorsForTopic.getValue();
 
-            final var customFactory = factoriesByTopics.get(topic);
-
-            var factory = customFactory != null ? customFactory.factory() : getDefaultStreamFactory.run(topic);
-            final var stream = factory.make(streamsBuilder);
+            final var customStream = streamsByTopics.get(topic);
+            final var stream = customStream != null ? customStream : getDefaultStreamFactory.run(topic).make(streamsBuilder);
 
             if (configurators == null || configurators.isEmpty()) {
                 continue;
             }
 
             for (final var configuratorForTopic : configurators) {
-                configuratorForTopic.configurator().configure(stream);
+                configuratorForTopic.configurator().connect(stream);
             }
         }
     }

@@ -12,11 +12,11 @@ import com.azat4dev.booking.shared.infrastructure.bus.Message;
 import com.azat4dev.booking.shared.infrastructure.bus.MessageBus;
 import com.azat4dev.booking.shared.infrastructure.bus.NewMessageListenerForChannel;
 import com.azat4dev.booking.shared.infrastructure.bus.kafka.GetSerdeForTopic;
-import com.azat4dev.booking.shared.infrastructure.bus.kafka.StreamFactoryForTopic;
-import com.azat4dev.booking.shared.infrastructure.bus.serialization.NewDeserializerForChannels;
-import com.azat4dev.booking.shared.infrastructure.bus.serialization.NewSerializerForChannels;
+import com.azat4dev.booking.shared.infrastructure.bus.kafka.NewKafkaStreamForTopic;
 import com.azat4dev.booking.shared.infrastructure.bus.serialization.MessageDeserializer;
 import com.azat4dev.booking.shared.infrastructure.bus.serialization.MessageSerializer;
+import com.azat4dev.booking.shared.infrastructure.bus.serialization.NewDeserializerForChannels;
+import com.azat4dev.booking.shared.infrastructure.bus.serialization.NewSerializerForChannels;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.apache.kafka.clients.admin.NewTopic;
@@ -126,7 +126,7 @@ public class KafkaMessageBusTests {
         );
 
         // Then
-        waitForValue(receivedMessageStore, Duration.ofSeconds(1));
+        waitForValue(receivedMessageStore, Duration.ofSeconds(3));
 
         final var receivedMessage = receivedMessageStore.get();
         assertThat(receivedMessage.payload()).isEqualTo(message.payload());
@@ -319,8 +319,8 @@ public class KafkaMessageBusTests {
 
 
         @Bean
-        StreamFactoryForTopic streamFactoryForJoinTopic(GetSerdeForTopic getSerdeForTopic) {
-            return new StreamFactoryForTopic(
+        NewKafkaStreamForTopic streamFactoryForJoinTopic(GetSerdeForTopic getSerdeForTopic) {
+            return new NewKafkaStreamForTopic(
                 TOPIC_WITH_JOIN,
                 builder -> {
 

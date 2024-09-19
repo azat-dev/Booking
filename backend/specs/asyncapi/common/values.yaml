@@ -5,18 +5,23 @@ info:
 components:
   schemas:
     OperationId:
+      x-service: common
       type: string
       format: uuid
     ListingId:
+      x-service: common
       type: string
       format: uuid
     HostId:
+      x-service: common
       type: string
       format: uuid
     UserId:
+      x-service: common
       type: string
       format: uuid
     ErrorCode:
+      x-service: common
       type: string
       enum:
         - NOT_FOUND
@@ -28,6 +33,7 @@ components:
         - UNIMPLEMENTED
         - WRONG_FORMAT
     Error:
+      x-service: common
       type: object
       additionalProperties: false
       required:

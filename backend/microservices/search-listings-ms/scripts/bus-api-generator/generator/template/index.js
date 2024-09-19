@@ -6,6 +6,7 @@ import {MessageFileGenerator} from "./MessageFileGenerator";
 import {EndpointInputInterfaceGenerator} from "./endpoints/EndpointInputInterfaceGenerator";
 import {AvroDtoGenerator} from "./AvroDtoGenerator";
 import {AvroChannelSerdeGenerator} from "./AvroChannelSerdeGenerator";
+import {removeSlashes} from "./utils";
 
 const SUFFIX = "DTO";
 
@@ -22,7 +23,7 @@ export default async function (options) {
         const result = options.params.packageNamesByServices[serviceId];
 
         if (!result) {
-            throw new Error(`There is no package for service: ${serviceId}`);
+            return removeSlashes(serviceId).toLowerCase();
         }
 
         return result;

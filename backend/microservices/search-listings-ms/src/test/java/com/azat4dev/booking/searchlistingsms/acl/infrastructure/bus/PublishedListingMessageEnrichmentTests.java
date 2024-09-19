@@ -1,13 +1,20 @@
 package com.azat4dev.booking.searchlistingsms.acl.infrastructure.bus;
 
+import com.azat4dev.booking.searchlistingsms.config.common.infrastructure.bus.InternalTopics;
 import com.azat4dev.booking.searchlistingsms.generated.api.bus.Channels;
-import com.azat4dev.booking.searchlistingsms.generated.api.bus.dto.listingsms.listingsqueries.responses.getlistingpublicdetailsbyid.GetListingPublicDetailsByIdParamsDTO;
-import com.azat4dev.booking.searchlistingsms.generated.api.bus.dto.listingsms.listingsqueries.responses.getlistingpublicdetailsbyid.GetListingPublicDetailsByIdResponseDTO;
-import com.azat4dev.booking.searchlistingsms.generated.api.bus.dto.listingsms.listingsqueries.responses.getlistingpublicdetailsbyid.ListingPublicDetailsDTO;
+import com.azat4dev.booking.searchlistingsms.generated.api.bus.dto.listingsms.*;
 import com.azat4dev.booking.searchlistingsms.generated.api.bus.dto.searchlistingsms.internallistingeventsstream.ListingPublishedDTO;
 import com.azat4dev.booking.searchlistingsms.generated.api.bus.dto.searchlistingsms.internallistingeventsstream.WaitingInfoForPublishedListingDTO;
 import com.azat4dev.booking.searchlistingsms.helpers.EnableTestcontainers;
-import com.azat4dev.booking.shared.infrastructure.bus.*;
+import com.azat4dev.booking.shared.infrastructure.bus.Message;
+import com.azat4dev.booking.shared.infrastructure.bus.MessageBus;
+import com.azat4dev.booking.shared.infrastructure.bus.MessageListener;
+import com.azat4dev.booking.shared.infrastructure.bus.NewMessageListenerForChannel;
+import com.azat4dev.booking.shared.infrastructure.bus.kafka.GetSerdeForTopic;
+import com.azat4dev.booking.shared.infrastructure.bus.kafka.NewKafkaStreamForTopic;
+import org.apache.kafka.common.serialization.Serdes;
+import org.apache.kafka.streams.kstream.Consumed;
+import org.apache.kafka.streams.kstream.Produced;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.actuate.observability.AutoConfigureObservability;
@@ -18,6 +25,7 @@ import org.springframework.test.context.jdbc.Sql;
 
 import java.time.Duration;
 import java.time.LocalDateTime;
+import java.util.List;
 import java.util.Optional;
 import java.util.Set;
 import java.util.UUID;
@@ -41,19 +49,50 @@ public class PublishedListingMessageEnrichmentTests {
         return UUID.randomUUID();
     }
 
-    com.azat4dev.booking.searchlistingsms.generated.api.bus.dto.listingsms.externallistingeventsstream.ListingPublishedDTO anyListingPublished() {
-        return com.azat4dev.booking.searchlistingsms.generated.api.bus.dto.listingsms.externallistingeventsstream.ListingPublishedDTO.newBuilder()
-            .setListingId(anyListingId())
-            .setPublishedAt(LocalDateTime.now().toString())
+    ListingPublicDetailsDTO anyPublicListingDetails(UUID listingId) {
+        return ListingPublicDetailsDTO.newBuilder()
+            .setId(listingId)
+            .setAddress(
+                AddressDTO.newBuilder()
+                    .setCity("city")
+                    .setCountry("country")
+                    .setStreet("street")
+                    .setState("state")
+                    .build()
+            )
+            .setCreatedAt(LocalDateTime.now().toString())
+            .setDescription("description")
+            .setStatus(ListingStatusDTO.PUBLISHED)
+            .setHostId(UUID.randomUUID())
+            .setRoomType(RoomTypeDTO.PRIVATE_ROOM)
+            .setPropertyType(PropertyTypeDTO.APARTMENT)
+            .setTitle("title")
+            .setGuestCapacity(
+                GuestsCapacityDTO.newBuilder()
+                    .setAdults(1)
+                    .setChildren(2)
+                    .setInfants(3)
+                    .build()
+            )
+            .setUpdatedAt(LocalDateTime.now().toString())
+            .setPhotos(
+                List.of(
+                    ListingPhotoDTO.newBuilder()
+                        .setId(UUID.randomUUID().toString())
+                        .setBucketName("bucketName")
+                        .setObjectName("objectName")
+                        .build()
+                )
+            )
             .build();
     }
 
     @Test
-    void test_givenWaitingForListingDetails_whenReceivedResponse_thenPublishEnrichedListingPublishedMessage() {
+    void test_givenWaitingForListingDetails_whenReceivedResponse_thenPublishEnrichedListingPublishedMessage() throws InterruptedException {
 
         // Given
         final var listingId = anyListingId();
-        final var listingPublished = anyListingPublished();
+        final var publishedAt = LocalDateTime.now();
 
         final var requestId = UUID.randomUUID();
 
@@ -66,6 +105,7 @@ public class PublishedListingMessageEnrichmentTests {
                 WaitingInfoForPublishedListingDTO.newBuilder()
                     .setListingId(listingId)
                     .setRequestId(requestId)
+                    .setPublishedAt(publishedAt.toString())
                     .build()
             )
         );
@@ -75,34 +115,29 @@ public class PublishedListingMessageEnrichmentTests {
             Optional.of(requestId.toString()),
             MessageBus.Data.with(
                 UUID.randomUUID().toString(),
-                "ListingPublished",
+                "GetListingPublicDetailsByIdResponse",
                 GetListingPublicDetailsByIdResponseDTO.newBuilder()
                     .setParams(
                         GetListingPublicDetailsByIdParamsDTO.newBuilder()
                             .setListingId(listingId)
                             .build()
                     )
-                    .setData(
-                        ListingPublicDetailsDTO.newBuilder()
-                            .build()
-                    )
+                    .setData(anyPublicListingDetails(listingId))
+                    .build()
             )
         );
 
         // Then
-        waitForValue(receivedListingPublished, Duration.ofSeconds(3));
+        waitForValue(receivedListingPublished, Duration.ofSeconds(30));
     }
 
     @TestConfiguration
     public static class Config {
 
-        public static final String JOINED_MESSAGES_TOPIC = "topic";
-
         @Bean
         AtomicReference<ListingPublishedDTO> receivedListingPublished() {
             return new AtomicReference<>();
         }
-
 
         @Bean
         NewMessageListenerForChannel outputMessageListener(AtomicReference<ListingPublishedDTO> receivedListingPublished) {
@@ -123,23 +158,106 @@ public class PublishedListingMessageEnrichmentTests {
             );
         }
 
-//        @Bean
-//        StreamFactoryForTopic streamFactoryForTopic() {
-//            return new StreamFactoryForTopic(
-//                JOINED_MESSAGES_TOPIC,
-//                new StreamFactory() {
-//                    @Override
-//                    public KStream<String, Message> make(StreamsBuilder builder) {
-//
-//                        final var table = builder.stream(Channels.INTERNAL_LISTING_EVENTS_STREAM.getValue())
-//                            .filter((key, value) -> value instanceof WaitingInfoForPublishedListingDTO)
-//                            .toTable();
-//
-//                        builder.stream(Channels.RECEIVE_GET_PUBLIC_LISTING_PUBLIC_DETAILS_BY_ID_FOR_PUBLISHED_LISTING.getValue())
-//                            .selectKey()
-//                    }
-//                }
-//            );
-//        }
+        @Bean
+        NewMessageListenerForChannel input1() {
+            return new NewMessageListenerForChannel(
+                Channels.RECEIVE_GET_LISTING_PUBLIC_DETAILS_BY_ID.getValue(),
+                new MessageListener() {
+
+                    @Override
+                    public Optional<Set<String>> messageTypes() {
+                        return Optional.of(Set.of("GetListingPublicDetailsByIdResponse"));
+                    }
+
+                    @Override
+                    public void consume(Message message) {
+
+                        System.out.println("Received message1: " + message);
+                    }
+                }
+            );
+        }
+
+        @Bean
+        NewMessageListenerForChannel messageListenerForChannel2() {
+            return new NewMessageListenerForChannel(
+                Channels.INTERNAL_LISTING_EVENTS_STREAM.getValue(),
+                new MessageListener() {
+
+                    @Override
+                    public Optional<Set<String>> messageTypes() {
+                        return Optional.of(Set.of("WaitingInfoForPublishedListing"));
+                    }
+
+                    @Override
+                    public void consume(Message message) {
+
+                        System.out.println("Received message2: " + message);
+                    }
+                }
+            );
+        }
+
+        @Bean
+        NewKafkaStreamForTopic streamFactoryForTopic(
+            GetSerdeForTopic getSerdeForTopic
+        ) {
+            return new NewKafkaStreamForTopic(
+                InternalTopics.LISTING_PUBLISHED.getValue(),
+                builder -> {
+
+                    final var waitingsTable = builder.stream(
+                            Channels.INTERNAL_LISTING_EVENTS_STREAM.getValue(),
+                            Consumed.with(
+                                Serdes.String(),
+                                getSerdeForTopic.run(Channels.INTERNAL_LISTING_EVENTS_STREAM.getValue())
+                            )
+                        )
+                        .filter((key, message) -> message.payload() instanceof WaitingInfoForPublishedListingDTO)
+                        .toTable();
+
+                    builder.stream(
+                        Channels.RECEIVE_GET_LISTING_PUBLIC_DETAILS_BY_ID.getValue(),
+                        Consumed.with(
+                            Serdes.String(),
+                            getSerdeForTopic.run(Channels.RECEIVE_GET_LISTING_PUBLIC_DETAILS_BY_ID.getValue())
+                        )
+                    ).join(waitingsTable, (responseMessage, waitingMessage) -> {
+                        final var response = responseMessage.payloadAs(GetListingPublicDetailsByIdResponseDTO.class);
+                        final var waiting = waitingMessage.payloadAs(WaitingInfoForPublishedListingDTO.class);
+
+                        System.out.println("Joining: " + response + " with " + waiting);
+                        return new Message(
+                            UUID.randomUUID().toString(),
+                            "ListingPublished",
+                            LocalDateTime.now(),
+                            Optional.of(waiting.getListingId().toString()),
+                            Optional.empty(),
+                            ListingPublishedDTO.newBuilder()
+                                .setListingId(waiting.getListingId())
+                                .setPublishedAt(LocalDateTime.now().toString())
+                                .setData(
+                                    response.getData()
+                                )
+                                .build()
+                        );
+                    }).to(
+                        Channels.INTERNAL_LISTING_EVENTS_STREAM.getValue(),
+                        Produced.with(
+                            Serdes.String(),
+                            getSerdeForTopic.run(Channels.INTERNAL_LISTING_EVENTS_STREAM.getValue())
+                        )
+                    );
+
+                    return builder.stream(
+                        Channels.INTERNAL_LISTING_EVENTS_STREAM.getValue(),
+                        Consumed.with(
+                            Serdes.String(),
+                            getSerdeForTopic.run(Channels.INTERNAL_LISTING_EVENTS_STREAM.getValue())
+                        )
+                    );
+                }
+            );
+        }
     }
 }

@@ -8,12 +8,12 @@ import org.apache.kafka.streams.kstream.KStream;
 import java.util.Set;
 
 @AllArgsConstructor
-public class KafkaStreamConfiguratorForMessageListener implements KafkaStreamConfigurator {
+public class KafkaStreamConnectToMessageListener implements KafkaStreamConnector {
 
     private final MessageListener messageListener;
 
     @Override
-    public void configure(KStream<String, Message> stream) {
+    public void connect(KStream<String, Message> stream) {
 
         final var messageTypes = messageListener.messageTypes()
             .orElse(Set.of());

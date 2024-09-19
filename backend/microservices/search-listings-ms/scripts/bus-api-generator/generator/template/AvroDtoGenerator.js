@@ -1,7 +1,12 @@
-import {getChannelServiceId} from "./utils";
+import {capitalize, getChannelServiceId} from "./utils";
 import {AvroModelsGenerator} from "./AvroModelsGenerator";
 import {ConverterJsonSchemaToAvro} from "./ConverterJsonSchemaToAvro";
-import {getInputChannelForOperation, getInputTypeInterfaceForEndpoint} from "./endpoints/utils";
+import {
+    channelIdToPackageName,
+    getInputChannelForOperation,
+    getInputTypeNameForEndpoint,
+    getInputTypes
+} from "./endpoints/utils";
 
 export class AvroDtoGenerator {
 
@@ -47,24 +52,18 @@ export class AvroDtoGenerator {
         };
     }
 
-    _getDtoForMessages = async (messages, packageName, serviceId, channelId, modelsSuffix, getEndpointInterfaces) => {
+    _deletePrefix = (str, prefix) => {
+        return str.startsWith(prefix) ? str.substring(prefix.length) : str;
+    }
+
+    _getDtoForMessages = async (messages, packageName, serviceId, channelId, modelsSuffix, getEndpointInterfaces, basePackageName) => {
 
         const result = [];
-        const pckg = `${packageName}.dto.${this._getPackageForService(serviceId)}.${channelId.toLowerCase().replace(/\//g, '.')}`;
-        const filePackage = `${this._getPackageForService(serviceId)}.${channelId.toLowerCase().replace(/\//g, '.')}`;
+        const channelPackage = channelIdToPackageName(channelId);
+        const channelNamespace = `${packageName}.dto.${this._getPackageForService(serviceId)}.${channelPackage}`;
+        const filePackage = `${this._getPackageForService(serviceId)}.${channelPackage}`;
 
-        const messageSchema = this._getChannelMessageSchema(
-            pckg,
-            messages.map(message => {
-                return {"name": message.id() + modelsSuffix, type: `${pckg}.${message.id()}${modelsSuffix}`}
-            })
-        );
-
-        result.push({
-            fileName: `ChannelMessage${modelsSuffix}.avsc`,
-            packageName: filePackage,
-            content: JSON.stringify(messageSchema, null, 2)
-        });
+        const payloads = [];
 
         for (let messageIndex = 0; messageIndex < messages.length; messageIndex++) {
 
@@ -72,23 +71,51 @@ export class AvroDtoGenerator {
             const messageId = message.id();
             const payload = message.payload();
 
-            const sch = payload.json();
+            const schema = payload.json();
             const converter = new ConverterJsonSchemaToAvro(
                 modelsSuffix,
-                pckg,
+                channelNamespace,
                 packageName + '.dto.Undefined',
+                basePackageName + '.dto',
+                this._getPackageForService
             );
 
-            const avroSchemas = converter.convert(sch, getEndpointInterfaces(channelId, messageId));
-            avroSchemas.forEach(avroSchema => {
+            const inputInterfaces = getEndpointInterfaces(channelId, messageId);
+
+            const messageConversionResult = converter.convert(schema);
+            messageConversionResult.schema["_interfaces"] = inputInterfaces.map(i => i.className);
+            messageConversionResult.schema["_interfacesImports"] = inputInterfaces.map(i => `import ${basePackageName}.dto.${i.packageName}.${i.className};`);
+
+            [messageConversionResult.schema, ...messageConversionResult.otherTypes].forEach(avroSchema => {
+                let filePackageName = filePackage;
+                if (avroSchema.namespace !== channelNamespace) {
+                    filePackageName = `${this._deletePrefix(avroSchema.namespace, basePackageName + '.')}`;
+                }
+
                 result.push({
                     fileName: `${avroSchema.name}.avsc`,
-                    packageName: filePackage,
+                    packageName: filePackageName,
                     content: JSON.stringify(avroSchema, null, 2)
                 });
             });
 
+            payloads.push({
+                name: capitalize(schema.title).trim(),
+                type: `${messageConversionResult.schema.namespace}.${messageConversionResult.schema.name}`
+            });
+
         }
+
+        const messageSchema = this._getChannelMessageSchema(
+            channelNamespace,
+            payloads
+        );
+
+        result.push({
+            fileName: `ChannelMessage${modelsSuffix}.avsc`,
+            packageName: filePackage,
+            content: JSON.stringify(messageSchema, null, 2)
+        });
 
         return result;
     }
@@ -104,7 +131,6 @@ export class AvroDtoGenerator {
                     return null;
                 }
 
-                const operationId = operation.id();
                 if (messageIds.length === 1) {
                     return null;
                 }
@@ -114,14 +140,21 @@ export class AvroDtoGenerator {
                     return null;
                 }
 
-                return getInputTypeInterfaceForEndpoint(operationId, modelsSuffix);
+                const inputTypeData = getInputTypeNameForEndpoint(
+                    operation.id(),
+                    getInputTypes(operation, modelsSuffix, this._getPackageForService),
+                    modelsSuffix,
+                    inputChannel,
+                    this._getPackageForService
+                );
+
+                if (!inputTypeData.isInterface) {
+                    return null;
+                }
+
+                return inputTypeData;
             }).filter(i => !!i);
 
-            if (interfaces.length === 0) {
-                return;
-            }
-
-            debugger
             return interfaces;
         }
     }
@@ -147,7 +180,17 @@ export class AvroDtoGenerator {
 
             const messages = channel.messages().all();
 
-            result.push(...await this._getDtoForMessages(messages, packageName, serviceId, channelId, modelsSuffix, getEndpointInterfaces));
+            result.push(
+                ...await this._getDtoForMessages(
+                    messages,
+                    packageName,
+                    serviceId,
+                    channelId,
+                    modelsSuffix,
+                    getEndpointInterfaces,
+                    packageName
+                )
+            );
         }
 
         return result;
@@ -181,7 +224,7 @@ export class AvroDtoGenerator {
             }
 
             const messages = inputChannel.messages().all();
-            result.push(...await this._getDtoForMessages(messages, packageName, serviceId, channelId, modelsSuffix, getEndpointInterfaces));
+            result.push(...await this._getDtoForMessages(messages, packageName, serviceId, channelId, modelsSuffix, getEndpointInterfaces, packageName));
         }
 
         return result;
@@ -193,13 +236,12 @@ export class AvroDtoGenerator {
             ...(await this._generateForChannels(asyncapi, modelsSuffix, packageName)),
             {
                 fileName: `Undefined.avsc`,
-                packageName: 'dto',
+                packageName: '',
                 content: JSON.stringify({
                     namespace: packageName + '.dto',
                     name: 'Undefined',
                     type: 'record',
-                    fields: [
-                    ]
+                    fields: []
                 }, null, 2)
             }
         ]

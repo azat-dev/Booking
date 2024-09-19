@@ -19,6 +19,7 @@ export const getInputTypes = (operation, modelsSuffix, getPackageForService) => 
         return {
             name: m.id(),
             className: m.id() + modelsSuffix,
+            customService: m.payload().json()['x-service'],
             packageName: getPackageForService(serviceId)
         }
     });
@@ -28,12 +29,19 @@ export const getInputTypeInterfaceForEndpoint = (operationId, modelsSuffix) => {
     return `${capitalize(removeSlashes(operationId))}Input${modelsSuffix}`;
 }
 
-export const getInputTypeNameForEndpoint = (operationId, inputTypes, modelsSuffix) => {
+export const getInputTypeNameForEndpoint = (operationId, inputTypes, modelsSuffix, channel, getServicePackage) => {
     if (inputTypes.length === 1) {
-        return inputTypes[0].className;
+        return {
+            className: inputTypes[0].className,
+            packageName: inputTypes[0].packageName
+        };
     }
 
-    return getInputTypeInterfaceForEndpoint(operationId, modelsSuffix);
+    return {
+        isInterface: true,
+        className: getInputTypeInterfaceForEndpoint(operationId, modelsSuffix),
+        packageName:  `${getServicePackage(getChannelServiceId(channel))}.${channelIdToPackageName(channel.id())}`
+    };
 }
 
 export const getInputChannel = (operation) => {

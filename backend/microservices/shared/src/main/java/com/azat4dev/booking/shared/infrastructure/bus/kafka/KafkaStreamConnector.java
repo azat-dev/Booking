@@ -3,7 +3,7 @@ package com.azat4dev.booking.shared.infrastructure.bus.kafka;
 import com.azat4dev.booking.shared.infrastructure.bus.Message;
 import org.apache.kafka.streams.kstream.KStream;
 
-public interface KafkaStreamConfigurator {
+public interface KafkaStreamConnector {
 
-    void configure(KStream<String, Message> stream);
+    void connect(KStream<String, Message> stream);
 }

@@ -1,5 +1,10 @@
 import {capitalize, convertChannelIdToConstantName, getChannelServiceId, removeSlashes} from "../utils";
-import {channelIdToPackageName, getInputTypeNameForEndpoint, getInputTypes} from "./utils";
+import {
+    channelIdToPackageName,
+    getInputTypeInterfaceForEndpoint,
+    getInputTypeNameForEndpoint,
+    getInputTypes
+} from "./utils";
 
 export class EndpointFileGenerator {
 
@@ -48,8 +53,11 @@ export class EndpointFileGenerator {
         }));
 
         const inputTypes = getInputTypes(operation, options.modelsSuffix, this._getPackageForService);
-        const inputTypeDto = getInputTypeNameForEndpoint(operationId, inputTypes, options.modelsSuffix);
-        const inputTypeDtoImport = `${options.packageName}.dto.${this._getPackageForService(inputServiceId)}.${channelIdToPackageName(inputChannel.id())}.${inputTypeDto}`
+        const inputTypeDtoData = getInputTypeNameForEndpoint(operationId, inputTypes, options.modelsSuffix, inputChannel, this._getPackageForService);
+
+        const {className: inputTypeDto, packageName: inputTypeDtoPackage} = inputTypeDtoData;
+
+        const inputTypeDtoImport = `${options.packageName}.dto.${inputTypeDtoPackage}.${inputTypeDto}`
 
         return (
             {
@@ -62,7 +70,12 @@ export class EndpointFileGenerator {
                         'com.azat4dev.booking.shared.infrastructure.api.bus.BusApiEndpoint',
                         inputTypeDtoImport,
                         `${options.packageName}.Channels`,
-                        ...(inputTypes.map(i => `${options.packageName}.dto.${i.packageName}.${channelIdToPackageName(inputChannelId)}.${i.className}`)),
+                        ...(inputTypes.map(i => {
+                            if (i.customService) {
+                                return `${options.packageName}.dto.${this._getPackageForService(i.customService)}.${i.className}`;
+                            }
+                            return `${options.packageName}.dto.${i.packageName}.${channelIdToPackageName(inputChannelId)}.${i.className}`;
+                        })),
                         ...(returnType.map(i => `${options.packageName}.dto.${i.packageName}.${i.className}`))
                     ],
                     inputTypes,
