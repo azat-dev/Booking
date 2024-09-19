@@ -14,9 +14,9 @@ channels:
   listingsQueries/responses/GetListingPublicDetailsById:
     $ref: './listings.yaml#/channels/queriesResponsesGetListingPublicDetailsById'
 
-  receiveGetPublicListingPublicDetailsByIdForPublishedListing:
+  receiveGetListingPublicDetailsById:
     x-service: search-listings
-    address: 'com.azat4dev.search-listings.receive.get-public-listing-public-details-by-id-for-published-listing'
+    address: 'com.azat4dev.search-listings.receive.get-Listing-public-details-by-id'
     messages:
       GetListingPublicDetailsByIdResponse:
         $ref: './listings.yaml#/channels/queriesResponsesGetListingPublicDetailsById/messages/GetListingPublicDetailsByIdResponse'
@@ -27,6 +27,8 @@ channels:
     x-service: search-listings
     address: 'com.azat4dev.search-listings.events.internal.listing-events-stream'
     messages:
+      WaitingInfoForPublishedListing:
+        $ref: '#/components/messages/WaitingInfoForPublishedListing'
       ListingPublished:
         $ref: '#/components/messages/ListingPublished'
       ListingUpdated:
@@ -35,6 +37,13 @@ channels:
         $ref: '#/components/messages/ListingDeleted'
 
 operations:
+  sendGetListingPublicDetailsById:
+    action: send
+    channel:
+      $ref: "#/channels/listingsQueries~1requests~1GetListingPublicDetailsById"
+    messages:
+      - $ref: '#/channels/listingsQueries~1requests~1GetListingPublicDetailsById/messages/GetListingPublicDetailsById'
+
   processExternalListingEvents:
     action: receive
     channel:
@@ -42,13 +51,14 @@ operations:
     messages:
       - $ref: '#/channels/externalListingEventsStream/messages/ListingPublished'
 
-  processGetListingPublicDetailsByIdForPublishedListing:
+  processResponseOfGetListingPublicDetailsByIdForPublishedListing:
     action: receive
+    description: Combine the response of GetListingPublicDetailsById and WaitingInfoForPublishedListing and produce internal ListingPublished
     channel:
-      $ref: '#/channels/receiveGetPublicListingPublicDetailsByIdForPublishedListing'
+      $ref: '#/channels/receiveGetListingPublicDetailsById'
     messages:
-      - $ref: '#/channels/receiveGetPublicListingPublicDetailsByIdForPublishedListing/messages/GetListingPublicDetailsByIdResponse'
-      - $ref: '#/channels/receiveGetPublicListingPublicDetailsByIdForPublishedListing/messages/FailedGetListingPublicDetailsById'
+      - $ref: '#/channels/receiveGetListingPublicDetailsById/messages/GetListingPublicDetailsByIdResponse'
+      - $ref: '#/channels/receiveGetListingPublicDetailsById/messages/FailedGetListingPublicDetailsById'
 
   sendInternalListingEvents:
     action: send
@@ -61,51 +71,23 @@ operations:
 
 components:
   messages:
+    WaitingInfoForPublishedListing:
+      name: WaitingInfoForPublishedListing
+      payload:
+        $ref: '#/components/schemas/payloads/WaitingInfoForPublishedListing'
+
     ListingPublished:
       name: ListingPublishedInternal
-      traits:
-        - $ref: '#/components/messageTraits/commonHeaders'
-      headers:
-        type: object
-        required:
-          - x-message-type
-        properties:
-          x-message-type:
-            type: string
-            enum:
-              - ListingPublished
       payload:
         $ref: '#/components/schemas/payloads/ListingPublished'
 
     ListingDeleted:
       name: ListingDeleted
-      traits:
-        - $ref: '#/components/messageTraits/commonHeaders'
-      headers:
-        type: object
-        required:
-          - x-message-type
-        properties:
-          x-message-type:
-            type: string
-            enum:
-              - ListingDeleted
       payload:
         $ref: '#/components/schemas/payloads/ListingDeleted'
 
     ListingUpdated:
       name: ListingUpdated
-      traits:
-        - $ref: '#/components/messageTraits/commonHeaders'
-      headers:
-        type: object
-        required:
-          - x-message-type
-        properties:
-          x-message-type:
-            type: string
-            enum:
-              - ListingUpdated
       payload:
         $ref: '#/components/schemas/payloads/ListingUpdated'
 
@@ -129,7 +111,7 @@ components:
             $ref: "./listings.yaml#/components/schemas/values/ListingPublicDetails"
 
       ListingUpdated:
-        x-title: ListingUpdated
+        title: ListingUpdated
         type: object
         additionalProperties: false
         required:
@@ -146,7 +128,7 @@ components:
             $ref: "./listings.yaml#/components/schemas/values/ListingPublicDetails"
 
       ListingDeleted:
-        x-title: ListingDeleted
+        title: ListingDeleted
         type: object
         additionalProperties: false
         required:
@@ -155,20 +137,20 @@ components:
           listingId:
             $ref: "./common/values.yaml#/components/schemas/ListingId"
 
-  messageTraits:
-    commonHeaders:
-      headers:
+      WaitingInfoForPublishedListing:
+        title: WaitingInfoForPublishedListing
         type: object
+        additionalProperties: false
         required:
-          - x-message-id
-          - x-message-sent-at
+          - requestId
+          - listingId
+          - publishedAt
         properties:
-          x-message-id:
+          requestId:
             type: string
-          x-correlation-id:
-            type: string
-          x-message-sent-at:
+            format: uuid
+          listingId:
+            $ref: "./common/values.yaml#/components/schemas/ListingId"
+          publishedAt:
             type: string
             format: date-time
-          x-reply-to:
-            type: string

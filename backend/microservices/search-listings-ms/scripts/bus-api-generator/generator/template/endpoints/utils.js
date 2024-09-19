@@ -24,12 +24,16 @@ export const getInputTypes = (operation, modelsSuffix, getPackageForService) => 
     });
 }
 
+export const getInputTypeInterfaceForEndpoint = (operationId, modelsSuffix) => {
+    return `${capitalize(removeSlashes(operationId))}Input${modelsSuffix}`;
+}
+
 export const getInputTypeNameForEndpoint = (operationId, inputTypes, modelsSuffix) => {
     if (inputTypes.length === 1) {
         return inputTypes[0].className;
     }
 
-    return `${capitalize(removeSlashes(operationId))}Input${modelsSuffix}`;
+    return getInputTypeInterfaceForEndpoint(operationId, modelsSuffix);
 }
 
 export const getInputChannel = (operation) => {
@@ -42,4 +46,8 @@ export const getInputChannel = (operation) => {
     }
 
     return inputChannels[0];
+}
+
+export const channelIdToPackageName = (channelId) => {
+    return channelId.toLowerCase().replace(/\//g, '.');
 }

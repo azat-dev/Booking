@@ -1,5 +1,5 @@
 import {capitalize, convertChannelIdToConstantName, getChannelServiceId, removeSlashes} from "../utils";
-import {getInputTypeNameForEndpoint, getInputTypes} from "./utils";
+import {channelIdToPackageName, getInputTypeNameForEndpoint, getInputTypes} from "./utils";
 
 export class EndpointFileGenerator {
 
@@ -44,12 +44,12 @@ export class EndpointFileGenerator {
         const returnType = replyMessages.map(m => ({
             type: m.meta().id,
             className: m.meta().id + options.modelsSuffix,
-            packageName: this._getPackageForService(getChannelServiceId(replyChannel))
+            packageName: this._getPackageForService(getChannelServiceId(replyChannel)) + '.' + "REPLAY"
         }));
 
         const inputTypes = getInputTypes(operation, options.modelsSuffix, this._getPackageForService);
         const inputTypeDto = getInputTypeNameForEndpoint(operationId, inputTypes, options.modelsSuffix);
-        const inputTypeDtoImport = `${options.packageName}.dto.${this._getPackageForService(inputServiceId)}.${inputTypeDto}`
+        const inputTypeDtoImport = `${options.packageName}.dto.${this._getPackageForService(inputServiceId)}.${channelIdToPackageName(inputChannel.id())}.${inputTypeDto}`
 
         return (
             {
@@ -62,7 +62,7 @@ export class EndpointFileGenerator {
                         'com.azat4dev.booking.shared.infrastructure.api.bus.BusApiEndpoint',
                         inputTypeDtoImport,
                         `${options.packageName}.Channels`,
-                        ...(inputTypes.map(i => `${options.packageName}.dto.${i.packageName}.${i.className}`)),
+                        ...(inputTypes.map(i => `${options.packageName}.dto.${i.packageName}.${channelIdToPackageName(inputChannelId)}.${i.className}`)),
                         ...(returnType.map(i => `${options.packageName}.dto.${i.packageName}.${i.className}`))
                     ],
                     inputTypes,
@@ -91,12 +91,18 @@ export class EndpointFileGenerator {
 package ${packageName}.endpoints;
 
 ${imports.map(i => `import ${i};`).join("\n")}
+import java.util.Arrays;
+import java.util.Set;
+import java.util.stream.Collectors;
 
 public interface ${interfaceName} extends BusApiEndpoint<${inputMessageClass}> {
 
     MessageInfo[] INPUT_MESSAGE_TYPES = new MessageInfo[] {
         ${inputMessageTypes.map(i => `new MessageInfo("${i.name}", ${i.className}.class)`).join("\n, ")}
     };
+    
+    Set<String> ALLOWED_MESSAGE_TYPES = Arrays.stream(INPUT_MESSAGE_TYPES)
+        .map(MessageInfo::messageType).collect(Collectors.toSet());
     
     @Override
     default String getInputAddress() {
@@ -123,6 +129,11 @@ public interface ${interfaceName} extends BusApiEndpoint<${inputMessageClass}> {
         return new MessageInfo[] { 
             ${returnTypes.map(i => `new MessageInfo("${i.type}", ${i.className}.class)`).join("\n, ")} 
         };
+    }
+    
+    @Override
+    default boolean isMessageTypeAllowed(String messageType) {
+        return ALLOWED_MESSAGE_TYPES.contains(messageType);
     }
 }
 `.trim();

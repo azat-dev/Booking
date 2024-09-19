@@ -31,6 +31,12 @@ const argv = yargs(hideBin(process.argv))
         type: 'string',
         demandOption: true, // Makes this argument required
     })
+    .option('output-avro', {
+        alias: 'oavro',
+        description: 'The path to the output directory for the avro models',
+        type: 'string',
+        demandOption: true, // Makes this argument required
+    })
     .option("service-package", {
         alias: 'sp',
         description: 'The path to yaml file for package names for services',
@@ -49,6 +55,7 @@ const replaceSeparator = (filepath: string) => {
 
 const INPUT_FILE = path.resolve(replaceSeparator((argv as any).input));
 const OUTPUT_DIR = path.resolve(replaceSeparator((argv as any).output));
+const OUTPUT_AVRO_DIR = path.resolve(replaceSeparator((argv as any).outputAvro));
 const PACKAGE_NAME = (argv as any).package;
 const PACKAGE_NAMES_BY_SERVICES = (argv as any).servicePackage;
 const MODEL_DIR = replaceSeparator(`${PACKAGE_NAME.split(".").join("/")}`);
@@ -68,7 +75,8 @@ const generator = new Generator(
             package: (argv as any).package,
             dtoPackage: (argv as any).dto,
             outputDir: OUTPUT_DIR,
-            packageNamesByServices: PACKAGE_NAMES_BY_SERVICES
+            packageNamesByServices: PACKAGE_NAMES_BY_SERVICES,
+            outputAvroDir: OUTPUT_AVRO_DIR
         }
     });
 

@@ -96,7 +96,7 @@ class AddListingToSearchingAfterPublishingPolicyTest {
     }
 
     @Test
-    void test_execute_givenExceptionDuringGettingDetails_thenPublishFailEvent() {
+    void test_execute_givenExceptionDuringGettingDetails_thenPublishFailEvent() throws GuestsCapacity.Exception.CapacityMustBePositive {
         // Given
         final var sut = createSUT();
         final var event = anyEvent();

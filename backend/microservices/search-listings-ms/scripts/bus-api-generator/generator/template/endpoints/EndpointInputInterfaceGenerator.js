@@ -1,4 +1,4 @@
-import {getInputChannelForOperation, getInputTypeNameForEndpoint, getInputTypes} from "./utils";
+import {channelIdToPackageName, getInputChannelForOperation, getInputTypeNameForEndpoint, getInputTypes} from "./utils";
 import {getChannelServiceId} from "../utils";
 
 export class EndpointInputInterfaceGenerator {
@@ -28,13 +28,15 @@ export class EndpointInputInterfaceGenerator {
 
         const inputChannel =  getInputChannelForOperation(operation);
         const serviceId  = getChannelServiceId(inputChannel);
-        const pckg = `${this._basePackageName}.dto.${this._getPackageForService(serviceId)}`
+
+        debugger
+        const pckg = `${this._basePackageName}.dto.${this._getPackageForService(serviceId)}.${channelIdToPackageName(inputChannel.id())}`
 
         const interfaceName = getInputTypeNameForEndpoint(operationId, inputTypes, this._modelsSuffix)
 
         return {
             fileName: `${interfaceName}.java`,
-            packageName: packageName,
+            packageName: `${this._basePackageName}.dto.${this._getPackageForService(serviceId)}.${channelIdToPackageName(inputChannel.id())}`,
             content: this._renderContent(pckg, interfaceName)
         }
     }

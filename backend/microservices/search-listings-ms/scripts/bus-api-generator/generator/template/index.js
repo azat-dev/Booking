@@ -2,12 +2,9 @@ import {FilesWriter} from "./FilesWriter";
 import {ChannelsFileGenerator} from "./ChannelsFileGenerator";
 import {EndpointFileGenerator} from "./endpoints/EndpointFileGenerator";
 import {EndpointFilesGenerator} from "./endpoints/EndpointFilesGenerator";
-import {CustomJavaGenerator} from "./CustomJavaGenerator";
-import {ModelFilesGenerator} from "./ModelFilesGenerator";
-import {DtoGenerator} from "./DtoGenerator";
-import {ModelsGenerator} from "./ModelsGenerator";
 import {MessageFileGenerator} from "./MessageFileGenerator";
 import {EndpointInputInterfaceGenerator} from "./endpoints/EndpointInputInterfaceGenerator";
+import {AvroDtoGenerator} from "./AvroDtoGenerator";
 
 const SUFFIX = "DTO";
 
@@ -18,6 +15,7 @@ export default async function (options) {
     const dtoPackage = options.params.dtoPackage;
     const packageName = options.params.package;
     const outputDir = options.params.outputDir;
+    const outputAvroDir = options.params.outputAvroDir;
 
     const getPackageForService = (serviceId) => {
         const result = options.params.packageNamesByServices[serviceId];
@@ -29,14 +27,12 @@ export default async function (options) {
         return result;
     }
 
-    const modelsSuffix  = SUFFIX;
-
-    const javaGenerator = new CustomJavaGenerator(options.id, modelsSuffix);
-    const modelFilesGenerator = new ModelFilesGenerator(getPackageForService);
+    const modelsSuffix = SUFFIX;
 
     const channelsFileGenerator = new ChannelsFileGenerator();
 
-    const basePackageName = options.packageName;
+    const basePackageName = options.params.package;
+    debugger
     const endpointInputInterfaceGenerator = new EndpointInputInterfaceGenerator(basePackageName, modelsSuffix, getPackageForService);
     const endpointFileGenerator = new EndpointFileGenerator(getPackageForService);
     const endpointFilesGenerator = new EndpointFilesGenerator(
@@ -46,8 +42,7 @@ export default async function (options) {
         getPackageForService
     );
 
-    const modelsGenerator = new ModelsGenerator(javaGenerator);
-    const dtoGenerator = new DtoGenerator(modelFilesGenerator, getPackageForService);
+    const dtoGenerator = new AvroDtoGenerator(getPackageForService);
 
     const messageFileGenerator = new MessageFileGenerator();
 
@@ -61,11 +56,15 @@ export default async function (options) {
                 dtoPackage,
                 packageName
             }),
-            ...(await dtoGenerator.generate(asyncapi, SUFFIX, packageName))
         ];
 
 
     const writer = new FilesWriter();
     await writer.write(generatedModels, outputDir, true);
+    await writer.write(
+        await dtoGenerator.generate(asyncapi, SUFFIX, packageName),
+        outputAvroDir,
+        true
+    );
     return [];
 }

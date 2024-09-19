@@ -37,6 +37,7 @@
 
 		<bus-api.server.input-file>../../../../specs/asyncapi/search-listings.yaml</bus-api.server.input-file>
 		<bus-api.server.output-directory>${project.build.directory}/generated-sources/bus-api-server</bus-api.server.output-directory>
+		<bus-api.server.output-avro-directory>${bus-api.server.output-directory}/avro</bus-api.server.output-avro-directory>
 		<bus-api.server.package>${default.package}.generated.api.bus</bus-api.server.package>
 		<bus-api.server.dto-package>${default.package}.generated.events.dto</bus-api.server.dto-package>
 	</properties>
@@ -45,7 +46,7 @@
 		<dependency>
 			<groupId>com.azat4dev.booking.shared</groupId>
 			<artifactId>shared</artifactId>
-			<version>1.2-SNAPSHOT</version>
+			<version>1.3-SNAPSHOT</version>
 		</dependency>
 
 		<!-- For Observation AOP -->
@@ -245,6 +246,18 @@
 			<version>7.4</version>
 		</dependency>
 
+		<!-- Avro-->
+		<dependency>
+			<groupId>org.apache.avro</groupId>
+			<artifactId>avro</artifactId>
+			<version>1.12.0</version>
+		</dependency>
+		<dependency>
+			<groupId>org.junit.jupiter</groupId>
+			<artifactId>junit-jupiter-api</artifactId>
+			<version>5.10.2</version>
+		</dependency>
+
 	</dependencies>
 
 	<build>
@@ -298,7 +311,7 @@
 						<configuration>
 							<workingDirectory>./scripts/bus-api-generator</workingDirectory>
 							<installDirectory>${project.build.directory}/java_runtime_node</installDirectory>
-							<arguments>run generate -- --package ${bus-api.server.package} --dto-package ${bus-api.server.dto-package} --input ${bus-api.server.input-file} --output ${bus-api.server.output-directory} --service-package.users=usersms --service-package.listings=listingsms --service-package.search-listings=searchlistingsms</arguments>
+							<arguments>run generate -- --package ${bus-api.server.package} --dto-package ${bus-api.server.dto-package} --input ${bus-api.server.input-file} --output ${bus-api.server.output-directory} --output-avro ${bus-api.server.output-avro-directory} --service-package.users=usersms --service-package.listings=listingsms --service-package.search-listings=searchlistingsms</arguments>
 							<environmentVariables>
 								<NODE_PATH>${project.build.directory}/java_runtime_node/node</NODE_PATH>
 							</environmentVariables>
@@ -335,6 +348,25 @@
 							<sources>
 								<source>${bus-api.server.output-directory}</source>
 							</sources>
+						</configuration>
+					</execution>
+				</executions>
+			</plugin>
+
+			<plugin>
+				<groupId>org.apache.avro</groupId>
+				<artifactId>avro-maven-plugin</artifactId>
+				<version>1.12.0</version>
+				<executions>
+					<execution>
+						<goals>
+							<goal>schema</goal>
+							<goal>protocol</goal>
+						</goals>
+						<configuration>
+							<sourceDirectory>${bus-api.server.output-avro-directory}</sourceDirectory>
+							<outputDirectory>${bus-api.server.output-directory}</outputDirectory>
+							<templateDirectory>${project.basedir}/src/main/avro/templates/</templateDirectory>
 						</configuration>
 					</execution>
 				</executions>

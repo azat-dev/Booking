@@ -14,21 +14,6 @@ export class DtoGenerator {
             JsonSchemaInputProcessor.convertSchemaToCommonModel(schema);
 
         return newCommonModel;
-        // if (newCommonModel.$id !== undefined) {
-        //     if (inputModel.models[newCommonModel.$id] !== undefined) {
-        //         // Logger.warn(
-        //         //     `Overwriting existing model with $id ${newCommonModel.$id}, are there two models with the same id present?`,
-        //         //     newCommonModel
-        //         // );
-        //     }
-        //     const metaModel = convertToMetaModel(newCommonModel);
-        //     inputModel.models[metaModel.name] = metaModel;
-        // } else {
-        //     // Logger.warn(
-        //     //     'Model did not have $id which is required, ignoring.',
-        //     //     newCommonModel
-        //     // );
-        // }
     };
 
     _getDtoForMessages = async (messages, packageName, serviceId, channelId, modelsSuffix) => {

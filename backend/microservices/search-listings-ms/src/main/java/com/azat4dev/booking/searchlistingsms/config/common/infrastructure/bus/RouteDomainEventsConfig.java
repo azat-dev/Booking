@@ -53,8 +53,8 @@ public class RouteDomainEventsConfig {
     }
 
     @Bean
-    GetPartitionKeyForEvent<String> getPartitionKeyForEvent() {
-        return new GetPartitionKeyForEvent<String>() {
+    GetPartitionKeyForEvent getPartitionKeyForEvent() {
+        return new GetPartitionKeyForEvent() {
             @Override
             public <T extends DomainEventPayload> Optional<String> execute(T event) {
 //                if (event instanceof EventWithListingId inst) {

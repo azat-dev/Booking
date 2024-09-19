@@ -69,161 +69,51 @@ operations:
 components:
   messages:
     queries/requests/GetListingPublicDetailsById:
-      traits:
-        - $ref: '#/components/messageTraits/commonHeaders'
-      headers:
-        type: object
-        required:
-          - x-message-type
-        properties:
-          x-message-type:
-            type: string
-            enum:
-              - GetListingPublicDetailsById
       payload:
         $ref: '#/components/schemas/queries/GetListingPublicDetailsById'
 
     queries/responses/GetListingPublicDetailsByIdResponse:
       name: GetListingPublicDetailsByIdResponse
-      traits:
-        - $ref: '#/components/messageTraits/commonHeaders'
-      headers:
-        type: object
-        required:
-          - x-message-type
-        properties:
-          x-message-type:
-            type: string
-            enum:
-              - GetListingPublicDetailsByIdResponse
       payload:
         $ref: '#/components/schemas/queries/GetListingPublicDetailsByIdResponse'
 
     queries/responses/FailedGetListingPublicDetailsById:
       name: FailedGetListingPublicDetailsById
-      traits:
-        - $ref: '#/components/messageTraits/commonHeaders'
-      headers:
-        type: object
-        required:
-          - x-message-type
-        properties:
-          x-message-type:
-            type: string
-            enum:
-              - FailedGetListingPublicDetailsById
       payload:
         $ref: '#/components/schemas/queries/FailedGetListingPublicDetailsById'
 
     events/NewListingAdded:
       name: NewListingAdded
-      traits:
-        - $ref: '#/components/messageTraits/commonHeaders'
-      headers:
-        type: object
-        required:
-          - x-message-type
-        properties:
-          x-message-type:
-            type: string
-            enum:
-              - NewListingAdded
       payload:
         $ref: '#/components/schemas/payloads/NewListingAdded'
 
     events/FailedToAddNewListing:
       name: FailedToAddNewListing
-      traits:
-        - $ref: '#/components/messageTraits/commonHeaders'
-      headers:
-        type: object
-        required:
-          - x-message-type
-        properties:
-          x-message-type:
-            type: string
-            enum:
-              - FailedToAddNewListing
       payload:
         $ref: '#/components/schemas/payloads/FailedToAddNewListing'
 
     events/ListingDetailsUpdated:
       name: ListingDetailsUpdated
-      traits:
-        - $ref: '#/components/messageTraits/commonHeaders'
-      headers:
-        type: object
-        required:
-          - x-message-type
-        properties:
-          x-message-type:
-            type: string
-            enum:
-              - ListingDetailsUpdated
       payload:
         $ref: '#/components/schemas/payloads/ListingDetailsUpdated'
 
     events/ListingPublished:
       name: ListingPublished
-      traits:
-        - $ref: '#/components/messageTraits/commonHeaders'
-      headers:
-        type: object
-        required:
-          - x-message-type
-        properties:
-          x-message-type:
-            type: string
-            enum:
-              - ListingPublished
       payload:
         $ref: '#/components/schemas/payloads/ListingPublished'
 
     events/GeneratedUrlForUploadListingPhoto:
       name: GeneratedUrlForUploadListingPhoto
-      traits:
-        - $ref: '#/components/messageTraits/commonHeaders'
-      headers:
-        type: object
-        required:
-          - x-message-type
-        properties:
-          x-message-type:
-            type: string
-            enum:
-              - GeneratedUrlForUploadListingPhoto
       payload:
         $ref: '#/components/schemas/payloads/GeneratedUrlForUploadListingPhoto'
 
     events/FailedGenerateUrlForUploadListingPhoto:
       name: FailedGenerateUrlForUploadListingPhoto
-      traits:
-        - $ref: '#/components/messageTraits/commonHeaders'
-      headers:
-        type: object
-        required:
-          - x-message-type
-        properties:
-          x-message-type:
-            type: string
-            enum:
-              - FailedGenerateUrlForUploadListingPhoto
       payload:
         $ref: '#/components/schemas/payloads/FailedGenerateUrlForUploadListingPhoto'
 
     events/AddedNewPhotoToListing:
       name: AddedNewPhotoToListing
-      traits:
-        - $ref: '#/components/messageTraits/commonHeaders'
-      headers:
-        type: object
-        required:
-          - x-message-type
-        properties:
-          x-message-type:
-            type: string
-            enum:
-              - AddedNewPhotoToListing
       payload:
         $ref: '#/components/schemas/payloads/AddedNewPhotoToListing'
 
@@ -613,20 +503,3 @@ components:
                     allOf:
                       - $ref: "./common/values.yaml#/components/schemas/ErrorCode"
               - $ref: "./common/values.yaml#/components/schemas/Error"
-  messageTraits:
-    commonHeaders:
-      headers:
-        type: object
-        required:
-          - x-message-id
-          - x-message-sent-at
-        properties:
-          x-message-id:
-            type: string
-          x-correlation-id:
-            type: string
-          x-message-sent-at:
-            type: string
-            format: date-time
-          x-reply-to:
-            type: string
