@@ -36,6 +36,13 @@ channels:
       ListingDeleted:
         $ref: '#/components/messages/ListingDeleted'
 
+  internalReceivedListingDetailsForPublishedListing:
+    x-service: search-listings
+    address: 'com.azat4dev.search-listings.events.internal.received-listing-details-for-published-listing'
+    messages:
+      ReceivedListingDetailsForPublishedListing:
+        $ref: '#/components/messages/ReceivedListingDetailsForPublishedListing'
+
 operations:
   sendGetListingPublicDetailsById:
     action: send
@@ -53,12 +60,29 @@ operations:
 
   processResponseOfGetListingPublicDetailsByIdForPublishedListing:
     action: receive
-    description: Combine the response of GetListingPublicDetailsById and WaitingInfoForPublishedListing and produce internal ListingPublished
+    description: if success then send ReceivedListingDetailsForPublishedListing to internalReceivedListingDetailsForPublishedListing \
+        else send (todo) FailedReceiveListingDetailsForPublishedListing
     channel:
       $ref: '#/channels/receiveGetListingPublicDetailsById'
     messages:
       - $ref: '#/channels/receiveGetListingPublicDetailsById/messages/GetListingPublicDetailsByIdResponse'
       - $ref: '#/channels/receiveGetListingPublicDetailsById/messages/FailedGetListingPublicDetailsById'
+
+  processReceivedListingDetailsForPublishedListingProduceListingPublished:
+    action: receive
+    description: Produce enriched ListingPublished event to internalListingEventsStream
+    channel:
+      $ref: '#/channels/internalReceivedListingDetailsForPublishedListing'
+    messages:
+      - $ref: '#/channels/internalReceivedListingDetailsForPublishedListing/messages/ReceivedListingDetailsForPublishedListing'
+
+  processReceivedListingDetailsForPublishedListingDeleteWaiting:
+    action: receive
+    description: Delete waiting info
+    channel:
+      $ref: '#/channels/internalReceivedListingDetailsForPublishedListing'
+    messages:
+      - $ref: '#/channels/internalReceivedListingDetailsForPublishedListing/messages/ReceivedListingDetailsForPublishedListing'
 
   sendInternalListingEvents:
     action: send
@@ -91,9 +115,15 @@ components:
       payload:
         $ref: '#/components/schemas/payloads/ListingUpdated'
 
+    ReceivedListingDetailsForPublishedListing:
+      name: ReceivedListingDetailsForPublishedListing
+      payload:
+          $ref: '#/components/schemas/payloads/ReceivedListingDetailsForPublishedListing'
+
   schemas:
     payloads:
       ListingPublished:
+        x-service: search-listings
         title: ListingPublished
         type: object
         additionalProperties: false
@@ -108,6 +138,26 @@ components:
             type: string
             format: date-time
           data:
+            $ref: "./listings.yaml#/components/schemas/values/ListingPublicDetails"
+
+      ReceivedListingDetailsForPublishedListing:
+        x-service: search-listings
+        title: ReceivedListingDetailsForPublishedListing
+        type: object
+        additionalProperties: false
+        required:
+          - requestId
+          - listingId
+          - waitingInfo
+          - listingDetails
+        properties:
+          listingId:
+            $ref: "./common/values.yaml#/components/schemas/ListingId"
+          requestId:
+            type: string
+          waitingInfo:
+            $ref: "#/components/schemas/payloads/WaitingInfoForPublishedListing"
+          listingDetails:
             $ref: "./listings.yaml#/components/schemas/values/ListingPublicDetails"
 
       ListingUpdated:
@@ -138,6 +188,7 @@ components:
             $ref: "./common/values.yaml#/components/schemas/ListingId"
 
       WaitingInfoForPublishedListing:
+        x-service: search-listings
         title: WaitingInfoForPublishedListing
         type: object
         additionalProperties: false

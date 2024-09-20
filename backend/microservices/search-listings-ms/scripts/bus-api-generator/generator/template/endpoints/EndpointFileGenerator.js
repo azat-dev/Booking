@@ -55,9 +55,15 @@ export class EndpointFileGenerator {
         const inputTypes = getInputTypes(operation, options.modelsSuffix, this._getPackageForService);
         const inputTypeDtoData = getInputTypeNameForEndpoint(operationId, inputTypes, options.modelsSuffix, inputChannel, this._getPackageForService);
 
-        const {className: inputTypeDto, packageName: inputTypeDtoPackage} = inputTypeDtoData;
+        const {className: inputTypeDto, packageName: inputTypeDtoPackage, isInterface} = inputTypeDtoData;
 
-        const inputTypeDtoImport = `${options.packageName}.dto.${inputTypeDtoPackage}.${inputTypeDto}`
+        const inputInterfaceImport = isInterface ? `${options.packageName}.dto.${inputTypeDtoPackage}.${inputTypeDto}` : null;
+        const importsForInputTypes = (inputTypes.map(i => {
+            if (i.customService) {
+                return `${options.packageName}.dto.${this._getPackageForService(i.customService)}.${i.className}`;
+            }
+            return `${options.packageName}.dto.${i.packageName}.${channelIdToPackageName(inputChannelId)}.${i.className}`;
+        }));
 
         return (
             {
@@ -68,16 +74,11 @@ export class EndpointFileGenerator {
                     [
                         'java.util.Optional',
                         'com.azat4dev.booking.shared.infrastructure.api.bus.BusApiEndpoint',
-                        inputTypeDtoImport,
+                        inputInterfaceImport,
                         `${options.packageName}.Channels`,
-                        ...(inputTypes.map(i => {
-                            if (i.customService) {
-                                return `${options.packageName}.dto.${this._getPackageForService(i.customService)}.${i.className}`;
-                            }
-                            return `${options.packageName}.dto.${i.packageName}.${channelIdToPackageName(inputChannelId)}.${i.className}`;
-                        })),
+                        ...importsForInputTypes,
                         ...(returnType.map(i => `${options.packageName}.dto.${i.packageName}.${i.className}`))
-                    ],
+                    ].filter(i => !!i),
                     inputTypes,
                     inputChannelConstantName,
                     hasDynamicReplyAddress,

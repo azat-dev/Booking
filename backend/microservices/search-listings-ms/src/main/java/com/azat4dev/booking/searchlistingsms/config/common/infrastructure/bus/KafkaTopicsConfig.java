@@ -15,7 +15,8 @@ public class KafkaTopicsConfig {
     KafkaAdmin.NewTopics newTopicList() {
         return new KafkaAdmin.NewTopics(
             new NewTopic(Channels.INTERNAL_LISTING_EVENTS_STREAM.getValue(), 1, (short) 1),
-            new NewTopic(Channels.RECEIVE_GET_LISTING_PUBLIC_DETAILS_BY_ID.getValue(), 1, (short) 1)
+            new NewTopic(Channels.RECEIVE_GET_LISTING_PUBLIC_DETAILS_BY_ID.getValue(), 1, (short) 1),
+            new NewTopic(Channels.INTERNAL_RECEIVED_LISTING_DETAILS_FOR_PUBLISHED_LISTING.getValue(), 1, (short) 1)
         );
     }
 }

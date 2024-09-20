@@ -3,8 +3,9 @@ package com.azat4dev.booking.searchlistingsms.acl.infrastructure.bus;
 import com.azat4dev.booking.searchlistingsms.config.common.infrastructure.bus.InternalTopics;
 import com.azat4dev.booking.searchlistingsms.generated.api.bus.Channels;
 import com.azat4dev.booking.searchlistingsms.generated.api.bus.dto.listingsms.*;
-import com.azat4dev.booking.searchlistingsms.generated.api.bus.dto.searchlistingsms.internallistingeventsstream.ListingPublishedDTO;
-import com.azat4dev.booking.searchlistingsms.generated.api.bus.dto.searchlistingsms.internallistingeventsstream.WaitingInfoForPublishedListingDTO;
+import com.azat4dev.booking.searchlistingsms.generated.api.bus.dto.searchlistingsms.ListingPublishedDTO;
+import com.azat4dev.booking.searchlistingsms.generated.api.bus.dto.searchlistingsms.ReceivedListingDetailsForPublishedListingDTO;
+import com.azat4dev.booking.searchlistingsms.generated.api.bus.dto.searchlistingsms.WaitingInfoForPublishedListingDTO;
 import com.azat4dev.booking.searchlistingsms.helpers.EnableTestcontainers;
 import com.azat4dev.booking.shared.infrastructure.bus.Message;
 import com.azat4dev.booking.shared.infrastructure.bus.MessageBus;
@@ -12,13 +13,10 @@ import com.azat4dev.booking.shared.infrastructure.bus.MessageListener;
 import com.azat4dev.booking.shared.infrastructure.bus.NewMessageListenerForChannel;
 import com.azat4dev.booking.shared.infrastructure.bus.kafka.GetSerdeForTopic;
 import com.azat4dev.booking.shared.infrastructure.bus.kafka.NewKafkaStreamForTopic;
-import org.apache.kafka.clients.admin.NewTopic;
+import org.apache.kafka.common.serialization.Serde;
 import org.apache.kafka.common.serialization.Serdes;
-import org.apache.kafka.streams.KafkaStreams;
-import org.apache.kafka.streams.kstream.Consumed;
-import org.apache.kafka.streams.kstream.Materialized;
-import org.apache.kafka.streams.kstream.Named;
-import org.apache.kafka.streams.kstream.Produced;
+import org.apache.kafka.streams.KeyValue;
+import org.apache.kafka.streams.kstream.*;
 import org.apache.kafka.streams.state.QueryableStoreTypes;
 import org.apache.kafka.streams.state.Stores;
 import org.junit.jupiter.api.Test;
@@ -30,10 +28,6 @@ import org.springframework.context.annotation.Bean;
 import org.springframework.kafka.config.StreamsBuilderFactoryBean;
 import org.springframework.kafka.core.KafkaTemplate;
 import org.springframework.kafka.streams.KafkaStreamsInteractiveQueryService;
-import org.springframework.retry.RetryPolicy;
-import org.springframework.retry.backoff.FixedBackOffPolicy;
-import org.springframework.retry.policy.SimpleRetryPolicy;
-import org.springframework.retry.support.RetryTemplate;
 import org.springframework.test.context.jdbc.Sql;
 
 import java.time.Duration;
@@ -43,7 +37,6 @@ import java.util.Optional;
 import java.util.Set;
 import java.util.UUID;
 import java.util.concurrent.atomic.AtomicReference;
-import java.util.function.Supplier;
 
 import static com.azat4dev.booking.searchlistingsms.helpers.Helpers.waitForValue;
 import static org.assertj.core.api.Assertions.assertThat;
@@ -170,14 +163,7 @@ public class PublishedListingMessageEnrichmentTests {
 
         @Bean
         public KafkaStreamsInteractiveQueryService kafkaStreamsInteractiveQueryService(StreamsBuilderFactoryBean streamsBuilderFactoryBean) {
-            final KafkaStreamsInteractiveQueryService kafkaStreamsInteractiveQueryService =
-                new KafkaStreamsInteractiveQueryService(streamsBuilderFactoryBean);
-            RetryTemplate retryTemplate = new RetryTemplate();
-            retryTemplate.setBackOffPolicy(new FixedBackOffPolicy());
-            RetryPolicy retryPolicy = new SimpleRetryPolicy(3);
-            retryTemplate.setRetryPolicy(retryPolicy);
-            kafkaStreamsInteractiveQueryService.setRetryTemplate(retryTemplate);
-            return kafkaStreamsInteractiveQueryService;
+            return new KafkaStreamsInteractiveQueryService(streamsBuilderFactoryBean);
         }
 
 
@@ -200,10 +186,31 @@ public class PublishedListingMessageEnrichmentTests {
             );
         }
 
+        static Consumed<String, Message> consumedWith(GetSerdeForChannel getSerdeForChannel, Channels channel) {
+            return Consumed.with(
+                Serdes.String(),
+                getSerdeForChannel.run(channel)
+            );
+        }
+
+        interface GetSerdeForChannel {
+            Serde<Message> run(Channels channel);
+        }
+
+        static Produced<String, Message> producedWith(GetSerdeForChannel getSerdeForChannel, Channels channel) {
+            return Produced.with(
+                Serdes.String(),
+                getSerdeForChannel.run(channel)
+            );
+        }
+
         @Bean
-        NewKafkaStreamForTopic streamFactoryForTopic(
-            GetSerdeForTopic getSerdeForTopic
-        ) {
+        GetSerdeForChannel getSerdeForChannel(GetSerdeForTopic getSerdeForTopic) {
+            return channel -> getSerdeForTopic.run(channel.getValue());
+        }
+
+        @Bean
+        NewKafkaStreamForTopic streamFactoryForTopic(GetSerdeForChannel getSerdeForChannel) {
             return new NewKafkaStreamForTopic(
                 InternalTopics.LISTING_PUBLISHED.getValue(),
                 builder -> {
@@ -212,60 +219,100 @@ public class PublishedListingMessageEnrichmentTests {
 
                     final var store = Stores.persistentKeyValueStore(storeName);
 
-                    final var waitingsTable = builder.stream(
+                    final var receivedListingDetailsStream = builder.stream(
+                        Channels.INTERNAL_RECEIVED_LISTING_DETAILS_FOR_PUBLISHED_LISTING.getValue(),
+                        consumedWith(getSerdeForChannel, Channels.INTERNAL_RECEIVED_LISTING_DETAILS_FOR_PUBLISHED_LISTING)
+                    );
+
+                    final var deleteProcessedWaitingsStream = receivedListingDetailsStream.<Message>mapValues(value -> null);
+
+                    // Keep waitings in table
+                    final var waitingsStream = builder.stream(
                             Channels.INTERNAL_LISTING_EVENTS_STREAM.getValue(),
-                            Consumed.with(
-                                Serdes.String(),
-                                getSerdeForTopic.run(Channels.INTERNAL_LISTING_EVENTS_STREAM.getValue())
-                            )
+                            consumedWith(getSerdeForChannel, Channels.INTERNAL_LISTING_EVENTS_STREAM)
                         )
                         .filter((key, message) -> message.payload() instanceof WaitingInfoForPublishedListingDTO)
+                        // Delete processed waitings
+                        .merge(deleteProcessedWaitingsStream);
+
+                    waitingsStream.print(Printed.<String, Message>toSysOut().withLabel("waitingsStream"));
+
+                    final var waitingsTable = waitingsStream
                         .toTable(
                             Named.as(storeName),
                             Materialized.<String, Message>as(store)
                                 .withKeySerde(Serdes.String())
-                                .withValueSerde(getSerdeForTopic.run(Channels.INTERNAL_LISTING_EVENTS_STREAM.getValue()))
+                                .withValueSerde(getSerdeForChannel.run(Channels.INTERNAL_LISTING_EVENTS_STREAM))
                         );
 
-                    builder.stream(
+                    final var responsesStream = builder.stream(
                         Channels.RECEIVE_GET_LISTING_PUBLIC_DETAILS_BY_ID.getValue(),
-                        Consumed.with(
-                            Serdes.String(),
-                            getSerdeForTopic.run(Channels.RECEIVE_GET_LISTING_PUBLIC_DETAILS_BY_ID.getValue())
-                        )
-                    ).join(waitingsTable, (responseMessage, waitingMessage) -> {
+                        consumedWith(getSerdeForChannel, Channels.RECEIVE_GET_LISTING_PUBLIC_DETAILS_BY_ID)
+                    );
+
+                    // Merge responses with waitings and publish enriched messages
+                    final var receivedListingDetailsForPublishedListingStream = responsesStream.join(waitingsTable, (responseMessage, waitingMessage) -> {
+
                         final var response = responseMessage.payloadAs(GetListingPublicDetailsByIdResponseDTO.class);
                         final var waiting = waitingMessage.payloadAs(WaitingInfoForPublishedListingDTO.class);
 
-                        System.out.println("Joining: " + response + " with " + waiting);
                         return new Message(
                             UUID.randomUUID().toString(),
-                            "ListingPublished",
+                            "ReceivedListingDetailsForPublishedListing",
                             LocalDateTime.now(),
                             Optional.of(waiting.getListingId().toString()),
                             Optional.empty(),
-                            ListingPublishedDTO.newBuilder()
+                            ReceivedListingDetailsForPublishedListingDTO.newBuilder()
                                 .setListingId(waiting.getListingId())
-                                .setPublishedAt(LocalDateTime.now().toString())
-                                .setData(
-                                    response.getData()
-                                )
+                                .setRequestId(waiting.getRequestId().toString())
+                                .setListingDetails(response.getData())
+                                .setWaitingInfo(waiting)
                                 .build()
                         );
-                    }).to(
+                    });
+
+                    receivedListingDetailsForPublishedListingStream.to(
+                        Channels.INTERNAL_RECEIVED_LISTING_DETAILS_FOR_PUBLISHED_LISTING.getValue(),
+                        producedWith(getSerdeForChannel, Channels.INTERNAL_RECEIVED_LISTING_DETAILS_FOR_PUBLISHED_LISTING)
+                    );
+
+                    final var inputJoinedMessagesStream = builder.stream(
+                        Channels.INTERNAL_RECEIVED_LISTING_DETAILS_FOR_PUBLISHED_LISTING.getValue(),
+                        consumedWith(getSerdeForChannel, Channels.INTERNAL_RECEIVED_LISTING_DETAILS_FOR_PUBLISHED_LISTING)
+                    );
+
+                    final var enrichedListingPublishedStream = inputJoinedMessagesStream
+                        .map((key, value) -> {
+                            final var payload = value.payloadAs(ReceivedListingDetailsForPublishedListingDTO.class);
+                            final var listingId = payload.getListingId();
+
+                            final var outputValue = new Message(
+                                UUID.randomUUID().toString(),
+                                "ListingPublished",
+                                LocalDateTime.now(),
+                                Optional.empty(),
+                                Optional.empty(),
+                                ListingPublishedDTO.newBuilder()
+                                    .setListingId(listingId)
+                                    .setPublishedAt(payload.getWaitingInfo().getPublishedAt())
+                                    .setData(payload.getListingDetails())
+                                    .build()
+                            );
+
+                            return KeyValue.pair(
+                                listingId.toString(),
+                                outputValue
+                            );
+                        });
+
+                    enrichedListingPublishedStream.to(
                         Channels.INTERNAL_LISTING_EVENTS_STREAM.getValue(),
-                        Produced.with(
-                            Serdes.String(),
-                            getSerdeForTopic.run(Channels.INTERNAL_LISTING_EVENTS_STREAM.getValue())
-                        )
+                        producedWith(getSerdeForChannel, Channels.INTERNAL_LISTING_EVENTS_STREAM)
                     );
 
                     return builder.stream(
                         Channels.INTERNAL_LISTING_EVENTS_STREAM.getValue(),
-                        Consumed.with(
-                            Serdes.String(),
-                            getSerdeForTopic.run(Channels.INTERNAL_LISTING_EVENTS_STREAM.getValue())
-                        )
+                        consumedWith(getSerdeForChannel, Channels.INTERNAL_LISTING_EVENTS_STREAM)
                     );
                 }
             );
