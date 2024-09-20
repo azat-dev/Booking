@@ -1,6 +1,7 @@
 package com.azat4dev.booking.searchlistingsms.config.common.infrastructure.bus;
 
 import com.azat4dev.booking.searchlistingsms.generated.api.bus.Channels;
+import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.kafka.clients.admin.NewTopic;
 import org.springframework.context.annotation.Bean;
@@ -8,6 +9,7 @@ import org.springframework.context.annotation.Configuration;
 import org.springframework.kafka.core.KafkaAdmin;
 
 @Slf4j
+@AllArgsConstructor
 @Configuration
 public class KafkaTopicsConfig {
 
