@@ -12,15 +12,28 @@ import com.azat4dev.booking.shared.infrastructure.bus.MessageListener;
 import com.azat4dev.booking.shared.infrastructure.bus.NewMessageListenerForChannel;
 import com.azat4dev.booking.shared.infrastructure.bus.kafka.GetSerdeForTopic;
 import com.azat4dev.booking.shared.infrastructure.bus.kafka.NewKafkaStreamForTopic;
+import org.apache.kafka.clients.admin.NewTopic;
 import org.apache.kafka.common.serialization.Serdes;
+import org.apache.kafka.streams.KafkaStreams;
 import org.apache.kafka.streams.kstream.Consumed;
+import org.apache.kafka.streams.kstream.Materialized;
+import org.apache.kafka.streams.kstream.Named;
 import org.apache.kafka.streams.kstream.Produced;
+import org.apache.kafka.streams.state.QueryableStoreTypes;
+import org.apache.kafka.streams.state.Stores;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.actuate.observability.AutoConfigureObservability;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.context.TestConfiguration;
 import org.springframework.context.annotation.Bean;
+import org.springframework.kafka.config.StreamsBuilderFactoryBean;
+import org.springframework.kafka.core.KafkaTemplate;
+import org.springframework.kafka.streams.KafkaStreamsInteractiveQueryService;
+import org.springframework.retry.RetryPolicy;
+import org.springframework.retry.backoff.FixedBackOffPolicy;
+import org.springframework.retry.policy.SimpleRetryPolicy;
+import org.springframework.retry.support.RetryTemplate;
 import org.springframework.test.context.jdbc.Sql;
 
 import java.time.Duration;
@@ -30,8 +43,10 @@ import java.util.Optional;
 import java.util.Set;
 import java.util.UUID;
 import java.util.concurrent.atomic.AtomicReference;
+import java.util.function.Supplier;
 
 import static com.azat4dev.booking.searchlistingsms.helpers.Helpers.waitForValue;
+import static org.assertj.core.api.Assertions.assertThat;
 
 @EnableTestcontainers
 @SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
@@ -44,6 +59,12 @@ public class PublishedListingMessageEnrichmentTests {
 
     @Autowired
     private MessageBus messageBus;
+
+    @Autowired
+    private KafkaStreamsInteractiveQueryService interactiveQueryService;
+
+    @Autowired
+    private KafkaTemplate<String, byte[]> kafkaTemplate;
 
     private UUID anyListingId() {
         return UUID.randomUUID();
@@ -88,7 +109,7 @@ public class PublishedListingMessageEnrichmentTests {
     }
 
     @Test
-    void test_givenWaitingForListingDetails_whenReceivedResponse_thenPublishEnrichedListingPublishedMessage() throws InterruptedException {
+    void test_givenWaitingForListingDetails_whenReceivedResponse_thenPublishEnrichedListingPublishedMessageAndDeleteRecordFromWaitingsTable() throws InterruptedException {
 
         // Given
         final var listingId = anyListingId();
@@ -128,7 +149,15 @@ public class PublishedListingMessageEnrichmentTests {
         );
 
         // Then
-        waitForValue(receivedListingPublished, Duration.ofSeconds(30));
+        waitForValue(receivedListingPublished, Duration.ofSeconds(10));
+
+        final var savedWating = interactiveQueryService.retrieveQueryableStore(
+                "listinginfowaitings",
+                QueryableStoreTypes.keyValueStore()
+            )
+            .get(requestId.toString());
+
+        assertThat(savedWating).isNull();
     }
 
     @TestConfiguration
@@ -138,6 +167,19 @@ public class PublishedListingMessageEnrichmentTests {
         AtomicReference<ListingPublishedDTO> receivedListingPublished() {
             return new AtomicReference<>();
         }
+
+        @Bean
+        public KafkaStreamsInteractiveQueryService kafkaStreamsInteractiveQueryService(StreamsBuilderFactoryBean streamsBuilderFactoryBean) {
+            final KafkaStreamsInteractiveQueryService kafkaStreamsInteractiveQueryService =
+                new KafkaStreamsInteractiveQueryService(streamsBuilderFactoryBean);
+            RetryTemplate retryTemplate = new RetryTemplate();
+            retryTemplate.setBackOffPolicy(new FixedBackOffPolicy());
+            RetryPolicy retryPolicy = new SimpleRetryPolicy(3);
+            retryTemplate.setRetryPolicy(retryPolicy);
+            kafkaStreamsInteractiveQueryService.setRetryTemplate(retryTemplate);
+            return kafkaStreamsInteractiveQueryService;
+        }
+
 
         @Bean
         NewMessageListenerForChannel outputMessageListener(AtomicReference<ListingPublishedDTO> receivedListingPublished) {
@@ -159,52 +201,16 @@ public class PublishedListingMessageEnrichmentTests {
         }
 
         @Bean
-        NewMessageListenerForChannel input1() {
-            return new NewMessageListenerForChannel(
-                Channels.RECEIVE_GET_LISTING_PUBLIC_DETAILS_BY_ID.getValue(),
-                new MessageListener() {
-
-                    @Override
-                    public Optional<Set<String>> messageTypes() {
-                        return Optional.of(Set.of("GetListingPublicDetailsByIdResponse"));
-                    }
-
-                    @Override
-                    public void consume(Message message) {
-
-                        System.out.println("Received message1: " + message);
-                    }
-                }
-            );
-        }
-
-        @Bean
-        NewMessageListenerForChannel messageListenerForChannel2() {
-            return new NewMessageListenerForChannel(
-                Channels.INTERNAL_LISTING_EVENTS_STREAM.getValue(),
-                new MessageListener() {
-
-                    @Override
-                    public Optional<Set<String>> messageTypes() {
-                        return Optional.of(Set.of("WaitingInfoForPublishedListing"));
-                    }
-
-                    @Override
-                    public void consume(Message message) {
-
-                        System.out.println("Received message2: " + message);
-                    }
-                }
-            );
-        }
-
-        @Bean
         NewKafkaStreamForTopic streamFactoryForTopic(
             GetSerdeForTopic getSerdeForTopic
         ) {
             return new NewKafkaStreamForTopic(
                 InternalTopics.LISTING_PUBLISHED.getValue(),
                 builder -> {
+
+                    final var storeName = "listinginfowaitings";
+
+                    final var store = Stores.persistentKeyValueStore(storeName);
 
                     final var waitingsTable = builder.stream(
                             Channels.INTERNAL_LISTING_EVENTS_STREAM.getValue(),
@@ -214,7 +220,12 @@ public class PublishedListingMessageEnrichmentTests {
                             )
                         )
                         .filter((key, message) -> message.payload() instanceof WaitingInfoForPublishedListingDTO)
-                        .toTable();
+                        .toTable(
+                            Named.as(storeName),
+                            Materialized.<String, Message>as(store)
+                                .withKeySerde(Serdes.String())
+                                .withValueSerde(getSerdeForTopic.run(Channels.INTERNAL_LISTING_EVENTS_STREAM.getValue()))
+                        );
 
                     builder.stream(
                         Channels.RECEIVE_GET_LISTING_PUBLIC_DETAILS_BY_ID.getValue(),

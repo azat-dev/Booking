@@ -12,7 +12,7 @@ class TestcontainersInitializer implements ApplicationContextInitializer<Configu
 
     static PostgreSQLContainer<?> postgres = new PostgreSQLContainer<>(DockerImageName.parse("postgres:15.1"));
 
-    static KafkaContainer kafka = new KafkaContainer(DockerImageName.parse("confluentinc/cp-kafka:5.4.3"));
+    static KafkaContainer kafka = new KafkaContainer(DockerImageName.parse("confluentinc/cp-kafka:7.7.1"));
 
     static {
         Startables.deepStart(postgres, kafka).join();
