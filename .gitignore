@@ -10,3 +10,5 @@
 /backend/microservices/shared/target
 /backend/microservices/users-ms/target
 /backend/microservices/listings-ms/target
+/backend/scripts/bus-api-generator/node_modules
+/backend/scripts/bus-api-generator/generator/__transpiled

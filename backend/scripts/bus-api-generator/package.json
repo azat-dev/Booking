@@ -7,6 +7,9 @@
     "ts-node": "^10.3.0",
     "yargs": "^17.7.2"
   },
+  "bin": {
+    "bus-api-generator": "ts-node ./generate.ts"
+  },
   "scripts": {
     "generate": "ts-node ./generate.ts",
     "generate-debug": "ts-node ./generate.ts --package com.azat4dev.booking.searchlistingsms.generated.api.bus --dto-package com.azat4dev.booking.searchlistingsms.generated.events.dto --input ../../../../specs/asyncapi/search-listings.yaml --output /Users/azat/dev/my/projects/demo-booking/backend/microservices/search-listings-ms/target/generated-sources/bus-api-server --output-avro /Users/azat/dev/my/projects/demo-booking/backend/microservices/search-listings-ms/target/generated-sources/bus-api-server/avro --service-package.users=usersms --service-package.listings=listingsms --service-package.search-listings=searchlistingsms",

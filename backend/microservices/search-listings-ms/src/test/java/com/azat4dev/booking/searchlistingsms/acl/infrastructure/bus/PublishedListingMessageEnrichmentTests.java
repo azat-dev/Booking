@@ -17,8 +17,8 @@ import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.context.TestConfiguration;
 import org.springframework.context.annotation.Bean;
 import org.springframework.kafka.config.StreamsBuilderFactoryBean;
-import org.springframework.kafka.core.KafkaTemplate;
 import org.springframework.kafka.streams.KafkaStreamsInteractiveQueryService;
+import org.springframework.test.annotation.DirtiesContext;
 import org.springframework.test.context.jdbc.Sql;
 
 import java.time.Duration;
@@ -33,6 +33,7 @@ import static com.azat4dev.booking.searchlistingsms.config.common.infrastructure
 import static com.azat4dev.booking.searchlistingsms.helpers.Helpers.waitForValue;
 import static org.assertj.core.api.Assertions.assertThat;
 
+@DirtiesContext
 @EnableTestcontainers
 @SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
 @Sql(value = {"/db/drop-schema.sql", "/db/schema.sql"})
@@ -47,9 +48,6 @@ public class PublishedListingMessageEnrichmentTests {
 
     @Autowired
     private KafkaStreamsInteractiveQueryService interactiveQueryService;
-
-    @Autowired
-    private KafkaTemplate<String, byte[]> kafkaTemplate;
 
     @Test
     void test_givenWaitingForListingDetails_whenReceivedResponse_thenPublishEnrichedListingPublishedMessageAndDeleteRecordFromWaitingsTable() throws InterruptedException {

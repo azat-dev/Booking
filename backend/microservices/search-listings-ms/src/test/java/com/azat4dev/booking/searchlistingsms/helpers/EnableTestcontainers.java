@@ -9,7 +9,7 @@ import java.lang.annotation.Target;
 
 @Target({ElementType.TYPE})
 @Retention(RetentionPolicy.RUNTIME)
-@ContextConfiguration(initializers = TestcontainersInitializer.class)
+@ContextConfiguration(initializers = {PostgresTestContainerInitializer.class, KafkaTestContainerInitializer.class})
 public @interface EnableTestcontainers {
 
     Class<?>[] classes() default {};
